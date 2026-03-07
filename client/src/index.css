@@ -1,12 +1,18 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Outfit:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+@font-face {
+  font-family: 'Aeonik';
+  src: local('Aeonik'), local('Aeonik Regular');
+  font-display: swap;
+}
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --font-sans: 'Inter', sans-serif;
-  --font-display: 'Outfit', sans-serif;
+  --font-sans: 'Aeonik', 'Inter', sans-serif;
+  --font-display: 'Aeonik', 'Inter', sans-serif;
 
   /* Brand Blue Palette - #2366c9 */
   --primary: 216 70% 46%;     /* #2366c9 converted to HSL (approx) */
