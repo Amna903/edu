@@ -5,18 +5,9 @@ import { Zap, Target, LineChart, Trophy, BookOpen, UserCheck, CheckCircle2, Mess
 import { Link } from "wouter";
 import { InquiryDialog } from "@/components/InquiryDialog";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useCurrency } from "@/hooks/use-currency";
 import React from "react";
-const rotations = [
-  "Moving Students from Confusion to Confidence",
-  "Converting Traditional Passive 5% Retention to 50%+ Active Mastery",
-  "Solving the Brain's Forgetting Problem with Spaced Retention Science",
-  "Building Independent Learners Who Don't Rely on Tutors",
-  "Overcoming Language Barriers and Tutor Dependency",
-  "Supporting Students, Parents and Teachers - All in One System",
-  "International Curriculum Mastery for Conceptual & Unseen Exams"
-];
 const tiers = [
   {
     tier: "CHARTER TIER",
@@ -44,10 +35,129 @@ const tiers = [
   },
 ];
 const stats = [
-  { value: "91%", label: "PASS RATE", sub: "vs 35% National Average" },
-  { value: "47%", label: "A/A* GRADES", sub: "vs 18% Traditional" },
-  { value: "75%+", label: "RETENTION", sub: "vs 5–10% Traditional" },
-  { value: "85%+", label: "COST SAVINGS", sub: "vs $2,400–3,600/yr Tutors" },
+  { value: "91%", label: "PASS RATE", sub: "Designed to Achieve — vs 35% National Average" },
+  { value: "47%", label: "A/A* GRADES", sub: "Designed to Achieve — vs 18% Traditional" },
+  { value: "75%+", label: "RETENTION", sub: "Designed to Achieve — vs 5-10% Traditional" },
+  { value: "85%+", label: "COST SAVINGS", sub: "Designed to Achieve — vs $2,400–3,600/yr Tutors" },
+];
+
+const masteryCycleSteps = [
+  {
+    step: 1,
+    title: "Diagnostic Analysis",
+    purpose: "Identifies each learner's conceptual gaps before instruction begins",
+    research: "Black & Wiliam (1998) - formative and diagnostic assessment improves learning outcomes",
+  },
+  {
+    step: 2,
+    title: "Remedial Concept Repair",
+    purpose: "Targeted micro-lessons rebuild missing foundational knowledge",
+    research: "Bloom (1984) - mastery learning shows targeted corrective instruction dramatically improves achievement",
+  },
+  {
+    step: 3,
+    title: "Interactive Learning",
+    purpose: "H5P-powered active engagement replaces passive video consumption",
+    research: "Freeman et al. (2014) - active learning significantly improves student performance in STEM courses",
+  },
+  {
+    step: 4,
+    title: "Past Paper Practice",
+    purpose: "Authentic Cambridge past questions build exam familiarity and strategy",
+    research: "Bartlett (2009) - exam preparation improves through practice with authentic past papers",
+  },
+  {
+    step: 5,
+    title: "Retrieval Practice",
+    purpose: "Scheduled recall sessions defeat the forgetting curve",
+    research: "Roediger & Karpicke (2006) - retrieval practice improves long-term retention more than repeated study",
+  },
+  {
+    step: 6,
+    title: "Formative Assessment",
+    purpose: "Continuous check-ins identify gaps before they compound",
+    research: "Black & Wiliam (1998) - formative assessment significantly improves student achievement",
+  },
+  {
+    step: 7,
+    title: "Corrective Study",
+    purpose: "Personalised feedback and targeted revision restore mastery",
+    research: "Hattie & Timperley (2007) - feedback and corrective instruction strongly impact learning outcomes",
+  },
+  {
+    step: 8,
+    title: "Time-Bound Mock Exams",
+    purpose: "Simulated exams develop timing, stamina, and exam strategy",
+    research: "Bjork & Bjork (2011) - testing under exam conditions as desirable difficulties improves performance",
+  },
+];
+
+const stakeholders = [
+  {
+    title: "STUDENTS",
+    colorClass: "border-t-[#1e1b4b]",
+    bulletColorClass: "bg-[#1e1b4b]",
+    features: [
+      "Personalised learning pathways",
+      "AI-powered diagnostic analysis",
+      "Interactive H5P mastery modules",
+      "Cambridge past paper practice",
+      "Retrieval practice & spaced repetition",
+      "Metacognitive progress tracking",
+    ],
+  },
+  {
+    title: "TEACHERS",
+    colorClass: "border-t-teal-500",
+    bulletColorClass: "bg-teal-500",
+    features: [
+      "Cambridge exam system training",
+      "One-day & SMK workshops",
+      "Bloom's-aligned lesson resources",
+      "AI teaching insights & automation",
+      "Professional learning communities",
+      "Competency gap development plans",
+    ],
+  },
+  {
+    title: "SCHOOLS",
+    colorClass: "border-t-[#2366c9]",
+    bulletColorClass: "bg-[#2366c9]",
+    features: [
+      "Full school partnership model",
+      "Real-time analytics dashboards",
+      "White-label platform option",
+      "Curriculum quality assurance",
+      "Admin reporting automation",
+      "Teacher performance monitoring",
+    ],
+  },
+  {
+    title: "PARENTS",
+    colorClass: "border-t-amber-500",
+    bulletColorClass: "bg-amber-500",
+    features: [
+      "Progress dashboards & alerts",
+      "Parent training modules",
+      "Home-support activity guides",
+      "Early learning gap identification",
+      "School-home communication",
+      "Co-facilitation strategies",
+    ],
+  },
+];
+
+const platformComparisonData = [
+  ['Research-Backed Learning Science', 'Full 8-step cycle', 'Partial', 'Limited', 'Partial', 'Minimal'],
+  ['Personalised Diagnostic Pathways', 'AI-powered, real-time', 'Prompt-based only', 'None', 'Partial', 'Partial'],
+  ['Interactive Modules (No Passive Video)', 'H5P throughout', 'None', 'Video-only', 'Partial', 'Video-only'],
+  ['Retrieval + Spaced Repetition System', 'Built-in, automated', 'None', 'None', 'Partial', 'None'],
+  ['Full Stakeholder Ecosystem', 'All four groups', 'None', 'Students only', 'Students only', 'Students only'],
+  ['Cambridge / O-Level Specialisation', 'Purpose-built', 'Generic', 'Generic', 'Yes', 'Yes'],
+  ['Bridge / Early Prep Courses (Gr 7-8)', 'Unique - 5 subjects', 'None', 'None', 'None', 'None'],
+  ['School Partnership B2B Model', 'Complete partnership', 'None', 'None', 'Limited', 'None'],
+  ['AI Diagnostic + Chatbot Support', 'Integrated, curriculum-linked', 'General purpose', 'Partial', 'Partial', 'Partial'],
+  ['Dual Curriculum (National + International)', 'Full dual coverage', 'None', 'None', 'None', 'None'],
 ];
 
 const strategies = [
@@ -62,7 +172,6 @@ const strategies = [
 ];
 
 export default function Home() {
-  const [currentRotation, setCurrentRotation] = useState(0);
   const [checkedItems, setCheckedItems] = useState<number[]>([]);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
   const { formatPrice } = useCurrency();
@@ -140,13 +249,6 @@ export default function Home() {
     },
   ];
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentRotation((prev) => (prev + 1) % rotations.length);
-    }, 3000);
-    return () => clearInterval(timer);
-  }, []);
-
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
@@ -202,28 +304,20 @@ export default function Home() {
       transition={{ duration: 0.8 }}
       className="max-w-4xl mx-auto text-center"
     >
-      {/* H1 – CategorySizeH1 = 96px → text-8xl (exact Tailwind match) */}
-      {/* Changed to single-line flow (no flex-col) + first phrase protected with nowrap */}
-<div className="flex flex-col items-center text-center mb-6">
-  {/* H1: Centralized, Single Line, 96px - KEEPING YOUR FONT */}
-     <h1 className="text-[5.2vw] text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight whitespace-nowrap px-4">
-    Your Child Doesn't Need More Content
-  </h1>
+      <h1 className="text-5xl md:text-8xl font-semibold text-[#1e1b4b] mb-8">
+        The Learning Ecosystem That Turns Passive Students Into Independent Masters
+      </h1>
 
-  {/* H2: 60px, Sentence Case - KEEPING YOUR FONT */}
-  <h2 className="text-[60px] font-semibold tracking-[-0.5px] text-[#2366c9] leading-tight mt-2">
-    They need a system that finds the gaps and fixes them.
-  </h2>
-</div>
+      <div className="inline-block bg-blue-100 text-[#2366c9] px-6 py-3 rounded-full font-semibold text-base my-6 border border-blue-200">
+        Research shows 90% of passive learning is forgotten within six days.
+      </div>
 
-      {/* Body 1 = 16px */}
-      <p className="text-base text-slate-600 mb-12 max-w-3xl mx-auto leading-relaxed text-center">
-        EduMeUp diagnoses what's broken, repairs it systematically, builds lasting mastery, and reduces tutor dependencall in one research-backed engine.
+      <p className="text-base text-slate-700 max-w-3xl mx-auto leading-relaxed my-8">
+        EduMeUp diagnoses exactly where each learner stands, then rebuilds their understanding through a structured, science-backed 8-step mastery cycle - producing up to 10x better retention than passive learning methods.
       </p>
 
-      {/* H5 / Subtitle emphasis = 24px */}
-      <p className="text-2xl font-semibold text-slate-700 mb-12">
-        Powered by the Research-Based 8-Step Mastery System
+      <p className="text-xs text-slate-500 mb-12">
+        Built for ambitious learners and high-performance schools worldwide.
       </p>
 
       <div className="flex flex-col sm:flex-row justify-center gap-4 mb-12">
@@ -244,24 +338,6 @@ export default function Home() {
         </Button>
       </div>
 
-      {/* Rotating Value Prop – H5 = 24px */}
-      <div className="h-auto mb-16 flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-white rounded-2xl border border-blue-200 max-w-2xl mx-auto p-8 shadow-sm overflow-hidden">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentRotation}
-            initial={{ y: 10, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -10, opacity: 0 }}
-            transition={{ duration: 0.4 }}
-            className="text-center"
-          >
-            <span className="text-2xl font-semibold text-slate-900 leading-relaxed">
-              {rotations[currentRotation]}
-            </span>
-          </motion.div>
-        </AnimatePresence>
-      </div>
-
       {/* Stat Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
         {stats.map((stat, i) => (
@@ -270,18 +346,60 @@ export default function Home() {
             whileHover={{ y: -4 }}
             className="bg-white p-6 rounded-xl border border-blue-100 shadow-sm hover:shadow-md hover:border-blue-300 transition-all"
           >
-            {/* H4 on mobile (34px) → H3 on larger (48px) */}
-            <div className="text-[34px] md:text-5xl font-semibold text-[#2366c9] mb-2">{stat.value}</div>
-            {/* OVERLINE = 10px */}
+            <div className="text-[34px] font-semibold text-[#2366c9] mb-2">{stat.value}</div>
             <div className="text-[10px] font-semibold text-slate-600 uppercase tracking-wide mb-2">{stat.label}</div>
-            {/* Caption = 12px */}
             <div className="text-[12px] text-slate-500">{stat.sub}</div>
           </motion.div>
         ))}
       </div>
 
+      {/* SECTION: OUR VISION & MISSION */}
+      <section className="py-16 md:py-24 bg-white">
+        <div className="container-custom max-w-4xl mx-auto text-center">
+          
+          {/* OUR VISION */}
+          <div className="mb-12">
+             <p className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#2366c9] mb-5">
+               OUR VISION</p>
+         <h2 className="text-4xl md:text-6xl font-semibold text-[#1e1b4b] mb-6">
+         From Passive Learning to Learning Mastery.</h2>
+            <p className="text-base text-slate-600 leading-relaxed">
+              EduMeUp aims to transform education by shifting from content delivery to learning mastery - empowering students, teachers, schools, and parents to reach their full potential.
+            </p>
+          </div>
+
+          {/* DIVIDER */}
+          <div className="w-24 h-1 bg-blue-100 mx-auto my-16"></div>
+
+          {/* OUR MISSION */}
+          <div>
+        <p className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#2366c9] mb-5">
+               OUR MISSION</p>
+            <p className="text-base text-slate-600 leading-relaxed mb-12">
+              Our mission is simple: help every learner understand deeply, retain longer, apply confidently, and become a truly independent thinker.
+            </p>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              {[
+                { icon: Zap, text: "Understand deeply" },
+                { icon: Brain, text: "Retain longer" },
+                { icon: Target, text: "Apply confidently" },
+                { icon: UserCheck, text: "Become truly independent learners" }
+              ].map((point, i) => (
+                <div key={i} className="flex flex-col items-center">
+                  <div className="h-16 w-16 rounded-full bg-blue-50 flex items-center justify-center mb-4 text-[#2366c9]">
+                    <point.icon className="h-8 w-8" />
+                  </div>
+                  <p className="font-semibold text-slate-800 text-center text-base">{point.text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       <div className="bg-[#2366c9]  text-white py-6 px-8 rounded-xl inline-block mb-16 shadow-lg">
-        <p className="text-sm font-medium text-center text-white">
+        <p className="text-base font-medium text-center text-white">
           Built on 27+ Years of Classroom Research & Educational Leadership
           <span className="block text-blue-300 text-[10px] mt-2 font-medium">
             Developed by Cambridge educators using evidence-based learning science - not content aggregation.
@@ -293,15 +411,12 @@ export default function Home() {
         {/* Card 1: Diagnostic */}
         <Card className="border border-blue-200 shadow-sm hover:shadow-lg transition-all rounded-2xl overflow-hidden group hover:-translate-y-1 bg-white">
           <CardContent className="p-10 flex flex-col h-full text-left">
-            {/* OVERLINE = 10px */}
             <div className="mb-6 text-[#2366c9] font-semibold text-[10px] bg-blue-50 py-1.5 px-3 rounded-lg inline-block self-start">
               FREE AI DIAGNOSTIC
             </div>
-            {/* H5 = 24px */}
             <h3 className="text-2xl font-semibold text-slate-900 mb-4 leading-tight">
               Is Your Child Ready for O-Level?
             </h3>
-            {/* Body 1 = 16px */}
             <p className="text-base font-medium text-slate-600 mb-10">
               Free 90-minute AI diagnostic to map exact knowledge gaps before you spend a single rupee on preparation.
             </p>
@@ -323,15 +438,12 @@ export default function Home() {
         {/* Card 2: Featured Program */}
         <Card className="border-2 border-[#2366c9] shadow-2xl hover:shadow-blue-100 transition-all rounded-2xl overflow-hidden bg-white relative md:scale-105 z-10">
           <CardContent className="p-10 flex flex-col h-full text-left">
-            {/* OVERLINE = 10px */}
             <div className="mb-6 text-[#2366c9] font-semibold text-[10px] bg-blue-50 py-1.5 px-3 rounded-lg inline-block self-start">
               EXPLORE ALL PROGRAMS
             </div>
-            {/* H5 = 24px */}
             <h3 className="text-2xl font-semibold text-slate-900 mb-4 leading-tight">
               Structured Learning Pathways
             </h3>
-            {/* Body 2 = 14px */}
             <ul className="text-sm text-slate-600 font-medium mb-10 space-y-4 list-disc pl-5">
               <li>Bridge Programs Grade 6–8 Gaps</li>
               <li>Pre-O-Level Victory 12-Month Prep</li>
@@ -352,15 +464,12 @@ export default function Home() {
         {/* Card 3: Guide */}
         <Card className="border border-blue-200 shadow-sm hover:shadow-lg transition-all rounded-2xl overflow-hidden group hover:-translate-y-1 bg-white">
           <CardContent className="p-10 flex flex-col h-full text-left">
-            {/* OVERLINE = 10px */}
             <div className="mb-6 text-[#2366c9] font-semibold text-[10px] bg-blue-50 py-1.5 px-3 rounded-lg inline-block self-start">
               O-LEVEL SURVIVAL GUIDE
             </div>
-            {/* H5 = 24px */}
             <h3 className="text-2xl font-semibold text-slate-900 mb-4 leading-tight">
               Free 20-page PDF What every parent MUST know.
             </h3>
-            {/* Body 2 = 14px */}
             <p className="text-sm font-medium text-slate-600 mb-10 leading-relaxed">
               Covers: Curriculum explained, gap diagnosis, cost comparison, and school checklists.
             </p>
@@ -388,18 +497,13 @@ export default function Home() {
   <p className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#2366c9] mb-5">
      For Schools & Educational Institutions
   </p>
-
-  {/* H2 Size: 60px (Desktop)
-      Responsive sizing (text-[7vw]) ensures it stays on one line without cutting.
-  */}
-
-  <div className="flex justify-center w-full ">
-           <h2 className="text-[4.2vw] text-white text-slate-900 font-semibold leading-[1.05] mb-7 text-center tracking-tight whitespace-nowrap px-4">
+  <div className="flex justify-center w-full">
+           <h2 className="text-4xl md:text-6xl text-white font-semibold leading-[1.05] mb-7 text-center tracking-tight px-4 md:whitespace-nowrap">
            Transform Your School into a Centre of Excellence
     </h2>
   </div>
 
-  <p className="text-[16px] font-normal tracking-[0.5px] text-slate-300 leading-relaxed max-w-3xl mx-auto">
+  <p className="text-base font-normal tracking-[0.5px] text-slate-300 leading-relaxed max-w-3xl mx-auto">
     Running a strong Cambridge school today requires more than good teachers. 
     EduMeUp provides a complete academic infrastructure your leadership team can deploy immediately. 
  
@@ -429,8 +533,6 @@ export default function Home() {
   <h3 className="text-2xl font-semibold text-[#2366c9] mb-4">
        Learning Infrastructure
           </h3>
-
-          {/* Body 2 = 14px */}
         <ul className="text-sm text-slate-600 space-y-3 leading-relaxed">
       <li>Curriculum-Mapped Interactive Courses</li>
             <li>O-Level Past Paper Retrieval Systems</li>
@@ -444,8 +546,6 @@ export default function Home() {
   <h3 className="text-2xl font-semibold text-[#2366c9] mb-4">
         Whole-School Empowerment
           </h3>
-
-          {/* Body 2 = 14px */}
         <ul className="text-sm text-slate-600 space-y-3 leading-relaxed">
       <li>Student, Teacher & Parent Resources</li>
             <li>Administration Tools & Academic Trackers</li>
@@ -458,8 +558,6 @@ export default function Home() {
   <h3 className="text-2xl font-semibold text-[#2366c9] mb-4">
        Platform & Technology
           </h3>
-
-          {/* Body 2 = 14px */}
         <ul className="text-sm text-slate-600 space-y-3 leading-relaxed">
       <li>White-Label School Platform</li>
             <li>AI Learning Support & Chatbot</li>
@@ -471,12 +569,9 @@ export default function Home() {
 
       {/* Advantage Section */}
       <div className="bg-white border border-blue-800/50 rounded-2xl p-10 text-center mb-12">
-        {/* H5 = 24px */}
         <h3 className="text-2xl font-semibold mb-4 text-[#2366c9]">
           The EduMeUp Advantage
         </h3>
-
-        {/* Body 1 = 16px */}
         <p className="text-base text-slate-600 max-w-3xl mx-auto leading-relaxed mb-6">
           Most schools invest heavily in facilities and staffing but lack
           the structured academic systems required for international curriculum success.
@@ -510,24 +605,18 @@ export default function Home() {
   <div className="container-custom">
     {/* SECTION 1B: WHO EDUMEUP IS FOR */}
 <div className="text-center max-w-full mx-auto mb-16">
-  {/* OVERLINE = 10px */}
   <p className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#2366c9] mb-5">
         Who This Is For
   </p>
-
-  {/* Forced to 1 single line + fully centralized */}
- 
-  <div className="flex justify-center w-full ">
-        <h2 className="text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight whitespace-nowrap px-4">
-          Who This Platform Is Designed For
+  <div className="flex justify-center w-full">
+           <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+           Who This Platform Is Designed For
     </h2>
   </div>
 </div>
-
     <div className="grid md:grid-cols-2 gap-6">
       <Card className="group p-6 rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-lg transition-all duration-300">
         <CardContent className="p-0">
-          {/* Body 2 = 14px (consistent with all card lists) */}
           <ul className="space-y-3 text-sm text-slate-700 font-medium">
             <li className="flex items-start gap-3">
               <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
@@ -539,11 +628,11 @@ export default function Home() {
             </li>
             <li className="flex items-start gap-3">
               <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
-              Students switching from National to Cambridge curriculum
+              Students transitioning from national to Cambridge/IGCSE standards
             </li>
             <li className="flex items-start gap-3">
               <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
-              Urdu-medium students needing English-medium support
+              Learners who want structured, independent mastery - not tutor dependency
             </li>
           </ul>
         </CardContent>
@@ -551,7 +640,6 @@ export default function Home() {
 
       <Card className="group p-6 rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-lg transition-all duration-300">
         <CardContent className="p-0">
-          {/* Body 2 = 14px */}
           <ul className="space-y-3 text-sm text-slate-700 font-medium">
             <li className="flex items-start gap-3">
               <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
@@ -576,25 +664,117 @@ export default function Home() {
   </div>
 </section>
 
+      {/* 8-Step Mastery Cycle Table */}
+      <section className="py-20 bg-blue-50/50">
+        <div className="container-custom max-w-6xl">
+          <div className="text-center w-full mb-12">
+            <p className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#2366c9] mb-5">
+              THE SCIENCE BEHIND THE SYSTEM
+            </p>
+            <div className="flex justify-center w-full">
+              <h2 className="text-4xl md:text-6xl font-semibold text-[#1e1b4b] mb-4 md:whitespace-nowrap">
+                The EduMeUp 8-Step Research-Backed Mastery Cycle
+              </h2>
+            </div>
+            <p className="text-lg text-slate-600 font-medium">
+              Every learner on EduMeUp follows a structured cycle grounded in Bloom's Mastery Learning, Retrieval Practice, Spaced Repetition, Cognitive Load Theory, and Active Learning science - for deep understanding and long-term retention.
+            </p>
+          </div>
+
+          {/* Desktop Table */}
+          <div className="hidden md:block bg-white rounded-2xl border border-blue-100 shadow-md overflow-hidden">
+            <div className="grid grid-cols-[auto_minmax(0,_1.5fr)_minmax(0,_2.5fr)_minmax(0,_3fr)] items-center bg-slate-50 font-semibold text-slate-700 text-xs uppercase tracking-wider">
+              <div className="p-4 text-center">#</div>
+              <div className="p-4 border-l border-slate-200">Step</div>
+              <div className="p-4 border-l border-slate-200">Purpose</div>
+              <div className="p-4 border-l border-slate-200">Research Reference</div>
+            </div>
+            <div>
+              {masteryCycleSteps.map((item, index) => (
+                <div key={item.step} className={`grid grid-cols-[auto_minmax(0,_1.5fr)_minmax(0,_2.5fr)_minmax(0,_3fr)] items-start ${index < masteryCycleSteps.length - 1 ? 'border-b border-blue-50' : ''}`}>
+                  <div className="p-4 flex justify-center items-start pt-5">
+                    <span className="h-6 w-6 flex items-center justify-center rounded-full bg-[#2366c9] text-white text-xs font-bold">{item.step}</span>
+                  </div>
+                  <div className="p-4 border-l border-slate-200 text-sm font-semibold text-[#1e1b4b]">{item.title}</div>
+                  <div className="p-4 border-l border-slate-200 text-sm text-slate-600">{item.purpose}</div>
+                  <div className="p-4 border-l border-slate-200 text-sm text-slate-500 italic">{item.research}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Mobile Cards */}
+          <div className="md:hidden space-y-4">
+            {masteryCycleSteps.map(item => (
+              <Card key={item.step} className="border-blue-100 shadow-sm">
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <span className="h-8 w-8 flex items-center justify-center rounded-full bg-[#2366c9] text-white font-bold flex-shrink-0 text-sm">{item.step}</span>
+                    <div className="flex-1">
+                      <h4 className="text-base font-semibold text-[#1e1b4b] mb-2">{item.title}</h4>
+                      <p className="text-sm text-slate-600 mb-3">{item.purpose}</p>
+                      <p className="text-xs text-slate-500 italic">{item.research}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="text-center mt-10">
+            <Link href="/research" className="text-sm font-semibold text-[#2366c9] hover:underline">
+              See the full research basis <ArrowRight className="inline h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION: STAKEHOLDER ECOSYSTEM */}
+      <section className="py-20 bg-white">
+        <div className="container-custom max-w-8xl">
+          <div className="text-center w-full mb-12">
+            <p className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#2366c9] mb-5">
+              COMPLETE ECOSYSTEM
+            </p>
+            <h2 className="text-4xl md:text-6xl font-semibold text-[#1e1b4b] mb-4 md:whitespace-nowrap text-center">
+                A Complete Ecosystem Empowering Every Stakeholder
+            </h2>
+            <p className="text-lg text-slate-600 font-medium">
+              EduMeUp is designed not just for students. It empowers the entire educational community - making it the only platform in the advanced international education market to serve all four stakeholder groups with purpose-built tools.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {stakeholders.map((stakeholder) => (
+              <div key={stakeholder.title} className={`rounded-2xl p-6 border-t-4 ${stakeholder.colorClass} bg-slate-50 shadow-sm`}>
+                <a href="#" className="text-lg font-bold uppercase tracking-wider text-slate-800 hover:underline">{stakeholder.title}</a>
+                <ul className="mt-4 space-y-3">
+                  {stakeholder.features.map((feature, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-slate-600 font-medium">
+                      <span className={`mt-1.5 h-1.5 w-1.5 rounded-full ${stakeholder.bulletColorClass} flex-shrink-0`}></span>
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
    {/* SECTION 2: THE SCIENCE OF EXAM MASTERY */}
 <section className="py-16 md:py-24 bg-white">
   <div className="container-custom">
     <div className="text-center max-w-4xl mx-auto mb-16">
-      {/* OVERLINE = 10px */}
       <p className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#2366c9] mb-5">
         Research Engine
       </p>
-
-      {/* H2 – 60px → text-6xl (exact match) */}
-      {/* Forced to 1 single line + fully centralized (your rule) */}
       <div className="flex justify-center w-full overflow-hidden">
-        <h2 className="text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight whitespace-nowrap px-4">
+        <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
           The Science of Exam Mastery
         </h2>
       </div>
-
-      {/* H5 emphasis = 24px */}
-      <p className="text-2xl text-slate-700 font-medium">
+      <p className="text-base text-slate-700 font-medium">
         Research-Validated Active Retention Engine
       </p>
     </div>
@@ -603,7 +783,6 @@ export default function Home() {
       <div className="bg-slate-50 p-8 border-r border-blue-200 text-left">
         <div className="mb-8 text-center">
           <div className="h-1 w-16 bg-red-600 mx-auto rounded-full mb-4"></div>
-          {/* H5 = 24px */}
           <h4 className="text-2xl font-semibold text-slate-900 mb-2 leading-tight">
             Your Brain is Built to Forget
           </h4>
@@ -613,7 +792,6 @@ export default function Home() {
 
         <div className="space-y-6">
           <div className="bg-white p-6 rounded-lg border border-red-200 shadow-sm text-left">
-            {/* H6 / small heading = 20px but using text-lg for visual balance */}
             <h5 className="font-semibold text-slate-900 text-lg mb-4 border-b border-red-200 pb-3">
               Key Statistics / Evidence
             </h5>
@@ -624,9 +802,7 @@ export default function Home() {
                 { val: "90%", txt: "irretrievable in 30 days (Cepeda et al., 2006)" }
               ].map((stat, i) => (
                 <li key={i} className="flex items-center gap-4 group transition-all">
-                  {/* Stat value – H4 mobile = 34px */}
                   <div className="text-[34px] font-semibold text-red-600 w-16 shrink-0">{stat.val}</div>
-                  {/* Body 2 = 14px */}
                   <span className="font-medium text-slate-700 text-sm leading-snug">{stat.txt}</span>
                 </li>
               ))}
@@ -643,7 +819,6 @@ export default function Home() {
                 <path d="M 0 0 Q 10 80 100 90" fill="none" stroke="red" strokeWidth="3" />
               </svg>
             </div>
-            {/* Caption = 12px */}
             <p className="text-center font-semibold text-red-600 text-xs">
               Traditional: 100% → 10% (30 days, no review)
             </p>
@@ -655,7 +830,6 @@ export default function Home() {
         <div className="absolute inset-0 bg-[#1e1b4b]/10 pointer-events-none"></div>
         <div className="mb-8 text-center relative z-10">
           <div className="h-1 w-16 bg-white mx-auto rounded-full mb-4"></div>
-          {/* H5 = 24px */}
           <h4 className="text-2xl font-semibold text-white mb-2 leading-tight">
             We're Built to Stop Forgetting
           </h4>
@@ -665,7 +839,6 @@ export default function Home() {
 
         <div className="space-y-6 relative z-10">
           <div className="bg-blue-500/40 p-6 rounded-lg border border-blue-400 backdrop-blur text-left">
-            {/* H6 / small heading */}
             <h5 className="font-semibold text-white text-lg mb-4 border-b border-blue-400 pb-3">
               Our System Fights Forgetting
             </h5>
@@ -678,9 +851,7 @@ export default function Home() {
                 <li key={i} className="group/item transition-all flex gap-3">
                   <step.icon className="h-6 w-6 text-white group-hover/item:rotate-12 transition-transform flex-shrink-0 mt-0.5" />
                   <div>
-                    {/* Body 1 = 16px */}
                     <p className="font-semibold text-white text-base">{step.t}</p>
-                    {/* Caption = 12px */}
                     <p className="text-white font-medium text-xs opacity-90">{step.s}</p>
                   </div>
                 </li>
@@ -698,7 +869,6 @@ export default function Home() {
                 <path d="M 0 0 L 5 30 L 15 20 L 30 35 L 50 25 L 70 30 L 85 20 L 100 15" fill="none" stroke="white" strokeWidth="3" />
               </svg>
             </div>
-            {/* Caption = 12px */}
             <p className="text-center font-semibold text-white text-xs">
               EduMeUp: 100% → 95% → 90% → 85%+ (maintained long-term)
             </p>
@@ -716,7 +886,6 @@ export default function Home() {
             Why Traditional Methods Fail
           </span>
         </h4>
-
         <div className="grid md:grid-cols-2 gap-8">
           {/* PASSIVE */}
           <div className="bg-red-50 border border-red-200 rounded-xl p-6">
@@ -724,7 +893,6 @@ export default function Home() {
               <div className="bg-red-500 text-white p-2 rounded-lg">
                 <BookOpen className="h-5 w-5" />
               </div>
-              {/* H6 = 20px but using text-lg */}
               <h5 className="font-semibold text-red-700 text-lg">Passive Methods</h5>
             </div>
 
@@ -735,14 +903,11 @@ export default function Home() {
                 { name: "Watching Videos", val: "20%" }
               ].map((item, i) => (
                 <li key={i} className="flex justify-between items-center bg-white p-3 rounded-lg border border-red-200">
-                  {/* Body 2 = 14px */}
                   <span className="text-sm font-medium text-slate-700">{item.name}</span>
                   <span className="text-red-600 font-semibold text-sm">{item.val}</span>
                 </li>
               ))}
             </ul>
-
-            {/* Caption = 12px */}
             <p className="text-xs text-slate-500 mt-4">
               *Dale's Cone of Learning (1969), updated Freeman et al. (2014)
             </p>
@@ -758,7 +923,6 @@ export default function Home() {
               <div className="bg-[#2366c9] text-white p-2 rounded-lg">
                 <Brain className="h-5 w-5" />
               </div>
-              {/* H6 = 20px but using text-lg */}
               <h5 className="font-semibold text-blue-700 text-lg">Active Methods</h5>
             </div>
 
@@ -769,22 +933,17 @@ export default function Home() {
                 { name: "Teaching Others", val: "90%" }
               ].map((item, i) => (
                 <li key={i} className="flex justify-between items-center bg-white p-3 rounded-lg border border-blue-200">
-                  {/* Body 2 = 14px */}
                   <span className="text-sm font-medium text-slate-700">{item.name}</span>
                   <span className="text-[#2366c9] font-semibold text-sm">{item.val}</span>
                 </li>
               ))}
             </ul>
-
-            {/* Caption = 12px */}
             <p className="text-xs text-slate-500 mt-4">
               *Freeman et al. (2014)
             </p>
           </div>
         </div>
-
         <div className="text-center mt-10">
-          {/* Body 2 = 14px */}
           <p className="text-sm italic text-slate-600 mb-5">
             Traditional education often relies on less effective methods - then wonders why students struggle to retain information after exams.
           </p>
@@ -806,23 +965,15 @@ export default function Home() {
   <div className="container-custom">
     <div className="grid lg:grid-cols-2 gap-12 items-center">
       <div className="text-left">
-        {/* OVERLINE = 10px */}
         <p className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#2366c9] mb-5">
           Parent Fit Check
         </p>
-
-        {/* H2 – 60px → text-6xl (exact match) */}
-        {/* Forced to 1 single line (your rule) – kept left-aligned to preserve layout */}
-        <h2 className="text-6xl text-slate-900 font-semibold mb-4 leading-[1.05] tracking-tight whitespace-nowrap">
-          Is EduMeUp Right for Your Child?
+        <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold mb-4 leading-[1.05] tracking-tight md:whitespace-nowrap">
+          Is EduMeUp Right for Your Child?  
         </h2>
-
-        {/* H5 / Subtitle = 24px */}
-        <h2 className="text-2xl font-semibold text-slate-800 mb-6 leading-tight whitespace-nowrap">
+        <h2 className="text-2xl font-semibold text-slate-800 mb-6 leading-tight md:whitespace-nowrap">
           Take This Quick Check (30 Seconds)
         </h2>
-
-        {/* Body 1 = 16px */}
         <p className="text-base text-slate-600 mb-12 leading-relaxed font-medium italic border-b border-slate-200 pb-4">
           Check all that apply to your child:
         </p>
@@ -859,7 +1010,6 @@ export default function Home() {
               >
                 {checkedItems.includes(i) && <CheckCircle2 className="h-4 w-4 text-white" />}
               </div>
-              {/* Body 2 = 14px */}
               <span
                 className={`text-sm font-medium leading-snug ${
                   checkedItems.includes(i) ? "text-slate-900" : "text-slate-600"
@@ -880,17 +1030,13 @@ export default function Home() {
               className={`p-8 rounded-xl border border-blue-200 bg-white shadow-md relative overflow-hidden`}
             >
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#2366c9] to-blue-400"></div>
-              {/* H5 = 24px */}
               <h3 className={`text-2xl font-semibold mb-4 mt-2 ${result.color}`}>{result.title}</h3>
               {checkedItems.length <= 3 && (
-                /* Body 1 = 16px */
                 <p className="text-base text-slate-700 font-medium leading-relaxed mb-8">{result.desc}</p>
               )}
               {checkedItems.length >= 4 && (
                 <>
-                  {/* OVERLINE = 10px */}
                   <p className="text-[10px] text-red-600 font-semibold mb-4">URGENT ACTION RECOMMENDED</p>
-                  {/* Body 2 = 14px */}
                   <p className="text-sm font-semibold text-slate-800 mb-3">EduMeUp will:</p>
                   <ul className="space-y-1 text-sm text-slate-700 mb-6">
                     <li>✓ Fix ALL gaps systematically</li>
@@ -899,7 +1045,6 @@ export default function Home() {
                     <li>✓ Eliminate need for expensive tutors</li>
                     <li>✓ Support strong O-Level results</li>
                   </ul>
-                  {/* Body 2 = 14px */}
                   <p className="text-sm text-red-600 font-semibold mb-6">
                     Every month you wait = More gaps accumulate = Harder and more expensive to fix later.
                   </p>
@@ -941,18 +1086,13 @@ export default function Home() {
           <CardContent className="p-0">
             <div className="bg-[#2366c9] p-8 text-center text-white relative">
               <div className="absolute top-0 left-0 w-full h-1 bg-[#2366c9]"></div>
-              {/* H5 = 24px */}
               <h3 className="text-2xl font-semibold mb-3 text-white">The EduMeUp Promise</h3>
-              {/* OVERLINE = 10px */}
               <p className="text-blue-300 font-medium text-[10px]">For Committed Students</p>
             </div>
             <div className="p-12 space-y-12">
               <div className="text-center">
-                {/* H3 = 48px on mobile (text-5xl) */}
                 <div className="text-5xl font-semibold text-blue-600 mb-3">60%+</div>
-                {/* H5 = 24px */}
                 <p className="text-2xl font-semibold text-blue-900 leading-tight">Guaranteed Minimum Result</p>
-                {/* Body 2 = 14px */}
                 <p className="text-sm font-medium text-slate-600 mt-3 max-w-xs mx-auto italic">
                   When following our research-backed learning pathway and completing retrieval tasks.
                 </p>
@@ -961,18 +1101,15 @@ export default function Home() {
               <div className="grid grid-cols-2 gap-6">
                 <div className="text-center p-6 bg-slate-50 rounded-lg border border-slate-200">
                   <Trophy className="h-8 w-8 text-yellow-500 mx-auto mb-3" />
-                  {/* Caption = 12px */}
                   <p className="font-semibold text-slate-900 text-xs">A* Excellence</p>
                 </div>
                 <div className="text-center p-6 bg-slate-50 rounded-lg border border-slate-200">
                   <ShieldCheck className="h-8 w-8 text-green-500 mx-auto mb-3" />
-                  {/* Caption = 12px */}
                   <p className="font-semibold text-slate-900 text-xs">Risk Free</p>
                 </div>
               </div>
 
               <div className="bg-blue-50 p-8 rounded-lg text-center border border-blue-200">
-                {/* Body 1 = 16px */}
                 <p className="text-base text-slate-700 font-medium leading-relaxed italic">
                   "We don't just teach. We ensure your child develops the capability to learn any subject independently for the rest of their lives."
                 </p>
@@ -990,11 +1127,11 @@ export default function Home() {
 <div className="text-center max-w-4xl mx-auto mb-20">
 <p className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-[#2366c9] mb-4">All Programs</p>
  <div className="flex justify-center w-full">
-        <h2 className="text-[4.2vw] text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight whitespace-nowrap px-4">
-Find the Right Program for Your Child
-</h2>
+        <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+          Find the Right Program for Your Child
+        </h2>
 </div>
-<p className="text-lg text-slate-600">
+<p className="text-base text-slate-600">
 Built on Learning Science, Validated by Research
 </p>
 <p className="text-sm text-slate-500 mt-3">Each program card links to its own full detail page. On this homepage, all CTAs focus on seeing details, free demo, or free diagnostic.</p>
@@ -1476,10 +1613,10 @@ Built on Learning Science, Validated by Research
   8-Step System
 </p>
 
-{/* H2 – 60px desktop, responsive mobile size */}
  <div className="flex justify-center w-full">
-        <h2 className="text-[4.2vw] text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight whitespace-nowrap px-4">
- 
+        {/* H2 – 60px desktop, responsive mobile size */}
+<h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+      
    The EduMeUp 8-Step Learning System
   </h2>
 </div>
@@ -1494,8 +1631,6 @@ Built on Learning Science, Validated by Research
         We don't sell content. We run a system.
       </p>
     </div>
-
-    {/* Steps Grid */}
     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-14">
 
       {learningSystemSteps.map((item, i) => (
@@ -1505,31 +1640,25 @@ Built on Learning Science, Validated by Research
         >
           <CardContent className="p-6">
 
-            {/* Top Row */}
             <div className="flex items-center justify-between mb-4">
 
               <div className="h-10 w-10 rounded-lg bg-blue-50 text-[#2366c9] flex items-center justify-center">
                 <item.icon className="h-5 w-5" />
               </div>
 
-              {/* OVERLINE = 10px */}
               <span className="text-[10px] font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded-md">
                 {item.step}
               </span>
 
             </div>
 
-            {/* H5 = 24px (consistent with all card titles) */}
             <h3 className="text-2xl font-semibold text-slate-900 leading-tight mb-1">
               {item.title}
             </h3>
 
-            {/* OVERLINE = 10px */}
             <p className="text-[10px] font-medium text-slate-500 mb-3">
               {item.subtitle}
             </p>
-
-            {/* Body 2 = 14px */}
             <p className="text-sm text-slate-700 leading-relaxed">
               {item.body}
             </p>
@@ -1540,7 +1669,6 @@ Built on Learning Science, Validated by Research
 
     </div>
 
-    {/* System Flow */}
     <Card className="border border-blue-200 bg-gradient-to-r from-blue-50 via-white to-blue-50 rounded-2xl shadow-sm">
       <CardContent className="p-7">
 
@@ -1580,27 +1708,20 @@ Built on Learning Science, Validated by Research
 <section className="py-20 md:py-28 bg-slate-50">
   <div className="container-custom max-w-6xl mx-auto">
 
-    {/* Header */}
     <div className="text-center mb-12">
-  {/* OVERLINE = 10px */}
 <p className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-1 text-[10px] font-semibold uppercase tracking-[1.5px] text-[#2366c9] mb-5">
   Tutoring Comparison
 </p>
-
-{/* H2 – 60px desktop, dynamic scaling for mobile */}
  <div className="flex justify-center w-full">
-        <h2 className="text-[4.2vw] text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight whitespace-nowrap px-4">
-    Why Traditional Tutoring Often Fails
-  </h2>
+       <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+         Why Traditional Tutoring Often Fails
+       </h2>
 </div>
-
-      {/* Body 1 = 16px */}
       <p className="text-base text-slate-600">
         Compare traditional tutoring to our structured, research-backed EduMeUp system
       </p>
     </div>
 
-    {/* Table – Improved readability with consistent typography */}
     <div className="overflow-x-auto">
       <div className="min-w-[700px] border border-slate-200 rounded-xl overflow-hidden shadow-sm">
         {/* Header Row */}
@@ -1635,15 +1756,12 @@ Built on Learning Science, Validated by Research
               i % 2 === 0 ? "bg-slate-50" : "bg-white"
             } hover:bg-slate-100/50 transition-colors`}
           >
-            {/* Feature – Body 1 = 16px, semi-bold */}
             <div className="flex-1 p-5 font-medium text-slate-800 text-left border-r border-slate-200">
               {row[0]}
             </div>
-            {/* Traditional – Body 2 = 14px, red */}
             <div className="flex-1 p-5 text-red-700 text-sm text-left border-r border-red-200">
               {row[1]}
             </div>
-            {/* EduMeUp – Body 2 = 14px, green */}
             <div className="flex-1 p-5 text-green-700 text-sm text-left">
               {row[2]}
             </div>
@@ -1651,10 +1769,7 @@ Built on Learning Science, Validated by Research
         ))}
       </div>
     </div>
-
-    {/* CTA */}
     <div className="mt-12 text-center">
-      {/* BUTTON = 14px */}
       <Button className="bg-[#2366c9] hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-xl text-sm shadow-md transition-all">
         See Full Program Advantages <ArrowRight className="ml-2 h-4 w-4" />
       </Button>
@@ -1663,27 +1778,67 @@ Built on Learning Science, Validated by Research
   </div>
 </section>
 
+      {/* SECTION: PLATFORM COMPARISON */}
+      <section className="py-20 md:py-28 bg-white">
+        <div className="container-custom max-w-7xl">
+          <div className="text-center max-w-4xl mx-auto mb-16">
+            <p className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#2366c9] mb-5">
+              PLATFORM COMPARISON
+            </p>
+            <div className="flex justify-center w-full">
+              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+                How EduMeUp Compares to Other EdTech Platforms
+              </h2>
+            </div>
+            <p className="text-lg text-slate-600 font-medium">
+              Most EdTech platforms deliver content. EduMeUp delivers learning transformation. The difference is structural - not cosmetic.
+            </p>
+          </div>
+
+          <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-md">
+            <table className="w-full min-w-[1000px] text-sm text-left">
+              <thead className="bg-slate-50 text-xs uppercase tracking-wider text-slate-600">
+                <tr>
+                  <th className="p-4 font-semibold w-1/4">Feature</th>
+                  <th className="p-4 font-semibold bg-green-50/70 text-green-800 border-x border-green-200">EduMeUp</th>
+                  <th className="p-4 font-semibold">General AI (ChatGPT/Gemini)</th>
+                  <th className="p-4 font-semibold">Khanmigo</th>
+                  <th className="p-4 font-semibold">Kognity</th>
+                  <th className="p-4 font-semibold">GCSEPod</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {platformComparisonData.map((row, i) => (
+                  <tr key={i} className="hover:bg-slate-50/50 transition-colors">
+                    <td className="p-4 font-semibold text-slate-800">{row[0]}</td>
+                    <td className="p-4 font-medium text-green-800 bg-green-50/70 border-x border-green-200">{row[1]}</td>
+                    {row.slice(2).map((cell, j) => (
+                      <td key={j} className={`p-4 font-medium ${cell.toLowerCase() === 'none' ? 'text-slate-400' : 'text-slate-600'}`}>
+                        {cell}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
     {/* SECTION 4C: PLATFORM FEATURES */}
 <section className="py-20 md:py-28 bg-slate-50">
   <div className="container-custom max-w-6xl mx-auto">
 
-    {/* Header */}
     <div className="text-center max-w-3xl mx-auto mb-16">
-      {/* OVERLINE = 10px */}
       <p className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#2366c9] mb-5">
         Platform Features
       </p>
-
-      {/* H2 – 60px → text-6xl (exact match) */}
-      {/* Forced to 1 single line + fully centralized (your rule) */}
       <div className="flex justify-center w-full overflow-hidden">
-       <h2 className="text-[4.2vw] text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight whitespace-nowrap px-4">
-         PLATFORM FEATURES
-        </h2>
+       <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+         PLATFORM FEATURES  
+       </h2>
       </div>
-
-      {/* H5 / Subtitle = 24px */}
-      <p className="text-2xl text-slate-600">
+      <p className="text-base text-slate-600">
         The tools that make independent mastery possible
       </p>
     </div>
@@ -1712,12 +1867,9 @@ Built on Learning Science, Validated by Research
           key={i}
           className="group border border-blue-100 rounded-3xl bg-white shadow-md hover:shadow-xl transition-all duration-300 p-8 flex flex-col items-start"
         >
-          {/* H5 = 24px (consistent with all feature/card titles) */}
           <h3 className="text-2xl font-semibold text-slate-900 mb-4 group-hover:text-[#2366c9] transition-colors leading-tight">
             {feature.title}
           </h3>
-
-          {/* Body 2 = 14px */}
           <p className="text-sm text-slate-600 leading-relaxed mt-auto">
             {feature.body}
           </p>
@@ -1725,9 +1877,7 @@ Built on Learning Science, Validated by Research
       ))}
     </div>
 
-    {/* CTA */}
     <div className="mt-16 text-center">
-      {/* BUTTON = 14px */}
       <Button className="bg-[#2366c9] hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-xl shadow-md transition-all text-sm">
         Explore All Features <ArrowRight className="ml-2 h-5 w-5" />
       </Button>
@@ -1735,6 +1885,38 @@ Built on Learning Science, Validated by Research
 
   </div>
 </section>
+ <section className="py-20 bg-white">
+        <div className="container-custom max-w-6xl">
+          <div className="text-center max-w-4xl mx-auto mb-16">
+            <p className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#2366c9] mb-5">
+              WHAT SETS US APART
+            </p>
+            <h2 className="text-4xl md:text-5xl font-semibold text-[#1e1b4b] mb-4 md:whitespace-nowrap">
+              What Makes EduMeUp Unique
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              "Research-backed learning science",
+              "AI-powered diagnostics",
+              "Interactive H5P learning modules",
+              "Retrieval practice & spaced repetition",
+              "Topic-by-topic interactive mastery modules (Grades 1 through O-Level)",
+              "Past paper mastery system",
+              "Bridge courses for early preparation (Grades 7-8)",
+              "Teacher professional development & Cambridge training",
+              "School Partnership B2B Model",
+            ].map((item, i) => (
+              <div key={i} className="flex items-start gap-3 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
+                <span className="text-sm font-semibold text-slate-700">{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* SECTION 5: THE 10X LEARNING LEAP MODEL */}
   <section className="py-16 md:py-24 bg-gradient-to-b from-blue-50 via-white to-blue-50 relative overflow-hidden">
   <div className="absolute -top-20 -right-20 h-64 w-64 rounded-full bg-blue-200/40 blur-3xl" aria-hidden="true"></div>
@@ -1742,27 +1924,20 @@ Built on Learning Science, Validated by Research
 
   <div className="container-custom relative z-10">
     <div className="text-center max-w-5xl mx-auto mb-14">
-      {/* OVERLINE = 10px */}
       <p className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#2366c9] mb-5">
         Research Architecture
       </p>
-
-      {/* H2 – 60px → text-6xl (exact match) */}
-      {/* Forced to 1 single line + fully centralized (your rule) */}
       <div className="flex justify-center w-full overflow-hidden">
-            <h2 className="text-[4.2vw] text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight whitespace-nowrap px-4">
-     The 10X Learning Leap Model
-        </h2>
+            <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+              The 10X Learning Leap Model
+            </h2>
       </div>
-
-      {/* H5 / Subtitle = 24px */}
-      <p className="text-2xl text-slate-700">
+      <p className="text-base text-slate-700">
         Why EduMeUp Students Retain 10X More - The Science + The System
       </p>
     </div>
 
     <div className="mb-14">
-      {/* H5 = 24px */}
       <h3 className="text-2xl md:text-3xl font-semibold text-slate-900 text-center mb-8">
         The Science Behind 10X Retention
       </h3>
@@ -1770,15 +1945,12 @@ Built on Learning Science, Validated by Research
       <div className="grid md:grid-cols-3 gap-6">
         <Card className="border border-blue-100 rounded-2xl bg-white/90 backdrop-blur shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
           <CardContent className="p-6 text-left">
-            {/* H6 / small heading ≈ 20px, using text-xl for hierarchy */}
             <h4 className="text-xl font-semibold text-slate-900 mb-2">
               Mastery Learning
             </h4>
-            {/* OVERLINE = 10px */}
             <p className="text-[10px] text-[#2366c9] font-semibold mb-3">
               Bloom (1968)
             </p>
-            {/* Body 2 = 14px */}
             <p className="text-sm text-slate-700 leading-relaxed">
               Students must master each concept before advancing. No topic is left partially understood.
             </p>
@@ -1816,7 +1988,6 @@ Built on Learning Science, Validated by Research
     </div>
 
     <div>
-      {/* H5 = 24px */}
       <h3 className="text-2xl md:text-3xl font-semibold text-slate-900 text-center mb-8">
         How EduMeUp Delivers 10X - At a Glance
       </h3>
@@ -1825,11 +1996,9 @@ Built on Learning Science, Validated by Research
         <Card className="border border-red-200 rounded-2xl bg-white shadow-sm hover:shadow-lg transition-all overflow-hidden">
           <CardContent className="p-6 text-left">
             <div className="h-1 w-full rounded-full bg-red-500 mb-5"></div>
-            {/* H6 ≈ 20px, using text-xl */}
             <h4 className="text-xl font-semibold text-red-600 mb-4">
               Traditional Model - 5% Retention
             </h4>
-            {/* Body 2 = 14px */}
             <ul className="space-y-2 text-sm text-slate-700">
               <li>• Lectures 5%</li>
               <li>• Textbook reading 10%</li>
@@ -1865,25 +2034,18 @@ Built on Learning Science, Validated by Research
   <div className="container-custom">
 
     <div className="text-center max-w-4xl mx-auto mb-16">
-      {/* OVERLINE = 10px */}
       <p className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#2366c9] mb-5">
         Guided Timeline
       </p>
-
-{/* H2 – 60px desktop, dynamic scaling for mobile to keep 1 line */}
 <div className="flex justify-center w-full">
-     <h2 className="text-[4.2vw] text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight whitespace-nowrap px-4">
-   Your Child's Journey  
-  </h2>
+     <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+       Your Child's Journey  
+     </h2>
 </div>
-
-      {/* H5 / Subtitle = 24px */}
-      <p className="text-2xl text-slate-600">
+      <p className="text-base text-slate-600">
         A clear, step-by-step pathway - nothing left to chance
       </p>
     </div>
-
-    {/* Timeline – horizontal on lg, grid on smaller */}
     <div className="relative mb-16">
       <div className="hidden lg:block absolute top-6 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-200 via-[#2366c9] to-blue-200"></div>
 
@@ -1905,8 +2067,6 @@ Built on Learning Science, Validated by Research
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-7 h-7 rounded-full bg-[#2366c9] text-white text-sm flex items-center justify-center font-semibold shadow-sm">
               {i + 1}
             </div>
-
-            {/* Caption = 12px for timeline nodes */}
             <p className="text-xs font-semibold text-slate-700 whitespace-pre-line pt-4 leading-tight">
               {node}
             </p>
@@ -1915,7 +2075,6 @@ Built on Learning Science, Validated by Research
       </div>
     </div>
 
-    {/* Phases – 4 cards */}
     <div className="grid md:grid-cols-2 gap-8">
       {[
         {
@@ -1960,16 +2119,12 @@ Built on Learning Science, Validated by Research
           className="border border-slate-200 rounded-2xl bg-white shadow-md hover:shadow-xl transition-all"
         >
           <CardContent className="p-8">
-
-            {/* H5 = 24px */}
             <h4 className="flex items-center gap-3 text-2xl font-semibold text-slate-900 mb-6 leading-tight">
               <span className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-[#2366c9] text-base font-semibold shrink-0">
                 {i + 1}
               </span>
               {phase.title}
             </h4>
-
-            {/* Body 2 = 14px */}
             <ul className="space-y-3 text-sm text-slate-700 font-medium">
               {phase.points.map((p, j) => (
                 <li key={j} className="leading-relaxed">• {p}</li>
@@ -1989,21 +2144,15 @@ Built on Learning Science, Validated by Research
 <section id="teacher-section" className="py-20 md:py-28 bg-slate-50">
   <div className="container-custom">
     <div className="text-center max-w-4xl mx-auto mb-14">
-      {/* OVERLINE = 10px */}
       <p className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#2366c9] mb-5">
         Price Intelligence
       </p>
-
-      {/* H2 – 60px → text-6xl (exact match) */}
-      {/* Forced to 1 single line + fully centralized (your rule) */}
       <div className="flex justify-center w-full">
-           <h2 className="text-[4.2vw] text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight whitespace-nowrap px-4">
-      Transparent Pricing - No Hidden Fees
-        </h2>
+           <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+             Transparent Pricing - No Hidden Fees
+           </h2>
       </div>
-
-      {/* H5 / Subtitle = 24px */}
-      <p className="text-2xl text-slate-600">
+      <p className="text-base text-slate-600">
         World-class Cambridge preparation at a fraction of tutor costs
       </p>
     </div>
@@ -2028,16 +2177,13 @@ Built on Learning Science, Validated by Research
         >
           <CardContent className="p-7 flex flex-col justify-between h-full">
             <div className="mb-5">
-              {/* H5 = 24px */}
               <h3 className="text-2xl font-semibold text-slate-900 mb-2 leading-tight">
                 {item[0]}
               </h3>
-              {/* Caption = 12px */}
               <p className="text-xs text-slate-600">{item[3]}</p>
             </div>
 
             <div className="flex flex-col gap-2 mt-auto">
-              {/* Body 2 = 14px */}
               <p className="text-sm text-slate-500">
                 Self-Learning: <span className="font-semibold text-blue-700">{item[1]}</span>
               </p>
@@ -2049,9 +2195,7 @@ Built on Learning Science, Validated by Research
         </Card>
       ))}
     </div>
-
     <div className="rounded-2xl border border-blue-200 bg-gradient-to-r from-blue-50 to-white p-8 shadow-sm text-center">
-      {/* Body 1 = 16px */}
       <p className="text-base font-medium text-slate-800 mb-3">
         COMPARE: Private tutoring costs $2,400–$3,600/year vs EduMeUp complete O-Level preparation from $199/year.
       </p>
@@ -2066,20 +2210,15 @@ Built on Learning Science, Validated by Research
 <section className="py-16 md:py-24 bg-white">
   <div className="container-custom">
     <div className="text-center max-w-5xl mx-auto mb-12">
-      {/* OVERLINE = 10px */}
       <p className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#2366c9] mb-5">
         Parent Control Room
       </p>
-
-      {/* H2 – 60px → text-6xl */}
       <div className="flex justify-center w-full">
-          <h2 className="text-[4.2vw] text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight whitespace-nowrap px-4">
-     Parents See Everything 
-        </h2>
+          <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+            Parents See Everything 
+          </h2>
       </div>
-
-      {/* H5 / Subtitle = 24px */}
-      <p className="text-2xl text-slate-600">
+      <p className="text-base text-slate-600">
         Real-time visibility into your child's learning - not just exam results
       </p>
     </div>
@@ -2114,7 +2253,6 @@ Built on Learning Science, Validated by Research
           </div>
 
           <div className="rounded-xl border border-slate-200 bg-white p-6">
-            {/* Caption / small label = 12px */}
             <p className="text-xs font-semibold text-slate-700 mb-4">Topic Heat Map</p>
             <div className="grid grid-cols-4 gap-2">
               {[
@@ -2142,11 +2280,9 @@ Built on Learning Science, Validated by Research
           className="border border-blue-100 rounded-2xl bg-white shadow-md hover:shadow-xl transition hover:-translate-y-1"
         >
           <CardContent className="p-7">
-            {/* H5 = 24px */}
             <h4 className="text-2xl font-semibold text-slate-900 mb-3 leading-tight">
               {title}
             </h4>
-            {/* Body 2 = 14px */}
             <p className="text-sm text-slate-600 leading-relaxed">
               {desc}
             </p>
@@ -2156,11 +2292,9 @@ Built on Learning Science, Validated by Research
     </div>
 
     <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-8 shadow-sm">
-      {/* H5 = 24px */}
       <h4 className="text-2xl font-semibold text-slate-900 mb-5">
         What Parents Love Most:
       </h4>
-      {/* Body 2 = 14px */}
       <ul className="space-y-3 text-sm text-slate-700">
         <li>✓ No more "I don't know how the test went" - results instantly visible</li>
         <li>✓ Know which topics need attention before the exam</li>
@@ -2176,21 +2310,15 @@ Built on Learning Science, Validated by Research
 <section className="py-16 md:py-24 bg-slate-50">
   <div className="container-custom">
     <div className="text-center max-w-4xl mx-auto mb-12">
-      {/* OVERLINE = 10px */}
       <p className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#2366c9] mb-5">
         Starter Pack
       </p>
-
-      {/* H2 – 60px → text-6xl (exact match) */}
-      {/* Forced to 1 single line + fully centralized (your rule) */}
       <div className="flex justify-center w-full  ">
-          <h2 className="text-[4.2vw] text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight whitespace-nowrap px-4">
-      Free Resources to Get Started
-        </h2>
+          <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+            Free Resources to Get Started
+          </h2>
       </div>
-
-      {/* H5 / Subtitle = 24px */}
-      <p className="text-2xl text-slate-600">
+      <p className="text-base text-slate-600">
         No login required - download and use immediately
       </p>
     </div>
@@ -2210,17 +2338,14 @@ Built on Learning Science, Validated by Research
               <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-[#2366c9]">
                 {i === 0 ? <Download className="h-6 w-6" /> : i === 1 ? <PlayCircle className="h-6 w-6" /> : <Calendar className="h-6 w-6" />}
               </div>
-              {/* H5 = 24px */}
               <h3 className="text-2xl font-semibold text-slate-900 mb-3 leading-tight">
                 {res[0]}
               </h3>
-              {/* Body 2 = 14px */}
               <p className="text-sm text-slate-600 leading-relaxed">
                 {res[1]}
               </p>
             </div>
 
-            {/* BUTTON = 14px */}
             <Button className="w-full mt-6 bg-[#2366c9] hover:bg-blue-700 text-white font-semibold flex items-center justify-center text-sm py-3">
               {res[2]} <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
@@ -2237,20 +2362,15 @@ Built on Learning Science, Validated by Research
 
   <div className="container-custom">
     <div className="text-center max-w-4xl mx-auto mb-12">
-      {/* OVERLINE = 10px */}
       <p className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#2366c9] mb-5">
         Founder Story
       </p>
-
-      {/* H2 – 60px → text-6xl */}
       <div className="flex justify-center w-full  ">
-            <h2 className="text-[4.2vw] text-[#2366c9] font-semibold leading-[1.05] mb-3 text-center tracking-tight whitespace-nowrap px-4">
-    Why We Built EduMeUp
-        </h2>
+            <h2 className="text-4xl md:text-6xl text-black font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+              Why We Built EduMeUp
+            </h2>
       </div>
-
-      {/* H5 / Subtitle = 24px */}
-      <p className="text-2xl text-slate-600">
+      <p className="text-base text-slate-600">
         Born from 27+ years inside classrooms, not in a tech lab
       </p>
     </div>
@@ -2258,16 +2378,12 @@ Built on Learning Science, Validated by Research
     <div className="grid lg:grid-cols-2 gap-8">
       <Card className="border border-blue-100 rounded-2xl bg-gradient-to-br from-blue-50 via-white to-white shadow-lg hover:shadow-xl transition">
         <CardContent className="p-8 text-left">
-          {/* H5 = 24px */}
           <h3 className="text-2xl font-semibold text-slate-900 mb-5 leading-tight">
             The Problem We Saw Every Day
           </h3>
-
-          {/* Body 2 = 14px */}
           <p className="text-sm text-slate-700 mb-4 leading-relaxed">
             Students attended tuition daily and parents spent heavily, yet exams still exposed gaps, weak retention, and panic.
           </p>
-
           <p className="text-sm text-slate-700 mb-4 font-medium">
             The real problem was not content scarcity. It was the absence of a learning system:
           </p>
@@ -2284,16 +2400,12 @@ Built on Learning Science, Validated by Research
 
       <Card className="border border-blue-100 rounded-2xl bg-gradient-to-b from-blue-50/60 to-white shadow-sm hover:shadow-lg transition-all">
         <CardContent className="p-8 text-left">
-          {/* H5 = 24px */}
           <h3 className="text-2xl font-semibold text-slate-900 mb-5 leading-tight">
             The Solution We Designed
           </h3>
-
-          {/* Body 2 = 14px */}
           <p className="text-sm text-slate-700 mb-4 leading-relaxed">
             EduMeUp combines learning science, interactive technology, and 27+ years of school leadership into one structured mastery platform.
           </p>
-
           <ul className="space-y-3 text-sm text-slate-700 mb-6">
             <li>✓ M.Phil Educational Planning & Management</li>
             <li>✓ 27+ years as Principal & Deputy Director</li>
@@ -2301,12 +2413,9 @@ Built on Learning Science, Validated by Research
             <li>✓ Research-backed 10X Learning Leap model</li>
             <li>✓ Moodle + H5P + AI learning ecosystem</li>
           </ul>
-
           <p className="text-sm italic text-slate-700 border-l-4 border-[#2366c9] pl-5 py-3 bg-blue-50 rounded-r-lg leading-relaxed">
             "Every student can master difficult subjects when they have a system that finds gaps, repairs them, and builds lasting memory."
           </p>
-
-          {/* Caption = 12px */}
           <p className="text-xs text-slate-600 mt-4 font-medium">
             - Muhammad Benyameen, Chief Adviser, EduMeUp
           </p>
@@ -2320,28 +2429,22 @@ Built on Learning Science, Validated by Research
 <section className="py-16 md:py-24 bg-slate-50">
   <div className="container-custom">
     <div className="text-center max-w-4xl mx-auto mb-12">
-      {/* OVERLINE = 10px */}
       <p className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#2366c9] mb-5">
         Social Proof
       </p>
-
-      {/* H2 – 60px → text-6xl (exact match) */}
-      {/* Forced to 1 single line + fully centralized (your rule) */}
       <div className="flex justify-center w-full  ">
-         <h2 className="text-[4.2vw] text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight whitespace-nowrap px-4">
-       What Students & Parents Say
-        </h2>
+         <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+           What Students & Parents Say
+         </h2>
       </div>
-
-      {/* H5 / Subtitle = 24px */}
-      <p className="text-2xl text-slate-600">
+      <p className="text-base text-slate-600">
         Real results from real families
       </p>
     </div>
 
     <div className="grid md:grid-cols-3 gap-6">
       {[
-        ["A.K.", "Parent, Lahore", "For the first time, I can actually see where my child is struggling - not just hear 'he'll be fine' from the tutor. The diagnostic alone was eye-opening."],
+        ["A.K.", "Parent", "For the first time, I can actually see where my child is struggling - not just hear 'he'll be fine' from the tutor. The diagnostic alone was eye-opening."],
         ["S.M.", "O-Level Student", "I used to rely on three tutors. After EduMeUp diagnosed my gaps and gave me targeted modules, I reduced to one - and my grades improved."],
         ["F.H.", "School Principal", "We partnered with EduMeUp and immediately had something genuinely new to offer parents. The $678 value we provide through the school gives our families a real advantage."]
       ].map((t, i) => (
@@ -2353,13 +2456,10 @@ Built on Learning Science, Validated by Research
             <div className="mb-4">
               <p className="text-yellow-500 text-xl">★★★★★</p>
             </div>
-            {/* Body 2 = 14px */}
             <p className="text-sm text-slate-700 mb-6 leading-relaxed flex-grow">
               "{t[2]}"
             </p>
-            {/* H5-like = 24px but scaled for attribution */}
             <p className="font-semibold text-[#2366c9] text-base">{t[0]}</p>
-            {/* Caption = 12px */}
             <p className="text-xs text-slate-500">{t[1]}</p>
           </CardContent>
         </Card>
@@ -2372,19 +2472,15 @@ Built on Learning Science, Validated by Research
 <section className="py-16 md:py-24 bg-white">
   <div className="container-custom">
     <div className="text-center max-w-4xl mx-auto mb-12">
-      {/* OVERLINE = 10px */}
       <p className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#2366c9] mb-5">
         FAQ
       </p>
-
-      {/* H2 – 60px → text-6xl */}
       <div className="flex justify-center w-full  ">
-         <h2 className="text-[4.2vw] text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight whitespace-nowrap px-4">
-       Parents Ask. We Answer.
-        </h2>
+         <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+           Parents Ask. We Answer.
+         </h2>
       </div>
     </div>
-
     <div className="max-w-5xl mx-auto space-y-4">
       {[
         ["Is EduMeUp replacing my child's school or tutor?", "No. EduMeUp is a structured supplemental learning system. It fills gaps that school and tutors leave behind, builds independent learning skills, and significantly reduces - but does not force the elimination of - tutor dependency. Many families use EduMeUp to reduce from 3 tutors to 1 while improving results."],
@@ -2407,7 +2503,6 @@ Built on Learning Science, Validated by Research
             >
               <div className="flex items-start gap-3">
                 <HelpCircle className="h-5 w-5 text-[#2366c9] shrink-0 mt-0.5" />
-                {/* H5 = 24px for questions */}
                 <h4 className="text-xl font-medium text-slate-900 group-hover:text-[#2366c9] transition-colors leading-tight">
                   {qa[0]}
                 </h4>
@@ -2416,7 +2511,6 @@ Built on Learning Science, Validated by Research
                 {openFaqIndex === i ? "−" : "+"}
               </span>
             </button>
-
             {openFaqIndex === i && (
               <p className="text-sm text-slate-700 mt-5 leading-relaxed pl-8">
                 {qa[1]}
@@ -2435,23 +2529,17 @@ Built on Learning Science, Validated by Research
   <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-[#2366c9] blur-3xl" aria-hidden="true"></div>
 
   <div className="container-custom text-center relative z-10">
-    {/* H2 – 60px → text-6xl */}
     <div className="flex justify-center w-full mb-6">
-      <h2 className="text-[4.0vw] text-slate-900 text-white font-semibold leading-[1.05] mb-3 text-center tracking-tight whitespace-nowrap px-4">
-     Your Child's O-Level Journey Starts with One Decision
+      <h2 className="text-4xl md:text-6xl text-white font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+        Your Child's O-Level Journey Starts with One Decision
       </h2>
     </div>
-
-    {/* Body 1 = 16px */}
-    <p className="text-lg md:text-xl text-blue-200 mb-4 max-w-3xl mx-auto">
+    <p className="text-base text-blue-200 mb-4 max-w-3xl mx-auto">
       The longer gaps remain unfixed, the harder - and more expensive - they become to repair.
     </p>
-
-    {/* OVERLINE = 10px */}
     <p className="text-[10px] md:text-xs font-semibold text-blue-300 mb-12 uppercase tracking-wider">
       Next cohort opens soon - Limited seats available
     </p>
-
     <div className="flex flex-col md:flex-row md:flex-wrap justify-center gap-6 max-w-5xl mx-auto mb-16">
       <InquiryDialog
         defaultType="diagnostic"
@@ -2459,7 +2547,7 @@ Built on Learning Science, Validated by Research
         trigger={
           <Button
             size="lg"
-            className="w-full md:w-auto min-w-[320px] bg-[#2366c9] hover:bg-blue-600 text-white font-semibold min-h-[5.5rem] h-auto py-5 px-10 rounded-3xl text-lg shadow-2xl active:scale-95 transition-all border-b-[12px] border-blue-800 leading-tight"
+            className="w-full md:w-auto min-w-[320px] bg-[#2366c9] hover:bg-blue-600 text-white font-semibold min-h-[5.5rem] h-auto py-5 px-10 rounded-3xl text-sm shadow-2xl active:scale-95 transition-all border-b-[12px] border-blue-800 leading-tight"
           >
             START FREE DIAGNOSTIC<br className="sm:hidden" /> - NO CREDIT CARD REQUIRED
             <ArrowRight className="ml-3 h-5 w-5 inline" />
@@ -2471,7 +2559,7 @@ Built on Learning Science, Validated by Research
         <Button
           size="lg"
           variant="outline"
-          className="w-full min-h-[5.5rem] h-auto py-5 px-10 border-4 border-white/20 bg-white/10 hover:bg-white/20 rounded-3xl text-lg font-semibold shadow-xl transition-all leading-tight"
+          className="w-full min-h-[5.5rem] h-auto py-5 px-10 border-4 border-white/20 bg-white/10 hover:bg-white/20 rounded-3xl text-sm font-semibold shadow-xl transition-all leading-tight"
         >
           EXPLORE ALL PROGRAMS
           <ArrowRight className="ml-3 h-5 w-5 inline" />
@@ -2481,7 +2569,7 @@ Built on Learning Science, Validated by Research
       <Button
         size="lg"
         variant="outline"
-        className="w-full md:w-auto min-w-[320px] min-h-[5.5rem] h-auto py-5 px-10 border-4 border-white/20 bg-white/10 hover:bg-white/20 rounded-3xl text-lg font-semibold shadow-xl transition-all leading-tight"
+        className="w-full md:w-auto min-w-[320px] min-h-[5.5rem] h-auto py-5 px-10 border-4 border-white/20 bg-white/10 hover:bg-white/20 rounded-3xl text-sm font-semibold shadow-xl transition-all leading-tight"
       >
         DOWNLOAD FREE PARENT GUIDE
         <ArrowRight className="ml-3 h-5 w-5 inline" />
@@ -2491,11 +2579,9 @@ Built on Learning Science, Validated by Research
     <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-16">
       <Card className="bg-white/10 backdrop-blur-lg border-white/20 shadow-2xl">
         <CardContent className="p-8">
-          {/* H5 = 24px */}
           <h3 className="text-2xl font-semibold text-white mb-4 leading-tight">
             Take the Free AI Diagnostic
           </h3>
-          {/* Body 2 = 14px */}
           <p className="text-sm text-blue-100 mb-6 leading-relaxed">
             The first step costs nothing. The diagnostic finds exactly what is missing and tells you - and your child - precisely what to do next.
           </p>
@@ -2505,7 +2591,7 @@ Built on Learning Science, Validated by Research
             trigger={
               <Button
                 size="lg"
-                className="w-full bg-[#2366c9] hover:bg-blue-600 text-white font-semibold h-20 px-10 rounded-3xl text-lg shadow-2xl active:scale-95 transition-all border-b-8 border-blue-800 leading-tight"
+              className="w-full bg-[#2366c9] hover:bg-blue-600 text-white font-semibold h-20 px-10 rounded-3xl text-sm shadow-2xl active:scale-95 transition-all border-b-8 border-blue-800 leading-tight"
               >
                 START FREE DIAGNOSTIC NOW
                 <ArrowRight className="ml-3 h-5 w-5 inline" />
@@ -2526,7 +2612,7 @@ Built on Learning Science, Validated by Research
           <Link href="/programs" className="w-full block">
             <Button
               size="lg"
-              className="w-full bg-white text-slate-900 hover:bg-blue-50 font-semibold h-20 px-10 rounded-3xl text-lg shadow-2xl active:scale-95 transition-all border-b-8 border-slate-300 leading-tight"
+              className="w-full bg-white text-slate-900 hover:bg-blue-50 font-semibold h-20 px-10 rounded-3xl text-sm shadow-2xl active:scale-95 transition-all border-b-8 border-slate-300 leading-tight"
             >
               EXPLORE ALL PROGRAMS
               <ArrowRight className="ml-3 h-5 w-5 inline" />
@@ -2536,12 +2622,11 @@ Built on Learning Science, Validated by Research
       </Card>
     </div>
 
-    {/* Footer micro-copy */}
     <p className="mt-12 text-xs text-blue-200 text-center">
-      EduMeUp.com | Cambridge O-Level & IGCSE Learning System | Pakistan & International
+      EduMeUp.com | Cambridge O-Level & IGCSE Learning System | Global
     </p>
     <p className="mt-2 text-[11px] text-blue-300 text-center">
-      © EduMeUp | Powered by Moodle 5.2 + H5P + AI | Built on 27+ Years of Educational Research
+      Powered by Moodle 5.2 + H5P + AI | Built on 27+ Years of Educational Research
     </p>
   </div>
 </section>
