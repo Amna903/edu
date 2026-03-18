@@ -436,7 +436,7 @@ Now experience it.
 
 FOR PARENTS & STUDENTS:
 ┌─────────────────────┐  ┌─────────────────────┐
-│ 🔍 FREE DIAGNOSTIC  │  │ 🎓 TRY FREE DEMO    │
+│ 🔍 FREE DIAGNOSTIC  │  │ 🎓 REGISTER    │
 ├─────────────────────┤  ├─────────────────────┤
 │                     │  │                     │
 │ 90-minute AI test   │  │ Experience the 10X  │

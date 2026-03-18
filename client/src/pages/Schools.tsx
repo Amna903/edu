@@ -42,7 +42,7 @@ export default function Schools() {
                     "Difficulty competing with academies",
                     "No data-driven insights"
                   ].map((text, i) => (
-                    <li key={i} className="flex items-center gap-3 text-sm font-semibold text-white/70">
+                    <li key={i} className="flex items-center gap-3 text-[14px] font-semibold text-white/70">
                       <span className="text-red-500">❌</span> {text}
                     </li>
                   ))}
@@ -54,7 +54,7 @@ export default function Schools() {
                   defaultType="school_charter"
                   title="School Partnership Inquiry"
                   trigger={
-                    <Button size="lg" className="bg-[#2366c9] hover:bg-blue-500 text-white font-semibold px-8 h-10 rounded-lg text-sm shadow-md active:scale-95 transition-all">
+                    <Button size="lg" className="bg-[#2366c9] hover:bg-blue-500 text-white font-semibold px-8 h-10 rounded-lg text-[14px] shadow-md active:scale-95 transition-all">
                       Get started now
                     </Button>
                   }
@@ -139,14 +139,14 @@ export default function Schools() {
               }
             ].map((item, i) => (
               <motion.div key={i} whileHover={{ y: -10 }}>
-                <Card className="border border-blue-50 shadow-md hover:border-[#2366c9] transition-all group rounded-xl bg-white h-full flex flex-col">
+                <Card className="border-[#2366c9]  border-2 border border-blue-50 shadow-md hover:border-[#2366c9] transition-all group rounded-xl bg-white h-full flex flex-col">
                   <CardContent className="p-6 h-full flex flex-col">
                     <div className="h-16 w-16 bg-blue-50 text-[#2366c9] rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#2366c9] group-hover:text-white transition-all shadow-lg">
                       <item.icon className="h-8 w-8" />
                     </div>
                     <Badge className="w-fit mb-2 bg-blue-100 text-blue-700 hover:bg-blue-100 border-none px-4">{item.value}</Badge>
                     <h3 className="text-xl font-semibold mb-4 text-[#1e1b4b]">{item.title}</h3>
-                    <p className="text-[#1e1b4b]/60 font-medium text-sm leading-relaxed mb-6 flex-1">{item.desc}</p>
+                    <p className="text-[#1e1b4b]/60 font-medium text-[14px] leading-relaxed mb-6 flex-1">{item.desc}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -164,7 +164,7 @@ export default function Schools() {
               <div className="space-y-12">
                 <div>
                   <div className="flex justify-between items-end mb-4">
-                    <span className="text-sm font-semibold text-[#1e1b4b]">Pass rate (EduMeUp)</span>
+                    <span className="text-[14px] font-semibold text-[#1e1b4b]">Pass rate (EduMeUp)</span>
                     <span className="text-3xl font-semibold text-[#2366c9]">91%</span>
                   </div>
                   <div className="h-6 bg-white rounded-full overflow-hidden border-2 border-blue-100 p-1">
@@ -175,14 +175,14 @@ export default function Schools() {
                     />
                   </div>
                   <div className="flex justify-between items-end mt-4 text-[#1e1b4b]/40">
-                    <span className="text-[10px] font-semibold">Traditional average: 35%</span>
-                    <span className="text-[10px] font-semibold">160% improvement</span>
+                    <span className="text-[14px] font-semibold">Traditional average: 35%</span>
+                    <span className="text-[14px] font-semibold">160% improvement</span>
                   </div>
                 </div>
 
                 <div>
                   <div className="flex justify-between items-end mb-4">
-                    <span className="text-sm font-semibold text-[#1e1b4b]">A/A* achievement</span>
+                    <span className="text-[14px] font-semibold text-[#1e1b4b]">A/A* achievement</span>
                     <span className="text-3xl font-semibold text-[#2366c9]">47%</span>
                   </div>
                   <div className="h-6 bg-white rounded-full overflow-hidden border-2 border-blue-100 p-1">
@@ -193,8 +193,8 @@ export default function Schools() {
                     />
                   </div>
                   <div className="flex justify-between items-end mt-4 text-[#1e1b4b]/40">
-                    <span className="text-[10px] font-semibold">Traditional average: 18%</span>
-                    <span className="text-[10px] font-semibold">161% improvement</span>
+                    <span className="text-[14px] font-semibold">Traditional average: 18%</span>
+                    <span className="text-[14px] font-semibold">161% improvement</span>
                   </div>
                 </div>
               </div>
@@ -205,21 +205,21 @@ export default function Schools() {
               <div className="space-y-12">
                 <div className="grid grid-cols-3 gap-8 text-center">
                   <div>
-                    <p className="text-[10px] font-semibold text-blue-400 mb-2">Day 1</p>
+                    <p className="text-[14px] font-semibold text-blue-400 mb-2">Day 1</p>
                     <p className="text-3xl font-semibold">100%</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-semibold text-blue-400 mb-2">Day 30</p>
+                    <p className="text-[14px] font-semibold text-blue-400 mb-2">Day 30</p>
                     <p className="text-3xl font-semibold text-green-400">90%</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-semibold text-blue-400 mb-2">6 months</p>
+                    <p className="text-[14px] font-semibold text-blue-400 mb-2">6 months</p>
                     <p className="text-3xl font-semibold text-green-400">75%</p>
                   </div>
                 </div>
                 <div className="pt-12 border-t border-white/10">
                   <p className="text-lg font-semibold mb-4">15× better retention</p>
-                  <p className="text-white/60 font-medium text-sm leading-relaxed">
+                  <p className="text-white/60 font-medium text-[14px] leading-relaxed">
                     Traditional methods see students forget 95% within 6 months. EduMeUp students retain 75% due to active learning and spaced retrieval.
                   </p>
                 </div>
@@ -285,12 +285,12 @@ export default function Schools() {
                       <p className="text-lg text-[#1e1b4b]/70 font-medium leading-relaxed">{model.details}</p>
                       <div className="bg-white p-6 rounded-2xl border-2 border-blue-50">
                         <p className="text-xs font-semibold text-blue-600 mb-2">Projected impact</p>
-                        <p className="text-sm font-semibold text-[#1e1b4b]">{model.impact}</p>
+                        <p className="text-[14px] font-semibold text-[#1e1b4b]">{model.impact}</p>
                       </div>
                     </div>
                     <div className="bg-[#1e1b4b] text-white p-10 rounded-[2.5rem] shadow-xl">
                       <h4 className="text-xl font-semibold text-blue-400 mb-6">Financial structure</h4>
-                      <p className="text-sm font-semibold leading-relaxed text-blue-100">{model.revenue}</p>
+                      <p className="text-[14px] font-semibold leading-relaxed text-blue-100">{model.revenue}</p>
                       <div className="mt-8 pt-8 border-t border-white/10">
                         <InquiryDialog 
                           defaultType="school_charter"

@@ -284,11 +284,11 @@ export default function Research() {
             <p className="text-blue-100 text-lg leading-relaxed mb-5">
               Education is too important to rely on guesswork. EduMeUp is built on peer-reviewed learning science, not trends.
             </p>
-            <div className="grid md:grid-cols-2 gap-6 text-sm text-left mb-12 max-w-3xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-6 text-[14px] text-left mb-12 max-w-3xl mx-auto">
               <div className="p-4 rounded-2xl bg-white/10 border border-white/15">Others: Build features first, then find research to justify</div>
               <div className="p-4 rounded-2xl bg-blue-500/20 border border-blue-300/40">EduMeUp: Study research first, then design features accordingly</div>
             </div>
-            <p className="text-sm text-blue-200/90 font-medium mb-8">
+            <p className="text-[14px] text-blue-200/90 font-medium mb-8">
               Powered by: Moodle 4.5.1 LMS · H5P Interactive Activities · AI Chatbot · Multilingual Support
             </p>
           </div>
@@ -302,7 +302,7 @@ export default function Research() {
             ))}
           </div>
 
-          <p className="text-center text-sm text-blue-100/90 mb-8">
+          <p className="text-center text-[14px] text-blue-100/90 mb-8">
             For the full academic treatment — 60+ citations, 22 study briefs, and complete APA references — download our Learning Science Whitepaper v1.0.
           </p>
 
@@ -325,11 +325,11 @@ export default function Research() {
         <div className="container-custom max-w-6xl">
           <div className="text-center max-w-4xl mx-auto mb-16">
             <h2 className="text-4xl md:text-5xl font-semibold text-[#1e1b4b] mb-4">The Crisis of Unscientific Education</h2>
-            <p className="text-lg text-slate-600 font-medium">Why most learning fails — and what science says we should do instead.</p>
+            <p className="text-lg text-black font-medium">Why most learning fails — and what science says we should do instead.</p>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-10 mb-14">
-            <Card className="border-red-100">
+            <Card className="border-[#2366c9]  border-2 border-red-100">
               <CardHeader>
                 <CardTitle className="text-2xl text-[#1e1b4b] flex items-center gap-2">
                    The Forgetting Curve
@@ -339,11 +339,11 @@ export default function Research() {
                 <p>• Within 24 hours: Students can forget approximately 70% without structured review.</p>
                 <p>• Within 1 week: Up to 90% may be forgotten without reinforcement.</p>
                 <p>• After exams: Knowledge can fade rapidly without continued retrieval practice.</p>
-                <p className="text-xs text-slate-500 pt-2">Source: Ebbinghaus, H. (1885). Memory: A Contribution to Experimental Psychology.</p>
+                <p className="text-xs text-black pt-2">Source: Ebbinghaus, H. (1885). Memory: A Contribution to Experimental Psychology.</p>
               </CardContent>
             </Card>
 
-            <Card className="border-blue-100">
+            <Card className="border-[#2366c9]  border-2 border-blue-100">
               <CardHeader>
                 <CardTitle className="text-2xl text-[#1e1b4b]">The Passive Learning Trap</CardTitle>
               </CardHeader>
@@ -360,21 +360,21 @@ export default function Research() {
                     <span className="font-semibold text-[#1e1b4b]">{retention}</span>
                   </div>
                 ))}
-                <p className="text-xs text-slate-500 pt-3">
+                <p className="text-xs text-black pt-3">
                   Note: We avoid unsupported percentage claims often attributed to Dale&apos;s Cone. Directional evidence favoring active methods is robust across independent studies.
                 </p>
               </CardContent>
             </Card>
           </div>
 
-          <Card className="border-blue-100 bg-blue-50/40">
+          <Card className="border-[#2366c9]  border-2 border-blue-100 bg-blue-50/40">
             <CardHeader>
               <CardTitle className="text-2xl text-[#1e1b4b]">The Solution: Evidence-Based Design</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid md:grid-cols-2 gap-6 mb-6">
                 {whatWorks.map((item) => (
-                  <div key={item} className="flex items-start gap-2 text-sm font-medium text-slate-700">
+                  <div key={item} className="flex items-start gap-2 text-[14px] font-medium text-slate-700">
                     <CheckCircle2 className="h-4 w-4 text-[#2366c9] mt-0.5" />
                     {item}
                   </div>
@@ -394,7 +394,7 @@ export default function Research() {
         <div className="container-custom max-w-6xl">
           <div className="text-center max-w-4xl mx-auto mb-16">
             <h2 className="text-4xl font-semibold text-[#1e1b4b] mb-4">Why Most EdTech Gets Research Wrong</h2>
-            <p className="text-slate-600 font-medium">Most platforms add “research-backed” as an afterthought. We reverse the order.</p>
+            <p className="text-black font-medium">Most platforms add “research-backed” as an afterthought. We reverse the order.</p>
           </div>
 
           <div className="overflow-x-auto rounded-2xl border border-blue-100 bg-white">
@@ -416,7 +416,7 @@ export default function Research() {
             </table>
           </div>
 
-          <p className="text-slate-600 font-medium leading-relaxed mt-8">
+          <p className="text-black font-medium leading-relaxed mt-8">
             EduMeUp is science-first, technology-second. Our H5P activities, AI questioning, and spaced review recommendations exist because learning science requires them — not because they are trendy features.
           </p>
         </div>
@@ -426,7 +426,7 @@ export default function Research() {
         <div className="container-custom max-w-6xl">
           <div className="text-center mb-14">
             <h2 className="text-4xl md:text-5xl font-semibold text-[#1e1b4b] mb-4">5 Pillars of Evidence-Based Learning</h2>
-            <p className="text-slate-600 font-medium">The research foundation of EduMeUp&apos;s 10X Learning Leap Model™</p>
+            <p className="text-black font-medium">The research foundation of EduMeUp&apos;s 10X Learning Leap Model™</p>
           </div>
 
           <div className="space-y-8">
@@ -442,7 +442,7 @@ export default function Research() {
                   <p className="text-slate-700 font-medium">{pillar.science}</p>
 
                   <div>
-                    <p className="text-sm font-semibold text-[#2366c9] mb-2">Key Research</p>
+                    <p className="text-[14px] font-semibold text-[#2366c9] mb-2">Key Research</p>
                     <div className="flex flex-wrap gap-2">
                       {pillar.studies.map((study) => (
                         <Badge key={study} className="bg-blue-100 text-[#1e1b4b] border border-blue-200">{study}</Badge>
@@ -453,19 +453,19 @@ export default function Research() {
                   <div className="grid md:grid-cols-2 gap-4">
                     {pillar.myths.map(([myth, reality]) => (
                       <div key={myth} className="p-4 rounded-xl border border-blue-100 bg-blue-50/40">
-                        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Myth</p>
-                        <p className="text-sm text-slate-700 font-medium mb-3">{myth}</p>
+                        <p className="text-xs font-semibold uppercase tracking-wider text-black mb-1">Myth</p>
+                        <p className="text-[14px] text-slate-700 font-medium mb-3">{myth}</p>
                         <p className="text-xs font-semibold uppercase tracking-wider text-[#2366c9] mb-1">Reality</p>
-                        <p className="text-sm text-[#1e1b4b] font-medium">{reality}</p>
+                        <p className="text-[14px] text-[#1e1b4b] font-medium">{reality}</p>
                       </div>
                     ))}
                   </div>
 
                   <div>
-                    <p className="text-sm font-semibold text-[#2366c9] mb-2">EduMeUp Implementation (Moodle + H5P)</p>
+                    <p className="text-[14px] font-semibold text-[#2366c9] mb-2">EduMeUp Implementation (Moodle + H5P)</p>
                     <div className="grid md:grid-cols-2 gap-2">
                       {pillar.implementation.map((point) => (
-                        <p key={point} className="text-sm text-slate-700 font-medium flex items-start gap-2">
+                        <p key={point} className="text-[14px] text-slate-700 font-medium flex items-start gap-2">
                           <CheckCircle2 className="h-4 w-4 text-[#2366c9] mt-0.5" />
                           {point}
                         </p>
@@ -483,7 +483,7 @@ export default function Research() {
         <div className="container-custom max-w-6xl">
           <div className="text-center max-w-4xl mx-auto mb-16">
             <h2 className="text-4xl font-semibold text-[#1e1b4b] mb-4">From Science to Student Experience</h2>
-            <p className="text-slate-600 font-medium">What these principles look like in your child&apos;s daily platform experience.</p>
+            <p className="text-black font-medium">What these principles look like in your child&apos;s daily platform experience.</p>
           </div>
 
           <div className="overflow-x-auto rounded-2xl border border-blue-100 bg-white">
@@ -515,7 +515,7 @@ export default function Research() {
         <div className="container-custom max-w-6xl">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-semibold text-[#1e1b4b] mb-4">What the Research Actually Shows</h2>
-            <p className="text-slate-600 font-medium">Five comparative effectiveness findings (full library in Whitepaper).</p>
+            <p className="text-black font-medium">Five comparative effectiveness findings (full library in Whitepaper).</p>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8">
@@ -528,7 +528,7 @@ export default function Research() {
                 <CardContent className="space-y-4">
                   <p className="text-[15px] leading-relaxed text-slate-700 font-medium">{study.summary}</p>
                   {study.points.map((point) => (
-                    <p key={point} className="text-[15px] leading-relaxed text-slate-600 font-medium flex items-start gap-2">
+                    <p key={point} className="text-[15px] leading-relaxed text-black font-medium flex items-start gap-2">
                       <CheckCircle2 className="h-4 w-4 text-[#2366c9] mt-0.5" />
                       {point}
                     </p>
@@ -548,7 +548,7 @@ export default function Research() {
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8">
-            <Card className="bg-[#0f1538] border-blue-300/50 text-white shadow-xl">
+            <Card className="border-[#2366c9]  border-2 bg-[#0f1538] border-blue-300/50 text-white shadow-xl">
               <CardHeader>
                 <CardTitle className="text-2xl text-white font-extrabold">Pilot Study Parameters</CardTitle>
               </CardHeader>
@@ -560,7 +560,7 @@ export default function Research() {
               </CardContent>
             </Card>
 
-            <Card className="bg-[#0f1538] border-blue-300/50 text-white shadow-xl">
+            <Card className="border-[#2366c9]  border-2 bg-[#0f1538] border-blue-300/50 text-white shadow-xl">
               <CardHeader>
                 <CardTitle className="text-2xl text-white font-extrabold">Observed Signals</CardTitle>
               </CardHeader>
@@ -584,7 +584,7 @@ export default function Research() {
         <div className="container-custom max-w-6xl">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-semibold text-[#1e1b4b] mb-4">How We Validate Our Approach</h2>
-            <p className="text-slate-600 font-medium">A five-phase methodology validation roadmap.</p>
+            <p className="text-black font-medium">A five-phase methodology validation roadmap.</p>
           </div>
 
           <div className="overflow-x-auto rounded-2xl border border-blue-100">
@@ -601,7 +601,7 @@ export default function Research() {
                   <tr key={phase} className={index % 2 ? "bg-blue-50/40" : "bg-white"}>
                     <td className="p-4 border-t border-blue-100 text-[#1e1b4b] font-medium">{phase}</td>
                     <td className="p-4 border-t border-blue-100 text-slate-700 font-medium">{status}</td>
-                    <td className="p-4 border-t border-blue-100 text-slate-600 font-medium">{description}</td>
+                    <td className="p-4 border-t border-blue-100 text-black font-medium">{description}</td>
                   </tr>
                 ))}
               </tbody>
@@ -614,10 +614,10 @@ export default function Research() {
         <div className="container-custom max-w-6xl">
           <div className="text-center max-w-4xl mx-auto mb-16">
             <h2 className="text-4xl font-semibold text-[#1e1b4b] mb-4">Honest Limitations</h2>
-            <p className="text-slate-600 font-medium">Intellectual honesty in educational research matters.</p>
+            <p className="text-black font-medium">Intellectual honesty in educational research matters.</p>
           </div>
 
-          <Card className="border-blue-100 mb-8">
+          <Card className="border-[#2366c9]  border-2 border-blue-100 mb-8">
             <CardContent className="pt-7 grid md:grid-cols-2 gap-6 text-[15px] leading-relaxed text-slate-700 font-medium">
               <p>1) Sample size is currently small (N=127) for definitive causal claims.</p>
               <p>2) Selection bias is possible with early adopters.</p>
@@ -632,15 +632,15 @@ export default function Research() {
           <div className="grid md:grid-cols-3 gap-6">
             <div className="p-5 rounded-2xl border border-green-200 bg-green-50">
               <p className="font-medium text-green-700"> High Confidence</p>
-              <p className="text-sm text-slate-700 mt-1">Methodology grounded in robust cognitive science literature.</p>
+              <p className="text-[14px] text-slate-700 mt-1">Methodology grounded in robust cognitive science literature.</p>
             </div>
             <div className="p-5 rounded-2xl border border-yellow-200 bg-yellow-50">
               <p className="font-medium text-yellow-700"> Moderate Confidence</p>
-              <p className="text-sm text-slate-700 mt-1">Pilot signals are promising but remain preliminary.</p>
+              <p className="text-[14px] text-slate-700 mt-1">Pilot signals are promising but remain preliminary.</p>
             </div>
             <div className="p-5 rounded-2xl border border-orange-200 bg-orange-50">
               <p className="font-medium text-orange-700"> Awaiting Evidence</p>
-              <p className="text-sm text-slate-700 mt-1">RCT and diverse samples required for stronger causal claims.</p>
+              <p className="text-[14px] text-slate-700 mt-1">RCT and diverse samples required for stronger causal claims.</p>
             </div>
           </div>
         </div>
@@ -650,7 +650,7 @@ export default function Research() {
         <div className="container-custom max-w-6xl">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-semibold text-[#1e1b4b] mb-4">Research Partnerships</h2>
-            <p className="text-slate-600 font-medium">Building independent validation through collaboration.</p>
+            <p className="text-black font-medium">Building independent validation through collaboration.</p>
           </div>
 
           <div className="grid lg:grid-cols-3 gap-6 mb-8">
@@ -663,12 +663,12 @@ export default function Research() {
                 <CardHeader>
                   <CardTitle className="text-xl text-[#1e1b4b]">{institution}</CardTitle>
                 </CardHeader>
-                <CardContent className="text-sm text-slate-600 font-medium">{context}</CardContent>
+                <CardContent className="text-[14px] text-black font-medium">{context}</CardContent>
               </Card>
             ))}
           </div>
 
-          <Card className="border-blue-100 bg-blue-50/50">
+          <Card className="border-[#2366c9]  border-2 border-blue-100 bg-blue-50/50">
             <CardHeader>
               <CardTitle className="text-2xl text-[#1e1b4b]">Call for Research Collaboration</CardTitle>
             </CardHeader>
@@ -690,7 +690,7 @@ export default function Research() {
         <div className="container-custom max-w-6xl">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-semibold text-[#1e1b4b] mb-4">Ongoing R&D Initiatives</h2>
-            <p className="text-slate-600 font-medium">Continuous improvement through measurable experiments.</p>
+            <p className="text-black font-medium">Continuous improvement through measurable experiments.</p>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8">
@@ -706,7 +706,7 @@ export default function Research() {
                 <CardHeader>
                   <CardTitle className="text-xl text-[#1e1b4b] flex items-center gap-2"><Beaker className="h-4 w-4 text-[#2366c9]" /> {title}</CardTitle>
                 </CardHeader>
-                <CardContent className="text-[15px] leading-relaxed text-slate-600 font-medium">{detail}</CardContent>
+                <CardContent className="text-[15px] leading-relaxed text-black font-medium">{detail}</CardContent>
               </Card>
             ))}
           </div>
@@ -725,10 +725,10 @@ export default function Research() {
         <div className="container-custom max-w-6xl">
           <div className="text-center mb-10">
             <h2 className="text-4xl font-semibold text-[#1e1b4b] mb-4">Selected References</h2>
-            <p className="text-slate-600 font-medium">Full APA reference list (60+) is available in the downloadable Whitepaper.</p>
+            <p className="text-black font-medium">Full APA reference list (60+) is available in the downloadable Whitepaper.</p>
           </div>
 
-          <Card className="border-blue-100">
+          <Card className="border-[#2366c9]  border-2 border-blue-100">
             <CardContent className="pt-7 space-y-4">
               {references.map((reference) => (
                 <p key={reference} className="text-[15px] leading-relaxed text-slate-700 font-medium">• {reference}</p>
@@ -780,7 +780,7 @@ export default function Research() {
                   <CardTitle className="text-lg text-[#1e1b4b]">{q}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-[15px] leading-relaxed text-slate-600 font-medium">{a}</p>
+                  <p className="text-[15px] leading-relaxed text-black font-medium">{a}</p>
                 </CardContent>
               </Card>
             ))}
@@ -805,19 +805,19 @@ export default function Research() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 mb-12">
-            <Card className="bg-white/5 border-white/20 text-white">
+            <Card className="border-[#2366c9]  border-2 bg-white/5 border-white/20 text-white">
               <CardHeader>
                 <CardTitle className="text-lg text-blue-300">1) Free Diagnostic Test</CardTitle>
               </CardHeader>
               <CardContent className="text-[15px] leading-relaxed text-blue-100 font-medium">See baseline performance and identify specific knowledge gaps in about 30 minutes.</CardContent>
             </Card>
-            <Card className="bg-white/5 border-white/20 text-white">
+            <Card className="border-[#2366c9]  border-2 bg-white/5 border-white/20 text-white">
               <CardHeader>
                 <CardTitle className="text-lg text-blue-300">2) Free Platform Trial (7 Days)</CardTitle>
               </CardHeader>
               <CardContent className="text-[15px] leading-relaxed text-blue-100 font-medium">Explore sample lessons, H5P interactions, and AI support before committing.</CardContent>
             </Card>
-            <Card className="bg-white/5 border-white/20 text-white">
+            <Card className="border-[#2366c9]  border-2 bg-white/5 border-white/20 text-white">
               <CardHeader>
                 <CardTitle className="text-lg text-blue-300">3) Schedule Consultation</CardTitle>
               </CardHeader>
@@ -841,7 +841,7 @@ export default function Research() {
             />
           </div>
 
-          <div className="text-center text-sm text-blue-100/90 max-w-4xl mx-auto">
+          <div className="text-center text-[14px] text-blue-100/90 max-w-4xl mx-auto">
             Education based on evidence, not guesswork. Every feature, interaction, and pathway is built on cognitive science — not opinion.
           </div>
         </div>

@@ -224,7 +224,7 @@ export default function Blog() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search articles, topics, or subjects..."
-                className="flex-1 px-4 py-3 outline-none text-sm text-slate-800"
+                className="flex-1 px-4 py-3 outline-none text-[14px] text-slate-800"
               />
               <button className="px-4 py-3 text-[#2366c9]" aria-label="Search articles">
                 <Search className="h-4 w-4" />
@@ -264,15 +264,15 @@ export default function Blog() {
               <div className="grid lg:grid-cols-[55%_45%] rounded-xl overflow-hidden bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] border border-slate-200">
                 <div className="relative min-h-[260px] lg:min-h-[380px]">
                   <img src={featured.image} alt={featured.title} className="w-full h-full object-cover" />
-                  <span className="absolute top-4 left-4 bg-[#2366c9] text-white px-3 py-1 rounded-full text-[10px] font-medium uppercase tracking-wider">
+                  <span className="absolute top-4 left-4 bg-[#2366c9] text-white px-3 py-1 rounded-full text-[14px] font-medium uppercase tracking-wider">
                     Featured
                   </span>
                 </div>
                 <div className="p-7 lg:p-8 border-l-4 border-[#2366c9] flex flex-col justify-center">
                   <Badge className="w-fit mb-3 bg-[#EFF6FF] text-[#1e1b4b] border border-slate-200">{featured.category}</Badge>
                   <h2 className="text-2xl md:text-3xl font-semibold text-[#1e1b4b] leading-tight mb-3 line-clamp-2">{featured.title}</h2>
-                  <p className="text-sm text-slate-600 font-medium leading-relaxed mb-4 line-clamp-3">{featured.excerpt}</p>
-                  <p className="text-xs text-slate-500 font-medium mb-5">
+                  <p className="text-[14px] text-black font-medium leading-relaxed mb-4 line-clamp-3">{featured.excerpt}</p>
+                  <p className="text-xs text-black font-medium mb-5">
                     {featured.author} · {featured.date} · {featured.readTime} read
                   </p>
                   <Button className="w-fit bg-[#2366c9] hover:bg-blue-500 text-white font-medium rounded-lg">
@@ -300,12 +300,12 @@ export default function Blog() {
                     {article.category}
                   </span>
                   <h3 className="text-[17px] font-semibold text-[#1e1b4b] leading-snug mt-2 mb-2 line-clamp-3">{article.title}</h3>
-                  <p className="text-sm text-slate-500 line-clamp-2 mb-3">{article.excerpt}</p>
-                  <p className="text-xs text-slate-500 mt-auto mb-3">
+                  <p className="text-[14px] text-black line-clamp-2 mb-3">{article.excerpt}</p>
+                  <p className="text-xs text-black mt-auto mb-3">
                     {article.author} · {article.date} · {article.readTime} read
                   </p>
-                  <button className="text-sm font-medium text-[#1e1b4b] hover:text-[#2366c9] text-left">
-                    Read More →
+                  <button className="text-[14px] font-medium text-[#1e1b4b] hover:text-[#2366c9] text-left">
+                    READ MORE →
                   </button>
                 </div>
               </article>
@@ -317,7 +317,7 @@ export default function Blog() {
               <div>
                 <p className="text-xs font-medium uppercase tracking-widest text-blue-300 mb-2">{inlineCta.eyebrow}</p>
                 <h3 className="text-2xl font-semibold text-white mb-2">{inlineCta.heading}</h3>
-                <p className="text-sm text-blue-200 font-medium">{inlineCta.sub}</p>
+                <p className="text-[14px] text-blue-200 font-medium">{inlineCta.sub}</p>
               </div>
               <div className="flex flex-col items-start md:items-end gap-3 min-w-[220px]">
                 <Link href="/parents">
@@ -325,7 +325,7 @@ export default function Blog() {
                     Take Free Diagnostic →
                   </Button>
                 </Link>
-                <Link href="/resources" className="text-sm text-blue-200 underline hover:text-white" data-cta="library">
+                <Link href="/resources" className="text-[14px] text-blue-200 underline hover:text-white" data-cta="library">
                   Explore Free Library
                 </Link>
               </div>
@@ -342,7 +342,7 @@ export default function Blog() {
                 Load More Articles
               </Button>
             ) : (
-              <p className="text-sm text-slate-500 italic">You have read everything — for now.</p>
+              <p className="text-[14px] text-black italic">You have read everything — for now.</p>
             )}
           </div>
         </div>
@@ -354,7 +354,7 @@ export default function Blog() {
             <div className="space-y-2">
               <p className="text-xs font-medium uppercase tracking-widest text-[#2366c9]">Not sure where to start?</p>
               <h3 className="text-xl font-semibold text-[#1e1b4b]">Find Your Starting Point</h3>
-              <p className="text-sm text-slate-700">Sample lessons, essay frameworks, and diagnostic pathways in one place.</p>
+              <p className="text-[14px] text-slate-700">Sample lessons, essay frameworks, and diagnostic pathways in one place.</p>
               <Link href="/parents">
                 <Button className="bg-[#2366c9] hover:bg-blue-500 text-white font-medium">Take Diagnostic</Button>
               </Link>
@@ -362,7 +362,7 @@ export default function Blog() {
             <div className="space-y-2">
               <p className="text-xs font-medium uppercase tracking-widest text-[#2366c9]">Free resources, no login</p>
               <h3 className="text-xl font-semibold text-[#1e1b4b]">Explore Free Learning Materials</h3>
-              <p className="text-sm text-slate-700">No account needed to browse core samples and frameworks.</p>
+              <p className="text-[14px] text-slate-700">No account needed to browse core samples and frameworks.</p>
               <Link href="/resources">
                 <Button variant="outline" className="border-2 border-[#1e1b4b] text-[#1e1b4b] hover:bg-[#1e1b4b] hover:text-white font-medium">Visit Library</Button>
               </Link>
@@ -370,7 +370,7 @@ export default function Blog() {
             <div className="space-y-2">
               <p className="text-xs font-medium uppercase tracking-widest text-[#2366c9]">Talk to a real person</p>
               <h3 className="text-xl font-semibold text-[#1e1b4b]">Speak With Our Education Team</h3>
-              <p className="text-sm text-slate-700">9AM–9PM PKT. Guidance call, not a pressure sales call.</p>
+              <p className="text-[14px] text-slate-700">9AM–9PM PKT. Guidance call, not a pressure sales call.</p>
               <Button variant="outline" className="border-2 border-[#2366c9] text-[#2366c9] hover:bg-[#2366c9] hover:text-white font-medium">WhatsApp Us</Button>
             </div>
           </div>

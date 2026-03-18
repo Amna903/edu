@@ -21,7 +21,7 @@ export default function About() {
             animate={{ opacity: 1, y: 0 }}
             className="space-y-6"
           >
-            <span className="text-blue-400 font-semibold text-sm">About EduMeUp</span>
+            <span className="text-blue-400 font-semibold text-[14px]">About EduMeUp</span>
             <h1 className="text-5xl md:text-6xl font-semibold mb-8 font-display leading-none text-white">
               Transforming Education Through <span className="text-blue-400">Science and Personalization</span>
             </h1>
@@ -54,7 +54,7 @@ export default function About() {
                 </p>
                 <div className="bg-blue-50 p-8 rounded-[2rem] border-2 border-blue-100">
                   <div className="space-y-4">
-                    <div className="flex justify-between items-center text-sm font-semibold">
+                    <div className="flex justify-between items-center text-[14px] font-semibold">
                       <span className="text-red-500">Without Systematic Review</span>
                       <span className="text-[#2366c9]">With Spaced Retrieval</span>
                     </div>
@@ -74,7 +74,7 @@ export default function About() {
                     </div>
                   </div>
                 </div>
-                <p className="mt-4 text-[10px] text-[#1e1b4b]/40 font-medium">Research: Ebbinghaus (1885), Cepeda et al. (2006), Roediger & Karpicke (2006)</p>
+                <p className="mt-4 text-[14px] text-[#1e1b4b]/40 font-medium">Research: Ebbinghaus (1885), Cepeda et al. (2006), Roediger & Karpicke (2006)</p>
               </div>
             </div>
 
@@ -104,7 +104,7 @@ export default function About() {
                     </div>
                   ))}
                 </div>
-                <p className="mt-4 text-[10px] text-[#1e1b4b]/40 font-medium">Source: Dale's Cone of Learning (1969), validated by Freeman et al. (2014)</p>
+                <p className="mt-4 text-[14px] text-[#1e1b4b]/40 font-medium">Source: Dale's Cone of Learning (1969), validated by Freeman et al. (2014)</p>
               </div>
             </div>
           </div>
@@ -114,17 +114,17 @@ export default function About() {
               <div>
                 <h4 className="text-3xl font-semibold text-blue-400 mb-2">91%</h4>
                 <p className="text-xs font-semibold text-blue-200">Pass rate</p>
-                <p className="text-[10px] text-white/40 mt-2">vs 35% National</p>
+                <p className="text-[14px] text-white/40 mt-2">vs 35% National</p>
               </div>
               <div>
                 <h4 className="text-3xl font-semibold text-blue-400 mb-2">47%</h4>
                 <p className="text-xs font-semibold text-blue-200">A/A* grades</p>
-                <p className="text-[10px] text-white/40 mt-2">vs 18% Traditional</p>
+                <p className="text-[14px] text-white/40 mt-2">vs 18% Traditional</p>
               </div>
               <div>
                 <h4 className="text-3xl font-semibold text-blue-400 mb-2">75%+</h4>
                 <p className="text-xs font-semibold text-blue-200">Retention</p>
-                <p className="text-[10px] text-white/40 mt-2">vs 5-10% Traditional</p>
+                <p className="text-[14px] text-white/40 mt-2">vs 5-10% Traditional</p>
               </div>
             </div>
           </div>
@@ -151,10 +151,10 @@ export default function About() {
               ].map((item, i) => (
                 <Card key={i} className="border border-white rounded-xl shadow-sm hover:shadow-xl transition-all">
                   <CardContent className="p-6">
-                    <span className="text-[10px] font-semibold text-[#2366c9]">Step {item.step}</span>
+                    <span className="text-[14px] font-semibold text-[#2366c9]">Step {item.step}</span>
                     <h4 className="text-xl font-semibold text-[#1e1b4b] mt-1 mb-2">{item.title}</h4>
                     <p className="text-[#1e1b4b]/70 font-medium mb-4">{item.desc}</p>
-                    <p className="text-[10px] text-[#1e1b4b]/30 font-medium">Research: {item.res}</p>
+                    <p className="text-[14px] text-[#1e1b4b]/30 font-medium">Research: {item.res}</p>
                   </CardContent>
                 </Card>
               ))}
@@ -171,10 +171,10 @@ export default function About() {
               ].map((item, i) => (
                 <Card key={i} className="border border-white rounded-xl shadow-sm hover:shadow-xl transition-all">
                   <CardContent className="p-6">
-                    <span className="text-[10px] font-semibold text-[#2366c9]">Step {item.step}</span>
+                    <span className="text-[14px] font-semibold text-[#2366c9]">Step {item.step}</span>
                     <h4 className="text-xl font-semibold text-[#1e1b4b] mt-1 mb-2">{item.title}</h4>
                     <p className="text-[#1e1b4b]/70 font-medium mb-4">{item.desc}</p>
-                    <p className="text-[10px] text-[#1e1b4b]/30 font-medium">Research: {item.res}</p>
+                    <p className="text-[14px] text-[#1e1b4b]/30 font-medium">Research: {item.res}</p>
                   </CardContent>
                 </Card>
               ))}
@@ -225,7 +225,7 @@ export default function About() {
                   {pillar.title}
                 </h3>
                 <p className="text-[#1e1b4b]/70 font-medium mb-6 leading-relaxed">{pillar.text}</p>
-                <p className="text-[10px] text-[#1e1b4b]/30 font-semibold">{pillar.res}</p>
+                <p className="text-[14px] text-[#1e1b4b]/30 font-semibold">{pillar.res}</p>
               </div>
             ))}
           </div>
@@ -246,35 +246,35 @@ export default function About() {
             <div className="space-y-12">
               <div className="space-y-4">
                 <div className="flex justify-between items-end">
-                  <span className="text-sm font-semibold text-[#1e1b4b]">Pass rate</span>
+                  <span className="text-[14px] font-semibold text-[#1e1b4b]">Pass rate</span>
                   <span className="text-2xl font-semibold text-[#2366c9]">91% vs 35%</span>
                 </div>
                 <div className="h-4 bg-white rounded-full overflow-hidden border-2 border-white">
                   <div className="h-full bg-[#2366c9] rounded-full" style={{ width: "91%" }}></div>
                 </div>
-                <p className="text-[10px] font-medium text-[#1e1b4b]/40">↑ 160% improvement over traditional</p>
+                <p className="text-[14px] font-medium text-[#1e1b4b]/40">↑ 160% improvement over traditional</p>
               </div>
 
               <div className="space-y-4">
                 <div className="flex justify-between items-end">
-                  <span className="text-sm font-semibold text-[#1e1b4b]">A/A* achievement</span>
+                  <span className="text-[14px] font-semibold text-[#1e1b4b]">A/A* achievement</span>
                   <span className="text-2xl font-semibold text-[#2366c9]">47% vs 18%</span>
                 </div>
                 <div className="h-4 bg-white rounded-full overflow-hidden border-2 border-white">
                   <div className="h-full bg-[#2366c9] rounded-full" style={{ width: "47%" }}></div>
                 </div>
-                <p className="text-[10px] font-medium text-[#1e1b4b]/40">↑ 161% improvement over traditional</p>
+                <p className="text-[14px] font-medium text-[#1e1b4b]/40">↑ 161% improvement over traditional</p>
               </div>
 
               <div className="space-y-4">
                 <div className="flex justify-between items-end">
-                  <span className="text-sm font-semibold text-[#1e1b4b]">Long-term retention</span>
+                  <span className="text-[14px] font-semibold text-[#1e1b4b]">Long-term retention</span>
                   <span className="text-2xl font-semibold text-[#2366c9]">75% vs 10%</span>
                 </div>
                 <div className="h-4 bg-white rounded-full overflow-hidden border-2 border-white">
                   <div className="h-full bg-[#2366c9] rounded-full" style={{ width: "75%" }}></div>
                 </div>
-                <p className="text-[10px] font-medium text-[#1e1b4b]/40">↑ 7.5× better retention after 6 months</p>
+                <p className="text-[14px] font-medium text-[#1e1b4b]/40">↑ 7.5× better retention after 6 months</p>
               </div>
             </div>
 
@@ -317,7 +317,7 @@ export default function About() {
     {/* Status Tag */}
     <div className="pt-4 flex items-center gap-3">
       <div className="h-2 w-2 rounded-full bg-green-400 animate-pulse"></div>
-      <p className="text-white/90 font-medium text-sm tracking-wide">
+      <p className="text-white/90 font-medium text-[14px] tracking-wide">
         Status: Peer-reviewed and published
       </p>
     </div>
@@ -364,14 +364,14 @@ export default function About() {
                 <h3 className="text-xl font-semibold text-[#1e1b4b] mb-6">{box.title}</h3>
                 <ul className="space-y-4 mb-8">
                   {box.items.map((item, j) => (
-                    <li key={j} className="flex items-start gap-3 text-sm font-medium text-[#1e1b4b]/60">
+                    <li key={j} className="flex items-start gap-3 text-[14px] font-medium text-[#1e1b4b]/60">
                       <div className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5 flex-shrink-0" />
                       {item}
                     </li>
                   ))}
                 </ul>
                 <div className="pt-6 border-t border-blue-100">
-                  <p className="text-[10px] font-medium text-[#2366c9]">Result: {box.result}</p>
+                  <p className="text-[14px] font-medium text-[#2366c9]">Result: {box.result}</p>
                 </div>
               </div>
             ))}
@@ -401,11 +401,11 @@ export default function About() {
               <div key={i} className="p-10 bg-white/5 rounded-[2.5rem] border border-white/10 hover:bg-white/10 transition-all">
                 <div className="flex justify-between items-start mb-4">
                   <span className="text-blue-400 font-black text-xs">{res.year}</span>
-                  <span className="text-white/40 font-black text-[10px] uppercase">{res.author}</span>
+                  <span className="text-white/40 font-black text-[14px] uppercase">{res.author}</span>
                 </div>
                 <h4 className="text-lg font-black uppercase mb-3 text-white">{res.topic}</h4>
-                <p className="text-white/60 text-sm font-medium mb-6 leading-relaxed">{res.desc}</p>
-                <p className="text-[10px] font-black uppercase tracking-widest text-blue-400 border-t border-white/10 pt-4">Applied: {res.apply}</p>
+                <p className="text-white/60 text-[14px] font-medium mb-6 leading-relaxed">{res.desc}</p>
+                <p className="text-[14px] font-black uppercase tracking-widest text-blue-400 border-t border-white/10 pt-4">Applied: {res.apply}</p>
               </div>
             ))}
           </div>
@@ -429,7 +429,7 @@ export default function About() {
               </p>
               <div className="bg-blue-50 p-12 rounded-[3rem] border-l-8 border-[#2366c9] my-12">
                 <p className="text-2xl  text-[#1e1b4b] uppercase tracking-tight mb-4 italic">"The question was simple: If cognitive science has proven what works for decades, why aren't these methods standard?"</p>
-                <p className="text-sm font-semibold uppercase text-[#2366c9]">— Muhammad Benyameen, Founder</p>
+                <p className="text-[14px] font-semibold uppercase text-[#2366c9]">— Muhammad Benyameen, Founder</p>
               </div>
               <p>
                 In 2021, EduMeUp was founded to bridge this gap. We didn't build technology for technology's sake—we built a system where every feature is grounded in research and every outcome is measured rigorously.
@@ -471,7 +471,7 @@ export default function About() {
                   <h4 className="text-xs font-black uppercase text-[#1e1b4b]/40 mb-4 tracking-widest">Students Who</h4>
                   <ul className="space-y-4">
                     {["Are serious about O-Level prep", "Want to reduce tutor dependency", "Struggle with retention", "Have foundation gaps"].map((item, i) => (
-                      <li key={i} className="flex items-center gap-3 text-sm font-medium text-[#1e1b4b]">
+                      <li key={i} className="flex items-center gap-3 text-[14px] font-medium text-[#1e1b4b]">
                         <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
                         {item}
                       </li>
@@ -482,7 +482,7 @@ export default function About() {
                   <h4 className="text-xs font-black uppercase text-[#1e1b4b]/40 mb-4 tracking-widest">Parents Who</h4>
                   <ul className="space-y-4">
                     {["Value research-backed approaches", "Want real-time visibility", "Seek cost-effective alternatives"].map((item, i) => (
-                      <li key={i} className="flex items-center gap-3 text-sm font-medium text-[#1e1b4b]">
+                      <li key={i} className="flex items-center gap-3 text-[14px] font-medium text-[#1e1b4b]">
                         <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
                         {item}
                       </li>
@@ -502,7 +502,7 @@ export default function About() {
                   <h4 className="text-xs font-black uppercase text-[#1e1b4b]/40 mb-4 tracking-widest">Students Who</h4>
                   <ul className="space-y-4">
                     {["Expect instant results without effort", "Won't commit min 3 hours/week", "Want shortcuts to success"].map((item, i) => (
-                      <li key={i} className="flex items-center gap-3 text-sm font-medium text-[#1e1b4b]/60">
+                      <li key={i} className="flex items-center gap-3 text-[14px] font-medium text-[#1e1b4b]/60">
                         <div className="w-1.5 h-1.5 rounded-full bg-red-400" />
                         {item}
                       </li>
@@ -513,7 +513,7 @@ export default function About() {
                   <h4 className="text-xs font-black uppercase text-[#1e1b4b]/40 mb-4 tracking-widest">Schools That</h4>
                   <ul className="space-y-4">
                     {["Won't implement systematically", "Expect tech to replace teachers", "Avoid data-driven decisions"].map((item, i) => (
-                      <li key={i} className="flex items-center gap-3 text-sm font-medium text-[#1e1b4b]/60">
+                      <li key={i} className="flex items-center gap-3 text-[14px] font-medium text-[#1e1b4b]/60">
                         <div className="w-1.5 h-1.5 rounded-full bg-red-400" />
                         {item}
                       </li>
@@ -533,10 +533,10 @@ export default function About() {
             <h2 className="text-3xl font-black mb-12 uppercase tracking-tighter text-white ">Transparency Builds Trust</h2>
             <div className="grid md:grid-cols-2 gap-12">
               <div className="space-y-6">
-                <h4 className="text-blue-400 font-black uppercase text-sm tracking-widest">What We Are</h4>
+                <h4 className="text-blue-400 font-black uppercase text-[14px] tracking-widest">What We Are</h4>
                 <ul className="space-y-3">
                   {["Systematic & research-validated", "Stakeholder support system", "Data-proven results", "Cost-effective"].map((item, i) => (
-                    <li key={i} className="text-sm font-medium text-white/80 flex items-center gap-3">
+                    <li key={i} className="text-[14px] font-medium text-white/80 flex items-center gap-3">
                       <div className="w-1 h-1 rounded-full bg-blue-400" />
                       {item}
                     </li>
@@ -544,10 +544,10 @@ export default function About() {
                 </ul>
               </div>
               <div className="space-y-6">
-                <h4 className="text-red-400 font-black uppercase text-sm tracking-widest">What We Are Not</h4>
+                <h4 className="text-red-400 font-black uppercase text-[14px] tracking-widest">What We Are Not</h4>
                 <ul className="space-y-3">
                   {["Not a teacher replacement", "Not an instant miracle", "Not a shortcut provider", "Not yet for every curriculum"].map((item, i) => (
-                    <li key={i} className="text-sm font-medium text-white/60 flex items-center gap-3">
+                    <li key={i} className="text-[14px] font-medium text-white/60 flex items-center gap-3">
                       <div className="w-1 h-1 rounded-full bg-red-400" />
                       {item}
                     </li>

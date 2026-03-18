@@ -63,7 +63,7 @@ export default function Resources() {
                     "Expert Roadmaps",
                     "Diagnostic Test Samples"
                   ].map((item, i) => (
-                    <li key={i} className="flex items-center gap-4 text-sm font-medium text-white/80">
+                    <li key={i} className="flex items-center gap-4 text-[14px] font-medium text-white/80">
                       <CheckCircle2 className="h-5 w-5 text-green-400" /> {item}
                     </li>
                   ))}
@@ -150,7 +150,7 @@ export default function Resources() {
                  ].map((step, i) => (
                    <div key={i} className="flex items-center gap-4 p-6 bg-white rounded-2xl border-2 border-blue-100 shadow-sm">
                      <div className="h-10 w-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold">{i+1}</div>
-                     <span className="font-semibold text-[#1e1b4b] text-sm">{step}</span>
+                     <span className="font-semibold text-[#1e1b4b] text-[14px]">{step}</span>
                    </div>
                  ))}
                </div>
@@ -284,7 +284,7 @@ export default function Resources() {
                       "Understanding Cambridge Reports"
                     ].map((guide, i) => (
                       <div key={i} className="flex items-center justify-between p-6 bg-white/5 rounded-2xl hover:bg-white/10 transition-all group">
-                         <span className="font-medium text-sm">{guide}</span>
+                         <span className="font-medium text-[14px]">{guide}</span>
                          <Button variant="ghost" className="text-blue-400 hover:text-white p-0 h-auto">
                             <Download className="h-6 w-6" />
                          </Button>
@@ -325,7 +325,7 @@ export default function Resources() {
                 { f: "Spaced Repetition", free: "✕", paid: "Automated System" },
                 { f: "Adaptive Difficulty", free: "✕", paid: "AI-Driven" }
               ].map((row, i) => (
-                <div key={i} className={`grid grid-cols-3 p-10 border-b-2 border-blue-50 font-semibold uppercase text-sm ${i % 2 === 0 ? 'bg-white' : 'bg-blue-50/20'}`}>
+                <div key={i} className={`grid grid-cols-3 p-10 border-b-2 border-blue-50 font-semibold uppercase text-[14px] ${i % 2 === 0 ? 'bg-white' : 'bg-blue-50/20'}`}>
                    <div className="text-[#1e1b4b]">{row.f}</div>
                    <div className="text-center text-[#1e1b4b]/40">{row.free}</div>
                    <div className="text-center text-[#2366c9] font-semibold">{row.paid}</div>

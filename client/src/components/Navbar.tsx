@@ -88,10 +88,10 @@ export function Navbar() {
               <Link key={link.href} href={link.href}>
                 <div
                   title={link.label}
-                  className={`flex items-center gap-1.5 px-3 py-2 text-sm font-medium transition-colors rounded-lg whitespace-nowrap ${
+                  className={`flex items-center gap-1.5 px-3 py-2 text-[14px] font-medium transition-colors rounded-lg whitespace-nowrap ${
                     isActive(link.href)
                       ? "bg-blue-50 text-[#2366c9]"
-                      : "text-slate-600 hover:text-slate-900"
+                      : "text-black hover:text-slate-900"
                   }`}
                 >
                   <link.icon className="h-4 w-4 shrink-0" />
@@ -106,10 +106,10 @@ export function Navbar() {
                   <button
                     type="button"
                     title={group.label}
-                    className={`flex items-center gap-1.5 px-3 py-2 text-sm font-medium transition-colors rounded-lg whitespace-nowrap ${
+                    className={`flex items-center gap-1.5 px-3 py-2 text-[14px] font-medium transition-colors rounded-lg whitespace-nowrap ${
                       isGroupActive(group.children)
                         ? "bg-blue-50 text-[#2366c9]"
-                        : "text-slate-600 hover:text-slate-900"
+                        : "text-black hover:text-slate-900"
                     }`}
                   >
                     <group.icon className="h-4 w-4 shrink-0" />
@@ -180,7 +180,7 @@ export function Navbar() {
                   onClick={() => setIsOpen(false)}
                 >
                   <div
-                    className={`flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium transition-colors hover:bg-muted ${
+                    className={`flex items-center gap-2 rounded-lg px-4 py-3 text-[14px] font-medium transition-colors hover:bg-muted ${
                       isActive(link.href) ? "bg-primary/10 text-primary" : ""
                     }`}
                   >
@@ -192,7 +192,7 @@ export function Navbar() {
 
               {groupedLinks.map((group) => (
                 <div key={group.label} className="space-y-1">
-                  <div className="px-4 py-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                  <div className="px-4 py-2 text-xs font-semibold text-black uppercase tracking-wider">
                     {group.label}
                   </div>
                   {group.children.map((child) => (
@@ -202,7 +202,7 @@ export function Navbar() {
                       onClick={() => setIsOpen(false)}
                     >
                       <div
-                        className={`flex items-center gap-2 rounded-lg px-8 py-3 text-sm font-medium transition-colors hover:bg-muted ${
+                        className={`flex items-center gap-2 rounded-lg px-8 py-3 text-[14px] font-medium transition-colors hover:bg-muted ${
                           isActive(child.href) ? "bg-primary/10 text-primary" : ""
                         }`}
                       >
@@ -214,7 +214,7 @@ export function Navbar() {
                 </div>
               ))}
               <Link href="/cart" onClick={() => setIsOpen(false)}>
-                <div className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium transition-colors hover:bg-muted">
+                <div className="flex items-center gap-2 rounded-lg px-4 py-3 text-[14px] font-medium transition-colors hover:bg-muted">
                   <ShoppingCart className="h-4 w-4" />
                   Cart ({items.length})
                 </div>

@@ -77,7 +77,7 @@
   }
 
   p {
-    @apply text-base text-slate-600 leading-relaxed;
+    @apply text-base text-black leading-relaxed;
   }
 
   /* Utility classes for text styles */
@@ -94,19 +94,19 @@
   }
 
   .text-body-lg {
-    @apply text-lg text-slate-600 leading-relaxed;
+    @apply text-lg text-black leading-relaxed;
   }
 
   .text-body {
-    @apply text-base text-slate-600 leading-relaxed;
+    @apply text-base text-black leading-relaxed;
   }
 
   .text-body-sm {
-    @apply text-sm text-slate-500 leading-relaxed;
+    @apply text-[14px] text-black leading-relaxed;
   }
 
   .text-label {
-    @apply text-xs font-medium text-slate-600 tracking-wider uppercase;
+    @apply text-xs font-medium text-black tracking-wider uppercase;
   }
 
   /* Premium container */

@@ -254,7 +254,7 @@ export default function ForStudents() {
             <p className="text-lg md:text-xl text-blue-100 font-medium leading-relaxed max-w-4xl mx-auto mb-4">
               You do not need more tuition, more notes, or more late nights. You need the right system, strategy, and feedback.
             </p>
-            <p className="text-sm md:text-base text-blue-200/90 font-semibold mb-10">
+            <p className="text-[14px] md:text-base text-blue-200/90 font-semibold mb-10">
               Designed for O-Level and IGCSE students — Cambridge-aligned, research-backed, built for how your brain actually learns.
             </p>
 
@@ -269,8 +269,8 @@ export default function ForStudents() {
                 <tbody>
                   {notWorkingVsEdu.map((row, i) => (
                     <tr key={i} className="border-b border-white/5 last:border-0">
-                      <td className="p-3 text-sm text-blue-100/80 font-semibold">{row[0]}</td>
-                      <td className="p-3 text-sm text-white font-semibold">{row[1]}</td>
+                      <td className="p-3 text-[14px] text-blue-100/80 font-semibold">{row[0]}</td>
+                      <td className="p-3 text-[14px] text-white font-semibold">{row[1]}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -280,7 +280,7 @@ export default function ForStudents() {
             <p className="text-blue-200 font-semibold mb-8">The earlier you start, the stronger your foundation.</p>
             <div className="flex flex-wrap justify-center gap-2 mb-8">
               {["45,000+ Practice Questions", "Past Papers 2010–2025", "80% Mastery Gates", "ATP Pathway to 38–40/40"].map((signal, i) => (
-                <span key={i} className="px-3 py-1 rounded-full border border-blue-300/30 bg-blue-500/10 text-[10px] md:text-xs font-semibold uppercase tracking-wide text-blue-100">
+                <span key={i} className="px-3 py-1 rounded-full border border-blue-300/30 bg-blue-500/10 text-[14px] md:text-xs font-semibold uppercase tracking-wide text-blue-100">
                   {signal}
                 </span>
               ))}
@@ -326,16 +326,16 @@ export default function ForStudents() {
                       <item.icon className="h-6 w-6 text-[#2366c9]" />
                     </div>
                     <div>
-                      <p className="text-[10px] font-semibold uppercase tracking-widest text-blue-600 mb-1">Struggle #{index + 1}</p>
+                      <p className="text-[14px] font-semibold uppercase tracking-widest text-blue-600 mb-1">Struggle #{index + 1}</p>
                       <h3 className="text-2xl font-semibold text-[#1e1b4b]">{item.title}</h3>
                     </div>
                   </div>
 
                   <p className="text-[#1e1b4b]/70 font-medium mb-3"><span className="font-semibold text-[#1e1b4b]">Why this happens:</span> {item.why}</p>
-                  <p className="text-sm italic text-[#1e1b4b]/60 font-semibold mb-3">“{item.quote}”</p>
+                  <p className="text-[14px] italic text-[#1e1b4b]/60 font-semibold mb-3">“{item.quote}”</p>
                   <div className="space-y-2 mb-4">
                     {item.solution.map((point, i) => (
-                      <div key={i} className="flex items-start gap-3 text-sm text-[#1e1b4b]/80 font-semibold">
+                      <div key={i} className="flex items-start gap-3 text-[14px] text-[#1e1b4b]/80 font-semibold">
                         <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 shrink-0" />
                         <span>{point}</span>
                       </div>
@@ -368,14 +368,14 @@ export default function ForStudents() {
                   ["Tutor dependency", "High", "Significantly reduced"],
                 ].map((row, i) => (
                   <tr key={i} className="border-b border-white/5 last:border-0">
-                    <td className="py-3 text-sm font-semibold text-blue-100">{row[0]}</td>
-                    <td className="py-3 text-sm font-semibold text-blue-200/80">{row[1]}</td>
-                    <td className="py-3 text-sm font-semibold text-white">{row[2]}</td>
+                    <td className="py-3 text-[14px] font-semibold text-blue-100">{row[0]}</td>
+                    <td className="py-3 text-[14px] font-semibold text-blue-200/80">{row[1]}</td>
+                    <td className="py-3 text-[14px] font-semibold text-white">{row[2]}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            <p className="mt-4 text-[10px] text-blue-200/70 font-semibold">Based on pilot programme data. Individual outcomes vary by starting point and consistency.</p>
+            <p className="mt-4 text-[14px] text-blue-200/70 font-semibold">Based on pilot programme data. Individual outcomes vary by starting point and consistency.</p>
           </div>
         </div>
       </section>
@@ -390,7 +390,7 @@ export default function ForStudents() {
             {skills.map((skill, i) => (
               <Card key={i} className="bg-white border-2 border-blue-100 rounded-2xl">
                 <CardContent className="p-6">
-                  <p className="text-[10px] font-semibold uppercase text-blue-600 tracking-widest mb-2">Skill {i + 1}</p>
+                  <p className="text-[14px] font-semibold uppercase text-blue-600 tracking-widest mb-2">Skill {i + 1}</p>
                   <h3 className="text-lg font-semibold text-[#1e1b4b] mb-2">{skill.title}</h3>
                   <p className="text-xs text-[#1e1b4b]/70 font-medium mb-2"><span className="text-[#1e1b4b] font-semibold">Why it matters:</span> {skill.why}</p>
                   <p className="text-xs text-[#2366c9] font-medium"><span className="font-semibold">How EduMeUp builds it:</span> {skill.how}</p>
@@ -419,17 +419,17 @@ export default function ForStudents() {
               <Card key={i} className="border-2 border-blue-50 rounded-[2rem]">
                 <CardHeader className="pb-2">
                   <h3 className="text-xl font-semibold text-[#1e1b4b]">{path.title}</h3>
-                  <p className="text-sm text-[#1e1b4b]/60 font-semibold">{path.profile}</p>
+                  <p className="text-[14px] text-[#1e1b4b]/60 font-semibold">{path.profile}</p>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2 mb-4">
                     {path.route.map((step, stepIndex) => (
-                      <p key={stepIndex} className="text-sm text-[#1e1b4b]/80 font-semibold">
+                      <p key={stepIndex} className="text-[14px] text-[#1e1b4b]/80 font-semibold">
                         {stepIndex + 1}. {step}
                       </p>
                     ))}
                   </div>
-                  <p className="text-[#2366c9] font-semibold text-sm">{path.expected}</p>
+                  <p className="text-[#2366c9] font-semibold text-[14px]">{path.expected}</p>
                 </CardContent>
               </Card>
             ))}
@@ -456,8 +456,8 @@ export default function ForStudents() {
                 <CardContent className="p-6">
                   <p className="text-xs font-semibold uppercase tracking-widest text-blue-600 mb-1">{month.phase}</p>
                   <h3 className="text-xl font-semibold text-[#1e1b4b] mb-2">{month.title}</h3>
-                  <p className="text-[#1e1b4b]/70 font-medium text-sm mb-2"><span className="font-semibold text-[#1e1b4b]">What you'll feel:</span> {month.feel}</p>
-                  <p className="text-[#2366c9] font-semibold text-sm">{month.measurable}</p>
+                  <p className="text-[#1e1b4b]/70 font-medium text-[14px] mb-2"><span className="font-semibold text-[#1e1b4b]">What you'll feel:</span> {month.feel}</p>
+                  <p className="text-[#2366c9] font-semibold text-[14px]">{month.measurable}</p>
                 </CardContent>
               </Card>
             ))}
@@ -465,7 +465,7 @@ export default function ForStudents() {
 
           <div className="mt-12 bg-white border-2 border-blue-100 rounded-[2rem] p-8">
             <h3 className="text-2xl font-semibold text-[#1e1b4b] mb-4">Composite student journeys</h3>
-            <div className="space-y-4 text-sm text-[#1e1b4b]/80 font-semibold">
+            <div className="space-y-4 text-[14px] text-[#1e1b4b]/80 font-semibold">
               <p><span className="text-[#2366c9] font-semibold">ATP improvement case:</span> A student starting near 22/40 in ATP Chemistry moved to 35–38/40 in mock conditions through structured ATP training and past-paper strategy.</p>
               <p><span className="text-[#2366c9] font-semibold">English structure case:</span> A student struggling with essay structure reached A-grade performance after framework-driven writing practice and feedback cycles.</p>
               <p><span className="text-[#2366c9] font-semibold">Emergency prep case:</span> A student with D grades across multiple subjects used risk-based triage and high-yield planning to pass all subjects within 14 weeks.</p>
@@ -480,10 +480,10 @@ export default function ForStudents() {
             <h2 className="text-4xl md:text-5xl font-semibold text-[#1e1b4b] mb-4">Is EduMeUp Right for You?</h2>
           </div>
           <div className="grid md:grid-cols-2 gap-6">
-            <Card className="border-2 border-green-100 rounded-2xl bg-green-50/40">
+            <Card className="border-[#2366c9]  border-2 border-2 border-green-100 rounded-2xl bg-green-50/40">
               <CardContent className="p-6">
                 <h3 className="text-xl font-semibold text-green-700 mb-4 flex items-center gap-2"><CheckCircle2 className="h-5 w-5" />EduMeUp works best if you</h3>
-                <ul className="space-y-2 text-sm font-semibold text-[#1e1b4b]/80">
+                <ul className="space-y-2 text-[14px] font-semibold text-[#1e1b4b]/80">
                   <li>• Are willing to practice actively</li>
                   <li>• Want conceptual understanding, not memorization only</li>
                   <li>• Can follow a structured system consistently</li>
@@ -492,10 +492,10 @@ export default function ForStudents() {
                 </ul>
               </CardContent>
             </Card>
-            <Card className="border-2 border-red-100 rounded-2xl bg-red-50/40">
+            <Card className="border-[#2366c9]  border-2 border-2 border-red-100 rounded-2xl bg-red-50/40">
               <CardContent className="p-6">
                 <h3 className="text-xl font-semibold text-red-700 mb-4 flex items-center gap-2"><AlertTriangle className="h-5 w-5" />Not ideal if you</h3>
-                <ul className="space-y-2 text-sm font-semibold text-[#1e1b4b]/80">
+                <ul className="space-y-2 text-[14px] font-semibold text-[#1e1b4b]/80">
                   <li>• Want shortcuts without effort</li>
                   <li>• Prefer direct answers without thinking</li>
                   <li>• Do not want a structured process</li>
@@ -515,11 +515,11 @@ export default function ForStudents() {
           </div>
 
           <div className="grid lg:grid-cols-3 gap-6 mb-10">
-            <Card className="border-2 border-blue-200 rounded-[2rem] bg-white shadow-sm">
+            <Card className="border-[#2366c9]  border-2 border-2 border-blue-200 rounded-[2rem] bg-white shadow-sm">
               <CardContent className="p-7">
                 <p className="text-xs font-semibold uppercase tracking-widest text-blue-600 mb-2">Recommended</p>
                 <h3 className="text-2xl font-semibold text-[#1e1b4b] mb-3">Explore Free Library</h3>
-                <p className="text-sm text-[#1e1b4b]/70 font-semibold mb-4">Permanent free access to sample lessons, ATP previews, essay frameworks, worked examples, and platform walkthroughs.</p>
+                <p className="text-[14px] text-[#1e1b4b]/70 font-semibold mb-4">Permanent free access to sample lessons, ATP previews, essay frameworks, worked examples, and platform walkthroughs.</p>
                 <p className="text-[11px] text-[#1e1b4b]/50 font-semibold mb-4">No time limit • Free account to save progress</p>
                 <Link href="/resources">
                   <Button className="w-full bg-[#2366c9] hover:bg-blue-500 font-semibold">
@@ -529,11 +529,11 @@ export default function ForStudents() {
               </CardContent>
             </Card>
 
-            <Card className="border-2 border-blue-100 rounded-[2rem] bg-white shadow-sm">
+            <Card className="border-[#2366c9]  border-2 border-2 border-blue-100 rounded-[2rem] bg-white shadow-sm">
               <CardContent className="p-7">
                 <p className="text-xs font-semibold uppercase tracking-widest text-blue-600 mb-2">Option 2</p>
                 <h3 className="text-2xl font-semibold text-[#1e1b4b] mb-3">Free Diagnostic Assessment</h3>
-                <p className="text-sm text-[#1e1b4b]/70 font-semibold mb-4">30–40 minute test with topic-level gap analysis and personalized roadmap.</p>
+                <p className="text-[14px] text-[#1e1b4b]/70 font-semibold mb-4">30–40 minute test with topic-level gap analysis and personalized roadmap.</p>
                 <InquiryDialog
                   defaultType="diagnostic"
                   title="Take Free Diagnostic Assessment"
@@ -542,12 +542,12 @@ export default function ForStudents() {
               </CardContent>
             </Card>
 
-            <Card className="border-2 border-blue-100 rounded-[2rem] bg-white shadow-sm">
+            <Card className="border-[#2366c9]  border-2 border-2 border-blue-100 rounded-[2rem] bg-white shadow-sm">
               <CardContent className="p-7">
                 <p className="text-xs font-semibold uppercase tracking-widest text-blue-600 mb-2">Option 3</p>
                 <h3 className="text-2xl font-semibold text-[#1e1b4b] mb-3">Speak With Our Team</h3>
-                <p className="text-sm text-[#1e1b4b]/70 font-semibold mb-4">Discuss your subjects, timeline, and concerns with zero pressure.</p>
-                <p className="text-sm font-semibold text-[#1e1b4b] mb-4">Available 9 AM – 9 PM Pakistan Time</p>
+                <p className="text-[14px] text-[#1e1b4b]/70 font-semibold mb-4">Discuss your subjects, timeline, and concerns with zero pressure.</p>
+                <p className="text-[14px] font-semibold text-[#1e1b4b] mb-4">Available 9 AM – 9 PM Pakistan Time</p>
                 <Button variant="outline" className="w-full border-blue-200 text-[#1e1b4b] hover:bg-blue-50 font-semibold">
                   <MessageCircle className="h-4 w-4 mr-2" /> Contact Support Team
                 </Button>
@@ -558,7 +558,7 @@ export default function ForStudents() {
           <div className="bg-[#1e1b4b] rounded-[2rem] p-8 text-white">
             <p className="text-xs font-semibold uppercase tracking-widest text-blue-300 mb-2">March 2026 launch offer</p>
             <h3 className="text-2xl font-semibold text-white mb-4">Enroll within 30 days and receive</h3>
-            <div className="grid md:grid-cols-2 gap-3 text-sm font-semibold text-blue-100">
+            <div className="grid md:grid-cols-2 gap-3 text-[14px] font-semibold text-blue-100">
               <p>• 25% off all programmes</p>
               <p>• Free diagnostic assessment included</p>
               <p>• Free parent orientation session</p>
@@ -577,7 +577,7 @@ export default function ForStudents() {
               <Card key={i} className="bg-white border border-blue-100 rounded-2xl">
                 <CardContent className="p-6">
                   <h4 className="text-base font-semibold text-[#1e1b4b] mb-2">{faq[0]}</h4>
-                  <p className="text-sm text-[#1e1b4b]/70 font-semibold">{faq[1]}</p>
+                  <p className="text-[14px] text-[#1e1b4b]/70 font-semibold">{faq[1]}</p>
                 </CardContent>
               </Card>
             ))}

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 export default function NotFound() {
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 p-4">
-      <Card className="w-full max-w-md mx-auto text-center shadow-lg border-0">
+      <Card className="border-[#2366c9]  border-2 w-full max-w-md mx-auto text-center shadow-lg border-0">
         <CardContent className="pt-12 pb-12">
           <div className="mb-6 flex justify-center">
             <AlertCircle className="h-16 w-16 text-[#2366c9] opacity-80" />

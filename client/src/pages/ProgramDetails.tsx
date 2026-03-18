@@ -60,7 +60,7 @@ export default function ProgramDetails() {
               animate={{ opacity: 1, y: 0 }}
               className="bg-white p-12 rounded-[4rem] border-[10px] border-blue-900/50 min-w-[380px] shadow-2xl relative overflow-hidden group"
             >
-              <div className="absolute top-0 right-0 bg-[#2366c9] text-white font-semibold text-[10px] px-8 py-3 rounded-bl-3xl uppercase tracking-widest">Pricing</div>
+              <div className="absolute top-0 right-0 bg-[#2366c9] text-white font-semibold text-[14px] px-8 py-3 rounded-bl-3xl uppercase tracking-widest">Pricing</div>
               <div className="text-5xl font-medium mb-2 text-[#1e1b4b] tracking-tighter leading-none">
                 {program.price ? `$${(program.price / 100).toFixed(2)}` : "Enquire"}
               </div>
@@ -105,7 +105,7 @@ export default function ProgramDetails() {
                     <div className="h-12 w-12 bg-white rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                       <ShieldCheck className="h-6 w-6 text-[#2366c9]" />
                     </div>
-                    <span className="text-[#1e1b4b] font-semibold uppercase text-sm tracking-widest leading-tight">{feature}</span>
+                    <span className="text-[#1e1b4b] font-semibold uppercase text-[14px] tracking-widest leading-tight">{feature}</span>
                   </motion.div>
                 ))}
               </div>
@@ -123,7 +123,7 @@ export default function ProgramDetails() {
                     <Calendar className="h-6 w-6 text-blue-400" />
                   </div>
                   <div>
-                    <p className="text-blue-400 font-semibold uppercase text-[10px] tracking-widest">Next Intake</p>
+                    <p className="text-blue-400 font-semibold uppercase text-[14px] tracking-widest">Next Intake</p>
                     <p className="font-semibold text-lg uppercase tracking-tight">September 2024</p>
                   </div>
                 </li>
@@ -132,7 +132,7 @@ export default function ProgramDetails() {
                     <Clock className="h-6 w-6 text-blue-400" />
                   </div>
                   <div>
-                    <p className="text-blue-400 font-semibold uppercase text-[10px] tracking-widest">Duration</p>
+                    <p className="text-blue-400 font-semibold uppercase text-[14px] tracking-widest">Duration</p>
                     <p className="font-semibold text-lg uppercase tracking-tight">6-Month Intensive</p>
                   </div>
                 </li>
@@ -141,7 +141,7 @@ export default function ProgramDetails() {
                     <Award className="h-6 w-6 text-blue-400" />
                   </div>
                   <div>
-                    <p className="text-blue-400 font-semibold uppercase text-[10px] tracking-widest">Certification</p>
+                    <p className="text-blue-400 font-semibold uppercase text-[14px] tracking-widest">Certification</p>
                     <p className="font-semibold text-lg uppercase tracking-tight">Mastery Document</p>
                   </div>
                 </li>
@@ -156,7 +156,7 @@ export default function ProgramDetails() {
                 defaultType="contact"
                 title="Academic Consultation"
                 trigger={
-                  <Button className="w-full bg-[#1e1b4b] hover:bg-black font-semibold h-20 rounded-2xl text-sm uppercase tracking-widest shadow-2xl active:scale-95 transition-all border-b-4 border-blue-900">
+                  <Button className="w-full bg-[#1e1b4b] hover:bg-black font-semibold h-20 rounded-2xl text-[14px] uppercase tracking-widest shadow-2xl active:scale-95 transition-all border-b-4 border-blue-900">
                     TALK TO EXPERT 
                   </Button>
                 }

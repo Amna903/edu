@@ -495,7 +495,7 @@ export function TutorApplicationForm() {
         
         <div className="grid gap-4">
           <div className="flex flex-col gap-1">
-            <label htmlFor="fullName" className="text-sm font-semibold text-gray-700">Full Name</label>
+            <label htmlFor="fullName" className="text-[14px] font-semibold text-gray-700">Full Name</label>
             <input 
               id="fullName" 
               type="text" 
@@ -507,7 +507,7 @@ export function TutorApplicationForm() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="dateOfBirth" className="text-sm font-semibold text-gray-700">Date of Birth</label>
+            <label htmlFor="dateOfBirth" className="text-[14px] font-semibold text-gray-700">Date of Birth</label>
             <input 
               id="dateOfBirth" 
               type="date" 
@@ -519,7 +519,7 @@ export function TutorApplicationForm() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="email" className="text-sm font-semibold text-gray-700">Email Address</label>
+            <label htmlFor="email" className="text-[14px] font-semibold text-gray-700">Email Address</label>
             <input 
               id="email" 
               type="email" 
@@ -531,7 +531,7 @@ export function TutorApplicationForm() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="phone" className="text-sm font-semibold text-gray-700">Phone Number</label>
+            <label htmlFor="phone" className="text-[14px] font-semibold text-gray-700">Phone Number</label>
             <input 
               id="phone" 
               type="tel" 
@@ -543,7 +543,7 @@ export function TutorApplicationForm() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="country" className="text-sm font-semibold text-gray-700">Country</label>
+            <label htmlFor="country" className="text-[14px] font-semibold text-gray-700">Country</label>
             <input 
               id="country" 
               type="text" 
@@ -556,7 +556,7 @@ export function TutorApplicationForm() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="city" className="text-sm font-semibold text-gray-700">City</label>
+            <label htmlFor="city" className="text-[14px] font-semibold text-gray-700">City</label>
             <input 
               id="city" 
               type="text" 
@@ -569,7 +569,7 @@ export function TutorApplicationForm() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="timezone" className="text-sm font-semibold text-gray-700">Time Zone</label>
+            <label htmlFor="timezone" className="text-[14px] font-semibold text-gray-700">Time Zone</label>
             <input 
               id="timezone" 
               type="text" 
@@ -589,7 +589,7 @@ export function TutorApplicationForm() {
 
         <div className="grid gap-4">
           <div className="flex flex-col gap-1">
-            <label htmlFor="educationQualification" className="text-sm font-semibold text-gray-700">Education / Qualification</label>
+            <label htmlFor="educationQualification" className="text-[14px] font-semibold text-gray-700">Education / Qualification</label>
             <input
               id="educationQualification"
               type="text"
@@ -602,7 +602,7 @@ export function TutorApplicationForm() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="degree" className="text-sm font-semibold text-gray-700">Bachelor's Degree</label>
+            <label htmlFor="degree" className="text-[14px] font-semibold text-gray-700">Bachelor's Degree</label>
             <input 
               id="degree" 
               type="text" 
@@ -615,7 +615,7 @@ export function TutorApplicationForm() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="degreeField" className="text-sm font-semibold text-gray-700">Subject of Expertise</label>
+            <label htmlFor="degreeField" className="text-[14px] font-semibold text-gray-700">Subject of Expertise</label>
             <input 
               id="degreeField" 
               type="text" 
@@ -628,7 +628,7 @@ export function TutorApplicationForm() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="yearsExp" className="text-sm font-semibold text-gray-700">Years Cambridge/O-Level Experience</label>
+            <label htmlFor="yearsExp" className="text-[14px] font-semibold text-gray-700">Years Cambridge/O-Level Experience</label>
             <input 
               id="yearsExp" 
               type="number" 
@@ -641,7 +641,7 @@ export function TutorApplicationForm() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="certifications" className="text-sm font-semibold text-gray-700">Additional Certifications</label>
+            <label htmlFor="certifications" className="text-[14px] font-semibold text-gray-700">Additional Certifications</label>
             <input 
               id="certifications" 
               type="text" 
@@ -653,7 +653,7 @@ export function TutorApplicationForm() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="hourlyRate" className="text-sm font-semibold text-gray-700">Desired Hourly Rate (USD)</label>
+            <label htmlFor="hourlyRate" className="text-[14px] font-semibold text-gray-700">Desired Hourly Rate (USD)</label>
             <input 
               id="hourlyRate" 
               type="text" 
@@ -672,7 +672,7 @@ export function TutorApplicationForm() {
         <h3 className="font-semibold text-lg text-blue-900 border-b pb-2">Part 3 — Subjects & Grade Levels</h3>
 
         <div>
-          <label className="text-sm font-semibold text-gray-700 mb-2 block">Subject(s) They Can Teach</label>
+          <label className="text-[14px] font-semibold text-gray-700 mb-2 block">Subject(s) They Can Teach</label>
           <div className="grid grid-cols-2 gap-2">
             {["Mathematics", "Physics", "Chemistry", "Biology", "English Language", "Economics", "Business Studies", "Computer Science"].map((subject) => (
               <label key={subject} className="flex items-center gap-2">
@@ -694,7 +694,7 @@ export function TutorApplicationForm() {
         </div>
 
         <div>
-          <label className="text-sm font-semibold text-gray-700 mb-2 block">Grade Levels You Teach</label>
+          <label className="text-[14px] font-semibold text-gray-700 mb-2 block">Grade Levels You Teach</label>
           <div className="grid grid-cols-2 gap-2">
             {["Grade 4", "Grade 5", "Grade 6", "Grade 7", "Grade 8", "Pre-O-Level", "O-Level", "A-Level"].map((grade) => (
               <label key={grade} className="flex items-center gap-2">
@@ -716,7 +716,7 @@ export function TutorApplicationForm() {
         </div>
 
         <div>
-          <label className="text-sm font-semibold text-gray-700 mb-2 block">Teaching Level</label>
+          <label className="text-[14px] font-semibold text-gray-700 mb-2 block">Teaching Level</label>
           <div className="space-y-2">
             {["O-Level", "IGCSE"].map((level) => (
               <label key={level} className="flex items-center gap-2">
@@ -740,7 +740,7 @@ export function TutorApplicationForm() {
         <h3 className="font-semibold text-lg text-blue-900 border-b pb-2">Part 4 — Teaching Mode & Languages</h3>
 
         <div>
-          <label className="text-sm font-semibold text-gray-700 mb-2 block">Teaching Mode</label>
+          <label className="text-[14px] font-semibold text-gray-700 mb-2 block">Teaching Mode</label>
           <div className="space-y-2">
             {["Online", "Physical"].map((mode) => (
               <label key={mode} className="flex items-center gap-2">
@@ -759,7 +759,7 @@ export function TutorApplicationForm() {
         </div>
 
         <div>
-          <label className="text-sm font-semibold text-gray-700 mb-2 block">Languages You Speak</label>
+          <label className="text-[14px] font-semibold text-gray-700 mb-2 block">Languages You Speak</label>
           <div className="grid grid-cols-2 gap-2">
             {["English", "Urdu", "Arabic", "French", "Spanish", "Mandarin"].map((lang) => (
               <label key={lang} className="flex items-center gap-2">
@@ -781,7 +781,7 @@ export function TutorApplicationForm() {
         </div>
 
         <div className="flex flex-col gap-1">
-          <label htmlFor="availability" className="text-sm font-semibold text-gray-700">Availability</label>
+          <label htmlFor="availability" className="text-[14px] font-semibold text-gray-700">Availability</label>
           <select 
             id="availability"
             className="p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
@@ -802,7 +802,7 @@ export function TutorApplicationForm() {
         <h3 className="font-semibold text-lg text-blue-900 border-b pb-2 mb-4">Part 5 — Digital Skills (Rate 1-5)</h3>
         {Object.keys(formData.digitalSkills).map(skill => (
           <div key={skill} className="flex items-center justify-between mb-3">
-            <label htmlFor={`skill-${skill}`} className="text-sm font-medium capitalize">
+            <label htmlFor={`skill-${skill}`} className="text-[14px] font-medium capitalize">
               {skill.replace(/([A-Z])/g, " $1")}
             </label>
             <input 
@@ -824,7 +824,7 @@ export function TutorApplicationForm() {
         
         <div className="grid gap-4">
           <div className="flex flex-col gap-1">
-            <label htmlFor="refName" className="text-sm font-semibold text-gray-700">Reference Name</label>
+            <label htmlFor="refName" className="text-[14px] font-semibold text-gray-700">Reference Name</label>
             <input 
               id="refName" 
               type="text" 
@@ -837,7 +837,7 @@ export function TutorApplicationForm() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="refEmail" className="text-sm font-semibold text-gray-700">Reference Email</label>
+            <label htmlFor="refEmail" className="text-[14px] font-semibold text-gray-700">Reference Email</label>
             <input 
               id="refEmail" 
               type="email" 
@@ -849,7 +849,7 @@ export function TutorApplicationForm() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="refPhone" className="text-sm font-semibold text-gray-700">Reference Phone</label>
+            <label htmlFor="refPhone" className="text-[14px] font-semibold text-gray-700">Reference Phone</label>
             <input 
               id="refPhone" 
               type="tel" 
@@ -868,39 +868,39 @@ export function TutorApplicationForm() {
         
         <div className="flex flex-col gap-3">
           <div>
-            <label htmlFor="cv-upload" className="block text-sm font-semibold mb-1">CV / Resume (PDF)</label>
+            <label htmlFor="cv-upload" className="block text-[14px] font-semibold mb-1">CV / Resume (PDF)</label>
             <input 
               id="cv-upload" 
               type="file" 
               accept=".pdf,.doc,.docx"
               title="Select your CV file"
-              className="text-sm w-full"
+              className="text-[14px] w-full"
               onChange={e => handleNestedChange("uploads", "cv", e.target.files?.[0])} 
               required
             />
           </div>
 
           <div>
-            <label htmlFor="degree-upload" className="block text-sm font-semibold mb-1">Degree Certificate (PDF/Image)</label>
+            <label htmlFor="degree-upload" className="block text-[14px] font-semibold mb-1">Degree Certificate (PDF/Image)</label>
             <input 
               id="degree-upload" 
               type="file" 
               accept=".pdf,.jpg,.jpeg,.png"
               title="Select your degree certificate"
-              className="text-sm w-full"
+              className="text-[14px] w-full"
               onChange={e => handleNestedChange("uploads", "degreeCertificate", e.target.files?.[0])} 
               required
             />
           </div>
 
           <div>
-            <label htmlFor="demo-upload" className="block text-sm font-semibold mb-1">Demo Lesson Video (5-10 min)</label>
+            <label htmlFor="demo-upload" className="block text-[14px] font-semibold mb-1">Demo Lesson Video (5-10 min)</label>
             <input 
               id="demo-upload" 
               type="file" 
               accept="video/*"
               title="Select your demo lesson video"
-              className="text-sm w-full"
+              className="text-[14px] w-full"
               onChange={e => handleNestedChange("uploads", "demoLesson", e.target.files?.[0])} 
               required
             />
@@ -920,7 +920,7 @@ export function TutorApplicationForm() {
             className="mt-1"
             required
           />
-          <span className="text-sm text-gray-700">I agree to take the SMK Mastery Test (30 min, 85% minimum passing)</span>
+          <span className="text-[14px] text-gray-700">I agree to take the SMK Mastery Test (30 min, 85% minimum passing)</span>
         </label>
 
         <label className="flex items-start gap-2">
@@ -931,7 +931,7 @@ export function TutorApplicationForm() {
             className="mt-1"
             required
           />
-          <span className="text-sm text-gray-700">I agree to complete the Digital Skills Quiz & demonstrate online teaching competency</span>
+          <span className="text-[14px] text-gray-700">I agree to complete the Digital Skills Quiz & demonstrate online teaching competency</span>
         </label>
 
         <label className="flex items-start gap-2">
@@ -942,7 +942,7 @@ export function TutorApplicationForm() {
             className="mt-1"
             required
           />
-          <span className="text-sm text-gray-700">I commit to completing the SMK Framework Orientation training</span>
+          <span className="text-[14px] text-gray-700">I commit to completing the SMK Framework Orientation training</span>
         </label>
 
         <label className="flex items-start gap-2">
@@ -953,7 +953,7 @@ export function TutorApplicationForm() {
             className="mt-1"
             required
           />
-          <span className="text-sm text-gray-700">I understand and accept the independence-building model (tutoring phase-out strategy)</span>
+          <span className="text-[14px] text-gray-700">I understand and accept the independence-building model (tutoring phase-out strategy)</span>
         </label>
 
         <label className="flex items-start gap-2">
@@ -964,7 +964,7 @@ export function TutorApplicationForm() {
             className="mt-1"
             required
           />
-          <span className="text-sm text-gray-700">I agree to EduMeUp's Code of Conduct & professionalism standards</span>
+          <span className="text-[14px] text-gray-700">I agree to EduMeUp's Code of Conduct & professionalism standards</span>
         </label>
       </section>
 
@@ -1039,11 +1039,11 @@ export default function Tutors() {
             <p className="text-xl text-blue-100 max-w-4xl mx-auto mb-4 font-semibold">
               Strategic Scaffolding Toward Independent Learning
             </p>
-            <p className="text-sm text-blue-200 max-w-4xl mx-auto mb-8">
+            <p className="text-[14px] text-blue-200 max-w-4xl mx-auto mb-8">
               SMK-Aligned Tutors + Research-Backed Platform + Proven Independence Model<br/>
               Powered by: Moodle 4.5.1 LMS · H5P Interactive Activities · AI Chatbot · Multilingual Support
             </p>
-            <p className="text-sm text-blue-200 font-semibold mb-12">LAUNCHING MARCH 2026 — Early applications open</p>
+            <p className="text-[14px] text-blue-200 font-semibold mb-12">LAUNCHING MARCH 2026 — Early applications open</p>
 
             <div className="grid lg:grid-cols-2 gap-12 max-w-5xl mx-auto bg-white/5 p-16 rounded-[3rem] border-4 border-white/10 backdrop-blur-sm text-left items-center">
               <div>
@@ -1057,7 +1057,7 @@ export default function Tutors() {
                     "Transparent dashboards",
                     "Phase out tutor support"
                   ].map((item, i) => (
-                    <div key={i} className="flex items-center gap-4 text-sm font-semibold text-white/80 border-b border-white/5 pb-2">
+                    <div key={i} className="flex items-center gap-4 text-[14px] font-semibold text-white/80 border-b border-white/5 pb-2">
                        <CheckCircle2 className="h-4 w-4 text-blue-400 flex-shrink-0" />
                        <span>{item}</span>
                     </div>
@@ -1068,9 +1068,9 @@ export default function Tutors() {
                 <div className="bg-blue-600/20 p-8 rounded-3xl border-2 border-blue-500/30">
                   <p className="text-blue-400 font-semibold text-xs mb-4">For specific learning needs:</p>
                   <ul className="space-y-3">
-                    <li className="text-white font-semibold text-sm"> Late Starters</li>
-                    <li className="text-white font-semibold text-sm"> Advanced Learners</li>
-                    <li className="text-white font-semibold text-sm"> Slow Learners</li>
+                    <li className="text-white font-semibold text-[14px]"> Late Starters</li>
+                    <li className="text-white font-semibold text-[14px]"> Advanced Learners</li>
+                    <li className="text-white font-semibold text-[14px]"> Slow Learners</li>
                   </ul>
                 </div>
                 <div className="flex flex-col gap-4">
@@ -1105,17 +1105,17 @@ export default function Tutors() {
             <div>
               <h4 className="text-3xl font-semibold text-blue-400 mb-2">91%</h4>
               <p className="text-xs font-semibold text-[#1e1b4b]">Pass rate</p>
-              <p className="text-[10px] text-[#1e1b4b]/40 mt-2">vs 35% National</p>
+              <p className="text-[14px] text-[#1e1b4b]/40 mt-2">vs 35% National</p>
             </div>
             <div>
               <h4 className="text-3xl font-semibold text-blue-400 mb-2">47%</h4>
               <p className="text-xs font-semibold text-[#1e1b4b]">A/A* grades</p>
-              <p className="text-[10px] text-[#1e1b4b]/40 mt-2">vs 18% Traditional</p>
+              <p className="text-[14px] text-[#1e1b4b]/40 mt-2">vs 18% Traditional</p>
             </div>
             <div>
               <h4 className="text-3xl font-semibold text-blue-400 mb-2">75%+</h4>
               <p className="text-xs font-semibold text-[#1e1b4b]">Retention</p>
-              <p className="text-[10px] text-[#1e1b4b]/40 mt-2">vs 5-10% Traditional</p>
+              <p className="text-[14px] text-[#1e1b4b]/40 mt-2">vs 5-10% Traditional</p>
             </div>
           </div>
         </div>
@@ -1130,7 +1130,7 @@ export default function Tutors() {
           </div>
 
           <div className="grid lg:grid-cols-2 gap-24 items-start mb-40">
-             <Card className="bg-red-50 p-16 rounded-[3rem] border-4 border-red-100 shadow-xl hover:shadow-2xl transition-all">
+             <Card className="border-[#2366c9]  border-2 bg-red-50 p-16 rounded-[3rem] border-4 border-red-100 shadow-xl hover:shadow-2xl transition-all">
                 <CardContent className="p-0">
                   <h3 className="text-2xl font-semibold mb-10 text-red-600">Traditional tutoring trap</h3>
                   <div className="flex items-center justify-between text-center gap-4">
@@ -1143,7 +1143,7 @@ export default function Tutors() {
                   <p className="mt-12 text-red-900/60 font-semibold leading-relaxed">Students become helpless without tutor guidance. You pay forever. We call this the business of dependency.</p>
                 </CardContent>
              </Card>
-             <Card className="bg-green-50 p-16 rounded-[3rem] border-4 border-green-100 shadow-xl hover:shadow-2xl transition-all">
+             <Card className="border-[#2366c9]  border-2 bg-green-50 p-16 rounded-[3rem] border-4 border-green-100 shadow-xl hover:shadow-2xl transition-all">
                 <CardContent className="p-0">
                   <h3 className="text-2xl font-semibold mb-10 text-green-600">EduMeUp independence model</h3>
                   <div className="flex items-center justify-between text-center gap-4">
@@ -1186,9 +1186,9 @@ export default function Tutors() {
                ].map((item,i)=>(
                  <div key={i} className="bg-white/20 p-6 rounded-2xl">
                    <h4 className="font-semibold mb-2 text-lg text-white">{item.stage}</h4>
-                   <p className="text-sm text-white"><span className="font-semibold">Timeline:</span> {item.timeline}</p>
-                   <p className="text-sm text-white"><span className="font-semibold">Tutor hours:</span> {item.hours}</p>
-                   <p className="text-sm text-white"><span className="font-semibold">Platform role:</span> {item.role}</p>
+                   <p className="text-[14px] text-white"><span className="font-semibold">Timeline:</span> {item.timeline}</p>
+                   <p className="text-[14px] text-white"><span className="font-semibold">Tutor hours:</span> {item.hours}</p>
+                   <p className="text-[14px] text-white"><span className="font-semibold">Platform role:</span> {item.role}</p>
                  </div>
                ))}
              </div>
@@ -1239,19 +1239,19 @@ export default function Tutors() {
                  <CardContent className="p-16 flex-1 flex flex-col">
                     <div className="h-20 w-20 bg-[#1e1b4b] text-blue-400 rounded-3xl flex items-center justify-center mb-10 font-semibold text-4xl shadow-xl group-hover:bg-[#2366c9] group-hover:text-white transition-all">{scen.id}</div>
                     <h3 className="text-2xl font-semibold mb-2 text-[#1e1b4b]">{scen.title}</h3>
-                    <p className="text-blue-600 font-semibold text-sm mb-10">{scen.sub}</p>
+                    <p className="text-blue-600 font-semibold text-[14px] mb-10">{scen.sub}</p>
                     <div className="space-y-8 flex-1">
                        <div>
-                          <p className="text-[10px] font-semibold text-[#1e1b4b]/40 mb-2">Ideal for</p>
-                          <p className="text-sm font-semibold text-[#1e1b4b]">{scen.for}</p>
+                          <p className="text-[14px] font-semibold text-[#1e1b4b]/40 mb-2">Ideal for</p>
+                          <p className="text-[14px] font-semibold text-[#1e1b4b]">{scen.for}</p>
                        </div>
                        <div>
-                          <p className="text-[10px] font-semibold text-[#1e1b4b]/40 mb-2">Tutor's role</p>
-                          <p className="text-sm font-semibold text-[#1e1b4b]">{scen.role}</p>
+                          <p className="text-[14px] font-semibold text-[#1e1b4b]/40 mb-2">Tutor's role</p>
+                          <p className="text-[14px] font-semibold text-[#1e1b4b]">{scen.role}</p>
                        </div>
                        <div className="pt-8 border-t border-blue-50">
                           <p className="text-green-600 font-semibold text-xs mb-2">Outcome goal</p>
-                          <p className="text-sm font-semibold text-[#1e1b4b]">{scen.goal}</p>
+                          <p className="text-[14px] font-semibold text-[#1e1b4b]">{scen.goal}</p>
                        </div>
                     </div>
                  </CardContent>
@@ -1287,7 +1287,7 @@ export default function Tutors() {
                      <step.icon className="h-10 w-10" />
                   </div>
                   <h4 className="text-xl font-semibold text-[#1e1b4b]">{step.t}</h4>
-                  <p className="text-sm text-[#1e1b4b]/60 font-medium">{step.d}</p>
+                  <p className="text-[14px] text-[#1e1b4b]/60 font-medium">{step.d}</p>
                </div>
              ))}
           </div>
@@ -1367,7 +1367,7 @@ export default function Tutors() {
               ].map((item, i) => (
                 <li key={i} className="flex items-center gap-2">
                   <span className="inline-block w-2 h-2 bg-[#2366c9] rounded-full mt-1"></span>
-                  <span className="text-sm text-[#1e1b4b]/80">{item}</span>
+                  <span className="text-[14px] text-[#1e1b4b]/80">{item}</span>
                 </li>
               ))}
             </ul>
@@ -1382,11 +1382,11 @@ export default function Tutors() {
               <p className="font-semibold mb-2">Step A — Online Tools Quiz (15 min)</p>
               <ul className="flex flex-wrap gap-4 mb-2">
                 {["Zoom/Google Meet", "Google Classroom", "Digital Whiteboard", "Moodle LMS", "H5P Assignment"].map((item, i) => (
-                  <li key={i} className="bg-blue-50 text-[#2366c9] px-3 py-1 rounded-full text-sm font-medium">{item}</li>
+                  <li key={i} className="bg-blue-50 text-[#2366c9] px-3 py-1 rounded-full text-[14px] font-medium">{item}</li>
                 ))}
               </ul>
               <p className="font-semibold mb-1">Step B — Live 10‑Minute Call</p>
-              <p className="text-sm text-[#1e1b4b]/80">Tutor demonstrates screen sharing, whiteboard explanation, Moodle navigation, and assigning an H5P activity.</p>
+              <p className="text-[14px] text-[#1e1b4b]/80">Tutor demonstrates screen sharing, whiteboard explanation, Moodle navigation, and assigning an H5P activity.</p>
             </>
           ),
         },
@@ -1477,7 +1477,7 @@ export default function Tutors() {
             {card.icon}
           </div>
           <h4 className="font-semibold text-lg mb-2 text-[#1e1b4b]">{card.title}</h4>
-          <p className="text-sm text-[#1e1b4b]/80">{card.desc}</p>
+          <p className="text-[14px] text-[#1e1b4b]/80">{card.desc}</p>
         </div>
       ))}
     </div>
@@ -1488,7 +1488,7 @@ export default function Tutors() {
         <strong>Who we’re looking for:</strong> Bachelor’s in relevant subject · 3+ years Cambridge experience · strong digital skills · commitment to independence‑building · available online (global) or physical (Lahore, Karachi, Islamabad/Rawalpindi, Faisalabad, or your city).
       </p>
       <p className="font-semibold text-[#2366c9] text-xl mb-2">Ready to apply?</p>
-      <p className="text-[#1e1b4b]/70 mb-6 text-sm">
+      <p className="text-[#1e1b4b]/70 mb-6 text-[14px]">
         Pro tip: Uploading a 5–10 min demo lesson increases your chances of getting matched faster.
       </p>
     <div className="flex justify-center">
@@ -1545,7 +1545,7 @@ export default function Tutors() {
         }
       />
 
-      <p className="mt-6 text-sm text-[#1e1b4b]/50">
+      <p className="mt-6 text-[14px] text-[#1e1b4b]/50">
         Takes less than 3 minutes to apply.
       </p>
 
@@ -1598,7 +1598,7 @@ export default function Tutors() {
             }`}
         >
           {plan.highlight && (
-            <div className="mb-4 text-sm font-semibold text-[#2366c9]">
+            <div className="mb-4 text-[14px] font-semibold text-[#2366c9]">
               Most Chosen
             </div>
           )}
@@ -1611,14 +1611,14 @@ export default function Tutors() {
             <span className="text-4xl font-medium text-[#1e1b4b]">
               {plan.price}
             </span>
-            <span className="text-gray-400 text-sm"> / hour</span>
+            <span className="text-gray-400 text-[14px]"> / hour</span>
           </div>
 
           <p className="text-gray-500 mb-8">
             {plan.desc}
           </p>
 
-          <ul className="space-y-3 text-sm text-gray-700">
+          <ul className="space-y-3 text-[14px] text-gray-700">
             {plan.inc.map((item, ii) => (
               <li key={ii}>• {item}</li>
             ))}
@@ -1638,7 +1638,7 @@ export default function Tutors() {
 
     </div>
 
-    <p className="mt-16 text-center text-sm text-gray-500">
+    <p className="mt-16 text-center text-[14px] text-gray-500">
       Platform value ($360–$720/year) included with all active tutoring plans.
     </p>
 
@@ -1670,7 +1670,7 @@ export default function Tutors() {
             <h4 className="text-xl font-semibold text-[#1e1b4b]">
               {c.name}
             </h4>
-            <p className="text-sm text-gray-400">{c.tag}</p>
+            <p className="text-[14px] text-gray-400">{c.tag}</p>
           </div>
 
           <div className="mb-6">
@@ -1679,7 +1679,7 @@ export default function Tutors() {
             </p>
           </div>
 
-          <div className="text-sm text-gray-500">
+          <div className="text-[14px] text-gray-500">
             <p>Duration: {c.duration}</p>
             <p>Total Investment: {c.cost}</p>
           </div>
@@ -1724,7 +1724,7 @@ export default function Tutors() {
                       transition={{ duration: 0.3 }}
                       className="px-8 overflow-hidden"
                     >
-                      <div className="pb-8 text-sm text-[#1e1b4b]/70 font-semibold leading-relaxed">
+                      <div className="pb-8 text-[14px] text-[#1e1b4b]/70 font-semibold leading-relaxed">
                         {item.a}
                       </div>
                     </motion.div>
@@ -1818,13 +1818,13 @@ export default function Tutors() {
 
     {/* Launch Offer */}
     <div className="mt-20 text-center border-t pt-12">
-      <p className="text-sm font-semibold text-[#2366c9]">
+      <p className="text-[14px] font-semibold text-[#2366c9]">
         March 2026 Launch Offer
       </p>
-      <p className="text-sm text-gray-500 mt-2">
+      <p className="text-[14px] text-gray-500 mt-2">
         Priority matching · Launch pricing locked 12 months · Free 30-min founder consultation · Limited spots
       </p>
-      <p className="mt-4 text-sm text-gray-400">
+      <p className="mt-4 text-[14px] text-gray-400">
         Contact: tutoring@edumeup.com
       </p>
     </div>

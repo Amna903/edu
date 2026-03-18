@@ -189,7 +189,7 @@ Colors: slate-900, slate-600, #2366c9 (consistent)
     <h1 className="text-5xl md:text-6xl font-semibold text-slate-950 mb-6">
       Main heading
     </h1>
-    <p className="text-lg text-slate-600 max-w-2xl mb-12 leading-relaxed">
+    <p className="text-lg text-black max-w-2xl mb-12 leading-relaxed">
       Supporting paragraph with max-width constraint
     </p>
   </div>
@@ -209,8 +209,8 @@ Colors: slate-900, slate-600, #2366c9 (consistent)
 - **Hero Title**: `text-5xl md:text-6xl`
 - **Section Title**: `text-4xl md:text-5xl`
 - **Card Title**: `text-2xl font-semibold`
-- **Body Text**: `text-base text-slate-600`
-- **Small Text**: `text-sm text-slate-500`
+- **Body Text**: `text-base text-black`
+- **Small Text**: `text-[14px] text-black`
 - **Label**: `text-xs font-medium uppercase tracking-wide`
 
 ### Spacing Quick Reference

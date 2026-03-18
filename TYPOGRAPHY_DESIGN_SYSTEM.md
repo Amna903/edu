@@ -85,17 +85,17 @@ xl:   20px/32px   - Subheadings
 ### Navbar
 - **Height**: h-16 (64px) for perfect vertical centering
 - **Logo Size**: h-8-h-9 (32-36px)
-- **Nav Link Text**: font-medium, text-sm (no uppercase)
-- **Button**: font-semibold, text-sm
+- **Nav Link Text**: font-medium, text-[14px] (no uppercase)
+- **Button**: font-semibold, text-[14px]
 
 ### Hero Section
 ```
 H1: text-5xl md:text-7xl font-semibold text-slate-950
 Subtitle: text-2xl font-semibold text-slate-700
-Description: text-lg text-slate-600
+Description: text-lg text-black
 
 Key Metric: text-4xl md:text-5xl font-semibold text-[#2366c9]
-Label: text-xs font-medium text-slate-600
+Label: text-xs font-medium text-black
 ```
 
 ### Cards
@@ -103,14 +103,14 @@ Label: text-xs font-medium text-slate-600
 Card Header: p-8 pb-6
 Icon: h-12 w-12
 Title: text-2xl font-semibold
-Description: text-base text-slate-600
-Features: text-sm font-medium with CheckCircle2 icons
+Description: text-base text-black
+Features: text-[14px] font-medium with CheckCircle2 icons
 ```
 
 ### Buttons
 ```
-Primary: font-semibold h-12 rounded-lg text-sm
-Secondary: font-semibold h-10 rounded-lg text-sm
+Primary: font-semibold h-12 rounded-lg text-[14px]
+Secondary: font-semibold h-10 rounded-lg text-[14px]
 Large: font-semibold h-12-h-14 rounded-xl text-base
 ```
 
@@ -194,7 +194,7 @@ xl (1280px): Max container width engagement
     <h1 className="text-5xl md:text-6xl font-semibold text-slate-950 mb-6">
       Main heading
     </h1>
-    <p className="text-lg text-slate-600 max-w-2xl mb-12">
+    <p className="text-lg text-black max-w-2xl mb-12">
       Description paragraph with max-width
     </p>
   </div>
@@ -203,12 +203,12 @@ xl (1280px): Max container width engagement
 
 ### Feature Card
 ```tsx
-<Card className="border border-slate-200 p-8 rounded-xl">
+<Card className="border-[#2366c9]  border-2 border border-slate-200 p-8 rounded-xl">
   <div className="h-12 w-12 bg-blue-100 rounded-lg mb-6" />
   <h3 className="text-2xl font-semibold text-slate-900 mb-4">
     Card title
   </h3>
-  <p className="text-slate-600 text-base leading-relaxed">
+  <p className="text-black text-base leading-relaxed">
     Card description
   </p>
 </Card>
@@ -217,8 +217,8 @@ xl (1280px): Max container width engagement
 ### Navbar Link
 ```tsx
 <Link href="/page">
-  <div className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium
-              transition-colors rounded-lg text-slate-600 hover:text-slate-900">
+  <div className="flex items-center gap-1.5 px-3 py-2 text-[14px] font-medium
+              transition-colors rounded-lg text-black hover:text-slate-900">
     {icon && <Icon className="h-4 w-4" />}
     Link Text
   </div>

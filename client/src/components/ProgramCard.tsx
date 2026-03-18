@@ -11,13 +11,13 @@ interface ProgramCardProps {
 
 export function ProgramCard({ program }: ProgramCardProps) {
   return (
-    <Card className="h-full flex flex-col border-4 border-white shadow-2xl hover:border-[#2366c9] transition-all group rounded-[3rem] bg-white overflow-hidden">
+    <Card className="border-[#2366c9]  border-2 h-full flex flex-col border-4 border-white shadow-2xl hover:border-[#2366c9] transition-all group rounded-[3rem] bg-white overflow-hidden">
       <CardHeader className="p-0 relative overflow-hidden h-48 bg-blue-50 flex items-center justify-center">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(37,99,235,0.1)_0%,transparent_70%)]"></div>
         <div className="text-4xl font-black text-[#1e1b4b]/10 uppercase tracking-tighter rotate-[-5deg] select-none group-hover:scale-110 transition-transform duration-500">
           {program.category.replace(/_/g, " ")}
         </div>
-        <Badge className="absolute top-6 left-6 bg-[#2366c9] text-white border-none px-4 py-1 font-black uppercase text-[10px] tracking-widest">
+        <Badge className="absolute top-6 left-6 bg-[#2366c9] text-white border-none px-4 py-1 font-black uppercase text-[14px] tracking-widest">
           {program.category.replace(/_/g, " ")}
         </Badge>
       </CardHeader>
@@ -26,13 +26,13 @@ export function ProgramCard({ program }: ProgramCardProps) {
         <h3 className="text-2xl font-black text-[#1e1b4b] mb-4 uppercase leading-none tracking-tight group-hover:text-[#2366c9] transition-colors">
           {program.title}
         </h3>
-        <p className="text-sm text-[#1e1b4b]/60 font-medium leading-relaxed mb-8 flex-1">
+        <p className="text-[14px] text-[#1e1b4b]/60 font-medium leading-relaxed mb-8 flex-1">
           {program.shortDescription}
         </p>
         
         <div className="space-y-3 mb-8">
           {program.features?.slice(0, 3).map((feature, i) => (
-            <div key={i} className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-[#2366c9]">
+            <div key={i} className="flex items-center gap-3 text-[14px] font-black uppercase tracking-widest text-[#2366c9]">
               <CheckCircle2 className="h-3 w-3" />
               {feature}
             </div>

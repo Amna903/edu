@@ -8,7 +8,7 @@
 ```
 Height: h-20 (80px) - Too tall, misaligned logo
 Logo: h-12 sm:h-10 md:h-12 lg:h-14 - Inconsistent sizing
-Links: text-sm font-black - Bold and uppercase
+Links: text-[14px] font-black - Bold and uppercase
 Tracking: rounded-full - Oversized buttons
 Border: bg-blue-50, border-4 - Heavy styling
 ```
@@ -17,7 +17,7 @@ Border: bg-blue-50, border-4 - Heavy styling
 ```
 Height: h-16 (64px) - Perfect alignment
 Logo: h-8 sm:h-9 - Consistent, refined
-Links: text-sm font-medium - Light weight, readable
+Links: text-[14px] font-medium - Light weight, readable
 Button: rounded-lg, font-semibold - Minimal, modern
 Spacing: gap-1.5 within items, space-x-1 between - Clean and spacious
 ```
@@ -54,7 +54,7 @@ H2:
   "Built on the Research-Backed 10X Learning Leap Model™"
   
 P:
-  text-lg text-slate-600 max-w-2xl mx-auto
+  text-lg text-black max-w-2xl mx-auto
   
 Benefits: 
   - Proper hierarchy with weight, not just size
@@ -73,7 +73,7 @@ Layout: grid-cols-2 lg:grid-cols-4 gap-8
 Size:   p-10 rounded-[3.5rem]
 Border: border-4 border-blue-50
 Title:  text-[67px] font-black text-[#2366c9]
-Label:  text-sm font-black uppercase tracking-[0.2em]
+Label:  text-[14px] font-black uppercase tracking-[0.2em]
 Sub:    text-[11px] font-black uppercase tracking-widest
 Shadow: shadow-[0_40px_80px_-20px...]
 
@@ -87,7 +87,7 @@ Size:   p-6 rounded-xl
 Border: border border-blue-100 (subtle)
 Title:  text-4xl md:text-5xl font-semibold
 Label:  text-xs font-semibold (not full caps)
-Sub:    text-xs text-slate-500
+Sub:    text-xs text-black
 Shadow: shadow-sm hover:shadow-md
 
 Benefits:
@@ -139,7 +139,7 @@ Benefits:
 
 #### Before
 ```
-Large:  h-20 rounded-[1.5rem] text-[10px] sm:text-sm UPPERCASE
+Large:  h-20 rounded-[1.5rem] text-[14px] sm:text-[14px] UPPERCASE
         font-black shadow-2xl shadow-[#2366c9]/30
         border-b-4 border-blue-800
 
@@ -150,8 +150,8 @@ Issues: Inconsistent heights, excessive styling, all uppercase
 
 #### After
 ```
-Primary:  h-12 rounded-lg font-semibold text-sm
-Secondary: h-10 rounded-lg font-semibold text-sm
+Primary:  h-12 rounded-lg font-semibold text-[14px]
+Secondary: h-10 rounded-lg font-semibold text-[14px]
 Large:    h-12 rounded-lg font-semibold text-base (context-dependent)
 
 Styling:
@@ -300,7 +300,7 @@ Container: mx-auto max-w-7xl px-4 sm:px-6 lg:px-8
 When updating remaining pages (Programs, Contact, About, etc.):
 
 1. Remove all `font-black` and `uppercase` classes on body text
-2. Replace custom pixel sizes with Tailwind scale (text-sm through text-5xl)
+2. Replace custom pixel sizes with Tailwind scale (text-[14px] through text-5xl)
 3. Apply container-custom and proper section padding (py-16 md:py-24)
 4. Use .text-label for intro tags instead of custom styling
 5. Ensure max-w-2xl or max-w-4xl on text blocks for readability

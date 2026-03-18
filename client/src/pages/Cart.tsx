@@ -55,7 +55,7 @@ export default function Cart() {
               <CheckCircle2 className="h-10 w-10 text-emerald-600" />
             </div>
             <h1 className="text-3xl font-semibold mb-4">Enrollment Confirmed!</h1>
-            <p className="text-slate-600 mb-8">
+            <p className="text-black mb-8">
               Welcome to EduMeUp! Your order has been processed and you now have full access to your selected programs.
             </p>
             <Link href="/programs">
@@ -81,7 +81,7 @@ export default function Cart() {
                 <Card>
                   <CardContent className="py-12 text-center">
                     <ShoppingBag className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-                    <p className="text-slate-500 mb-6">Your cart is empty</p>
+                    <p className="text-black mb-6">Your cart is empty</p>
                     <Link href="/programs">
                       <Button variant="outline">Browse Programs</Button>
                     </Link>
@@ -112,16 +112,16 @@ export default function Cart() {
             </div>
 
             <div className="lg:col-span-1">
-              <Card className="sticky top-24">
+              <Card className="border-[#2366c9]  border-2 sticky top-24">
                 <CardHeader>
                   <CardTitle>Order Summary</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="flex justify-between text-slate-600">
+                  <div className="flex justify-between text-black">
                     <span>Subtotal</span>
                     <span>${(total / 100).toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between text-slate-600">
+                  <div className="flex justify-between text-black">
                     <span>Tax</span>
                     <span>$0.00</span>
                   </div>
