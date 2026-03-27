@@ -20,7 +20,7 @@ export default function About() {
             animate={{ opacity: 1, y: 0 }}
             className="space-y-6"
           >
-            <span className="text-[#2366c9] font-semibold text-[14px]">About EduMeUp</span>
+        
             <h1 className="text-5xl md:text-6xl font-semibold mb-8 font-display leading-none text-slate-900">
               Transforming Education Through <span className="text-[#2366c9]">Science and Personalization</span>
             </h1>
@@ -379,37 +379,59 @@ export default function About() {
       </section>
 
       {/* ================= RESEARCH FOUNDATION ================= */}
-      <section className="py-16 md:py-24 bg-[#2366c9] text-white">
-        <div className="container-custom max-w-6xl">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-black text-white mb-4 uppercase tracking-tight">
-              Built on 40+ Years of Science
-            </h2>
-            <p className="text-xl text-blue-400 font-medium uppercase tracking-wide">Not Marketing Hype — Peer-Reviewed Facts</p>
+<section className="py-16 md:py-24 bg-[#2366c9] text-white">
+  <div className="container-custom max-w-6xl">
+    <div className="text-center mb-20">
+      <h2 className="text-4xl md:text-5xl font-black text-white mb-4 uppercase tracking-tight">
+        Built on 40+ Years of Science
+      </h2>
+      <p className="text-xl text-blue-300 font-medium uppercase tracking-wide">
+        Not Marketing Hype — Peer-Reviewed Facts
+      </p>
+    </div>
+
+    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+      {[
+        { year: "1969", author: "Dale", topic: "Cone of Learning", desc: "Active learning (75% retention) vs passive (5%).", apply: "1000+ interactive activities" },
+        { year: "1971", author: "Paivio", topic: "Dual Coding", desc: "Words + pictures = 2× memory strength.", apply: "Visual-first platform design" },
+        { year: "1984", author: "Bloom", topic: "Mastery Learning", desc: "One-to-one tutoring effect size d=2.0.", apply: "AI personalization + mastery gates" },
+        { year: "1998", author: "Black & Wiliam", topic: "Formative Assessment", desc: "Ongoing feedback improves learning 0.4-0.7σ.", apply: "Real-time stakeholder dashboards" },
+        { year: "2006", author: "Roediger & Karpicke", topic: "Retrieval Practice", desc: "Testing improves retention 50-200% vs re-reading.", apply: "Automated spaced retrieval system" },
+        { year: "2014", author: "Freeman et al.", topic: "Active Learning", desc: "Active learning: 6% higher scores, 55% fewer failures.", apply: "Practice-by-doing methodology" }
+      ].map((res, i) => (
+        <div
+          key={i}
+          className="p-10 bg-white/10 backdrop-blur-md rounded-[2.5rem] border border-white/20 hover:bg-white/20 transition-all shadow-lg"
+        >
+          {/* TOP ROW */}
+          <div className="flex justify-between items-start mb-4">
+            <span className="text-blue-300 font-black text-xs">
+              {res.year}
+            </span>
+            <span className="text-white/70 font-bold text-[14px] uppercase">
+              {res.author}
+            </span>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {[
-              { year: "1969", author: "Dale", topic: "Cone of Learning", desc: "Active learning (75% retention) vs passive (5%).", apply: "1000+ interactive activities" },
-              { year: "1971", author: "Paivio", topic: "Dual Coding", desc: "Words + pictures = 2× memory strength.", apply: "Visual-first platform design" },
-              { year: "1984", author: "Bloom", topic: "Mastery Learning", desc: "One-to-one tutoring effect size d=2.0.", apply: "AI personalization + mastery gates" },
-              { year: "1998", author: "Black & Wiliam", topic: "Formative Assessment", desc: "Ongoing feedback improves learning 0.4-0.7σ.", apply: "Real-time stakeholder dashboards" },
-              { year: "2006", author: "Roediger & Karpicke", topic: "Retrieval Practice", desc: "Testing improves retention 50-200% vs re-reading.", apply: "Automated spaced retrieval system" },
-              { year: "2014", author: "Freeman et al.", topic: "Active Learning", desc: "Active learning: 6% higher scores, 55% fewer failures.", apply: "Practice-by-doing methodology" }
-            ].map((res, i) => (
-              <div key={i} className="p-10 bg-white/5 rounded-[2.5rem] border border-white/10 hover:bg-white/10 transition-all">
-                <div className="flex justify-between items-start mb-4">
-                  <span className="text-blue-400 font-black text-xs">{res.year}</span>
-                  <span className="text-white/40 font-black text-[14px] uppercase">{res.author}</span>
-                </div>
-                <h4 className="text-lg font-black uppercase mb-3 text-white">{res.topic}</h4>
-                <p className="text-white/60 text-[14px] font-medium mb-6 leading-relaxed">{res.desc}</p>
-                <p className="text-[14px] font-black uppercase tracking-widest text-blue-400 border-t border-white/10 pt-4">Applied: {res.apply}</p>
-              </div>
-            ))}
-          </div>
+          {/* TITLE */}
+          <h4 className="text-lg font-black uppercase mb-3 text-white">
+            {res.topic}
+          </h4>
+
+          {/* DESCRIPTION */}
+          <p className="text-white/90 text-[14px] font-medium mb-6 leading-relaxed">
+            {res.desc}
+          </p>
+
+          {/* APPLY */}
+          <p className="text-[14px] font-black uppercase tracking-widest text-blue-300 border-t border-white/20 pt-4">
+            Applied: {res.apply}
+          </p>
         </div>
-      </section>
+      ))}
+    </div>
+  </div>
+</section>
 
       {/* ================= OUR STORY ================= */}
       <section className="py-16 md:py-24 bg-white overflow-hidden">
@@ -562,20 +584,24 @@ export default function About() {
       </section>
 
       {/* ================= FINAL CTA ================= */}
-      <section className="py-16 md:py-24 bg-blue-50 text-center">
-        <div className="container-custom max-w-4xl">
-          <h2 className="text-5xl md:text-6xl font-semibold text-slate-900 mb-4 leading-tight">
-            Ready to transform <span className="text-[#2366c9]">learning?</span>
-          </h2>
-          <p className="text-lg text-slate-600 mb-8 font-semibold">
+      <section className="py-20 md:py-32 bg-[#2366c9] text-white relative overflow-hidden">
+        <div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
+        <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
+        <div className="container-custom text-center relative z-10">
+          <div className="flex justify-center w-full mb-6">
+            <h2 className="text-4xl md:text-6xl text-white font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
+              Ready to transform learning?
+            </h2>
+          </div>
+          <p className="text-base text-blue-200 mb-12 max-w-3xl mx-auto">
             Experience the science of success
           </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Button className="bg-[#2366c9] hover:bg-blue-700 text-white font-semibold text-[14px] py-3 px-6">
-              Start Free Diagnostic <ArrowRight className="ml-2 h-5 w-5" />
+          <div className="flex flex-col md:flex-row justify-center gap-6 max-w-5xl mx-auto">
+            <Button size="lg" className="w-full md:w-auto min-w-[260px] bg-white text-[#2366c9] hover:bg-blue-50 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+              Start Free Diagnostic <ArrowRight className="h-4 w-4" />
             </Button>
-            <Button variant="outline" className="border-2 border-[#2366c9] text-[#2366c9] font-semibold text-[14px] py-3 px-6">
-              Talk to Expert <ArrowRight className="ml-2 h-5 w-5" />
+            <Button size="lg" variant="outline" className="w-full md:w-auto min-w-[260px] border border-white/30 text-white hover:bg-white/10 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+              Talk to Expert <ArrowRight className="h-4 w-4" />
             </Button>
           </div>
         </div>

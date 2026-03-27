@@ -55,9 +55,7 @@ export default function AllResources() {
             transition={{ duration: 0.45 }}
             className="mx-auto max-w-5xl text-center"
           >
-            <div className="mb-4 inline-flex rounded-full border border-blue-200 bg-blue-100 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-[#2366c9]">
-              Programme 15: All Resources
-            </div>
+  
             <h1 className="text-4xl font-semibold text-slate-900 md:text-6xl">Every EduMeUp Resource, In One Place</h1>
             <p className="mx-auto mt-5 max-w-3xl text-base text-slate-700 md:text-lg">
               Courses. Workbooks. Worksheets. Past papers. All in one searchable catalogue.

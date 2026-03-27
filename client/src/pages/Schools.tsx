@@ -19,9 +19,7 @@ export default function Schools() {
               animate={{ opacity: 1, x: 0 }}
               className="flex-1"
             >
-              <Badge className="bg-blue-100 text-[#2366c9] border border-blue-200 px-6 py-2 mb-8 font-semibold text-xs rounded-full">
-                COMPLETE O-LEVEL TRANSFORMATION SYSTEM
-              </Badge>
+             
               <h1 className="text-5xl md:text-6xl font-semibold mb-8 leading-tight text-slate-900">
                 Transform Your <br/><span className="text-[#2366c9]">O-Level</span> Program
               </h1>
@@ -319,15 +317,15 @@ export default function Schools() {
           <div className="grid lg:grid-cols-3 gap-12">
             {[
               {
-                tier: "CHARTER TIER",
+                tier: "Charter Tier",
                 limit: "10 Founding Schools",
                 desc: "Permanent charter status + 20% lifetime discount + founder privileges.",
                 status: "6 spots remaining",
-                color: "bg-[#2366c9]",
-                textColor: "text-white"
+               color: "bg-white",
+                textColor: "text-slate-900"
               },
               {
-                tier: "GROWTH TIER",
+                tier: "Growth Tier",
                 limit: "Mid-Size Institutions",
                 desc: "Complete platform access + standard support + revenue sharing.",
                 status: "Open Enrollment",
@@ -335,7 +333,7 @@ export default function Schools() {
                 textColor: "text-slate-900"
               },
               {
-                tier: "FOUNDATION TIER",
+                tier: "Foundation Tier",
                 limit: "Small Schools",
                 desc: "Essential features + community support + flexible terms.",
                 status: "Open Enrollment",
@@ -345,14 +343,14 @@ export default function Schools() {
             ].map((option, i) => (
               <div key={i} className={`p-6 rounded-xl border border-white flex flex-col ${option.color} ${option.textColor} shadow-lg`}>
                 <h3
-                  className={`text-3xl font-semibold mb-2 tracking-tighter ${
-                    option.tier === "CHARTER TIER" ? "text-white" : ""
+                  className={`text-3xl  mb-2 tracking-tighter ${
+                    option.tier === "CHARTER TIER" ? "" : ""
                   }`}
                 >
                   {option.tier}
                 </h3>
                 <p className="text-xs font-semibold text-blue-400 mb-6">{option.limit}</p>
-                <p className="text-lg font-medium leading-relaxed mb-12 flex-1">{option.desc}</p>
+                <p className="text-lg  mb-12 flex-1">{option.desc}</p>
                 <div className="pt-8 border-t border-blue-200/20">
                   <p className="text-xs font-semibold mb-8">{option.status}</p>
                   <InquiryDialog 
@@ -370,28 +368,33 @@ export default function Schools() {
       </section>
 
       {/* FINAL CTA */}
-      <section className="py-16 md:py-24 bg-blue-50 text-center">
-        <div className="container-custom">
-          <motion.h2 
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            className="text-5xl md:text-6xl font-semibold mb-6 leading-tight text-slate-900"
-          >
-            Ready to <span className="text-[#2366c9]">lead</span> your city?
-          </motion.h2>
-          <p className="text-lg text-slate-600 mb-10 max-w-3xl mx-auto font-medium">
+      <section className="py-20 md:py-32 bg-[#2366c9] text-white relative overflow-hidden">
+        <div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
+        <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
+        <div className="container-custom text-center relative z-10">
+          <div className="flex justify-center w-full mb-6">
+            <h2 className="text-4xl md:text-6xl text-white font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
+              Ready to lead your city?
+            </h2>
+          </div>
+          <p className="text-base text-blue-200 mb-4 max-w-3xl mx-auto">
             Applications for 2026 Charter membership close March 31. Secure your institution's legacy today.
           </p>
-          <InquiryDialog 
-            defaultType="school_charter"
-            title="School Partnership Inquiry"
-            trigger={
-              <Button className="bg-[#2366c9] hover:bg-blue-700 text-white font-semibold text-[14px] py-3 px-6">
-                Apply for Charter <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            }
-          />
-          <p className="mt-8 text-slate-500 font-semibold text-xs">Serving 50,000+ students globally</p>
+          <p className="text-[14px] font-semibold text-blue-300 mb-12 uppercase tracking-wider">Serving 50,000+ students globally</p>
+          <div className="flex flex-col md:flex-row justify-center gap-6 max-w-5xl mx-auto">
+            <InquiryDialog
+              defaultType="school_charter"
+              title="School Partnership Inquiry"
+              trigger={
+                <Button size="lg" className="w-full md:w-auto min-w-[260px] bg-white text-[#2366c9] hover:bg-blue-50 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+                  Apply for Charter <ArrowRight className="h-4 w-4" />
+                </Button>
+              }
+            />
+            <Button size="lg" variant="outline" className="w-full md:w-auto min-w-[260px] border border-white/30 text-white hover:bg-white/10 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+              Explore Programs <ArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </section>
     </Layout>

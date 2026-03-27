@@ -43,9 +43,7 @@ export default function ATPCourses() {
             transition={{ duration: 0.45 }}
             className="mx-auto max-w-5xl text-center"
           >
-            <div className="mb-4 inline-flex rounded-full border border-blue-200 bg-blue-100 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-[#2366c9]">
-              Programme 5: ATP Courses
-            </div>
+         
             <h1 className="text-4xl font-semibold text-slate-900 md:text-6xl">
               Master Cambridge Paper 4, No Lab Required
             </h1>

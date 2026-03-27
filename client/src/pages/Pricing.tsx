@@ -201,9 +201,10 @@ export default function Pricing() {
       <section className="py-16 md:py-24 relative overflow-hidden bg-gradient-to-b from-blue-50/80 to-white text-center">
         <div className="max-w-4xl mx-auto px-6">
           <div className="relative z-10">
-            <h1 className="text-5xl md:text-6xl text-slate-900 font-extrabold mb-6">Simple, Transparent Pricing</h1>
+       
+            <h1 className="text-5xl md:text-6xl text-slate-900 font-semibold mb-6 tracking-tight leading-tight">Simple, Transparent Pricing</h1>
             <p className="text-2xl text-[#2366c9] font-semibold mb-4">Structured Support. Affordable Access.</p>
-            <p className="text-lg text-slate-700 mb-10 max-w-3xl mx-auto">No hidden fees. Flexible plans. 30-day money-back guarantee. Education should be accessible — not exclusive.</p>
+            <p className="text-base text-slate-700 mb-10 max-w-3xl mx-auto">No hidden fees. Flexible plans. 30-day money-back guarantee. Education should be accessible — not exclusive.</p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link href="/programs"><Button className="bg-[#2366c9] hover:bg-blue-700 text-white font-semibold text-[14px] py-3 px-6">Browse Programs <ArrowRight className="h-5 w-5 ml-2" /></Button></Link>
               <InquiryDialog defaultType="diagnostic" title="Free Diagnostic" trigger={<Button variant="outline" className="border-2 border-[#2366c9] text-[#2366c9] font-semibold text-[14px] py-3 px-6">Take Free Diagnostic</Button>} />
@@ -459,30 +460,43 @@ export default function Pricing() {
         </div>
       </section>
 
-      <section className="py-20 bg-[#2366c9] text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(37,99,235,0.25)_0%,transparent_60%)]" />
-        <div className="max-w-5xl mx-auto px-6 relative z-10 text-center">
-          <h2 className="text-4xl md:text-5xl text-white font-black mb-6">Ready to Start?</h2>
-          <p className="text-blue-200 text-lg mb-8">30-Day Risk-Free Guarantee. Transparent pricing. Structured system. Sustainable cost.</p>
+      <section className="py-20 md:py-32 bg-[#2366c9] text-white relative overflow-hidden">
+        <div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
+        <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
+        <div className="container-custom text-center relative z-10">
+          <div className="flex justify-center w-full mb-6">
+            <h2 className="text-4xl md:text-6xl text-white font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
+              Ready to Start?
+            </h2>
+          </div>
+          <p className="text-base text-blue-200 mb-4 max-w-3xl mx-auto">30-Day Risk-Free Guarantee. Transparent pricing. Structured system. Sustainable cost.</p>
 
-          <div className="grid md:grid-cols-3 gap-4 mb-10 text-left">
-            <div className="p-5 rounded-2xl border border-white/20 bg-white/5">
-              <p className="font-semibold text-blue-300"> Enroll Now</p>
-              <p className="text-[14px] text-blue-100 mt-1">Start with the plan that fits your level and goals.</p>
+          <div className="grid md:grid-cols-3 gap-6 mb-12 max-w-5xl mx-auto">
+            <div className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-[#2366c9] transition-all duration-300">
+              <h3 className="text-2xl font-semibold text-[#2366c9] mb-4">Enroll Now</h3>
+              <p className="text-[14px] text-black">Start with the plan that fits your level and goals.</p>
             </div>
-            <div className="p-5 rounded-2xl border border-white/20 bg-white/5">
-              <p className="font-semibold text-blue-300"> Take Free Diagnostic</p>
-              <p className="text-[14px] text-blue-100 mt-1">Identify exact gaps before spending on support.</p>
+            <div className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-[#2366c9] transition-all duration-300">
+              <h3 className="text-2xl font-semibold text-[#2366c9] mb-4">Take Free Diagnostic</h3>
+              <p className="text-[14px] text-black">Identify exact gaps before spending on support.</p>
             </div>
-            <div className="p-5 rounded-2xl border border-white/20 bg-white/5">
-              <p className="font-semibold text-blue-300"> Schedule Consultation</p>
-              <p className="text-[14px] text-blue-100 mt-1">Get clear guidance on program and payment structure.</p>
+            <div className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-[#2366c9] transition-all duration-300">
+              <h3 className="text-2xl font-semibold text-[#2366c9] mb-4">Schedule Consultation</h3>
+              <p className="text-[14px] text-black">Get clear guidance on program and payment structure.</p>
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Link href="/programs"><Button size="lg" className="bg-[#2366c9] hover:bg-[#1d57ac] h-14 px-10 rounded-2xl font-semibold text-white">Browse Programs <ArrowRight className="h-4 w-4 ml-2" /></Button></Link>
-            <InquiryDialog defaultType="consultation" title="Schedule Consultation" trigger={<Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-slate-900 h-14 px-10 rounded-2xl font-semibold">Schedule Consultation</Button>} />
+          <div className="flex flex-col md:flex-row justify-center gap-6 max-w-5xl mx-auto">
+            <Link href="/programs">
+              <Button size="lg" className="w-full md:w-auto min-w-[260px] bg-white text-[#2366c9] hover:bg-blue-50 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+                Browse Programs <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+            <InquiryDialog defaultType="consultation" title="Schedule Consultation" trigger={
+              <Button size="lg" variant="outline" className="w-full md:w-auto min-w-[260px] border border-white/30 text-white hover:bg-white/10 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+                Schedule Consultation <ArrowRight className="h-4 w-4" />
+              </Button>
+            } />
           </div>
         </div>
       </section>

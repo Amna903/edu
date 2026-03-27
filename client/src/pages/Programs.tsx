@@ -38,9 +38,9 @@ export default function Programs() {
             animate={{ opacity: 1, y: 0 }}
             className="space-y-8"
           >
-            <span className="text-[#2366c9] font-semibold text-[14px]">Exam Mastery pathways</span>
+
             <h1 className="text-5xl md:text-6xl font-semibold mb-8 font-display leading-tight text-slate-900">
-              STOP THE <span className="text-[#2366c9]">STUDY STRUGGLE</span>
+              Stop The Study Struggle
             </h1>
             
             <div className="max-w-3xl mx-auto space-y-6">
@@ -126,7 +126,7 @@ export default function Programs() {
             <div className="space-y-8">
               <div className="bg-[#2366c9] p-12 rounded-[4rem] text-white shadow-2xl relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl"></div>
-                <h3 className="text-2xl font-semibold mb-8 text-red-400">Who it's not for</h3>
+                <h3 className="text-2xl font-semibold mb-8 text-white">Who it's not for</h3>
                 <ul className="space-y-6">
                   {[
                     "Lazy students looking for shortcuts",
@@ -134,13 +134,13 @@ export default function Programs() {
                     "Anyone unwilling to follow a systematic roadmap",
                     "Passive learners who only want to watch videos"
                   ].map((item, i) => (
-                    <li key={i} className="flex items-center gap-4 text-white/60 font-semibold uppercase text-xs tracking-widest">
+                    <li key={i} className="flex items-center gap-4 text-white font-semibold uppercase text-xs tracking-widest">
                       <span className="text-red-500 text-lg">✕</span> {item}
                     </li>
                   ))}
                 </ul>
                 <div className="mt-12 pt-8 border-t border-white/10">
-                  <p className="text-xs font-semibold text-blue-200 uppercase tracking-[0.2em]">"We build serious scholars, not just exam takers."</p>
+                  <p className="text-xs font-semibold text-white uppercase tracking-[0.2em]">"We build serious scholars, not just exam takers."</p>
                 </div>
               </div>
 
@@ -472,15 +472,24 @@ export default function Programs() {
       </section>
 
       {/* FINAL CTA */}
-      <section className="py-16 md:py-24 bg-blue-50 text-center">
-        <div className="container-custom">
-          <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold mb-6 leading-none">Not sure which path <span className="text-[#2366c9]">to take?</span></h2>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Button className="bg-[#2366c9] hover:bg-blue-700 text-white font-semibold text-[14px] py-3 px-6">
-              Take Free Diagnostic (90 Min) <ArrowRight className="ml-2 h-5 w-5" />
+      <section className="py-20 md:py-32 bg-[#2366c9] text-white relative overflow-hidden">
+        <div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
+        <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
+        <div className="container-custom text-center relative z-10">
+          <div className="flex justify-center w-full mb-6">
+            <h2 className="text-4xl md:text-6xl text-white font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
+              Not sure which path to take?
+            </h2>
+          </div>
+          <p className="text-base text-blue-200 mb-12 max-w-3xl mx-auto">
+            Take our free 90-minute diagnostic and get a personalised program recommendation.
+          </p>
+          <div className="flex flex-col md:flex-row justify-center gap-6 max-w-5xl mx-auto">
+            <Button size="lg" className="w-full md:w-auto min-w-[260px] bg-white text-[#2366c9] hover:bg-blue-50 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+              Take Free Diagnostic (90 Min) <ArrowRight className="h-4 w-4" />
             </Button>
-            <Button variant="outline" className="border-2 border-[#2366c9] text-[#2366c9] font-semibold text-[14px] py-3 px-6">
-              Talk to Education Expert <ArrowRight className="ml-2 h-5 w-5" />
+            <Button size="lg" variant="outline" className="w-full md:w-auto min-w-[260px] border border-white/30 text-white hover:bg-white/10 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+              Talk to Education Expert <ArrowRight className="h-4 w-4" />
             </Button>
           </div>
         </div>

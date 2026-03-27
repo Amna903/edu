@@ -273,9 +273,7 @@ export default function Research() {
       <section className="py-16 md:py-24 relative overflow-hidden bg-gradient-to-b from-blue-50/80 to-white">
         <div className="container-custom max-w-6xl relative z-10">
           <div className="text-center max-w-4xl mx-auto">
-            <Badge className="bg-blue-100 text-[#2366c9] border border-blue-200 mb-6 px-4 py-1.5 uppercase tracking-widest text-xs font-semibold">
-              Research & Development
-            </Badge>
+        
             <h1 className="text-5xl md:text-6xl text-slate-900 font-semibold leading-tight mb-5">
               Where Cognitive Science Meets <span className="text-[#2366c9]">Educational Technology</span>
             </h1>
@@ -547,30 +545,26 @@ export default function Research() {
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8">
-            <Card className="border-[#2366c9]  border-2 bg-[#0f1538] border-blue-300/50 text-white shadow-xl">
-              <CardHeader>
-                <CardTitle className="text-2xl text-white font-extrabold">Pilot Study Parameters</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3 text-white font-medium text-base leading-relaxed">
-                <p className="text-white">• Sample: N=127 early-access students</p>
-                <p className="text-white">• Profile: O-Level students, primarily Pakistan-based</p>
-                <p className="text-white">• Duration: 3–6 months active platform use</p>
-                <p className="text-white">• Limitation: Self-selected sample; no randomised control group yet</p>
-              </CardContent>
-            </Card>
+            <div className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-[#2366c9] transition-all duration-300">
+              <h3 className="text-2xl font-semibold text-[#2366c9] mb-4">Pilot Study Parameters</h3>
+              <ul className="text-[14px] text-black space-y-3">
+                <li>• Sample: N=127 early-access students</li>
+                <li>• Profile: O-Level students, primarily Pakistan-based</li>
+                <li>• Duration: 3–6 months active platform use</li>
+                <li>• Limitation: Self-selected sample; no randomised control group yet</li>
+              </ul>
+            </div>
 
-            <Card className="border-[#2366c9]  border-2 bg-[#0f1538] border-blue-300/50 text-white shadow-xl">
-              <CardHeader>
-                <CardTitle className="text-2xl text-white font-extrabold">Observed Signals</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3 text-white font-medium text-base leading-relaxed">
-                <p className="text-white">• 3 months: +15 to +20 percentage point mock improvement</p>
-                <p className="text-white">• 6 months: +22 to +27 percentage point mock improvement</p>
-                <p className="text-white">• Spaced review adherence: 82%</p>
-                <p className="text-white">• Satisfaction: 4.6/5.0</p>
-                <p className="text-white">• Practice completion: 850+ H5P questions per student on average</p>
-              </CardContent>
-            </Card>
+            <div className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-[#2366c9] transition-all duration-300">
+              <h3 className="text-2xl font-semibold text-[#2366c9] mb-4">Observed Signals</h3>
+              <ul className="text-[14px] text-black space-y-3">
+                <li>• 3 months: +15 to +20 percentage point mock improvement</li>
+                <li>• 6 months: +22 to +27 percentage point mock improvement</li>
+                <li>• Spaced review adherence: 82%</li>
+                <li>• Satisfaction: 4.6/5.0</li>
+                <li>• Practice completion: 850+ H5P questions per student on average</li>
+              </ul>
+            </div>
           </div>
 
           <div className="mt-10 p-7 rounded-2xl bg-blue-500/20 border border-blue-300/30 text-blue-100 text-base leading-relaxed font-medium">
@@ -795,53 +789,63 @@ export default function Research() {
         </div>
       </section>
 
-      <section className="py-16 md:py-24 bg-blue-50 text-center">
-        <div className="container-custom max-w-6xl">
-          <div className="text-center max-w-4xl mx-auto mb-10">
-            <h2 className="text-4xl md:text-5xl text-slate-900 font-semibold mb-4">Proof + Action = Results</h2>
-            <p className="text-slate-600 text-lg">Turn research into your child's success.</p>
+      <section className="py-20 md:py-32 bg-[#2366c9] text-white relative overflow-hidden">
+        <div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
+        <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
+        <div className="container-custom text-center relative z-10">
+          <div className="flex justify-center w-full mb-6">
+            <h2 className="text-4xl md:text-6xl text-white font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
+              Proof + Action = Results
+            </h2>
+          </div>
+          <p className="text-base text-blue-200 mb-12 max-w-3xl mx-auto">
+            Turn research into your child's success. Three steps to get started — all free.
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-6 mb-12 max-w-5xl mx-auto">
+            <div className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-[#2366c9] transition-all duration-300">
+              <h3 className="text-2xl font-semibold text-[#2366c9] mb-4">1) Free Diagnostic Test</h3>
+              <p className="text-[14px] text-black">See baseline performance and identify specific knowledge gaps in about 30 minutes.</p>
+            </div>
+            <div className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-[#2366c9] transition-all duration-300">
+              <h3 className="text-2xl font-semibold text-[#2366c9] mb-4">2) Free Platform Trial (7 Days)</h3>
+              <p className="text-[14px] text-black">Explore sample lessons, H5P interactions, and AI support before committing.</p>
+            </div>
+            <div className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-[#2366c9] transition-all duration-300">
+              <h3 className="text-2xl font-semibold text-[#2366c9] mb-4">3) Schedule Consultation</h3>
+              <p className="text-[14px] text-black">Speak with our pedagogy team for a no-pressure fit assessment.</p>
+            </div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 mb-12">
-            <Card className="border border-blue-100 shadow-sm">
-              <CardHeader>
-                <CardTitle className="text-lg text-[#2366c9]">1) Free Diagnostic Test</CardTitle>
-              </CardHeader>
-              <CardContent className="text-[15px] leading-relaxed text-slate-700 font-medium">See baseline performance and identify specific knowledge gaps in about 30 minutes.</CardContent>
-            </Card>
-            <Card className="border border-blue-100 shadow-sm">
-              <CardHeader>
-                <CardTitle className="text-lg text-[#2366c9]">2) Free Platform Trial (7 Days)</CardTitle>
-              </CardHeader>
-              <CardContent className="text-[15px] leading-relaxed text-slate-700 font-medium">Explore sample lessons, H5P interactions, and AI support before committing.</CardContent>
-            </Card>
-            <Card className="border border-blue-100 shadow-sm">
-              <CardHeader>
-                <CardTitle className="text-lg text-[#2366c9]">3) Schedule Consultation</CardTitle>
-              </CardHeader>
-              <CardContent className="text-[15px] leading-relaxed text-slate-700 font-medium">Speak with our pedagogy team for a no-pressure fit assessment.</CardContent>
-            </Card>
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+          <div className="flex flex-col md:flex-row justify-center gap-6 max-w-5xl mx-auto mb-8">
             <InquiryDialog
               defaultType="diagnostic"
               title="Free Diagnostic"
-              trigger={<Button className="bg-[#2366c9] hover:bg-blue-700 text-white font-semibold text-[14px] py-3 px-6">Take Free Diagnostic <ArrowRight className="ml-2 h-5 w-5" /></Button>}
+              trigger={
+                <Button size="lg" className="w-full md:w-auto min-w-[260px] bg-white text-[#2366c9] hover:bg-blue-50 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+                  Take Free Diagnostic <ArrowRight className="h-4 w-4" />
+                </Button>
+              }
             />
             <Link href="/programs">
-              <Button variant="outline" className="border-2 border-[#2366c9] text-[#2366c9] font-semibold text-[14px] py-3 px-6">Explore Our Platform</Button>
+              <Button size="lg" variant="outline" className="w-full md:w-auto min-w-[260px] border border-white/30 text-white hover:bg-white/10 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+                Explore Our Platform <ArrowRight className="h-4 w-4" />
+              </Button>
             </Link>
             <InquiryDialog
               defaultType="consultation"
               title="Schedule Consultation"
-              trigger={<Button variant="outline" className="border-2 border-[#2366c9] text-[#2366c9] font-semibold text-[14px] py-3 px-6">Book Consultation</Button>}
+              trigger={
+                <Button size="lg" variant="outline" className="w-full md:w-auto min-w-[260px] border border-white/30 text-white hover:bg-white/10 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+                  Book Consultation <ArrowRight className="h-4 w-4" />
+                </Button>
+              }
             />
           </div>
 
-          <div className="text-center text-[14px] text-slate-600 max-w-4xl mx-auto">
+          <p className="text-xs text-blue-200 text-center max-w-4xl mx-auto">
             Education based on evidence, not guesswork. Every feature, interaction, and pathway is built on cognitive science — not opinion.
-          </div>
+          </p>
         </div>
       </section>
     </Layout>

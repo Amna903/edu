@@ -144,7 +144,7 @@ export default function Blog() {
 
   const ctaByCategory: Record<string, { eyebrow: string; heading: string; sub: string }> = {
     All: {
-      eyebrow: "FREE â€” NO COMMITMENT REQUIRED",
+      eyebrow: "FREE — NO COMMITMENT REQUIRED",
       heading: "Discover Your O-Level Readiness Score",
       sub: "Free 10-minute diagnostic. Find your exact weak areas.",
     },
@@ -209,13 +209,12 @@ export default function Blog() {
 
   return (
     <Layout>
-      <section className="bg-[#2366c9] py-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,rgba(255,255,255,0.03)_0px,rgba(255,255,255,0.03)_1px,transparent_1px,transparent_12px)]" />
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#2366c9]" />
+      <section className="relative overflow-hidden bg-gradient-to-b from-blue-50/80 to-white py-16 md:py-24">
         <div className="container-custom relative z-10 text-center max-w-5xl">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <h1 className="text-4xl md:text-5xl font-semibold text-white mb-4">O-Level & IGCSE Learning Hub</h1>
-            <p className="text-lg text-blue-200 font-medium mb-8 max-w-3xl mx-auto">
+           
+            <h1 className="text-5xl md:text-6xl font-semibold text-slate-900 mb-4 tracking-tight leading-tight">O-Level &amp; IGCSE Learning Hub</h1>
+            <p className="text-base text-slate-700 font-medium mb-8 max-w-3xl mx-auto">
               Research-backed articles, exam strategies, and study guides for Cambridge preparation.
             </p>
             <div className="max-w-[560px] mx-auto bg-white border border-slate-200 rounded-lg overflow-hidden flex items-center">
@@ -342,7 +341,7 @@ export default function Blog() {
                 Load More Articles
               </Button>
             ) : (
-              <p className="text-[14px] text-black italic">You have read everything â€” for now.</p>
+              <p className="text-[14px] text-black italic">You have read everything — for now.</p>
             )}
           </div>
         </div>

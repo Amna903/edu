@@ -13,6 +13,7 @@ import {
   ClipboardList,
 } from "lucide-react";
 import { Link } from "wouter";
+import { Button } from "@/components/ui/button";
 
 const steps = [
   {
@@ -128,9 +129,7 @@ export default function EightStepModel() {
             transition={{ duration: 0.8 }}
             className="max-w-5xl mx-auto text-center"
           >
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
-              THE SCIENCE BEHIND THE SYSTEM
-            </p>
+       
             <h1 className="text-5xl md:text-7xl font-semibold text-slate-900 mb-6 tracking-tight leading-tight">
               The EduMeUp 8-Step Mastery Cycle
             </h1>
@@ -286,20 +285,28 @@ export default function EightStepModel() {
       </section>
 
       {/* CTA */}
-      <section className="bg-[#2366c9] py-12">
-        <div className="container-custom">
-          <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
+      <section className="py-20 md:py-32 bg-[#2366c9] text-white relative overflow-hidden">
+        <div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
+        <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
+        <div className="container-custom text-center relative z-10">
+          <div className="flex justify-center w-full mb-6">
+            <h2 className="text-4xl md:text-6xl text-white font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
+              Apply the 8-Step System to Your Learning
+            </h2>
+          </div>
+          <p className="text-base text-blue-200 mb-12 max-w-3xl mx-auto">
+            Begin with Step 1 — a free AI diagnostic that maps exactly where you are and what to fix first.
+          </p>
+          <div className="flex flex-col md:flex-row justify-center gap-6 max-w-5xl mx-auto">
             <Link href="/programs/ai-diagnostic">
-              <span className="inline-flex items-center gap-2 rounded-full bg-[#2366c9] px-7 py-3.5 text-[14px] font-semibold text-white hover:bg-blue-600">
-                Start With Step 1 — Free Diagnostic
-                <ArrowRight className="h-4 w-4" />
-              </span>
+              <Button size="lg" className="w-full md:w-auto min-w-[260px] bg-white text-[#2366c9] hover:bg-blue-50 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+                Start With Step 1 — Free Diagnostic <ArrowRight className="h-4 w-4" />
+              </Button>
             </Link>
             <Link href="/research">
-              <span className="inline-flex items-center gap-2 rounded-full border border-blue-400 px-7 py-3.5 text-[14px] font-semibold text-white hover:border-blue-300">
-                Read the Full Research Basis
-                <ArrowRight className="h-4 w-4" />
-              </span>
+              <Button size="lg" variant="outline" className="w-full md:w-auto min-w-[260px] border border-white/30 text-white hover:bg-white/10 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+                Read the Full Research Basis <ArrowRight className="h-4 w-4" />
+              </Button>
             </Link>
           </div>
         </div>

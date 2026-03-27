@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Layout } from "@/components/Layout";
+import { Button } from "@/components/ui/button";
 import {
   parentBenefits,
   parentCanDoList,
@@ -192,6 +193,34 @@ export default function ForParentsMain() {
                 </span>
               </Link>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FINAL CTA */}
+      <section className="py-20 md:py-32 bg-[#2366c9] text-white relative overflow-hidden">
+        <div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
+        <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
+        <div className="container-custom text-center relative z-10">
+          <div className="flex justify-center w-full mb-6">
+            <h2 className="text-4xl md:text-6xl text-white font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
+              See Your Child's Learning — In Real Time
+            </h2>
+          </div>
+          <p className="text-base text-blue-200 mb-12 max-w-3xl mx-auto">
+            Start with a free diagnostic. Know exactly where your child is and what to do next.
+          </p>
+          <div className="flex flex-col md:flex-row justify-center gap-6 max-w-5xl mx-auto">
+            <Link href="/programs/ai-diagnostic">
+              <Button size="lg" className="w-full md:w-auto min-w-[260px] bg-white text-[#2366c9] hover:bg-blue-50 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+                Start Your Child's Free Diagnostic <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+            <Link href="/programs">
+              <Button size="lg" variant="outline" className="w-full md:w-auto min-w-[260px] border border-white/30 text-white hover:bg-white/10 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+                Explore All Programmes <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>

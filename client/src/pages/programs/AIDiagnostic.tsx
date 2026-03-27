@@ -101,11 +101,9 @@ export default function AIDiagnostic() {
             transition={{ duration: 0.8 }}
             className="max-w-5xl mx-auto text-center"
           >
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
-              Free AI Diagnostic
-            </p>
+         
             <h1 className="text-5xl md:text-7xl font-semibold text-slate-900 mb-6 tracking-tight leading-tight">
-              Know Exactly Where Your Child Stands — Before a Single Lesson Begins
+              Know Exactly Where Your Child Stands - Before a Single Lesson Begins
             </h1>
             <p className="text-base text-slate-700 max-w-3xl mx-auto leading-relaxed mb-8">
               90 minutes. AI-powered. Free. No credit card required.

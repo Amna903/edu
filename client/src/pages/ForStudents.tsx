@@ -163,7 +163,7 @@ export default function ForStudents() {
 
   const pathways = [
     {
-      title: "Pathway 1 â€” Struggling Student",
+      title: "Pathway 1 — Struggling Student",
       profile: "D/E/F grades, weak fundamentals, exams in 3â€“4 months",
       route: [
         "Week 1: Diagnostic identifies exact gaps by topic and sub-skill",
@@ -175,7 +175,7 @@ export default function ForStudents() {
       expected: "Expected trajectory: D/E â†’ C/B with consistent effort",
     },
     {
-      title: "Pathway 2 â€” Average Student",
+      title: "Pathway 2 — Average Student",
       profile: "C/B range, wants consistent A/A* performance",
       route: [
         "Gap analysis pinpoints score-leak topics, not vague subject weakness",
@@ -187,7 +187,7 @@ export default function ForStudents() {
       expected: "Expected trajectory: C/B â†’ A/A* within 4â€“6 months",
     },
     {
-      title: "Pathway 3 â€” Top Student",
+      title: "Pathway 3 — Top Student",
       profile: "Already at A, targeting A* and scholarship readiness",
       route: [
         "Precision audit of final 10â€“15% score leakage",
@@ -199,7 +199,7 @@ export default function ForStudents() {
       expected: "Expected trajectory: A â†’ A* in target subjects",
     },
     {
-      title: "Pathway 4 â€” Last-Minute Student",
+      title: "Pathway 4 — Last-Minute Student",
       profile: "Exams in 6â€“8 weeks, needs maximum impact quickly",
       route: [
         "Emergency triage: safe vs at-risk vs opportunity subjects",
@@ -244,9 +244,7 @@ export default function ForStudents() {
       <section className="py-16 md:py-24 relative overflow-hidden bg-gradient-to-b from-blue-50/80 to-white">
         <div className="container-custom relative z-10 max-w-5xl mx-auto text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <Badge className="bg-blue-100 text-[#2366c9] mb-6 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest border border-blue-200">
-              For Students
-            </Badge>
+       
             <h1 className="text-5xl md:text-6xl font-semibold leading-tight text-slate-900 mb-6">
               Stop Studying Hard. <span className="text-[#2366c9]">Start Studying Smart.</span>
             </h1>
@@ -254,7 +252,7 @@ export default function ForStudents() {
               You do not need more tuition, more notes, or more late nights. You need the right system, strategy, and feedback.
             </p>
             <p className="text-[14px] md:text-base text-slate-600 font-semibold mb-10">
-              Designed for O-Level and IGCSE students â€” Cambridge-aligned, research-backed, built for how your brain actually learns.
+              Designed for O-Level and IGCSE students — Cambridge-aligned, research-backed, built for how your brain actually learns.
             </p>
 
             <div className="bg-white border border-blue-100 shadow-sm rounded-2xl p-3 md:p-6 mb-10 overflow-x-auto">
@@ -382,7 +380,7 @@ export default function ForStudents() {
       <section className="py-20 bg-blue-50">
         <div className="container-custom max-w-6xl">
           <div className="text-center mb-14">
-            <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-4">Beyond Content â€” We Teach How to Learn</h2>
+            <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-4">Beyond Content — We Teach How to Learn</h2>
             <p className="text-xl text-slate-900/60 font-semibold">7 skills that improve exam outcomes and last for life</p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -584,23 +582,37 @@ export default function ForStudents() {
         </div>
       </section>
 
-      <section className="py-16 md:py-24 bg-blue-50 text-center">
-        <div className="container-custom max-w-5xl">
-          <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-5">The opportunity is yours.</h2>
-          <p className="text-lg text-slate-700 font-medium max-w-3xl mx-auto mb-8">
+      <section className="py-20 md:py-32 bg-[#2366c9] text-white relative overflow-hidden">
+        <div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
+        <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
+        <div className="container-custom text-center relative z-10">
+          <div className="flex justify-center w-full mb-6">
+            <h2 className="text-4xl md:text-6xl text-white font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
+              The opportunity is yours.
+            </h2>
+          </div>
+          <p className="text-base text-blue-200 mb-12 max-w-3xl mx-auto">
             Every activity, feedback loop, and progression gate is built around how learning actually works.
           </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
+          <div className="flex flex-col md:flex-row justify-center gap-6 max-w-5xl mx-auto">
             <Link href="/resources">
-              <Button className="bg-[#2366c9] hover:bg-blue-700 text-white font-semibold text-[14px] py-3 px-6">Explore Free Library <ArrowRight className="ml-2 h-5 w-5" /></Button>
+              <Button size="lg" className="w-full md:w-auto min-w-[260px] bg-white text-[#2366c9] hover:bg-blue-50 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+                Explore Free Library <ArrowRight className="h-4 w-4" />
+              </Button>
             </Link>
             <InquiryDialog
               defaultType="diagnostic"
               title="Take Free Diagnostic"
-              trigger={<Button variant="outline" className="border-2 border-[#2366c9] text-[#2366c9] font-semibold text-[14px] py-3 px-6">Take Free Diagnostic</Button>}
+              trigger={
+                <Button size="lg" variant="outline" className="w-full md:w-auto min-w-[260px] border border-white/30 text-white hover:bg-white/10 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+                  Take Free Diagnostic <ArrowRight className="h-4 w-4" />
+                </Button>
+              }
             />
             <Link href="/why-edumeup/how-it-works">
-              <Button variant="outline" className="border-2 border-[#2366c9] text-[#2366c9] font-semibold text-[14px] py-3 px-6">See Inside The Platform</Button>
+              <Button size="lg" variant="outline" className="w-full md:w-auto min-w-[260px] border border-white/30 text-white hover:bg-white/10 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+                See Inside The Platform <ArrowRight className="h-4 w-4" />
+              </Button>
             </Link>
           </div>
         </div>

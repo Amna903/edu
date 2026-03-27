@@ -63,9 +63,9 @@ export function StudentApplicationForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8 max-h-[80vh] overflow-y-auto pr-2">
-      {/* PART 1 â€” STUDENT INFORMATION */}
+      {/* PART 1 — STUDENT INFORMATION */}
       <section className="border rounded-2xl p-6 space-y-4">
-        <h3 className="font-semibold text-lg">Part 1 â€” Student Information</h3>
+        <h3 className="font-semibold text-lg">Part 1 — Student Information</h3>
 
         <div>
           <label className="block font-medium">Student Full Name</label>
@@ -170,9 +170,9 @@ export function StudentApplicationForm() {
         </div>
       </section>
 
-      {/* PART 2 â€” SUBJECTS NEEDED */}
+      {/* PART 2 — SUBJECTS NEEDED */}
       <section className="border rounded-2xl p-6 space-y-4">
-        <h3 className="font-semibold text-lg">Part 2 â€” Subjects Needed</h3>
+        <h3 className="font-semibold text-lg">Part 2 — Subjects Needed</h3>
         <div>
           <label htmlFor="primarySubject" className="block font-medium">Subject</label>
           <select
@@ -207,9 +207,9 @@ export function StudentApplicationForm() {
         </div>
       </section>
 
-      {/* PART 3 â€” TUTORING PREFERENCE */}
+      {/* PART 3 — TUTORING PREFERENCE */}
       <section className="border rounded-2xl p-6 space-y-4">
-        <h3 className="font-semibold text-lg">Part 3 â€” Tutoring Preference</h3>
+        <h3 className="font-semibold text-lg">Part 3 — Tutoring Preference</h3>
 
         <div className="space-y-2">
           <label className="block font-medium">Learning Mode</label>
@@ -250,9 +250,9 @@ export function StudentApplicationForm() {
         </div>
       </section>
 
-      {/* PART 4 â€” LEARNING SCENARIO */}
+      {/* PART 4 — LEARNING SCENARIO */}
       <section className="border rounded-2xl p-6 space-y-4">
-        <h3 className="font-semibold text-lg">Part 4 â€” Learning Scenario</h3>
+        <h3 className="font-semibold text-lg">Part 4 — Learning Scenario</h3>
         <div className="space-y-2">
           {["Late Starter", "Advanced Learner", "Slow Learner", "Not Sure"].map((type) => (
             <label key={type} className="flex gap-2">
@@ -263,9 +263,9 @@ export function StudentApplicationForm() {
         </div>
       </section>
 
-      {/* PART 5 â€” CURRENT PERFORMANCE */}
+      {/* PART 5 — CURRENT PERFORMANCE */}
       <section className="border rounded-2xl p-6 space-y-4">
-        <h3 className="font-semibold text-lg">Part 5 â€” Current Performance</h3>
+        <h3 className="font-semibold text-lg">Part 5 — Current Performance</h3>
 
         <div>
           <label className="block font-medium">Current Average % or Grade</label>
@@ -290,9 +290,9 @@ export function StudentApplicationForm() {
         </div>
       </section>
 
-      {/* PART 6 â€” SCHEDULE PREFERENCES */}
+      {/* PART 6 — SCHEDULE PREFERENCES */}
       <section className="border rounded-2xl p-6 space-y-4">
-        <h3 className="font-semibold text-lg">Part 6 â€” Schedule Preferences</h3>
+        <h3 className="font-semibold text-lg">Part 6 — Schedule Preferences</h3>
 
         <div>
           <label className="block font-medium">Availability</label>
@@ -386,9 +386,9 @@ export function StudentApplicationForm() {
         </div>
       </section>
 
-      {/* PART 8 â€” CONSENT */}
+      {/* PART 8 — CONSENT */}
       <section className="border rounded-2xl p-6 space-y-4">
-        <h3 className="font-semibold text-lg">Part 8 â€” Parent Consent</h3>
+        <h3 className="font-semibold text-lg">Part 8 — Parent Consent</h3>
         <label className="flex gap-2">
           <input type="checkbox" checked={formData.parentConsent} onChange={(e) => handleChange("parentConsent", e.target.checked)} required />
           I authorize this application and agree to EduMeUp's terms
@@ -489,9 +489,9 @@ export function TutorApplicationForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-h-[80vh] overflow-y-auto px-2 text-left">
       
-      {/* Part 1 â€” Personal Information */}
+      {/* Part 1 — Personal Information */}
       <section className="p-5 border rounded-2xl bg-white shadow-sm space-y-4">
-        <h3 className="font-semibold text-lg text-blue-900 border-b pb-2">Part 1 â€” Personal Information</h3>
+        <h3 className="font-semibold text-lg text-blue-900 border-b pb-2">Part 1 — Personal Information</h3>
         
         <div className="grid gap-4">
           <div className="flex flex-col gap-1">
@@ -583,9 +583,9 @@ export function TutorApplicationForm() {
         </div>
       </section>
 
-      {/* Part 2 â€” Qualifications */}
+      {/* Part 2 — Qualifications */}
       <section className="p-5 border rounded-2xl bg-white shadow-sm space-y-4">
-        <h3 className="font-semibold text-lg text-blue-900 border-b pb-2">Part 2 â€” Qualifications & Experience</h3>
+        <h3 className="font-semibold text-lg text-blue-900 border-b pb-2">Part 2 — Qualifications & Experience</h3>
 
         <div className="grid gap-4">
           <div className="flex flex-col gap-1">
@@ -667,9 +667,9 @@ export function TutorApplicationForm() {
         </div>
       </section>
 
-      {/* Part 3 â€” Teaching Subjects & Grades */}
+      {/* Part 3 — Teaching Subjects & Grades */}
       <section className="p-5 border rounded-2xl bg-white shadow-sm space-y-4">
-        <h3 className="font-semibold text-lg text-blue-900 border-b pb-2">Part 3 â€” Subjects & Grade Levels</h3>
+        <h3 className="font-semibold text-lg text-blue-900 border-b pb-2">Part 3 — Subjects & Grade Levels</h3>
 
         <div>
           <label className="text-[14px] font-semibold text-gray-700 mb-2 block">Subject(s) They Can Teach</label>
@@ -735,9 +735,9 @@ export function TutorApplicationForm() {
         </div>
       </section>
 
-      {/* Part 4 â€” Teaching Mode & Languages */}
+      {/* Part 4 — Teaching Mode & Languages */}
       <section className="p-5 border rounded-2xl bg-white shadow-sm space-y-4">
-        <h3 className="font-semibold text-lg text-blue-900 border-b pb-2">Part 4 â€” Teaching Mode & Languages</h3>
+        <h3 className="font-semibold text-lg text-blue-900 border-b pb-2">Part 4 — Teaching Mode & Languages</h3>
 
         <div>
           <label className="text-[14px] font-semibold text-gray-700 mb-2 block">Teaching Mode</label>
@@ -797,9 +797,9 @@ export function TutorApplicationForm() {
         </div>
       </section>
 
-      {/* Part 5 â€” Digital Skills */}
+      {/* Part 5 — Digital Skills */}
       <section className="p-5 border rounded-2xl bg-white shadow-sm">
-        <h3 className="font-semibold text-lg text-blue-900 border-b pb-2 mb-4">Part 5 â€” Digital Skills (Rate 1-5)</h3>
+        <h3 className="font-semibold text-lg text-blue-900 border-b pb-2 mb-4">Part 5 — Digital Skills (Rate 1-5)</h3>
         {Object.keys(formData.digitalSkills).map(skill => (
           <div key={skill} className="flex items-center justify-between mb-3">
             <label htmlFor={`skill-${skill}`} className="text-[14px] font-medium capitalize">
@@ -818,9 +818,9 @@ export function TutorApplicationForm() {
         ))}
       </section>
 
-      {/* Part 6 â€” Professional References */}
+      {/* Part 6 — Professional References */}
       <section className="p-5 border rounded-2xl bg-white shadow-sm space-y-4">
-        <h3 className="font-semibold text-lg text-blue-900 border-b pb-2">Part 6 â€” Professional Reference</h3>
+        <h3 className="font-semibold text-lg text-blue-900 border-b pb-2">Part 6 — Professional Reference</h3>
         
         <div className="grid gap-4">
           <div className="flex flex-col gap-1">
@@ -862,9 +862,9 @@ export function TutorApplicationForm() {
         </div>
       </section>
 
-      {/* Part 7 â€” File Uploads */}
+      {/* Part 7 — File Uploads */}
       <section className="p-5 border rounded-2xl bg-white shadow-sm space-y-4">
-        <h3 className="font-semibold text-lg text-blue-900 border-b pb-2">Part 7 â€” Uploads</h3>
+        <h3 className="font-semibold text-lg text-blue-900 border-b pb-2">Part 7 — Uploads</h3>
         
         <div className="flex flex-col gap-3">
           <div>
@@ -908,9 +908,9 @@ export function TutorApplicationForm() {
         </div>
       </section>
 
-      {/* Part 8 â€” Agreements */}
+      {/* Part 8 — Agreements */}
       <section className="p-5 border rounded-2xl bg-white shadow-sm space-y-4">
-        <h3 className="font-semibold text-lg text-blue-900 border-b pb-2">Part 8 â€” Agreements & Certifications</h3>
+        <h3 className="font-semibold text-lg text-blue-900 border-b pb-2">Part 8 — Agreements & Certifications</h3>
         
         <label className="flex items-start gap-2">
           <input 
@@ -1007,7 +1007,7 @@ export default function Tutors() {
     },
     {
       q: "What if student becomes independent early?",
-      a: "Great â€” tutoring hours reduce and student transitions to platform-only learning."
+      a: "Great — tutoring hours reduce and student transitions to platform-only learning."
     },
     {
       q: "Are sessions recorded?",
@@ -1043,7 +1043,7 @@ export default function Tutors() {
               SMK-Aligned Tutors + Research-Backed Platform + Proven Independence Model<br/>
               Powered by: MoodleÂ 4.5.1â€¯LMS Â· H5P Interactive Activities Â· AI Chatbot Â· Multilingual Support
             </p>
-            <p className="text-[14px] text-blue-200 font-semibold mb-12">LAUNCHING MARCHâ€¯2026 â€” Early applications open</p>
+            <p className="text-[14px] text-blue-200 font-semibold mb-12">LAUNCHING MARCHâ€¯2026 — Early applications open</p>
 
             <div className="grid lg:grid-cols-2 gap-12 max-w-5xl mx-auto bg-white/5 p-16 rounded-[3rem] border-4 border-white/10 backdrop-blur-sm text-left items-center">
               <div>
@@ -1173,7 +1173,7 @@ export default function Tutors() {
                 ))}
              </div>
              <p className="mt-8 text-white/90 font-semibold">
-               Every session integrates Moodle 4.5.1, H5P interactive activities, and our AI chatbot â€” so learning never stops between sessions.
+               Every session integrates Moodle 4.5.1, H5P interactive activities, and our AI chatbot — so learning never stops between sessions.
              </p>
              <p className="mt-6 font-semibold text-blue-200">
                THE 3â€‘STAGE SCAFFOLDING PROCESS:
@@ -1276,11 +1276,11 @@ export default function Tutors() {
 
           <div className="grid lg:grid-cols-5 gap-10">
              {[
-               { t: "Day 0â€“2", d: "Free diagnostic test (30â€“40â€¯min) + 20â€‘min consultation call â€” decide platform-only or tutoring scenario.", icon: Microscope },
+               { t: "Day 0â€“2", d: "Free diagnostic test (30â€“40â€¯min) + 20â€‘min consultation call — decide platform-only or tutoring scenario.", icon: Microscope },
                { t: "Day 3â€“5", d: "Tutor matched Â· platform account created free Â· parent dashboard activated Â· first session plan set.", icon: UserCheck },
                { t: "Months 1â€“3", d: "8â€“12â€¯hrs/month | Tutor assigns H5P activities on Moodle | Weekly progress reports.", icon: Zap },
                { t: "Months 4â€“6", d: "4â€“6â€¯hrs/month | Teaching shifts to coaching | Student becomes primary learner.", icon: Target },
-               { t: "Month 7+", d: "0â€“2â€¯hrs/month | Student fully independent on platform â€” SUCCESS.", icon: CheckCircle2 }
+               { t: "Month 7+", d: "0â€“2â€¯hrs/month | Student fully independent on platform — SUCCESS.", icon: CheckCircle2 }
              ].map((step, i) => (
                <div key={i} className="text-center space-y-8 group">
                   <div className="mx-auto h-24 w-24 bg-blue-50 rounded-full flex items-center justify-center text-[#2366c9] group-hover:bg-[#2366c9] group-hover:text-white transition-all shadow-xl">
@@ -1340,7 +1340,7 @@ export default function Tutors() {
       Tutor <span className="text-[#2366c9]">Certification & Digital Verification </span>
     </h2>
     <p className="text-lg md:text-xl mb-16 text-slate-900/80">
-      Only <span className="font-semibold text-[#2366c9]">15â€“20%</span> of applicants become certified. Hereâ€™s how we ensure quality:
+      Only <span className="font-semibold text-[#2366c9]">15â€“20%</span> of applicants become certified. Here’s how we ensure quality:
     </p>
 
     {/* Accordion Timeline */}
@@ -1350,7 +1350,7 @@ export default function Tutors() {
           step: 1,
           title: "Credentials Screening",
           icon: <UserCheck className="h-6 w-6 text-white" />,
-          description: "Bachelorâ€™s degree in subject + 3 years Cambridge/O-Level experience + professional references + background check.",
+          description: "Bachelor’s degree in subject + 3 years Cambridge/O-Level experience + professional references + background check.",
         },
         {
           step: 2,
@@ -1379,13 +1379,13 @@ export default function Tutors() {
           icon: <Zap className="h-6 w-6 text-white" />,
           description: (
             <>
-              <p className="font-semibold mb-2">Step A â€” Online Tools Quiz (15 min)</p>
+              <p className="font-semibold mb-2">Step A — Online Tools Quiz (15 min)</p>
               <ul className="flex flex-wrap gap-4 mb-2">
                 {["Zoom/Google Meet", "Google Classroom", "Digital Whiteboard", "Moodle LMS", "H5P Assignment"].map((item, i) => (
                   <li key={i} className="bg-blue-50 text-[#2366c9] px-3 py-1 rounded-full text-[14px] font-medium">{item}</li>
                 ))}
               </ul>
-              <p className="font-semibold mb-1">Step B â€” Live 10â€‘Minute Call</p>
+              <p className="font-semibold mb-1">Step B — Live 10â€‘Minute Call</p>
               <p className="text-[14px] text-slate-900/80">Tutor demonstrates screen sharing, whiteboard explanation, Moodle navigation, and assigning an H5P activity.</p>
             </>
           ),
@@ -1485,7 +1485,7 @@ export default function Tutors() {
     {/* Call-to-Action */}
     <div className="max-w-3xl mx-auto">
       <p className="text-slate-900/80 mb-4">
-        <strong>Who weâ€™re looking for:</strong> Bachelorâ€™s in relevant subject Â· 3+ years Cambridge experience Â· strong digital skills Â· commitment to independenceâ€‘building Â· available online (global) or physical (Lahore, Karachi, Islamabad/Rawalpindi, Faisalabad, or your city).
+        <strong>Who we’re looking for:</strong> Bachelor’s in relevant subject Â· 3+ years Cambridge experience Â· strong digital skills Â· commitment to independenceâ€‘building Â· available online (global) or physical (Lahore, Karachi, Islamabad/Rawalpindi, Faisalabad, or your city).
       </p>
       <p className="font-semibold text-[#2366c9] text-xl mb-2">Ready to apply?</p>
       <p className="text-slate-900/70 mb-6 text-[14px]">
@@ -1753,7 +1753,7 @@ export default function Tutors() {
       {/* Path 1 */}
       <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
         <h3 className="text-xl font-semibold text-slate-900 mb-3">
-          Path 1 â€” Platform First
+          Path 1 — Platform First
         </h3>
         <p className="text-gray-500 mb-6">
           Free diagnostic â†’ Start independently â†’ Add tutor if needed
@@ -1769,7 +1769,7 @@ export default function Tutors() {
       {/* Path 2 */}
       <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
         <h3 className="text-xl font-semibold text-slate-900 mb-3">
-          Path 2 â€” Diagnostic + Consultation
+          Path 2 — Diagnostic + Consultation
         </h3>
         <p className="text-gray-500 mb-6">
           Free test + 20-minute honest recommendation.
@@ -1785,7 +1785,7 @@ export default function Tutors() {
       {/* Path 3 */}
       <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
         <h3 className="text-xl font-semibold text-slate-900 mb-3">
-          Path 3 â€” Apply as Student
+          Path 3 — Apply as Student
         </h3>
         <p className="text-gray-500 mb-6">
           If your scenario fits structured tutoring support.
@@ -1801,7 +1801,7 @@ export default function Tutors() {
       {/* Path 4 */}
       <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
         <h3 className="text-xl font-semibold text-slate-900 mb-3">
-          Path 4 â€” Become an SMK Certified (Subject Master Knowledge Certified) Tutor
+          Path 4 — Become an SMK Certified (Subject Master Knowledge Certified) Tutor
         </h3>
         <p className="text-gray-500 mb-6">
           For qualified educators ready to join EduMeUp.

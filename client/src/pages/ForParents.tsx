@@ -108,9 +108,7 @@ export default function ForParents() {
       <section className="py-16 md:py-24 relative overflow-hidden bg-gradient-to-b from-blue-50/80 to-white">
         <div className="container-custom relative z-10 max-w-6xl mx-auto text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <Badge className="bg-blue-100 text-[#2366c9] mb-6 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest border border-blue-200">
-              For Parents
-            </Badge>
+     
             <h1 className="text-5xl md:text-6xl font-semibold text-slate-900 leading-tight mb-5">
               Your Child Deserves a <span className="text-[#2366c9]">Structured Path</span> to O-Level Success
             </h1>
@@ -570,22 +568,30 @@ export default function ForParents() {
         </div>
       </section>
 
-      <section className="py-20 bg-[#2366c9] text-white text-center">
-        <div className="container-custom max-w-5xl">
-          <h2 className="text-4xl md:text-5xl font-semibold text-white mb-5">Begin Your Child’s Structured Preparation</h2>
-          <p className="text-lg text-blue-100 max-w-3xl mx-auto mb-8 font-medium">
+            <section className="py-20 md:py-32 bg-[#2366c9] text-white relative overflow-hidden">
+        <div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
+        <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
+        <div className="container-custom text-center relative z-10">
+          <div className="flex justify-center w-full mb-6">
+            <h2 className="text-4xl md:text-6xl text-white font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
+              Begin Your Child’s Structured Preparation
+            </h2>
+          </div>
+          <p className="text-base text-blue-200 mb-12 max-w-3xl mx-auto">
             See the methodology first. Then decide with confidence.
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-col md:flex-row justify-center gap-6 max-w-5xl mx-auto">
             <Link href="/resources">
-              <Button size="lg" className="bg-[#2366c9] hover:bg-blue-500 text-white h-14 px-8 font-semibold">Explore Free Library</Button>
+              <Button size="lg" className="w-full md:w-auto min-w-[260px] bg-white text-[#2366c9] hover:bg-blue-50 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+                Explore Free Library <ArrowRight className="h-4 w-4" />
+              </Button>
             </Link>
             <InquiryDialog
               defaultType="diagnostic"
               title="Free Diagnostic"
               trigger={
-                <Button size="lg" variant="outline" className="h-14 px-8 border-2 border-white/10 bg-white/5 text-white hover:bg-white/10 font-semibold">
-                  Take Free Diagnostic
+                <Button size="lg" variant="outline" className="w-full md:w-auto min-w-[260px] border border-white/30 text-white hover:bg-white/10 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+                  Take Free Diagnostic <ArrowRight className="h-4 w-4" />
                 </Button>
               }
             />
@@ -593,8 +599,8 @@ export default function ForParents() {
               defaultType="general"
               title="Speak With Our Team"
               trigger={
-                <Button size="lg" variant="outline" className="h-14 px-8 border-2 border-white/10 bg-white/5 text-white hover:bg-white/10 font-semibold">
-                  Speak With Our Team
+                <Button size="lg" variant="outline" className="w-full md:w-auto min-w-[260px] border border-white/30 text-white hover:bg-white/10 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+                  Speak With Our Team <ArrowRight className="h-4 w-4" />
                 </Button>
               }
             />

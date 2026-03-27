@@ -376,7 +376,7 @@ export default function Home() {
               </p>
 
               <p className="text-lg font-semibold text-[#2366c9] mb-8">
-                EduMeUp engineers learning â€” using methods proven to work.
+                EduMeUp engineers learning — using methods proven to work.
               </p>
 
               <p className="text-sm text-black mb-12">
@@ -1421,7 +1421,7 @@ export default function Home() {
               <CardContent className="p-6 flex flex-col h-full justify-between">
 
                 <div className="space-y-3">
-                  <h3 className="text-xl font-semibold text-slate-900">TUTOR BOOKING â€” 1-TO-1 PERSONALISED EDUCATION</h3>
+                  <h3 className="text-xl font-semibold text-slate-900">TUTOR BOOKING — 1-TO-1 PERSONALISED EDUCATION</h3>
                   <p className="text-[14px] font-semibold text-slate-700">Better Than Traditional Providers - Same Price, 10Ã— Support</p>
                   <p className="text-[14px] text-slate-700">Professional tutor matching service with FREE platform resources for both students and teachers. Quality guaranteed.</p>
                   <p className="text-[14px] text-slate-700">NO EXTRA CHARGES - Just teacher fee. All platform resources 100% FREE.</p>
@@ -2095,10 +2095,10 @@ export default function Home() {
               ["Bridge Courses Packages", "$170 - $250", "N/A", "Math-Chem-Phys ($170) | All 5 ($250, Save $80)"],
               ["English Language Mastery Courses", "$250", "N/A", "Paper 1 & 2 Complete Package (Save $60)"],
               ["ATP Courses (Physics | Chemistry | Biology)", "$229", "N/A", "Paper 4 practical replacement (Save $148)"],
-              ["Tutor Booking â€” 1-to-1 Personalised Education", "$80â€“150/month", "-", "Structured 1-on-1 support"],
+              ["Tutor Booking — 1-to-1 Personalised Education", "$80â€“150/month", "-", "Structured 1-on-1 support"],
               ["Pakistan Matric Programme (Grades 9â€“10)", "$18/mo or $160/yr", "N/A", "Pakistan Board Grades 9â€“10"],
               ["Pakistan FSc / ICS Programme", "$20/mo or $199/yr", "N/A", "Intermediate Board students"],
-              ["Pakistan ECAT â€” Engineering Entry Test", "$140 (2-yr)", "N/A", "Engineering entry test prep"]
+              ["Pakistan ECAT — Engineering Entry Test", "$140 (2-yr)", "N/A", "Engineering entry test prep"]
             ].map((item, i) => (
               <Card
                 key={i}

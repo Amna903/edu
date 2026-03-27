@@ -99,11 +99,9 @@ export default function WhyEduMeUp() {
             transition={{ duration: 0.8 }}
             className="max-w-5xl mx-auto text-center"
           >
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
-              Why EduMeUp
-            </p>
+       
             <h1 className="text-5xl md:text-7xl font-semibold text-slate-900 mb-6 tracking-tight leading-tight">
-              Why EduMeUp — The Science, The System, The Difference
+              Why EduMeUp - The Science, The System, The Difference
             </h1>
             <p className="text-base text-slate-700 max-w-3xl mx-auto leading-relaxed mb-8">
               Not another course platform. A learning transformation system.
@@ -274,17 +272,27 @@ export default function WhyEduMeUp() {
       </section>
 
       {/* CTA STRIP */}
-      <section className="py-16 md:py-20 bg-blue-50">
-        <div className="container-custom">
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
+      <section className="py-20 md:py-32 bg-[#2366c9] text-white relative overflow-hidden">
+        <div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
+        <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
+        <div className="container-custom text-center relative z-10">
+          <div className="flex justify-center w-full mb-6">
+            <h2 className="text-4xl md:text-6xl text-white font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
+              Stop Guessing. Start Learning Right.
+            </h2>
+          </div>
+          <p className="text-base text-blue-200 mb-12 max-w-3xl mx-auto">
+            EduMeUp diagnoses where your child is, then builds a system that ensures they never forget what they learn.
+          </p>
+          <div className="flex flex-col md:flex-row justify-center gap-6 max-w-5xl mx-auto">
             <Link href="/programs/ai-diagnostic">
-              <Button className="bg-[#2366c9] hover:bg-blue-700 text-white font-semibold text-[14px] py-3 px-6">
-                Start Your Free Diagnostic <ArrowRight className="ml-2 h-5 w-5" />
+              <Button size="lg" className="w-full md:w-auto min-w-[260px] bg-white text-[#2366c9] hover:bg-blue-50 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+                Start Your Free Diagnostic <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
             <Link href="/why-edumeup/how-it-works">
-              <Button variant="outline" className="border-2 border-[#2366c9] text-[#2366c9] font-semibold text-[14px] py-3 px-6">
-                See How the System Works <ArrowRight className="ml-2 h-5 w-5" />
+              <Button size="lg" variant="outline" className="w-full md:w-auto min-w-[260px] border border-white/30 text-white hover:bg-white/10 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+                See How the System Works <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
           </div>
