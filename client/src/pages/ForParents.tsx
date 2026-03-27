@@ -332,8 +332,8 @@ export default function ForParents() {
             </Card>
             <Card className="border-[#2366c9]  border-2 bg-white border-2 border-blue-100 rounded-2xl">
               <CardContent className="p-6">
-                <h3 className="text-lg font-semibold text-[#1e1b4b] mb-2">IGCSE / O-Level Bridge Programs + Past Papers</h3>
-                <p className="text-[14px] text-[#1e1b4b]/70">IGCSE / O-Level Bridge Programs (Grades 6–8) and past paper coverage from 2010–2025.</p>
+                <h3 className="text-lg font-semibold text-[#1e1b4b] mb-2">Foundational O-Level Bridge Courses + Past Papers</h3>
+                <p className="text-[14px] text-[#1e1b4b]/70">Foundational O-Level Bridge Courses (Grades 6–8) and past paper coverage from 2010–2025.</p>
               </CardContent>
             </Card>
           </div>
@@ -363,7 +363,7 @@ export default function ForParents() {
             <Card className="border-[#2366c9]  border-2 border-2 border-blue-100 rounded-2xl">
               <CardContent className="p-6">
                 <MessageCircle className="h-6 w-6 text-[#2366c9] mb-3" />
-                <h3 className="text-xl font-semibold text-[#1e1b4b] mb-2">SMK Certified (Subject Master Knowledge Certified) Network</h3>
+                <h3 className="text-xl font-semibold text-[#1e1b4b] mb-2">Tutor Booking - 1-to-1 Personalised Education</h3>
                 <p className="text-[14px] text-[#1e1b4b]/70 mb-3">In-person support in Lahore, Karachi, Islamabad, and Rawalpindi.</p>
                 <p className="text-[14px] font-semibold text-[#2366c9]">From $20/hour</p>
               </CardContent>

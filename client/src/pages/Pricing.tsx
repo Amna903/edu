@@ -166,9 +166,9 @@ const ROICalculator = () => {
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-black mb-2">Desired EduMeUp Program</label>
             <select value={program} onChange={(e) => setProgram(e.target.value)} title="Select desired EduMeUp program" aria-label="Select desired EduMeUp program" className="w-full border border-blue-100 rounded-xl h-11 px-3 text-[14px] font-semibold text-slate-700">
-              <option value="complete">Complete O-Level Subjects</option>
-              <option value="victory">Pre-O-Level Victory</option>
-              <option value="bridge">IGCSE / O-Level Bridge Programs</option>
+              <option value="complete">Complete O-Level Subject Preparation</option>
+              <option value="victory">Pre-O-Level Victory Program</option>
+              <option value="bridge">Foundational O-Level Bridge Courses</option>
             </select>
           </div>
         </div>
@@ -250,9 +250,9 @@ export default function Pricing() {
           <p className="text-black font-semibold">Clear plans. Clear outcomes. Clear guarantees.</p>
         </div>
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-8">
-          <PricingCard title="Complete O-Level Subjects" price="$55" period="/subject/year" badge="Self-Paced" description="Best for current O-Level students who want structured, independent preparation." features={["Complete syllabus coverage", "Interactive H5P practice", "Past paper integration (10+ years)", "Automated spaced review system", "AI diagnostic feedback", "Parent dashboard access", "Mock exams"]} note="4 subjects package: $130/year · 8 subjects package: $230/year · 30-Day Money-Back Guarantee." />
-          <PricingCard title="Pre-O-Level Victory" price="$360" period="/year" badge="Teacher-Led + Platform" isPopular={true} description="Best for Grade 7–8 students preparing early." features={["Structured 12-month program", "Guided live sessions", "IGCSE / O-Level Bridge Programs included", "Platform access", "Diagnostic & remedial support", "Parent reporting", "Mock assessments"]} note="Installment options available. Performance guarantee applies to students who complete assigned coursework and assessments." />
-          <PricingCard title="IGCSE / O-Level Bridge Programs" price="$50–$80" period="/course" badge="Repair Gaps" description="For students with foundational gaps." features={["Diagnostic pre-test", "Gap repair modules", "Interactive practice", "Readiness assessment", "Complete 5-course package: $250"]} />
+          <PricingCard title="Complete O-Level Subject Preparation" price="$55" period="/subject/year" badge="Self-Paced" description="Best for current O-Level students who want structured, independent preparation." features={["Complete syllabus coverage", "Interactive H5P practice", "Past paper integration (10+ years)", "Automated spaced review system", "AI diagnostic feedback", "Parent dashboard access", "Mock exams"]} note="4 subjects package: $130/year · 8 subjects package: $230/year · 30-Day Money-Back Guarantee." />
+          <PricingCard title="Pre-O-Level Victory Program" price="$360" period="/year" badge="Teacher-Led + Platform" isPopular={true} description="Best for Grade 7–8 students preparing early." features={["Structured 12-month program", "Guided live sessions", "Foundational O-Level Bridge Courses included", "Platform access", "Diagnostic & remedial support", "Parent reporting", "Mock assessments"]} note="Installment options available. Performance guarantee applies to students who complete assigned coursework and assessments." />
+          <PricingCard title="Foundational O-Level Bridge Courses" price="$50–$80" period="/course" badge="Repair Gaps" description="For students with foundational gaps." features={["Diagnostic pre-test", "Gap repair modules", "Interactive practice", "Readiness assessment", "Complete 5-course package: $250"]} />
         </div>
       </section>
 

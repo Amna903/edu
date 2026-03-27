@@ -1214,7 +1214,7 @@ export default function Tutors() {
                 id: "A",
                 title: "LATE STARTERS",
                 sub: "Catch-Up Support",
-                for: "Missed IGCSE / O-Level Bridge Programs / weak O-Level foundation",
+                for: "Missed Foundational O-Level Bridge Courses / weak O-Level foundation",
                 role: "Intensive remedial instruction targeting exact foundational gaps.",
                 goal: "Platform independence in 3–6 months."
               },
@@ -1262,7 +1262,7 @@ export default function Tutors() {
 
           <div className="mt-32 p-16 bg-red-50 rounded-[3rem] border-4 border-red-100 text-center max-w-4xl mx-auto">
              <h3 className="text-2xl font-semibold text-red-600 mb-4">Who doesn't need tutors?</h3>
-             <p className="text-[#1e1b4b] font-semibold">Students scoring 50%+, with a solid foundation and completed diagnostics/IGCSE / O-Level Bridge Programs – platform alone is sufficient. Save money, build independence immediately.</p>
+             <p className="text-[#1e1b4b] font-semibold">Students scoring 50%+, with a solid foundation and completed diagnostics/Foundational O-Level Bridge Courses - platform alone is sufficient. Save money, build independence immediately.</p>
           </div>
         </div>
       </section>

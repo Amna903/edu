@@ -47,6 +47,7 @@ function Router() {
       <Route path="/blog" component={Blog} />
       <Route path="/how-it-works" component={HowItWorks} />
       <Route path="/programs" component={Programs} />
+      <Route path="/programs/ai-diagnostic" component={Contact} />
       <Route path="/programs/atp-courses" component={ATPCourses} />
       <Route path="/programs/tutor-booking" component={TutorBooking} />
       <Route path="/programs/:slug" component={ProgramDetails} />
@@ -62,8 +63,11 @@ function Router() {
       <Route path="/schools" component={Schools} />
       <Route path="/for-schools" component={ForSchools} />
       <Route path="/for-schools/partnership" component={ForSchoolsPartnership} />
+      <Route path="/for-schools/consultation" component={ForSchoolsPartnership} />
       <Route path="/for-parents" component={ForParentsMain} />
       <Route path="/teacher-training" component={TeacherTraining} />
+      <Route path="/teacher-training/individual" component={TeacherTraining} />
+      <Route path="/teacher-training/book" component={TeacherTraining} />
       <Route path="/why-edumeup" component={WhyEduMeUp} />
       <Route path="/why-edumeup/how-it-works" component={HowItWorks} />
       <Route path="/tutors" component={Tutors} />

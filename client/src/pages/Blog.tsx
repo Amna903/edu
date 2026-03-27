@@ -13,7 +13,7 @@ export default function Blog() {
     "English P1&P2",
     "Sciences & ATP",
     "Mathematics",
-    "IGCSE / O-Level Bridge Programs",
+    "Foundational O-Level Bridge Courses",
     "Parent Guides",
     "Study Skills",
   ];
@@ -66,9 +66,9 @@ export default function Blog() {
     },
     {
       id: 5,
-      title: "IGCSE / O-Level Bridge Programs Explained: Why Starting Early Changes Everything",
+      title: "Foundational O-Level Bridge Courses Explained: Why Starting Early Changes Everything",
       excerpt: "How Grade 6–8 preparation creates O-Level momentum before pressure spikes.",
-      category: "IGCSE / O-Level Bridge Programs",
+      category: "Foundational O-Level Bridge Courses",
       author: "Muhammad",
       date: "26 Mar 2026",
       readTime: "7 min",
@@ -168,7 +168,7 @@ export default function Blog() {
       heading: "Find Exactly Where Marks Are Leaking",
       sub: "Diagnostic first, then focused practice blocks.",
     },
-    "IGCSE / O-Level Bridge Programs": {
+    "Foundational O-Level Bridge Courses": {
       eyebrow: "START EARLY, BUILD ADVANTAGE",
       heading: "Cover O-Level Foundations Before Pressure Peaks",
       sub: "Bridge strategy for Grades 6–8 and early O-Level pathways.",
@@ -192,7 +192,7 @@ export default function Blog() {
     "English P1&P2": "border-t-[#2366c9]",
     "Sciences & ATP": "border-t-[#2366c9]",
     Mathematics: "border-t-[#1e1b4b]",
-    "IGCSE / O-Level Bridge Programs": "border-t-[#2366c9]",
+    "Foundational O-Level Bridge Courses": "border-t-[#2366c9]",
     "Parent Guides": "border-t-[#1e1b4b]",
     "Study Skills": "border-t-[#2366c9]",
   };
@@ -202,7 +202,7 @@ export default function Blog() {
     "English P1&P2": "bg-[#2366c9]/10 text-[#2366c9]",
     "Sciences & ATP": "bg-[#2366c9]/10 text-[#2366c9]",
     Mathematics: "bg-[#1e1b4b]/10 text-[#1e1b4b]",
-    "IGCSE / O-Level Bridge Programs": "bg-[#2366c9]/10 text-[#2366c9]",
+    "Foundational O-Level Bridge Courses": "bg-[#2366c9]/10 text-[#2366c9]",
     "Parent Guides": "bg-[#1e1b4b]/10 text-[#1e1b4b]",
     "Study Skills": "bg-[#2366c9]/10 text-[#2366c9]",
   };

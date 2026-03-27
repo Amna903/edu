@@ -147,7 +147,7 @@ export default function About() {
               {[
                 { step: 1, title: "AI-Powered Comprehensive Diagnostic", desc: "Identifies exact gaps at sub-skill level in 90 minutes", res: "VanLehn, 2011" },
                 { step: 2, title: "Personalized Remedial Pathway", desc: "Custom plan targeting only identified weak areas", res: "Bloom, 1984" },
-                { step: 3, title: "Foundation Preparation Courses", desc: "IGCSE / O-Level Bridge Programs build O-Level readiness systematically", res: "Vygotsky, 1978" },
+                { step: 3, title: "Foundation Preparation Courses", desc: "Foundational O-Level Bridge Courses build O-Level readiness systematically", res: "Vygotsky, 1978" },
               ].map((item, i) => (
                 <Card key={i} className="border border-white rounded-xl shadow-sm hover:shadow-xl transition-all">
                   <CardContent className="p-6">

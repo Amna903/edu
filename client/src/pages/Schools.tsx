@@ -103,7 +103,7 @@ export default function Schools() {
             {[
               {
                 title: "Academic Content",
-                desc: "1000+ H5P interactive activities covering all subjects. IGCSE / O-Level Bridge Programs, ATP courses, and English skill development included.",
+                desc: "1000+ H5P interactive activities covering all subjects. Foundational O-Level Bridge Courses, ATP courses, and English skill development included.",
                 icon: BookOpen,
                 value: "$678 Value/Student"
               },

@@ -169,7 +169,7 @@ export default function Programs() {
             {[
               {
                 id: "p1",
-                title: "Pathway 1: Foundation & IGCSE / O-Level Bridge Programs",
+                title: "Pathway 1: Foundation & Foundational O-Level Bridge Courses",
                 subtitle: "Build Strong Basics → Transition to O-Level",
                 for: "Grade 5-8 students, foundation gaps, curriculum transitions",
                 priorities: [
@@ -180,7 +180,7 @@ export default function Programs() {
                   },
                   { 
                     title: "Pre-O-Level Victory Program", 
-                    details: "9-month comprehensive system covering Grade 6-8 repair + IGCSE / O-Level Bridge Programs + 30% O-Level syllabus. Available in Self-Learning ($199) or Teacher-Led ($360).",
+                    details: "9-month comprehensive system covering Grade 6-8 repair + Foundational O-Level Bridge Courses + 30% O-Level syllabus. Available in Self-Learning ($199) or Teacher-Led ($360).",
                     guarantee: "60% performance guarantee"
                   }
                 ]
@@ -192,12 +192,12 @@ export default function Programs() {
                 for: "Current O-Level students (O1/O2), self-motivated learners",
                 priorities: [
                   { 
-                    title: "Complete O-Level Subjects", 
+                    title: "Complete O-Level Subject Preparation", 
                     details: "100% Cambridge syllabus coverage with 1000+ interactive H5P activities. Includes integrated past papers, anti-forgetting system, and 24/7 AI support.",
                     pricing: "$65/year per subject"
                   },
                   { 
-                    title: "ATP / Practical Training", 
+                    title: "ATP Courses (Physics / Chemistry / Biology)", 
                     details: "Virtual lab demonstrations for Paper 4 (Physics, Chemistry, Biology). Build analytical skills for unseen experiments without needing a physical lab.",
                     pricing: "From $99/subject"
                   }
@@ -210,12 +210,12 @@ export default function Programs() {
                 for: "Exam preparation (1-6 months), technique mastery, time management",
                 priorities: [
                   { 
-                    title: "Real-Time Mock Series", 
+                    title: "Real-Time Exam Preparation", 
                     details: "20+ actual Cambridge past papers with enhanced solutions. MCQ interface timed exactly like real exams with instant AI explanations for every mistake.",
                     value: "50-80% cheaper than traditional mocks"
                   },
                   { 
-                    title: "Revision & Crash Courses", 
+                    title: "Exam Practice Papers with Enhanced Solutions", 
                     details: "Condensed syllabus review targeting high-yield topics. Formula sheets, magic sheets, and rapid practice for emergency 2-4 week preparation.",
                     pricing: "From $40/subject"
                   }
@@ -228,7 +228,7 @@ export default function Programs() {
                 for: "Students needing 1-on-1 guidance, accountability, human interaction",
                 priorities: [
                   { 
-                    title: "SMK Certified (Subject Master Knowledge Certified) Network", 
+                    title: "Tutor Booking - 1-to-1 Personalised Education", 
                     details: "Vetted, SMK-trained teachers matched to student needs. Includes 2 FREE sample lectures and full platform resource access ($360 value free).",
                     availability: "Online & Physical (Selected cities)"
                   }
@@ -326,10 +326,10 @@ export default function Programs() {
               <h3 className="text-2xl font-semibold text-blue-600 px-4 border-l-8 border-blue-600">1. Where are you now?</h3>
               <div className="grid gap-4">
                 {[
-                  { q: "GRADE 7-8", path: "Foundation & IGCSE / O-Level Bridge Programs", start: "Pre-O-Level Victory" },
-                  { q: "O-LEVEL YEAR 1", path: "IGCSE / O-Level Bridge Programs & Mastery", start: "Complete O-Level Subjects" },
-                  { q: "O-LEVEL YEAR 2-3", path: "O-Level Mastery", start: "Complete O-Level Subjects" },
-                  { q: "EXAM PREP", path: "Exam Specialization", start: "Real-Time Exam Prep" },
+                  { q: "GRADE 7-8", path: "Foundation & Foundational O-Level Bridge Courses", start: "Pre-O-Level Victory Program" },
+                  { q: "O-LEVEL YEAR 1", path: "Foundational O-Level Bridge Courses & Mastery", start: "Complete O-Level Subject Preparation" },
+                  { q: "O-LEVEL YEAR 2-3", path: "O-Level Mastery", start: "Complete O-Level Subject Preparation" },
+                  { q: "EXAM PREP", path: "Exam Specialization", start: "Real-Time Exam Preparation" },
                 ].map((item, i) => (
                   <div key={i} className="p-8 bg-blue-50 rounded-3xl border-2 border-white hover:border-blue-100 transition-all">
                     <span className="text-[14px] font-semibold text-[#2366c9]">{item.q}</span>
@@ -344,9 +344,9 @@ export default function Programs() {
               <h3 className="text-2xl font-semibold text-blue-600 px-4 border-l-8 border-blue-600">2. Biggest challenge?</h3>
               <div className="grid gap-4">
                 {[
-                  { q: "Foundation Gaps", path: "Diagnostic + Remedial + IGCSE / O-Level Bridge Programs" },
-                  { q: "Complete Prep", path: "Pre-O-Level Victory" },
-                  { q: "Exam Technique", path: "Real-Time Exam Prep (Mock Series)" },
+                  { q: "Foundation Gaps", path: "Diagnostic + Remedial + Foundational O-Level Bridge Courses" },
+                  { q: "Complete Prep", path: "Pre-O-Level Victory Program" },
+                  { q: "Exam Technique", path: "Real-Time Exam Preparation" },
                   { q: "English Weakness", path: "English Paper 1 & 2 Skill Dev" },
                 ].map((item, i) => (
                   <div key={i} className="p-8 bg-blue-50 rounded-3xl border-2 border-white hover:border-blue-100 transition-all flex items-center justify-between">

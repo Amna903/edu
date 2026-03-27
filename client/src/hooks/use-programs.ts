@@ -6,16 +6,16 @@ const fallbackPrograms: Program[] = [
   {
     id: 1,
     title: "Pre-O-Level Victory Program",
-    slug: "pre-o-level-victory-program",
+    slug: "pre-o-level-victory",
     shortDescription: "Build foundation and transition confidently into O-Level with structured guidance.",
     fullDescription:
-      "A complete 9-month pathway for Grade 7-8 learners covering gap repair, IGCSE / O-Level Bridge Programs content, and early O-Level readiness.",
+      "A complete 9-month pathway for Grade 7-8 learners covering gap repair, Foundational O-Level Bridge Courses content, and early O-Level readiness.",
     category: "foundation",
     price: 36000,
     prices: null,
     features: [
       "AI diagnostic and remedial mapping",
-      "IGCSE / O-Level Bridge Programs and structured weekly roadmap",
+      "Foundational O-Level Bridge Courses and structured weekly roadmap",
       "Interactive H5P practice",
       "Parent progress visibility",
     ],
@@ -24,8 +24,8 @@ const fallbackPrograms: Program[] = [
   },
   {
     id: 2,
-    title: "Complete O-Level Subjects",
-    slug: "complete-o-level-subjects",
+    title: "Complete O-Level Subject Preparation",
+    slug: "complete-o-level",
     shortDescription: "Full Cambridge-aligned O-Level preparation with retention-focused learning design.",
     fullDescription:
       "Comprehensive syllabus mastery with active recall, spaced review, and exam-focused question banks.",
@@ -43,8 +43,8 @@ const fallbackPrograms: Program[] = [
   },
   {
     id: 3,
-    title: "ATP / Practical Training",
-    slug: "atp-practical-training",
+    title: "ATP Courses (Physics / Chemistry / Biology)",
+    slug: "atp-courses",
     shortDescription: "Master practical and ATP paper strategy through simulation-style guided practice.",
     fullDescription:
       "Targeted preparation for practical and ATP components with experiment interpretation, data handling, and examiner-style techniques.",
@@ -61,8 +61,8 @@ const fallbackPrograms: Program[] = [
   },
   {
     id: 4,
-    title: "Real-Time Exam Prep (Mock Series)",
-    slug: "real-time-exam-prep-mock-series",
+    title: "Real-Time Exam Preparation",
+    slug: "exam-prep",
     shortDescription: "Timed mock testing and exam strategy refinement for final-phase readiness.",
     fullDescription:
       "Exam simulation environment with timed papers, instant diagnostics, and strategic mistake correction.",
@@ -79,11 +79,11 @@ const fallbackPrograms: Program[] = [
   },
   {
     id: 5,
-    title: "IGCSE / O-Level Bridge Programs",
+    title: "Foundational O-Level Bridge Courses",
     slug: "foundation-bridge-courses",
     shortDescription: "Repair conceptual gaps quickly before higher-level exam preparation.",
     fullDescription:
-      "Short, targeted IGCSE / O-Level Bridge Programs designed to close foundational weaknesses in core subjects.",
+      "Short, targeted Foundational O-Level Bridge Courses designed to close foundational weaknesses in core subjects.",
     category: "foundation",
     price: 5000,
     prices: null,
@@ -97,18 +97,18 @@ const fallbackPrograms: Program[] = [
   },
   {
     id: 6,
-    title: "School Charter Program",
-    slug: "school-charter-program",
-    shortDescription: "Institutional partnership model for schools adopting EduMeUp at scale.",
+    title: "Tutor Booking - 1-to-1 Personalised Education",
+    slug: "tutor-booking",
+    shortDescription: "Personalized tutor support tailored to student needs and target outcomes.",
     fullDescription:
-      "School-level deployment with teacher enablement, performance reporting, and structured O-Level improvement framework.",
-    category: "school_charter",
+      "One-to-one tutor guidance with structured lesson plans, progress reporting, and platform-backed practice resources.",
+    category: "tutoring",
     price: null,
     prices: null,
     features: [
-      "School implementation support",
-      "Teacher onboarding and SMK alignment",
-      "Institutional dashboards",
+      "Personalized tutor matching",
+      "Structured weekly learning plans",
+      "Progress reporting with parent visibility",
     ],
     isPopular: false,
     createdAt: new Date(),

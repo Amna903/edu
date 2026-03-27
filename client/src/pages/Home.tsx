@@ -1216,8 +1216,8 @@ Built on Learning Science, Validated by Research
 
       <p className="text-xs font-semibold text-[#2366c9] uppercase tracking-wider">Featured</p>
     <h3 className="text-3xl font-semibold text-slate-900">PRE-O-LEVEL VICTORY PROGRAM</h3>
-        <p className="text-[14px] font-semibold text-slate-700">The Complete Bridge from Middle School to O-Level Excellence</p>
-        <p className="text-[14px] text-slate-700">The complete bridge from middle school to O-Level excellence.</p>
+        <p className="text-[14px] font-semibold text-slate-700">The complete bridge from middle school to O-Level mastery.</p>
+        <p className="text-[14px] text-slate-700">The complete bridge from middle school to Cambridge O-Level readiness.</p>
         <p className="text-[14px] text-slate-700">Repair Grade 6–8 gaps, complete Bridge Program, and cover 30–40% of O-Level syllabus - equivalent to O1 preparation.</p>
         <p className="text-[14px] font-semibold text-slate-900">THREE-IN-ONE PROGRAM:</p>
         <ul className="text-[14px] text-slate-700 space-y-1">
