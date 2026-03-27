@@ -110,15 +110,15 @@ export default function Resources() {
                    <div className="text-green-400 font-semibold text-xs">EduMeUp free resources</div>
                  </div>
                  <div className="grid grid-cols-2 gap-4 border-b border-white/10 pb-6">
-                   <div className="text-white/40 font-semibold italic">Low-quality upsell</div>
+                   <div className="text-slate-300 font-semibold italic">Low-quality upsell</div>
                    <div className="text-white font-semibold">Premium course samples âœ“</div>
                  </div>
                  <div className="grid grid-cols-2 gap-4 border-b border-white/10 pb-6">
-                   <div className="text-white/40 font-semibold italic">Generic textbook copy</div>
+                   <div className="text-slate-300 font-semibold italic">Generic textbook copy</div>
                    <div className="text-white font-semibold">Purpose-built, tested âœ“</div>
                  </div>
                  <div className="grid grid-cols-2 gap-4">
-                   <div className="text-white/40 font-semibold italic">Time-limited access</div>
+                   <div className="text-slate-300 font-semibold italic">Time-limited access</div>
                    <div className="text-white font-semibold">Free forever, unlimited âœ“</div>
                  </div>
                </div>

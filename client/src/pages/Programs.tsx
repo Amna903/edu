@@ -91,9 +91,9 @@ export default function Programs() {
       </section>
 
       {/* PROOF LAYER & RISK REVERSAL */}
-      <section className="py-32 bg-white">
+      <section className="py-16 md:py-32 bg-white">
         <div className="container-custom">
-          <div className="grid lg:grid-cols-2 gap-20 items-center ">
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-20 items-center">
             <div>
               <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-8 leading-none">
                 PROVEN BY <span className="text-blue-600">NUMBERS</span>
@@ -124,7 +124,7 @@ export default function Programs() {
             </div>
 
             <div className="space-y-8">
-              <div className="bg-[#2366c9] p-12 rounded-[4rem] text-white shadow-2xl relative overflow-hidden">
+              <div className="bg-[#2366c9] p-6 sm:p-10 md:p-12 rounded-[2rem] sm:rounded-[4rem] text-white shadow-2xl relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl"></div>
                 <h3 className="text-2xl font-semibold mb-8 text-white">Who it's not for</h3>
                 <ul className="space-y-6">
@@ -144,7 +144,7 @@ export default function Programs() {
                 </div>
               </div>
 
-              <div className="bg-blue-50 p-12 rounded-[4rem] border-4 border-blue-100">
+              <div className="bg-blue-50 p-6 sm:p-10 md:p-12 rounded-[2rem] sm:rounded-[4rem] border-4 border-blue-100">
                 <h3 className="text-2xl font-semibold text-slate-900 mb-8">Success stories</h3>
                 <div className="space-y-6">
                   <p className="text-slate-900/70 font-medium italic">"Ahmed went from a 'D' in Physics to an 'A*' in just 4 months. The diagnostic revealed he was missing Grade 7 fundamentals."</p>
@@ -157,9 +157,9 @@ export default function Programs() {
       </section>
 
       {/* THE 4 LEARNING PATHWAYS */}
-      <section className="py-28 bg-white">
+      <section className="py-16 md:py-28 bg-white">
         <div className="container-custom max-w-6xl">
-          <div className="text-center mb-24">
+          <div className="text-center mb-12 md:mb-24">
             <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-4">The 4 learning pathways</h2>
             <p className="text-lg text-blue-600 font-semibold">Designed for every stage of the O-Level journey</p>
           </div>
@@ -236,13 +236,13 @@ export default function Programs() {
             ].map((path, i) => (
               <Accordion type="single" collapsible key={i} className="bg-blue-50 rounded-[2.5rem] border-4 border-white hover:border-blue-100 transition-all overflow-hidden shadow-sm">
                 <AccordionItem value={path.id} className="border-none">
-                  <AccordionTrigger className="px-10 py-8 hover:no-underline group">
+                  <AccordionTrigger className="px-4 sm:px-10 py-5 sm:py-8 hover:no-underline group">
                     <div className="text-left">
                       <h3 className="text-2xl font-semibold text-slate-900 group-hover:text-[#2366c9] transition-colors">{path.title}</h3>
                       <p className="text-blue-600 font-semibold uppercase text-xs tracking-widest mt-1">{path.subtitle}</p>
                     </div>
                   </AccordionTrigger>
-                  <AccordionContent className="px-10 pb-10">
+                  <AccordionContent className="px-4 sm:px-10 pb-6 sm:pb-10">
                     <div className="pt-6 border-t border-white/50">
                       <div className="mb-8 p-6 bg-white/50 rounded-2xl border border-white">
                         <span className="text-[14px] font-semibold text-slate-900/40">Ideal for</span>
@@ -277,9 +277,9 @@ export default function Programs() {
       </section>
 
       {/* SYSTEM CAPABILITIES - COLLAPSIBLE */}
-      <section className="py-32 bg-[#2366c9] text-white">
+      <section className="py-16 md:py-32 bg-[#2366c9] text-white">
         <div className="container-custom">
-          <div className="text-center mb-24">
+          <div className="text-center mb-12 md:mb-24">
             <h2 className="text-4xl md:text-5xl text-white font-semibold">System capabilities</h2>
             <p className="text-xl text-blue-400 font-semibold uppercase tracking-widest mt-4">The Engine Powering Your 10X Learning Leap</p>
           </div>
@@ -313,7 +313,7 @@ export default function Programs() {
       </section>
 
       {/* DECISION FRAMEWORK */}
-      <section className="py-32 bg-white">
+      <section className="py-16 md:py-32 bg-white">
         <div className="container-custom max-w-6xl">
           <div className="text-center mb-24">
             <h2 className="text-4xl md:text-5xl font-semibold text-slate-900">Choose your path</h2>

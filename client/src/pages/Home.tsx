@@ -1,7 +1,7 @@
 ﻿import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Zap, Target, LineChart, Trophy, BookOpen, UserCheck, CheckCircle2, MessageSquare, HelpCircle, ShieldCheck, Brain, Layers, Search, RefreshCw, MousePointer2, BarChart3, GraduationCap as GraduationIcon, ArrowRight, Download, Calendar, PlayCircle } from "lucide-react";
+import { Zap, Target, LineChart, Trophy, BookOpen, UserCheck, CheckCircle2, MessageSquare, HelpCircle, ShieldCheck, Brain, Layers, Search, RefreshCw, MousePointer2, BarChart3, GraduationCap as GraduationIcon, ArrowRight, Download, Calendar, PlayCircle, Star } from "lucide-react";
 import { Link } from "wouter";
 import { InquiryDialog } from "@/components/InquiryDialog";
 import { motion, AnimatePresence } from "framer-motion";
@@ -432,7 +432,7 @@ export default function Home() {
                   For Schools & Educational Institutions
                 </p>
                 <div className="flex justify-center w-full">
-                  <h2 className="text-4xl md:text-6xl text-white font-semibold leading-[1.05] mb-7 text-center tracking-tight px-4 md:whitespace-nowrap">
+                  <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white font-semibold leading-[1.1] mb-7 text-center tracking-tight px-4">
                     Transform Your School into a Centre of Excellence
                   </h2>
                 </div>
@@ -543,7 +543,7 @@ export default function Home() {
               Who This Is For
             </p>
             <div className="flex justify-center w-full">
-              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
                 Who this Platform is Designed for
               </h2>
             </div>
@@ -606,7 +606,7 @@ export default function Home() {
               THE SCIENCE BEHIND THE SYSTEM
             </p>
             <div className="flex justify-center w-full">
-              <h2 className="text-4xl md:text-6xl font-semibold text-slate-900 mb-4 md:whitespace-nowrap">
+              <h2 className="text-4xl md:text-6xl font-semibold text-slate-900 mb-4">
                 The EduMeUp 8-Step Research-Backed Mastery Cycle
               </h2>
             </div>
@@ -669,7 +669,7 @@ export default function Home() {
             <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
               COMPLETE ECOSYSTEM
             </p>
-            <h2 className="text-4xl md:text-6xl font-semibold text-slate-900 mb-4 md:whitespace-nowrap text-center">
+            <h2 className="text-4xl md:text-6xl font-semibold text-slate-900 mb-4 text-center">
               A Complete Ecosystem Empowering Every Stakeholder
             </h2>
             <p className="text-lg text-black font-medium text-left">
@@ -714,7 +714,7 @@ export default function Home() {
               Research Engine
             </p>
             <div className="flex justify-center w-full overflow-hidden">
-              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
                 The Science of Exam Mastery
               </h2>
             </div>
@@ -917,7 +917,7 @@ export default function Home() {
               <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold mb-4 leading-[1.05] tracking-tight ">
                 Is EduMeUp Right for Your Child?
               </h2>
-              <h2 className="text-2xl font-semibold text-slate-800 mb-6 leading-tight md:whitespace-nowrap">
+              <h2 className="text-2xl font-semibold text-slate-800 mb-6 leading-tight">
                 Take This Quick Check (30 Seconds)
               </h2>
               <p className="text-base text-black mb-12 leading-relaxed font-medium italic border-b border-slate-200 pb-4">
@@ -1071,7 +1071,7 @@ export default function Home() {
             <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
               All Programs</p>
             <div className="flex justify-center w-full">
-              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
                 Find the Right Program for Your Child
               </h2>
             </div>
@@ -1551,7 +1551,7 @@ export default function Home() {
 
             <div className="flex justify-center w-full">
               {/* H2 â€“ 60px desktop, responsive mobile size */}
-              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
 
                 The EduMeUp 8-Step Learning System
               </h2>
@@ -1643,7 +1643,7 @@ export default function Home() {
               Tutoring Comparison
             </p>
             <div className="flex justify-center w-full">
-              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
                 Why Traditional Tutoring Often Fails
               </h2>
             </div>
@@ -1716,7 +1716,7 @@ export default function Home() {
               PLATFORM COMPARISON
             </p>
             <div className="flex justify-center w-full">
-              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
                 How EduMeUp Compares to Other EdTech Platforms
               </h2>
             </div>
@@ -1764,7 +1764,7 @@ export default function Home() {
               Platform Features
             </p>
             <div className="flex justify-center w-full overflow-hidden">
-              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
                 PLATFORM FEATURES
               </h2>
             </div>
@@ -1821,7 +1821,7 @@ export default function Home() {
             <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
               WHAT SETS US APART
             </p>
-            <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-4 md:whitespace-nowrap">
+            <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-4">
               What Makes EduMeUp Unique
             </h2>
           </div>
@@ -1858,7 +1858,7 @@ export default function Home() {
               Research Architecture
             </p>
             <div className="flex justify-center w-full overflow-hidden">
-              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
                 The 10X Learning Leap Model
               </h2>
             </div>
@@ -1968,7 +1968,7 @@ export default function Home() {
               Guided Timeline
             </p>
             <div className="flex justify-center w-full">
-              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
                 Your Child's Journey
               </h2>
             </div>
@@ -2078,7 +2078,7 @@ export default function Home() {
               Price Intelligence
             </p>
             <div className="flex justify-center w-full">
-              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
                 Transparent Pricing - No Hidden Fees
               </h2>
             </div>
@@ -2129,7 +2129,7 @@ export default function Home() {
               Parent Control Room
             </p>
             <div className="flex justify-center w-full">
-              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
                 Parents See Everything
               </h2>
             </div>
@@ -2229,7 +2229,7 @@ export default function Home() {
               Starter Pack
             </p>
             <div className="flex justify-center w-full  ">
-              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
                 Free Resources to Get Started
               </h2>
             </div>
@@ -2281,7 +2281,7 @@ export default function Home() {
               Founder Story
             </p>
             <div className="flex justify-center w-full  ">
-              <h2 className="text-4xl md:text-6xl text-black font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+              <h2 className="text-4xl md:text-6xl text-black font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
                 Why We Built EduMeUp
               </h2>
             </div>
@@ -2348,7 +2348,7 @@ export default function Home() {
               Social Proof
             </p>
             <div className="flex justify-center w-full  ">
-              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
                 What Students & Parents Say
               </h2>
             </div>
@@ -2368,8 +2368,10 @@ export default function Home() {
                 className="border border-slate-200 rounded-xl bg-white shadow-sm hover:shadow-xl transition-all hover:-translate-y-1 flex flex-col"
               >
                 <CardContent className="p-7 text-left flex flex-col h-full">
-                  <div className="mb-4">
-                    <p className="text-yellow-500 text-xl">â˜…â˜…â˜…â˜…â˜…</p>
+                  <div className="mb-4 flex gap-0.5">
+                    {Array(5).fill(null).map((_, i) => (
+                      <Star key={i} className="h-4 w-4 text-yellow-400 fill-yellow-400" />
+                    ))}
                   </div>
                   <p className="text-[14px] text-slate-700 mb-6 leading-relaxed flex-grow">
                     "{t[2]}"
@@ -2391,7 +2393,7 @@ export default function Home() {
               FAQ
             </p>
             <div className="flex justify-center w-full  ">
-              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
                 Parents Ask. We Answer.
               </h2>
             </div>
@@ -2445,7 +2447,7 @@ export default function Home() {
 
         <div className="container-custom text-center relative z-10">
           <div className="flex justify-center w-full mb-6">
-            <h2 className="text-4xl md:text-6xl text-white font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4 md:whitespace-nowrap">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white font-semibold leading-[1.1] mb-3 text-center tracking-tight px-4">
               Your Child's O-Level Journey Starts with One Decision
             </h2>
           </div>

@@ -1029,7 +1029,7 @@ export default function Tutors() {
   return (
     <Layout>
       {/* SECTION 1: HERO */}
-      <section className="bg-[#2366c9] py-32 text-white relative overflow-hidden text-center">
+      <section className="bg-[#2366c9] py-16 md:py-32 text-white relative overflow-hidden text-center">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(37,99,235,0.2)_0%,transparent_50%)]"></div>
         <div className="container-custom relative z-10 max-w-6xl">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
@@ -1122,7 +1122,7 @@ export default function Tutors() {
       </section>
 
       {/* SECTION 2: PHILOSOPHY */}
-      <section className="py-40 bg-white">
+      <section className="py-20 md:py-40 bg-white">
         <div className="container-custom max-w-6xl">
           <div className="text-center max-w-4xl mx-auto mb-32">
              <h2 className="text-5xl md:text-6xl font-display font-semibold mb-8 text-slate-900 leading-tight">Why scaffolding, <span className="text-[#2366c9]">not crutches</span></h2>
@@ -1200,7 +1200,7 @@ export default function Tutors() {
       </section>
 
       {/* SECTION 3: WHO NEEDS TUTORS */}
-      <section className="py-40 bg-blue-50">
+      <section className="py-20 md:py-40 bg-blue-50">
         <div className="container-custom max-w-6xl">
           <div className="text-center max-w-4xl mx-auto mb-32">
              <h2 className="text-4xl md:text-5xl font-display font-semibold mb-8 text-slate-900 leading-tight">Who needs <span className="text-[#2366c9]">scaffolding?</span></h2>
@@ -1267,7 +1267,7 @@ export default function Tutors() {
         </div>
       </section>
       {/* SECTION 4: PROCESS */}
-      <section className="py-40 bg-white">
+      <section className="py-20 md:py-40 bg-white">
         <div className="container-custom max-w-6xl">
            <div className="text-center max-w-4xl mx-auto mb-32">
              <h2 className="text-4xl md:text-5xl font-display font-semibold mb-8 text-slate-900 leading-tight">Your scaffolding <span className="text-[#2366c9]">journey</span></h2>
@@ -1295,7 +1295,7 @@ export default function Tutors() {
         </div>
       </section>
       {/* SECTION 5: WHAT'S INCLUDED */}
-      <section className="py-40 bg-white">
+      <section className="py-20 md:py-40 bg-white">
         <div className="container-custom max-w-6xl">
           <div className="text-center max-w-4xl mx-auto mb-32">
             <h2 className="text-4xl md:text-5xl font-display font-semibold mb-8 text-slate-900 leading-tight">What's <span className="text-[#2366c9]">included</span></h2>
@@ -1334,7 +1334,7 @@ export default function Tutors() {
 
      {/* SECTION 6: TUTOR CERTIFICATION & DIGITAL VERIFICATION â­ [NEW] */}
  
-<section className="py-32 bg-gradient-to-b from-white to-blue-50">
+<section className="py-16 md:py-32 bg-gradient-to-b from-white to-blue-50">
   <div className="container-custom max-w-5xl mx-auto text-center">
     <h2 className="text-4xl md:text-5xl font-display font-semibold mb-6 text-slate-900">
       Tutor <span className="text-[#2366c9]">Certification & Digital Verification </span>
@@ -1454,7 +1454,7 @@ export default function Tutors() {
   </div>
 </section>
 {/* SECTION 7: JOIN AS AN SMK CERTIFIED TUTOR */}
-<section className="py-32 bg-blue-50">
+<section className="py-16 md:py-32 bg-blue-50">
   <div className="container-custom max-w-6xl mx-auto text-center">
     {/* Heading */}
     <h2 className="text-4xl md:text-5xl font-display font-semibold text-slate-900 mb-4">
@@ -1512,7 +1512,7 @@ export default function Tutors() {
 </section>
      
 {/* SECTION 8: APPLY AS STUDENT */}
-<section className="relative py-32 bg-[#f8fafc] overflow-hidden">
+<section className="relative py-16 md:py-32 bg-[#f8fafc] overflow-hidden">
 
   {/* Subtle background glow */}
   <div className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-[#2366c9]/10 rounded-full blur-3xl" />
@@ -1552,7 +1552,7 @@ export default function Tutors() {
     </div>
   </div>
 </section>
-<section className="py-32 bg-[#f8fafc]">
+<section className="py-16 md:py-32 bg-[#f8fafc]">
   <div className="max-w-6xl mx-auto px-6">
 
     <div className="text-center mb-20">
@@ -1645,7 +1645,7 @@ export default function Tutors() {
   </div>
 </section>
 
-<section className="py-32 bg-white">
+<section className="py-16 md:py-32 bg-white">
   <div className="max-w-6xl mx-auto px-6">
 
     <div className="text-center mb-20">
@@ -1692,7 +1692,7 @@ export default function Tutors() {
   </div>
 </section>
 
-      <section className="py-40 bg-blue-50">
+      <section className="py-20 md:py-40 bg-blue-50">
         <div className="container-custom max-w-6xl">
           <h2 className="text-4xl md:text-5xl font-semibold mb-20 text-center text-slate-900">
             Frequently Asked Questions
@@ -1736,7 +1736,7 @@ export default function Tutors() {
         </div>
       </section>
       {/* SECTION 12: GET STARTED */}
-  <section className="py-32 bg-[#f8fafc]">
+  <section className="py-16 md:py-32 bg-[#f8fafc]">
   <div className="max-w-6xl mx-auto px-6">
 
     <div className="text-center mb-20">
@@ -1836,14 +1836,14 @@ export default function Tutors() {
   </div>
 </section>
       {/* FINAL CTA */}
-        <section className="py-32 bg-[#2366c9] text-white text-center relative overflow-hidden">
+        <section className="py-16 md:py-32 bg-[#2366c9] text-white text-center relative overflow-hidden">
        
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(37,99,235,0.2)_0%,transparent_70%)]"></div>
         <div className="container-custom relative z-10">
           <motion.h2 
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
-            className="text-6xl md:text-7xl font-semibold mb-12 leading-[0.9] text-white"
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold mb-8 md:mb-12 leading-[0.9] text-white"
           >
             Ready for <span className="text-blue-400">independence?</span>
           </motion.h2>

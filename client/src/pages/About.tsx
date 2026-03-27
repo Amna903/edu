@@ -21,7 +21,7 @@ export default function About() {
             className="space-y-6"
           >
         
-            <h1 className="text-5xl md:text-6xl font-semibold mb-8 font-display leading-none text-slate-900">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold mb-8 font-display leading-tight text-slate-900">
               Transforming Education Through <span className="text-[#2366c9]">Science and Personalization</span>
             </h1>
             <div className="max-w-2xl mx-auto">
@@ -38,7 +38,7 @@ export default function About() {
       <section className="py-16 md:py-24 bg-white">
         <div className="container-custom max-w-6xl">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-6">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-6">
               Why Traditional Education Struggles
             </h2>
             <p className="text-xl text-slate-900/60 font-medium">The Science of Learning and Forgetting</p>
@@ -113,17 +113,17 @@ export default function About() {
               <div>
                 <h4 className="text-3xl font-semibold text-blue-400 mb-2">91%</h4>
                 <p className="text-xs font-semibold text-blue-200">Pass rate</p>
-                <p className="text-[14px] text-white/40 mt-2">vs 35% National</p>
+                <p className="text-[14px] text-slate-300 mt-2">vs 35% National</p>
               </div>
               <div>
                 <h4 className="text-3xl font-semibold text-blue-400 mb-2">47%</h4>
                 <p className="text-xs font-semibold text-blue-200">A/A* grades</p>
-                <p className="text-[14px] text-white/40 mt-2">vs 18% Traditional</p>
+                <p className="text-[14px] text-slate-300 mt-2">vs 18% Traditional</p>
               </div>
               <div>
                 <h4 className="text-3xl font-semibold text-blue-400 mb-2">75%+</h4>
                 <p className="text-xs font-semibold text-blue-200">Retention</p>
-                <p className="text-[14px] text-white/40 mt-2">vs 5-10% Traditional</p>
+                <p className="text-[14px] text-slate-300 mt-2">vs 5-10% Traditional</p>
               </div>
             </div>
           </div>
@@ -133,8 +133,8 @@ export default function About() {
       {/* ================= THE 10X LEARNING LEAP MODEL™ ================= */}
       <section className="py-16 md:py-24 bg-blue-50">
         <div className="container-custom max-w-6xl">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-4">
+          <div className="text-center mb-10 md:mb-20">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-4">
               The 10X Learning Leap Model™
             </h2>
             <p className="text-xl text-blue-700 font-medium">A systematic, research-validated process</p>
@@ -185,8 +185,8 @@ export default function About() {
       {/* ================= THREE PILLARS ================= */}
       <section className="py-16 md:py-24 bg-white">
         <div className="container-custom max-w-6xl">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-4">
+          <div className="text-center mb-10 md:mb-20">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-4">
               Three foundational pillars
             </h2>
             <p className="text-xl text-slate-900/40 font-medium">What makes EduMeUp different at the core</p>
@@ -215,7 +215,7 @@ export default function About() {
             ].map((pillar, i) => (
               <div
                 key={i}
-                className="bg-blue-50 p-12 rounded-[3.5rem] shadow hover:shadow-2xl transition-all text-center border-4 border-white"
+                className="bg-blue-50 p-6 sm:p-10 md:p-12 rounded-[2rem] md:rounded-[3.5rem] shadow hover:shadow-2xl transition-all text-center border-4 border-white"
               >
                 <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-lg">
                   <pillar.icon className="h-10 w-10 text-[#2366c9]" />
@@ -234,8 +234,8 @@ export default function About() {
       {/* ================= RESULTS & VALIDATION ================= */}
       <section className="py-16 md:py-24 bg-blue-50">
         <div className="container-custom max-w-6xl">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-4">
+          <div className="text-center mb-10 md:mb-20">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-4">
               University-validated results
             </h2>
             <p className="text-xl text-blue-700 font-medium">Proven through rigorous research (2021-2024)</p>
@@ -381,11 +381,11 @@ export default function About() {
       {/* ================= RESEARCH FOUNDATION ================= */}
 <section className="py-16 md:py-24 bg-[#2366c9] text-white">
   <div className="container-custom max-w-6xl">
-    <div className="text-center mb-20">
-      <h2 className="text-4xl md:text-5xl font-black text-white mb-4 uppercase tracking-tight">
+    <div className="text-center mb-10 md:mb-20">
+      <h2 className="text-4xl md:text-5xl font-semibold text-white mb-4 ">
         Built on 40+ Years of Science
       </h2>
-      <p className="text-xl text-blue-300 font-medium uppercase tracking-wide">
+      <p className="text-xl text-blue-300 uppercase tracking-wide">
         Not Marketing Hype — Peer-Reviewed Facts
       </p>
     </div>
@@ -437,8 +437,8 @@ export default function About() {
       <section className="py-16 md:py-24 bg-white overflow-hidden">
         <div className="container-custom max-w-4xl">
           <div className="space-y-12">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 uppercase tracking-tight">
+            <div className="text-center mb-10 md:mb-16">
+              <h2 className="text-4xl md:text-5xl font-semibold font-black text-slate-900 mb-4  ">
                 How EduMeUp Was Born
               </h2>
               <p className="text-xl text-blue-600 font-semibold uppercase tracking-wide">From Frustration to Mission</p>
@@ -448,8 +448,8 @@ export default function About() {
               <p>
                 As an educator in Pakistan for 15+ years, our founder witnessed a heartbreaking pattern: bright students struggling in O-Level not from lack of ability, but from a broken system of passive instruction and rapid forgetting.
               </p>
-              <div className="bg-blue-50 p-12 rounded-[3rem] border-l-8 border-[#2366c9] my-12">
-                <p className="text-2xl  text-slate-900 uppercase tracking-tight mb-4 italic">"The question was simple: If cognitive science has proven what works for decades, why aren't these methods standard?"</p>
+              <div className="bg-blue-50 p-6 sm:p-10 md:p-12 rounded-[2rem] sm:rounded-[3rem] border-l-4 sm:border-l-8 border-[#2366c9] my-8 md:my-12">
+                <p className="text-base sm:text-lg md:text-2xl text-slate-900 uppercase tracking-tight mb-4 italic">"The question was simple: If cognitive science has proven what works for decades, why aren't these methods standard?"</p>
                 <p className="text-[14px] font-semibold uppercase text-[#2366c9]">— Muhammad Benyameen, Founder</p>
               </div>
               <p>
@@ -474,16 +474,16 @@ export default function About() {
       {/* ================= WHO THIS IS FOR ================= */}
       <section className="py-16 md:py-24 bg-blue-50">
         <div className="container-custom max-w-6xl">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 uppercase tracking-tight">
-              Is EduMeUp Right For You?
+          <div className="text-center mb-10 md:mb-20">
+        <h2 className="text-4xl md:text-5xl font-semibold font-black text-slate-900 mb-4  ">
+                    Is EduMeUp Right For You?
             </h2>
             <p className="text-xl text-slate-900/40 font-medium uppercase tracking-wide">An Honest Assessment of Fit</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-12">
-            <div className="bg-white p-12 rounded-[3.5rem] border-4 border-white shadow-xl">
-              <h3 className="text-2xl font-black text-green-600 mb-8 uppercase flex items-center gap-3">
+            <div className="bg-white p-6 sm:p-10 md:p-12 rounded-[2rem] md:rounded-[3.5rem] border-4 border-white shadow-xl">
+              <h3 className="text-2xl font-black text-green-600 mb-6 md:mb-8 uppercase flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-lg">✓</div>
                 Ideal For
               </h3>
@@ -513,8 +513,8 @@ export default function About() {
               </div>
             </div>
 
-            <div className="bg-white p-12 rounded-[3.5rem] border-4 border-white shadow-xl opacity-80">
-              <h3 className="text-2xl font-black text-red-500 mb-8 uppercase flex items-center gap-3">
+            <div className="bg-white p-6 sm:p-10 md:p-12 rounded-[2rem] md:rounded-[3.5rem] border-4 border-white shadow-xl opacity-80">
+              <h3 className="text-2xl font-black text-red-500 mb-6 md:mb-8 uppercase flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-lg">×</div>
                 Not For
               </h3>
@@ -550,8 +550,9 @@ export default function About() {
       {/* ================= LIMITATIONS & HONESTY ================= */}
       <section className="py-16 md:py-24 bg-white">
         <div className="container-custom max-w-4xl">
-          <div className="bg-[#2366c9] p-16 rounded-[4rem] text-white">
-            <h2 className="text-3xl font-black mb-12 uppercase tracking-tighter text-white ">Transparency Builds Trust</h2>
+          <div className="bg-[#2366c9] p-6 sm:p-10 md:p-16 rounded-[2rem] sm:rounded-[3rem] md:rounded-[4rem] text-white">
+          <h2 className="text-4xl md:text-5xl font-semibold text-white   mb-4  ">
+             Transparency Builds Trust</h2>
             <div className="grid md:grid-cols-2 gap-12">
               <div className="space-y-6">
                 <h4 className="text-blue-400 font-black uppercase text-[14px] tracking-widest">What We Are</h4>
@@ -576,8 +577,8 @@ export default function About() {
                 </ul>
               </div>
             </div>
-            <p className="mt-12 pt-8 border-t border-white/10 text-center text-white/40 text-xs font-medium uppercase tracking-[0.2em]">
-              We believe in radical honesty: transparency over overpromising.
+            <p className="mt-12 pt-8 border-t border-white/10 text-center text-slate-300 text-xs font-medium   tracking-[0.2em]">
+              We believe in radical honesty: transparency over overpromising
             </p>
           </div>
         </div>
@@ -589,7 +590,7 @@ export default function About() {
         <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
         <div className="container-custom text-center relative z-10">
           <div className="flex justify-center w-full mb-6">
-            <h2 className="text-4xl md:text-6xl text-white font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl text-white font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
               Ready to transform learning?
             </h2>
           </div>

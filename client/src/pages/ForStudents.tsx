@@ -555,11 +555,13 @@ export default function ForStudents() {
           <div className="bg-[#2366c9] rounded-[2rem] p-8 text-white">
             <p className="text-xs font-semibold uppercase tracking-widest text-blue-300 mb-2">March 2026 launch offer</p>
             <h3 className="text-2xl font-semibold text-white mb-4">Enroll within 30 days and receive</h3>
-            <div className="grid md:grid-cols-2 gap-3 text-[14px] font-semibold text-blue-100">
-              <p>â€¢ 25% off all programmes</p>
-              <p>â€¢ Free diagnostic assessment included</p>
-              <p>â€¢ Free parent orientation session</p>
-              <p>â€¢ Permanent Free Library access</p>
+            <div className="grid md:grid-cols-2 gap-3 text-[14px] font-semibold text-white">
+              {["25% off all programmes", "Free diagnostic assessment included", "Free parent orientation session", "Permanent Free Library access"].map((item, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-blue-300 flex-shrink-0" />
+                  <span>{item}</span>
+                </div>
+              ))}
             </div>
             <p className="text-[11px] text-blue-200/80 mt-4">Pricing shown in USD. Local currency equivalents are available at checkout.</p>
           </div>
