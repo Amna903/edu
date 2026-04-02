@@ -24,7 +24,7 @@ export default function Schools() {
                 Transform Your <br/><span className="text-[#2366c9]">O-Level</span> Program
               </h1>
               <p className="text-lg text-slate-700 mb-8 leading-relaxed font-medium max-w-2xl">
-                Research-Backed Platform Used by 150+ Schools. Zero Upfront Investment.
+                Research-Backed Platform. Zero Upfront Investment.
               </p>
               
               <div className="grid gap-4 mb-16">

@@ -1,4 +1,4 @@
-﻿import { Layout } from "@/components/Layout";
+import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Download, Search, FileText, CheckCircle2, Zap, LayoutDashboard, Microscope, BookOpen, Clock, Users, ShieldCheck, PieChart, ArrowRight } from "lucide-react";
@@ -215,7 +215,48 @@ export default function Resources() {
         </div>
       </section>
 
-      {/* SECTION 5 & 6: DOWNLOADS */}
+      {/* SECTION 4B: 15 INTERACTIVE MODULE SAMPLES */}
+      <section className="py-40 bg-white">
+        <div className="container-custom">
+          <div className="text-center max-w-4xl mx-auto mb-32">
+            <h2 className="text-4xl md:text-5xl font-semibold mb-8 text-slate-900 leading-tight">15 Free <span className="text-[#2366c9]">interactive</span> modules</h2>
+            <p className="text-lg text-slate-900/40 font-medium">Try our premium learning experience across core subjects</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              { s: "Physics", t: "Forces and Motion - Newton's Laws" },
+              { s: "Physics", t: "Electricity - Current, Voltage, Resistance" },
+              { s: "Physics", t: "Light - Reflection and Refraction" },
+              { s: "Chemistry", t: "Atomic Structure and Periodic Table" },
+              { s: "Chemistry", t: "Ionic Bonding - Formation and Properties" },
+              { s: "Chemistry", t: "Acids, Bases, and Salts" },
+              { s: "Biology", t: "Cell Structure and Organization" },
+              { s: "Biology", t: "Photosynthesis - Process and Factors" },
+              { s: "Biology", t: "Enzymes - Structure, Function, Activity" },
+              { s: "Mathematics", t: "Algebra - Solving Linear Equations" },
+              { s: "Mathematics", t: "Geometry - Angles and Triangles" },
+              { s: "Mathematics", t: "Graphs - Linear Functions" },
+              { s: "Economics", t: "Demand and Supply - Market Equilibrium" },
+              { s: "Economics", t: "Market Failure - Externalities" },
+              { s: "Business", t: "Marketing Mix - The 4 Ps" }
+            ].map((mod, i) => (
+              <Card key={i} className="rounded-3xl border-2 border-blue-50 hover:border-blue-200 transition-all group overflow-hidden">
+                <CardContent className="p-8">
+                  <div className="flex justify-between items-start mb-6">
+                    <Badge variant="secondary" className="bg-blue-50 text-[#2366c9] border-none font-semibold px-4 py-1">{mod.s}</Badge>
+                    <div className="h-8 w-8 rounded-full bg-green-50 text-green-600 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Zap className="h-4 w-4" />
+                    </div>
+                  </div>
+                  <h4 className="text-xl font-semibold text-slate-900 mb-6 leading-tight min-h-[3.5rem]">{mod.t}</h4>
+                  <Button className="w-full bg-slate-50 hover:bg-[#2366c9] hover:text-white text-[#2366c9] border-none font-semibold h-14 rounded-xl transition-all">TRY MODULE</Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
       <section className="py-40 bg-blue-50">
         <div className="container-custom">
            <div className="text-center max-w-4xl mx-auto mb-32">
@@ -321,10 +362,10 @@ export default function Resources() {
               {[
                 { f: "Module Access", free: "15 Samples", paid: "1000+ Modules" },
                 { f: "Syllabus Coverage", free: "Topic Samples", paid: "100% Comprehensive" },
-                { f: "AI Tutor Support", free: "âœ•", paid: "24/7 Unlimited" },
-                { f: "Analytics Dashboards", free: "âœ•", paid: "Student, Parent, School" },
-                { f: "Spaced Repetition", free: "âœ•", paid: "Automated System" },
-                { f: "Adaptive Difficulty", free: "âœ•", paid: "AI-Driven" }
+                { f: "AI Tutor Support", free: "Limited", paid: "24/7 Unlimited" },
+                { f: "Analytics Dashboards", free: "Basic", paid: "Student, Parent, School" },
+                { f: "Spaced Repetition", free: "Manual", paid: "Automated System" },
+                { f: "Adaptive Difficulty", free: "Static", paid: "AI-Driven" }
               ].map((row, i) => (
                 <div key={i} className={`grid grid-cols-3 p-10 border-b-2 border-blue-50 font-semibold uppercase text-[14px] ${i % 2 === 0 ? 'bg-white' : 'bg-blue-50/20'}`}>
                    <div className="text-slate-900">{row.f}</div>

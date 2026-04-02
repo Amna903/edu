@@ -1,4 +1,4 @@
-﻿import { Layout } from "@/components/Layout";
+import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -41,7 +41,7 @@ export default function ForStudents() {
         "Immediate feedback explains why an answer is wrong",
       ],
       result: "Understanding replaces memorization, and concepts start sticking permanently.",
-      cta: "Try a Sample H5P Activity in the Free Library â†’",
+      cta: "Try a Sample H5P Activity in the Free Library ->",
     },
     {
       icon: Target,
@@ -51,10 +51,10 @@ export default function ForStudents() {
       solution: [
         "Principle-first teaching focused on the why behind each method",
         "45,000+ varied practice questions across different contexts",
-        "Problem-solving framework: identify question type â†’ select method â†’ execute confidently",
+        "Problem-solving framework: identify question type -> select method -> execute confidently",
       ],
       result: "Unseen questions become recognizable challenges, not panic moments.",
-      cta: "See a Sample Problem-Solving Framework in the Free Library â†’",
+      cta: "See a Sample Problem-Solving Framework in the Free Library ->",
     },
     {
       icon: RefreshCw,
@@ -62,12 +62,12 @@ export default function ForStudents() {
       quote: "I studied Chapter 1 in September. By November, it feels completely gone.",
       why: "Without systematic review, memory fades quickly and students end up relearning from scratch. Traditional instruction teaches once and moves on before retention stabilizes.",
       solution: [
-        "Automated spaced retrieval sequence (Day 1 â†’ Day 3 â†’ Day 7 â†’ Week 2 â†’ Month 1 â†’ Month 3)",
+        "Automated spaced retrieval sequence (Day 1 -> Day 3 -> Day 7 -> Week 2 -> Month 1 -> Month 3)",
         "10-minute targeted reviews instead of full chapter restudy",
         "Performance-based interval adjustment",
       ],
       result: "What you learn early is still available when exams arrive.",
-      cta: "Explore Sample Spaced Retrieval Activities in the Free Library â†’",
+      cta: "Explore Sample Spaced Retrieval Activities in the Free Library ->",
     },
     {
       icon: FlaskConical,
@@ -76,11 +76,11 @@ export default function ForStudents() {
       why: "ATP skills are rarely taught explicitly despite carrying significant exam weight. Students are expected to infer variable control, method validity, and conclusions without structured instruction.",
       solution: [
         "Structured ATP courses for Physics, Chemistry, and Biology with variable identification and control design",
-        "Past paper analysis (2010â€“2025) with mark-scheme interpretation and model conclusions",
+        "Past paper analysis (2010-2025) with mark-scheme interpretation and model conclusions",
         "Practice activities simulating ATP reasoning",
       ],
-      result: "ATP shifts from guesswork to a trainable scoring skill (students often move from partial marks to near-full marks like 35â€“38/40).",
-      cta: "Try a Free ATP Sample Lesson in the Free Library â†’",
+      result: "ATP shifts from guesswork to a trainable scoring skill (students often move from partial marks to near-full marks like 35-38/40).",
+      cta: "Try a Free ATP Sample Lesson in the Free Library ->",
     },
     {
       icon: BookOpen,
@@ -88,12 +88,12 @@ export default function ForStudents() {
       quote: "Teachers say my essay is not structured well, but no one explains what structure actually means.",
       why: "Many students are told what is wrong, but not taught a reproducible structure. Without repeatable frameworks, improvement feels random.",
       solution: [
-        "Paper 1: 7-step summary method (overview â†’ detail â†’ key points â†’ paraphrase â†’ count â†’ coverage â†’ polish)",
+        "Paper 1: 7-step summary method (overview -> detail -> key points -> paraphrase -> count -> coverage -> polish)",
         "Paper 2: explicit frameworks (Descriptive: Show-Don't-Tell + 5 Senses, Narrative: 5-Act structure, Argumentative: thesis + evidence + counterargument)",
         "50+ passages and 100+ prompts with modeled applications",
       ],
       result: "English becomes structured and trainable, not mysterious.",
-      cta: "See a Sample Essay Framework in the Free Library â†’",
+      cta: "See a Sample Essay Framework in the Free Library ->",
     },
     {
       icon: ShieldCheck,
@@ -106,20 +106,20 @@ export default function ForStudents() {
         "AI chatbot nudges thinking instead of spoon-feeding",
       ],
       result: "Confidence grows from capability, not dependency.",
-      cta: "Try a Sample Independent Practice Activity in the Free Library â†’",
+      cta: "Try a Sample Independent Practice Activity in the Free Library ->",
     },
     {
       icon: BarChart3,
       title: "I don't know if I am exam-ready",
-      quote: "I studied so muchâ€¦ but am I actually ready, or just hoping?",
+      quote: "I studied so much... but am I actually ready, or just hoping?",
       why: "Generic feedback creates uncertainty near exam time. Students need topic-level evidence, not vague reassurance.",
       solution: [
         "Topic-by-topic mastery tracking (for example: Maths 78%, Chemistry 65%, English 88%)",
         "Predicted performance insights tied to weak-topic priorities",
-        "Timed mock exams and color-coded readiness alerts (red <60, yellow 60â€“75, green 80+)",
+        "Timed mock exams and color-coded readiness alerts (red <60, yellow 60-75, green 80+)",
       ],
       result: "You know exactly where you stand, backed by data.",
-      cta: "Take the Free Diagnostic â†’",
+      cta: "Take the Free Diagnostic ->",
     },
   ];
 
@@ -142,7 +142,7 @@ export default function ForStudents() {
     {
       title: "Problem Decomposition",
       why: "Complex questions feel easier when broken into steps.",
-      how: "Worked examples model knowns â†’ unknowns â†’ method â†’ solve â†’ check.",
+      how: "Worked examples model knowns -> unknowns -> method -> solve -> check.",
     },
     {
       title: "Self-Regulated Learning",
@@ -152,7 +152,7 @@ export default function ForStudents() {
     {
       title: "Growth Mindset",
       why: "Performance improves when mistakes are treated as feedback.",
-      how: "Language and feedback focus on â€œnot yetâ€ and targeted next actions.",
+      how: "Language and feedback focus on \"not yet\" and targeted next actions.",
     },
     {
       title: "Time Management",
@@ -164,15 +164,15 @@ export default function ForStudents() {
   const pathways = [
     {
       title: "Pathway 1 — Struggling Student",
-      profile: "D/E/F grades, weak fundamentals, exams in 3â€“4 months",
+      profile: "D/E/F grades, weak fundamentals, exams in 3-4 months",
       route: [
         "Week 1: Diagnostic identifies exact gaps by topic and sub-skill",
-        "Weeks 2â€“4: Foundation repair before heavy O-Level load",
-        "Weeks 5â€“10: High-yield topic mastery using frequent exam patterns",
-        "Weeks 11â€“14: Timed past papers with feedback loops",
+        "Weeks 2-4: Foundation repair before heavy O-Level load",
+        "Weeks 5-10: High-yield topic mastery using frequent exam patterns",
+        "Weeks 11-14: Timed past papers with feedback loops",
         "Final 2 weeks: Consolidation via spaced retrieval + mock confidence build",
       ],
-      expected: "Expected trajectory: D/E â†’ C/B with consistent effort",
+      expected: "Expected trajectory: D/E -> C/B with consistent effort",
     },
     {
       title: "Pathway 2 — Average Student",
@@ -184,23 +184,23 @@ export default function ForStudents() {
         "Strong topics maintained via short spaced retrieval loops",
         "Exam technique optimization: timing and mark maximization",
       ],
-      expected: "Expected trajectory: C/B â†’ A/A* within 4â€“6 months",
+      expected: "Expected trajectory: C/B -> A/A* within 4-6 months",
     },
     {
       title: "Pathway 3 — Top Student",
       profile: "Already at A, targeting A* and scholarship readiness",
       route: [
-        "Precision audit of final 10â€“15% score leakage",
-        "Hardest past-paper sets (2015â€“2025) only",
+        "Precision audit of final 10-15% score leakage",
+        "Hardest past-paper sets (2015-2025) only",
         "Error-elimination checklists and mark-maximization technique",
-        "ATP refinement targeting 38â€“40/40 range where possible",
+        "ATP refinement targeting 38-40/40 range where possible",
         "Deeper theory transfer for scholarship-level confidence",
       ],
-      expected: "Expected trajectory: A â†’ A* in target subjects",
+      expected: "Expected trajectory: A -> A* in target subjects",
     },
     {
       title: "Pathway 4 — Last-Minute Student",
-      profile: "Exams in 6â€“8 weeks, needs maximum impact quickly",
+      profile: "Exams in 6-8 weeks, needs maximum impact quickly",
       route: [
         "Emergency triage: safe vs at-risk vs opportunity subjects",
         "~80% effort on at-risk subjects first",
@@ -208,7 +208,7 @@ export default function ForStudents() {
         "Safe subjects kept on minimum maintenance schedule",
         "Final week: no new content, only consolidation and exam execution",
       ],
-      expected: "Expected trajectory: 1â€“2 grade jumps in at-risk subjects",
+      expected: "Expected trajectory: 1-2 grade jumps in at-risk subjects",
     },
   ];
 
@@ -216,26 +216,26 @@ export default function ForStudents() {
     {
       phase: "Month 1",
       title: "Foundation and Mindset Shift",
-      feel: "Week 1â€“2 feels unfamiliar. Week 3â€“4: first â€œthis is actually clickingâ€ moments.",
-      measurable: "Typical progression: 0% â†’ 25â€“35% mastery",
+      feel: "Week 1-2 feels unfamiliar. Week 3-4: first \"this is actually clicking\" moments.",
+      measurable: "Typical progression: 0% -> 25-35% mastery",
     },
     {
       phase: "Month 2",
       title: "Momentum Building",
       feel: "Active recall becomes natural. Dependence on external help starts dropping.",
-      measurable: "Typical progression: 35% â†’ 55â€“65% mastery; study time reduces while scores rise",
+      measurable: "Typical progression: 35% -> 55-65% mastery; study time reduces while scores rise",
     },
     {
       phase: "Month 3",
       title: "Acceleration",
       feel: "Confidence becomes earned, not borrowed. Students start aiming higher.",
-      measurable: "Typical progression: 65% â†’ 75â€“80% mastery; mock scores often reach 70â€“75%",
+      measurable: "Typical progression: 65% -> 75-80% mastery; mock scores often reach 70-75%",
     },
     {
-      phase: "Months 4â€“6",
+      phase: "Months 4-6",
       title: "Refinement and Excellence",
       feel: "Exam-readiness feels stable because preparation is systematic.",
-      measurable: "Typical progression: 80â€“90%+ mastery with strong grade predictability",
+      measurable: "Typical progression: 80-90%+ mastery with strong grade predictability",
     },
   ];
 
@@ -276,7 +276,7 @@ export default function ForStudents() {
 
             <p className="text-slate-600 font-semibold mb-8">The earlier you start, the stronger your foundation.</p>
             <div className="flex flex-wrap justify-center gap-2 mb-8">
-              {["45,000+ Practice Questions", "Past Papers 2010â€“2025", "80% Mastery Gates", "ATP Pathway to 38â€“40/40"].map((signal, i) => (
+              {["45,000+ Practice Questions", "Past Papers 2010-2025", "80% Mastery Gates", "ATP Pathway to 38-40/40"].map((signal, i) => (
                 <span key={i} className="px-3 py-1 rounded-full border border-blue-200 bg-blue-50 text-[14px] md:text-xs font-semibold uppercase tracking-wide text-[#2366c9]">
                   {signal}
                 </span>
@@ -329,7 +329,7 @@ export default function ForStudents() {
                   </div>
 
                   <p className="text-slate-900/70 font-medium mb-3"><span className="font-semibold text-slate-900">Why this happens:</span> {item.why}</p>
-                  <p className="text-[14px] italic text-slate-900/60 font-semibold mb-3">â€œ{item.quote}â€</p>
+                  <p className="text-[14px] italic text-slate-900/60 font-semibold mb-3">"{item.quote}"</p>
                   <div className="space-y-2 mb-4">
                     {item.solution.map((point, i) => (
                       <div key={i} className="flex items-start gap-3 text-[14px] text-slate-900/80 font-semibold">
@@ -359,8 +359,8 @@ export default function ForStudents() {
               </thead>
               <tbody>
                 {[
-                  ["Average mock score", "50â€“60%", "70â€“78%"],
-                  ["Daily study hours", "8+ (inefficient)", "5â€“6 (focused)"],
+                  ["Average mock score", "50-60%", "70-78%"],
+                  ["Daily study hours", "8+ (inefficient)", "5-6 (focused)"],
                   ["Readiness before exams", "Panic and relearning", "Clear readiness score"],
                   ["Tutor dependency", "High", "Significantly reduced"],
                 ].map((row, i) => (
@@ -435,7 +435,7 @@ export default function ForStudents() {
             <InquiryDialog
               defaultType="diagnostic"
               title="Diagnostic Test"
-              trigger={<Button className="bg-[#2366c9] hover:bg-[#2366c9] rounded-xl font-semibold">Diagnostic Test Recommends Your Best Pathway â†’</Button>}
+              trigger={<Button className="bg-[#2366c9] hover:bg-[#2366c9] rounded-xl font-semibold">Diagnostic Test Recommends Your Best Pathway &rarr;</Button>}
             />
           </div>
         </div>
@@ -463,7 +463,7 @@ export default function ForStudents() {
           <div className="mt-12 bg-white border-2 border-blue-100 rounded-[2rem] p-8">
             <h3 className="text-2xl font-semibold text-slate-900 mb-4">Composite student journeys</h3>
             <div className="space-y-4 text-[14px] text-slate-900/80 font-semibold">
-              <p><span className="text-[#2366c9] font-semibold">ATP improvement case:</span> A student starting near 22/40 in ATP Chemistry moved to 35â€“38/40 in mock conditions through structured ATP training and past-paper strategy.</p>
+              <p><span className="text-[#2366c9] font-semibold">ATP improvement case:</span> A student starting near 22/40 in ATP Chemistry moved to 35-38/40 in mock conditions through structured ATP training and past-paper strategy.</p>
               <p><span className="text-[#2366c9] font-semibold">English structure case:</span> A student struggling with essay structure reached A-grade performance after framework-driven writing practice and feedback cycles.</p>
               <p><span className="text-[#2366c9] font-semibold">Emergency prep case:</span> A student with D grades across multiple subjects used risk-based triage and high-yield planning to pass all subjects within 14 weeks.</p>
             </div>
@@ -481,11 +481,11 @@ export default function ForStudents() {
               <CardContent className="p-6">
                 <h3 className="text-xl font-semibold text-green-700 mb-4 flex items-center gap-2"><CheckCircle2 className="h-5 w-5" />EduMeUp works best if you</h3>
                 <ul className="space-y-2 text-[14px] font-semibold text-slate-900/80">
-                  <li>â€¢ Are willing to practice actively</li>
-                  <li>â€¢ Want conceptual understanding, not memorization only</li>
-                  <li>â€¢ Can follow a structured system consistently</li>
-                  <li>â€¢ Are ready for mastery gates and feedback</li>
-                  <li>â€¢ Want long-term independent learning</li>
+                  <li>- Are willing to practice actively</li>
+                  <li>- Want conceptual understanding, not memorization only</li>
+                  <li>- Can follow a structured system consistently</li>
+                  <li>- Are ready for mastery gates and feedback</li>
+                  <li>- Want long-term independent learning</li>
                 </ul>
               </CardContent>
             </Card>
@@ -493,10 +493,10 @@ export default function ForStudents() {
               <CardContent className="p-6">
                 <h3 className="text-xl font-semibold text-red-700 mb-4 flex items-center gap-2"><AlertTriangle className="h-5 w-5" />Not ideal if you</h3>
                 <ul className="space-y-2 text-[14px] font-semibold text-slate-900/80">
-                  <li>â€¢ Want shortcuts without effort</li>
-                  <li>â€¢ Prefer direct answers without thinking</li>
-                  <li>â€¢ Do not want a structured process</li>
-                  <li>â€¢ Expect results without consistency</li>
+                  <li>- Want shortcuts without effort</li>
+                  <li>- Prefer direct answers without thinking</li>
+                  <li>- Do not want a structured process</li>
+                  <li>- Expect results without consistency</li>
                 </ul>
               </CardContent>
             </Card>
@@ -517,7 +517,7 @@ export default function ForStudents() {
                 <p className="text-xs font-semibold uppercase tracking-widest text-blue-600 mb-2">Recommended</p>
                 <h3 className="text-2xl font-semibold text-slate-900 mb-3">Explore Free Library</h3>
                 <p className="text-[14px] text-slate-900/70 font-semibold mb-4">Permanent free access to sample lessons, ATP previews, essay frameworks, worked examples, and platform walkthroughs.</p>
-                <p className="text-[11px] text-slate-900/50 font-semibold mb-4">No time limit â€¢ Free account to save progress</p>
+                <p className="text-[11px] text-slate-900/50 font-semibold mb-4">No time limit - Free account to save progress</p>
                 <Link href="/resources">
                   <Button className="w-full bg-[#2366c9] hover:bg-blue-500 font-semibold">
                     <Library className="h-4 w-4 mr-2" /> Explore Free Library Now
@@ -530,7 +530,7 @@ export default function ForStudents() {
               <CardContent className="p-7">
                 <p className="text-xs font-semibold uppercase tracking-widest text-blue-600 mb-2">Option 2</p>
                 <h3 className="text-2xl font-semibold text-slate-900 mb-3">Free Diagnostic Assessment</h3>
-                <p className="text-[14px] text-slate-900/70 font-semibold mb-4">30â€“40 minute test with topic-level gap analysis and personalized roadmap.</p>
+                <p className="text-[14px] text-slate-900/70 font-semibold mb-4">30-40 minute test with topic-level gap analysis and personalized roadmap.</p>
                 <InquiryDialog
                   defaultType="diagnostic"
                   title="Take Free Diagnostic Assessment"
@@ -544,7 +544,7 @@ export default function ForStudents() {
                 <p className="text-xs font-semibold uppercase tracking-widest text-blue-600 mb-2">Option 3</p>
                 <h3 className="text-2xl font-semibold text-slate-900 mb-3">Speak With Our Team</h3>
                 <p className="text-[14px] text-slate-900/70 font-semibold mb-4">Discuss your subjects, timeline, and concerns with zero pressure.</p>
-                <p className="text-[14px] font-semibold text-slate-900 mb-4">Available 9 AM â€“ 9 PM Pakistan Time</p>
+                <p className="text-[14px] font-semibold text-slate-900 mb-4">Available 9 AM - 9 PM Pakistan Time</p>
                 <Button variant="outline" className="w-full border-blue-200 text-slate-900 hover:bg-blue-50 font-semibold">
                   <MessageCircle className="h-4 w-4 mr-2" /> Contact Support Team
                 </Button>
@@ -570,7 +570,7 @@ export default function ForStudents() {
             {[
               ["How is Free Library different from full platform?", "The Free Library offers real sample and partial resources to experience the method. Full courses include complete sequences, mastery tracking, and personalized pathways."],
               ["Is Free Library time-limited?", "No. Free Library access is permanent with no expiry countdown."],
-              ["I am failing right now. Is it too late?", "A 3â€“4 month window can still produce meaningful gains with consistent daily execution."],
+              ["I am failing right now. Is it too late?", "A 3-4 month window can still produce meaningful gains with consistent daily execution."],
               ["Will this work on slow internet?", "The platform is optimized for low bandwidth and supports downloaded/offline learning workflows where available."],
             ].map((faq, i) => (
               <Card key={i} className="bg-white border border-blue-100 rounded-2xl">

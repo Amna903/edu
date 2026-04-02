@@ -88,7 +88,7 @@ export function Navbar() {
           children: [
             { href: "/programs/matric", label: "Pakistan Matric Programme (Grades 9–10)", icon: BookOpen },
             { href: "/programs/fsc-ics", label: "Pakistan FSc / ICS Programme", icon: BookOpen },
-            { href: "/programs/ecat", label: "Pakistan ECAT — Engineering Entry Test", icon: Beaker },
+            { href: "/programs/ecat", label: "Pakistan ECAT — Engineering Colleges Admission Test", icon: Beaker },
           ],
         },
       ],

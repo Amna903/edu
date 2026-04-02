@@ -6,7 +6,7 @@ import { Layout } from "@/components/Layout";
 
 const ecatCoverage = [
   {
-    title: "Engineering Entry Test Mastery",
+    title: "Engineering Colleges Admission Test Mastery",
     description: "100% ECAT curriculum with focus on Physics, Chemistry, Mathematics, and English sections.",
     icon: CheckCircle2,
   },
@@ -46,7 +46,7 @@ const ecatHowItWorks = [
 ];
 
 const ecatWhoItsFor = [
-  "FSc students preparing for ECAT (Engineering Entry Test)",
+  "FSc students preparing for ECAT (Engineering Colleges Admission Test)",
   "Students targeting top engineering universities",
   "Learners aiming for merit-based scholarships",
   "Anyone needing speed and accuracy under exam pressure",
@@ -67,11 +67,11 @@ export default function Ecat() {
     const previousDescription = metaDescription?.getAttribute("content") || "";
 
     document.title =
-      "Pakistan ECAT â€” Engineering Entry Test Prep | FAST | LUMS | UET | EduMeUp";
+      "Pakistan ECAT - Engineering Colleges Admission Test Prep | FAST | LUMS | UET | EduMeUp";
     if (metaDescription) {
       metaDescription.setAttribute(
         "content",
-        "EduMeUp's Pakistan ECAT Engineering Entry Test preparation with timed mock exams, topic-wise drills, and proven strategies for FAST, LUMS, UET, NED, GIKI.",
+        "EduMeUp's Pakistan ECAT Engineering Colleges Admission Test preparation with timed mock exams, topic-wise drills, and proven strategies for FAST, LUMS, UET, NED, GIKI.",
       );
     }
 
@@ -257,7 +257,7 @@ export default function Ecat() {
                 </thead>
                 <tbody>
                   <tr className="border-t border-blue-100">
-                    <td className="px-4 py-3 text-sm font-semibold text-slate-900">Pakistan ECAT â€” Engineering Entry Test</td>
+                    <td className="px-4 py-3 text-sm font-semibold text-slate-900">Pakistan ECAT - Engineering Colleges Admission Test</td>
                     <td className="px-4 py-3 text-sm font-semibold text-slate-900">24 months</td>
                     <td className="px-4 py-3 text-sm font-semibold text-slate-900">$140</td>
                     <td className="px-4 py-3 text-sm text-slate-800">

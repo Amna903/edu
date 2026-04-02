@@ -1,4 +1,4 @@
-﻿import { Link } from "wouter";
+import { Link } from "wouter";
 import { GraduationCap, Mail, Phone, Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
 
 export function Footer() {
@@ -21,8 +21,26 @@ export function Footer() {
     { label: "English Language Mastery Courses", href: "/programs/english-mastery" },
     { label: "ATP Courses (Physics | Chemistry | Biology)", href: "/programs/atp-courses" },
     { label: "Real-Time Exam Preparation", href: "/programs/exam-prep" },
-    { label: "Tutor Booking â€” 1-to-1 Personalised Education", href: "/programs/tutor-booking" },
+    { label: "Tutor Booking – 1-to-1 Personalised Education", href: "/programs/tutor-booking" },
     { label: "Teacher Training (CTMW)", href: "/teacher-training" },
+  ];
+
+  const freeModules = [
+    { label: "Physics: Newton's Laws", href: "https://moodle.example.com/physics1" },
+    { label: "Physics: Electricity", href: "https://moodle.example.com/physics2" },
+    { label: "Physics: Light", href: "https://moodle.example.com/physics3" },
+    { label: "Chemistry: Atomic Structure", href: "https://moodle.example.com/chem1" },
+    { label: "Chemistry: Ionic Bonding", href: "https://moodle.example.com/chem2" },
+    { label: "Chemistry: Acids & Bases", href: "https://moodle.example.com/chem3" },
+    { label: "Biology: Cell Organization", href: "https://moodle.example.com/bio1" },
+    { label: "Biology: Photosynthesis", href: "https://moodle.example.com/bio2" },
+    { label: "Biology: Enzymes", href: "https://moodle.example.com/bio3" },
+    { label: "Math: Linear Equations", href: "https://moodle.example.com/math1" },
+    { label: "Math: Geometry", href: "https://moodle.example.com/math2" },
+    { label: "Math: Graphs", href: "https://moodle.example.com/math3" },
+    { label: "Economics: Market Equilibrium", href: "https://moodle.example.com/econ1" },
+    { label: "Economics: Market Failure", href: "https://moodle.example.com/econ2" },
+    { label: "Business: Marketing Mix (4Ps)", href: "https://moodle.example.com/biz1" },
   ];
 
   const resourceLinks = [
@@ -37,9 +55,9 @@ export function Footer() {
   ];
 
   const pakistanProgrammes = [
-    { label: "Pakistan Matric Programme (Grades 9â€“10)", href: "/programs/matric" },
+    { label: "Pakistan Matric Programme (Grades 9–10)", href: "/programs/matric" },
     { label: "Pakistan FSc / ICS Programme", href: "/programs/fsc-ics" },
-    { label: "Pakistan ECAT â€” Engineering Entry Test", href: "/programs/ecat" },
+    { label: "Pakistan ECAT – Engineering Colleges Admission Test", href: "/programs/ecat" },
   ];
 
   return (
@@ -53,7 +71,7 @@ export function Footer() {
               <div className="h-10 w-10 rounded-lg bg-[#2366c9] flex items-center justify-center">
                 <GraduationCap className="h-6 w-6 text-white" />
               </div>
-              <span className="font-display text-2xl font-black text-white">Edumeup</span>
+              <span className="font-display text-2xl font-bold text-white">Edumeup</span>
             </div>
             <p className="text-sm leading-relaxed text-slate-300 [text-shadow:0_0_10px_rgba(226,232,240,0.2)]">
               A complete science-powered learning ecosystem - built for ambitious learners and high-performance schools worldwide.
@@ -85,7 +103,7 @@ export function Footer() {
 
           {/* Quick Links */}
           <div className="min-w-0">
-            <h3 className="mb-5 font-display text-base font-black text-slate-50 [text-shadow:0_0_14px_rgba(226,232,240,0.28)]">Quick Links</h3>
+            <h3 className="mb-5 font-display text-base font-semibold text-slate-50 [text-shadow:0_0_14px_rgba(226,232,240,0.28)]">Quick Links</h3>
             <ul className="space-y-3">
               {quickLinks.map((link) => (
                 <li key={link.href}>
@@ -127,16 +145,41 @@ export function Footer() {
 
           {/* Pakistan Curriculum */}
           <div className="hidden min-w-0 xl:block">
-            <h3 className="mb-5 font-display text-base font-semibold text-slate-50 [text-shadow:0_0_14px_rgba(226,232,240,0.28)]">Pakistan Curriculum</h3>
+            <h3 className="mb-5 font-display text-base font-semibold text-slate-50">Pakistan Curriculum</h3>
             <ul className="space-y-3">
               {pakistanProgrammes.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="break-words text-sm leading-snug text-slate-200 hover:text-white transition-colors [text-shadow:0_0_10px_rgba(226,232,240,0.22)]">
+                  <Link href={link.href} className="break-words text-sm leading-snug text-slate-200 hover:text-white transition-colors">
                     {link.label}
                   </Link>
                 </li>
               ))}
             </ul>
+          </div>
+
+          {/* Free Interactive Modules */}
+          <div className="min-w-0 flex flex-col">
+            <h3 className="mb-5 font-display text-base font-semibold text-slate-50">Free Modules (15)</h3>
+            <div className="grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2 lg:grid-cols-1">
+              <ul className="space-y-3">
+                {freeModules.slice(0, 8).map((link) => (
+                  <li key={link.href}>
+                    <a href={link.href} target="_blank" rel="noreferrer" className="break-words text-sm leading-snug text-slate-200 hover:text-white transition-colors">
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+              <ul className="space-y-3">
+                {freeModules.slice(8).map((link) => (
+                  <li key={link.href}>
+                    <a href={link.href} target="_blank" rel="noreferrer" className="break-words text-sm leading-snug text-slate-200 hover:text-white transition-colors">
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           {/* Pakistan Programmes mobile accordion */}
@@ -157,7 +200,7 @@ export function Footer() {
 
           {/* Contact */}
           <div className="min-w-0">
-            <h3 className="mb-5 font-display text-base font-black text-slate-50 [text-shadow:0_0_14px_rgba(226,232,240,0.28)]">Contact Us</h3>
+            <h3 className="mb-5 font-display text-base font-semibold text-slate-50 [text-shadow:0_0_14px_rgba(226,232,240,0.28)]">Contact Us</h3>
             <ul className="space-y-3 text-sm text-slate-200 [text-shadow:0_0_10px_rgba(226,232,240,0.2)]">
               <li className="flex items-center gap-3">
                 <Phone className="h-5 w-5 shrink-0 text-[#2366c9]" />
@@ -209,4 +252,3 @@ export function Footer() {
     </footer>
   );
 }
-

@@ -1,4 +1,4 @@
-﻿import { Layout } from "@/components/Layout";
+import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Zap, Target, LineChart, Trophy, BookOpen, UserCheck, CheckCircle2, MessageSquare, HelpCircle, ShieldCheck, Brain, Layers, Search, RefreshCw, MousePointer2, BarChart3, GraduationCap as GraduationIcon, ArrowRight, Download, Calendar, PlayCircle, Star } from "lucide-react";
@@ -38,7 +38,7 @@ const stats = [
   { value: "91%", label: "PASS RATE", sub: "Designed to Achieve - vs 35% National Average" },
   { value: "47%", label: "A/A* GRADES", sub: "Designed to Achieve - vs 18% Traditional" },
   { value: "75%+", label: "RETENTION", sub: "Designed to Achieve - vs 5-10% Traditional" },
-  { value: "85%+", label: "COST SAVINGS", sub: "Designed to Achieve - vs $2,400â€“3,600/yr Tutors" },
+  { value: "85%+", label: "COST SAVINGS", sub: "Designed to Achieve - vs $2,400-3,600/yr Tutors" },
 ];
 
 const masteryCycleSteps = [
@@ -173,7 +173,7 @@ const strategies = [
 
 export default function Home() {
   const [checkedItems, setCheckedItems] = useState<number[]>([]);
-  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const { formatPrice } = useCurrency();
 
   const handleCheck = (index: number) => {
@@ -186,7 +186,7 @@ export default function Home() {
     const count = checkedItems.length;
     if (count === 0) return null;
     if (count <= 1) return {
-      title: "âœ“ Your child may already be well-prepared.",
+      title: "✓ Your child may already be well-prepared.",
       desc: "But take our free diagnostic to confirm - you might be surprised by hidden gaps!",
       color: "text-[#2366c9]"
     };
@@ -216,14 +216,14 @@ export default function Home() {
       step: "STEP 2",
       title: "TARGETED FOUNDATION REPAIR",
       subtitle: "Step 2 of 8",
-      body: "Identified gaps are closed through structured remedial modules - not glossed over. Weak foundations from Grade 6â€“8 are rebuilt concept by concept before any O-Level material is introduced. You cannot build a strong house on a cracked foundation.",
+      body: "Identified gaps are closed through structured remedial modules - not glossed over. Weak foundations from Grade 6-8 are rebuilt concept by concept before any O-Level material is introduced. You cannot build a strong house on a cracked foundation.",
       icon: Layers,
     },
     {
       step: "STEP 3",
       title: "INTERACTIVE CONCEPT MASTERY",
       subtitle: "Step 3 of 8",
-      body: "No passive reading. No lecture-style videos. Every concept is delivered through H5P-powered interactive modules requiring the student to engage, respond, and demonstrate understanding - because passive consumption produces only 5â€“20% retention.",
+      body: "No passive reading. No lecture-style videos. Every concept is delivered through H5P-powered interactive modules requiring the student to engage, respond, and demonstrate understanding - because passive consumption produces only 5-20% retention.",
       icon: Zap,
     },
     {
@@ -439,10 +439,7 @@ export default function Home() {
 
                 <p className="text-base font-normal tracking-[0.5px] text-slate-300 leading-relaxed max-w-3xl mx-auto text-left">
                   Running a strong Cambridge school today requires more than good teachers.
-                  EduMeUp provides a complete academic infrastructure your leadership team can deploy immediately.
-
-                  <span className="font-semibold text-white"> EduMeUp provides a complete academic infrastructure </span>
-                  your leadership team can deploy immediately allowing your school to focus
+                  EduMeUp provides a complete academic infrastructure your leadership team can deploy immediately, allowing your school to focus
                   on admissions, management, and growth.
                 </p>
               </div>
@@ -457,7 +454,7 @@ export default function Home() {
                 </h3>
                 <ul className="text-[14px] text-black space-y-3 leading-relaxed">
                   <li>SMK-Aligned Teacher Training</li>
-                  <li>Bridge Programs (Grade 7 â†’ O-Level)</li>
+                  <li>Bridge Programs (Grade 7 &rarr; O-Level)</li>
                   <li>Diagnostic Gap Analysis & Remedial Repair</li>
                 </ul>
               </div>
@@ -816,7 +813,7 @@ export default function Home() {
                     </svg></div>
                   </div>
                   <p className="text-center font-semibold text-white text-xs">
-                    EduMeUp: 100% â†’ 95% â†’ 90% â†’ 85%+ (maintained long-term retention)
+                    EduMeUp: 100% &rarr; 95% &rarr; 90% &rarr; 85%+ (maintained long-term retention)
                   </p>
                 </div>
               </div>
@@ -929,11 +926,11 @@ export default function Home() {
                   "Currently in Grade 7 or 8 (entering O-Level within 12 months)",
                   "Scored below 70% in recent school exams",
                   "Struggles with Math, Physics, Chemistry, or English",
-                  "Has learning gaps from Grade 6â€“7 that were never properly fixed",
+                  "Has learning gaps from Grade 6-7 that were never properly fixed",
                   "Switching from Urdu medium to English medium",
                   "Switching from national curriculum to Cambridge / IGCSE",
                   "School has 35+ students per class (limited individual attention)",
-                  "Family cannot afford $200â€“300/month private tutors for 2â€“3 years",
+                  "Family cannot afford $200-300/month private tutors for 2-3 years",
                   "You want child to become an independent learner (not tutor-dependent)",
                   "You want research-backed results, not \"we'll try our best\""
                 ].map((item, i) => (
@@ -982,11 +979,11 @@ export default function Home() {
                         <p className="text-[14px] text-red-600 font-semibold mb-4">URGENT ACTION RECOMMENDED</p>
                         <p className="text-[14px] font-semibold text-slate-800 mb-3">EduMeUp will:</p>
                         <ul className="space-y-1 text-[14px] text-slate-700 mb-6">
-                          <li>âœ“ Fix ALL gaps systematically</li>
-                          <li>âœ“ Build strong O-Level foundations</li>
-                          <li>âœ“ Develop self-learning capabilities</li>
-                          <li>âœ“ Eliminate need for expensive tutors</li>
-                          <li>âœ“ Support strong O-Level results</li>
+                          <li>✓ Fix ALL gaps systematically</li>
+                          <li>✓ Build strong O-Level foundations</li>
+                          <li>✓ Develop self-learning capabilities</li>
+                          <li>✓ Eliminate need for expensive tutors</li>
+                          <li>✓ Support strong O-Level results</li>
                         </ul>
                         <p className="text-[14px] text-red-600 font-semibold mb-6">
                           Every month you wait = More gaps accumulate = Harder and more expensive to fix later.
@@ -1001,10 +998,10 @@ export default function Home() {
                           trigger={
                             <Button className="w-full bg-[#2366c9] hover:bg-blue-700 font-semibold min-h-[3.25rem] h-auto py-3 px-4 rounded-lg text-[14px] text-white whitespace-normal leading-tight text-center">
                               {checkedItems.length <= 1
-                                ? "TAKE FREE DIAGNOSTIC ANYWAY â†’"
+                                ? "TAKE FREE DIAGNOSTIC ANYWAY ->"
                                 : checkedItems.length <= 3
-                                  ? "TAKE FREE DIAGNOSTIC â†’"
-                                  : "START FREE DIAGNOSTIC NOW â†’"}
+                                  ? "TAKE FREE DIAGNOSTIC ->"
+                                  : "START FREE DIAGNOSTIC NOW ->"}
                             </Button>
                           }
                         />
@@ -1014,7 +1011,7 @@ export default function Home() {
                           variant="outline"
                           className="w-full border border-[#2366c9] text-[#2366c9] hover:bg-blue-50 font-semibold min-h-[3.25rem] h-auto py-3 px-4 rounded-lg text-[14px] whitespace-normal leading-tight text-center"
                         >
-                          {checkedItems.length <= 3 ? "EXPLORE BRIDGE COURSES â†’" : "ENROLL IN PRE-O-LEVEL VICTORY â†’"}
+                          {checkedItems.length <= 3 ? "EXPLORE BRIDGE COURSES ->" : "ENROLL IN PRE-O-LEVEL VICTORY ->"}
                         </Button>
                       </Link>
                     </div>
@@ -1088,33 +1085,33 @@ export default function Home() {
               <h3 className="text-3xl font-semibold text-slate-900">PRE-O-LEVEL VICTORY PROGRAM</h3>
               <p className="text-[14px] font-semibold text-slate-700">The complete bridge from middle school to O-Level mastery.</p>
               <p className="text-[14px] text-slate-700">The complete bridge from middle school to Cambridge O-Level readiness.</p>
-              <p className="text-[14px] text-slate-700">Repair Grade 6â€“8 gaps, complete Bridge Program, and cover 30â€“40% of O-Level syllabus - equivalent to O1 preparation.</p>
+              <p className="text-[14px] text-slate-700">Repair Grade 6-8 gaps, complete Bridge Program, and cover 30-40% of O-Level syllabus - equivalent to O1 preparation.</p>
               <p className="text-[14px] font-semibold text-slate-900">THREE-IN-ONE PROGRAM:</p>
               <ul className="text-[14px] text-slate-700 space-y-1">
-                <li>âœ“ Grade 6â€“8 Deficiency Repair - Close all foundational gaps</li>
-                <li>âœ“ Complete O-Level Bridge Program - Smooth Cambridge transition </li>
-                <li>âœ“ O-Level Syllabus Coverage - Master 30â€“40% of O1 content</li>
+                <li>✓ Grade 6-8 Deficiency Repair - Close all foundational gaps</li>
+                <li>✓ Complete O-Level Bridge Program - Smooth Cambridge transition </li>
+                <li>✓ O-Level Syllabus Coverage - Master 30-40% of O1 content</li>
               </ul>
 
               <p className="text-[14px] font-semibold text-slate-900">TWO LEARNING MODES:</p>
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-[14px] text-slate-700 space-y-2">
                   <p className="font-semibold text-slate-900">ONLINE SELF-LEARNING  </p>
-                  <p>â€¢ 9 subjects: English, Math, Physics, Chemistry, Biology, Urdu, Islamiyat, History, Geography</p>
-                  <p>â€¢ Self-paced learning with full platform access</p>
-                  <p>â€¢ Interactive activities, diagnostic tests, AI support</p>
-                  <p>â€¢ Certificate on 60%+ completion</p>
-                  <p>â€¢ Flexible start anytime</p>
+                  <p>- 9 subjects: English, Math, Physics, Chemistry, Biology, Urdu, Islamiyat, History, Geography</p>
+                  <p>- Self-paced learning with full platform access</p>
+                  <p>- Interactive activities, diagnostic tests, AI support</p>
+                  <p>- Certificate on 60%+ completion</p>
+                  <p>- Flexible start anytime</p>
                   <p><span className="font-semibold">Best For:</span> Self-motivated students, budget-conscious families</p>
                 </div>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-[14px] text-slate-700 space-y-2">
                   <p className="font-semibold text-slate-900">TEACHER-LED CLASSES  </p>
-                  <p>â€¢ Everything in Self-Learning PLUS:</p>
-                  <p>â€¢ Live classes: 2.5â€“3 hours/day, 5 days/week (Sepâ€“May)</p>
-                  <p>â€¢ Expert teachers (rotating by subject)</p>
-                  <p>â€¢ Online + Physical (Lahore - Phase 1)</p>
-                  <p>â€¢ Group learning environment</p>
-                  <p>â€¢ 60% Performance Designed Outcome* on actual O-Level papers from covered syllabus</p>
+                  <p>- Everything in Self-Learning PLUS:</p>
+                  <p>- Live classes: 2.5-3 hours/day, 5 days/week (Sep-May)</p>
+                  <p>- Expert teachers (rotating by subject)</p>
+                  <p>- Online + Physical (Lahore - Phase 1)</p>
+                  <p>- Group learning environment</p>
+                  <p>- 60% Performance Designed Outcome* on actual O-Level papers from covered syllabus</p>
                   <p>(*80% attendance + 80% task completion required)</p>
                   <p><span className="font-semibold">Best For:</span> Students needing structure and guaranteed readiness</p>
                 </div>
@@ -1122,10 +1119,10 @@ export default function Home() {
 
               <p className="text-[14px] font-semibold text-slate-900">WHO IT'S FOR:</p>
               <ul className="text-[14px] text-slate-700 space-y-1">
-                <li>â€¢ Grade 7â€“8 students preparing for O-Level</li>
-                <li>â€¢ Post-Grade 8 students needing O-Level preparation</li>
-                <li>â€¢ Students transitioning from local to Cambridge curriculum</li>
-                <li>â€¢ Anyone wanting O1-level readiness</li>
+                <li>- Grade 7-8 students preparing for O-Level</li>
+                <li>- Post-Grade 8 students needing O-Level preparation</li>
+                <li>- Students transitioning from local to Cambridge curriculum</li>
+                <li>- Anyone wanting O1-level readiness</li>
               </ul>
               <p className="text-[14px] text-slate-700">SUCCESS RATE: 90%+ for students meeting program requirements</p>
               <p className="text-[14px] text-slate-700">Research Foundation: Mastery learning & scaffolding (Bloom, 1968; Rosenshine, 2012)</p>
@@ -1149,7 +1146,7 @@ export default function Home() {
                   </h3>
 
                   <p className="text-[14px] font-semibold text-slate-700">
-                    Full Syllabus Coverage + Exam Readiness â€¢ Understand â€¢ Cover â€¢ Practice
+                    Full Syllabus Coverage + Exam Readiness - Understand - Cover - Practice
                   </p>
 
                   <p className="text-[14px] text-slate-700">
@@ -1159,12 +1156,12 @@ export default function Home() {
                   <p className="text-[14px] font-semibold text-slate-900">INCLUDES:</p>
 
                   <ul className="text-[14px] text-slate-700 space-y-1">
-                    <li>â€¢ Complete syllabus coverage (100%)</li>
-                    <li>â€¢ 1,000+ interactive H5P activities</li>
-                    <li>â€¢ 2,000+ past paper questions integrated from first lesson</li>
-                    <li>â€¢ Spaced retrieval system (automated reviews)</li>
-                    <li>â€¢ Mock exams with enhanced solutions</li>
-                    <li>â€¢ Progress tracking dashboard</li>
+                    <li>- Complete syllabus coverage (100%)</li>
+                    <li>- 1,000+ interactive H5P activities</li>
+                    <li>- 2,000+ past paper questions integrated from first lesson</li>
+                    <li>- Spaced retrieval system (automated reviews)</li>
+                    <li>- Mock exams with enhanced solutions</li>
+                    <li>- Progress tracking dashboard</li>
                   </ul>
 
                   <p className="text-[14px] text-slate-700">
@@ -1235,16 +1232,16 @@ export default function Home() {
                   </p>
 
                   <ul className="text-[14px] text-slate-700 space-y-1">
-                    <li>âœ“ 20+ Actual Cambridge Past Papers per subject</li>
-                    <li>âœ“ Timed Exam Experience - Real exam limits</li>
-                    <li>âœ“ Instant Enhanced Solutions - MCQ explanations</li>
-                    <li>âœ“ Essay Paper Solutions - Model answers</li>
-                    <li>âœ“ 2-Year Access - Unlimited practice</li>
-                    <li>âœ“ 8 Core Subjects coverage</li>
+                    <li>✓ 20+ Actual Cambridge Past Papers per subject</li>
+                    <li>✓ Timed Exam Experience - Real exam limits</li>
+                    <li>✓ Instant Enhanced Solutions - MCQ explanations</li>
+                    <li>✓ Essay Paper Solutions - Model answers</li>
+                    <li>✓ 2-Year Access - Unlimited practice</li>
+                    <li>✓ 8 Core Subjects coverage</li>
                   </ul>
 
                   <p className="text-[14px] text-slate-700">
-                    PERFECT FOR: Last-minute exam preparation (3â€“6 months),
+                    PERFECT FOR: Last-minute exam preparation (3-6 months),
                     year-round practice, understanding Cambridge marking schemes,
                     and identifying weak areas.
                   </p>
@@ -1292,46 +1289,46 @@ export default function Home() {
                 <div className="rounded-xl border border-slate-200 bg-blue-50/40 p-4 text-[14px] text-slate-700 space-y-2">
                   <p className="font-semibold text-slate-900">COURSE 1 - COMPREHENSION MASTERY (Paper 1) </p>
                   <p>Built around 8 complete Cambridge past paper modules. Each past paper is taught through a 9-step Learning Mastery System.</p>
-                  <p>âœ“ Full vocabulary preview before each reading passage</p>
-                  <p>âœ“ Scanning & skimming technique training per text</p>
-                  <p>âœ“ MCQs with complete justifications - not just answer keys</p>
-                  <p>âœ“ Actual Cambridge exam questions with model answers</p>
-                  <p>âœ“ Questions categorised as Literal / Inferential / Evaluative - the exact taxonomy Cambridge examiners use</p>
-                  <p>âœ“ Exam Skills Tip for each question type</p>
-                  <p>âœ“ Higher-order Challenge Corner for Band 1 performance</p>
-                  <p>âœ“ 100% interactive H5P - no passive reading or videos</p>
+                  <p>✓ Full vocabulary preview before each reading passage</p>
+                  <p>✓ Scanning & skimming technique training per text</p>
+                  <p>✓ MCQs with complete justifications - not just answer keys</p>
+                  <p>✓ Actual Cambridge exam questions with model answers</p>
+                  <p>✓ Questions categorised as Literal / Inferential / Evaluative - the exact taxonomy Cambridge examiners use</p>
+                  <p>✓ Exam Skills Tip for each question type</p>
+                  <p>✓ Higher-order Challenge Corner for Band 1 performance</p>
+                  <p>✓ 100% interactive H5P - no passive reading or videos</p>
                   <p>Perfect For: Students who lose marks on inference and "own words" questions - the 2 most common failure points in Paper 1.</p>
 
                   <p className="font-semibold text-slate-900">PERFECT FOR - COMPREHENSION MASTERY (Paper 1)</p>
-                  <p>âœ“ Students who find the answer but lose marks writing it</p>
-                  <p>âœ“ Students who copy text instead of answering in own words</p>
-                  <p>âœ“ Students who cannot distinguish Literal from Inferential questions</p>
-                  <p>âœ“ Students who re-read passages repeatedly and run out of time</p>
-                  <p>âœ“ Students aiming for Band 1 but stuck just below it</p>
+                  <p>✓ Students who find the answer but lose marks writing it</p>
+                  <p>✓ Students who copy text instead of answering in own words</p>
+                  <p>✓ Students who cannot distinguish Literal from Inferential questions</p>
+                  <p>✓ Students who re-read passages repeatedly and run out of time</p>
+                  <p>✓ Students aiming for Band 1 but stuck just below it</p>
                 </div>
 
                 <div className="rounded-xl border border-slate-200 bg-blue-50/40 p-4 text-[14px] text-slate-700 space-y-2">
                   <p className="font-semibold text-slate-900">COURSE 2 - COMPOSITION MASTERY (Paper 2)  </p>
                   <p>Three progressive courses take students from Band 3 writing to Band 1 excellence - step by step:</p>
                   <p> F1 - Essay Types & Structure</p>
-                  <p> F2 - 10-Day Band 3 â†’ Band 1 Bridge</p>
+                  <p> F2 - 10-Day Band 3 to Band 1 Bridge</p>
                   <p> Complete Mastery - Band 3 to Band 1 - The Cambridge Composition Transformation Course with complete training</p>
-                  <p>âœ“ 120+ H5P interactive activities</p>
-                  <p>âœ“ 30+ authentic O-Level exam prompts</p>
-                  <p>âœ“ 4 timed essays under real exam conditions</p>
-                  <p>âœ“ Official Band 1 rubric taught and applied throughout</p>
-                  <p>âœ“ 60+ vocabulary words - all from O-Level past papers</p>
-                  <p>âœ“ AI Chatbot support integrated</p>
-                  <p>âœ“ Portfolio tracks growth from first to final essay</p>
-                  <p>âœ“ Certificate on completion</p>
+                  <p>✓ 120+ H5P interactive activities</p>
+                  <p>✓ 30+ authentic O-Level exam prompts</p>
+                  <p>✓ 4 timed essays under real exam conditions</p>
+                  <p>✓ Official Band 1 rubric taught and applied throughout</p>
+                  <p>✓ 60+ vocabulary words - all from O-Level past papers</p>
+                  <p>✓ AI Chatbot support integrated</p>
+                  <p>✓ Portfolio tracks growth from first to final essay</p>
+                  <p>✓ Certificate on completion</p>
 
 
                   <p className="font-semibold text-slate-900">PERFECT FOR - COMPOSITION MASTERY (Paper 2)</p>
-                  <p>âœ“ Students whose essays are "correct" but never rise above Band 3</p>
-                  <p>âœ“ Students who go blank when they see the exam prompt</p>
-                  <p>âœ“ Students using simple, repetitive vocabulary they cannot upgrade</p>
-                  <p>âœ“ Students who only attempt Narrative and avoid other essay types</p>
-                  <p>âœ“ Students who have never been shown - sentence by sentence - exactly what separates their writing from Band 1</p>
+                  <p>✓ Students whose essays are "correct" but never rise above Band 3</p>
+                  <p>✓ Students who go blank when they see the exam prompt</p>
+                  <p>✓ Students using simple, repetitive vocabulary they cannot upgrade</p>
+                  <p>✓ Students who only attempt Narrative and avoid other essay types</p>
+                  <p>✓ Students who have never been shown - sentence by sentence - exactly what separates their writing from Band 1</p>
                 </div>
               </div>
 
@@ -1366,8 +1363,8 @@ export default function Home() {
 
                 <div className="space-y-3">
                   <h3 className="text-xl font-semibold text-slate-900">FOUNDATIONAL O-LEVEL BRIDGE COURSES</h3>
-                  <p className="text-[14px] font-semibold text-slate-700">Fix Weak Foundations Before O-Level Starts â€¢ Diagnose â€¢ Repair â€¢ Strengthen</p>
-                  <p className="text-[14px] text-slate-700">Targeted remedial courses fixing Grade 6â€“8 gaps before entering O-Level. Prevents compounding knowledge gaps.</p>
+                  <p className="text-[14px] font-semibold text-slate-700">Fix Weak Foundations Before O-Level Starts - Diagnose - Repair - Strengthen</p>
+                  <p className="text-[14px] text-slate-700">Targeted remedial courses fixing Grade 6-8 gaps before entering O-Level. Prevents compounding knowledge gaps.</p>
                   <p className="text-[14px] text-slate-700">Results: Designed to support 60%+ in standard tests.</p>
                 </div>
 
@@ -1397,7 +1394,7 @@ export default function Home() {
 
                 <div className="space-y-3">
                   <h3 className="text-xl font-semibold text-slate-900">ATP COURSES (PHYSICS | CHEMISTRY | BIOLOGY)</h3>
-                  <p className="text-[14px] font-semibold text-slate-700">Virtual Lab Training for Unseen Practical Exams â€¢ Unseen â€¢ Analytical â€¢ Conceptual</p>
+                  <p className="text-[14px] font-semibold text-slate-700">Virtual Lab Training for Unseen Practical Exams - Unseen - Analytical - Conceptual</p>
                   <p className="text-[14px] text-slate-700">Complete replacement for O-Level Paper 4 (Practical) with virtual lab skill development and unseen question training.</p>
                   <p className="text-[14px] text-slate-700">NOTE: NOT included in annual packages - separate add-on</p>
                 </div>
@@ -1422,7 +1419,7 @@ export default function Home() {
 
                 <div className="space-y-3">
                   <h3 className="text-xl font-semibold text-slate-900">TUTOR BOOKING — 1-TO-1 PERSONALISED EDUCATION</h3>
-                  <p className="text-[14px] font-semibold text-slate-700">Better Than Traditional Providers - Same Price, 10Ã— Support</p>
+                  <p className="text-[14px] font-semibold text-slate-700">Better Than Traditional Providers - Same Price, 10X Support</p>
                   <p className="text-[14px] text-slate-700">Professional tutor matching service with FREE platform resources for both students and teachers. Quality guaranteed.</p>
                   <p className="text-[14px] text-slate-700">NO EXTRA CHARGES - Just teacher fee. All platform resources 100% FREE.</p>
                 </div>
@@ -1454,7 +1451,7 @@ export default function Home() {
                 <div className="p-6 rounded-xl border border-blue-100 bg-blue-50/30 text-left flex flex-col h-full">
                   <div className="mb-6">
                     <h4 className="font-bold text-slate-900 text-lg mb-2">
-                      MATRIC <span className="text-xs font-medium text-slate-500">(Grades 9â€“10)</span>
+                      MATRIC <span className="text-xs font-medium text-slate-500">(Grades 9-10)</span>
                     </h4>
                     <p className="text-[14px] text-slate-700 leading-relaxed">
                       <span className="font-semibold">Subjects:</span> English, Math, Physics, Chemistry, Biology
@@ -1492,7 +1489,7 @@ export default function Home() {
                 <div className="p-6 rounded-xl border border-blue-100 bg-blue-50/30 text-left flex flex-col h-full">
                   <div className="mb-6">
                     <h4 className="font-bold text-slate-900 text-lg mb-2">
-                      ECAT <span className="text-xs font-medium text-slate-500">(Engineering Entry Test)</span>
+                      ECAT <span className="text-xs font-medium text-slate-500">(Engineering Colleges Admission Test)</span>
                     </h4>
                     <p className="text-[14px] text-slate-700 leading-relaxed">
                       <span className="font-semibold">Subjects:</span> Math, Physics, Chemistry, English
@@ -1520,11 +1517,11 @@ export default function Home() {
 
                 <div className="max-w-xl mx-auto text-left mb-8">
                   <ul className="text-[14px] text-slate-700 space-y-2">
-                    <li>âœ“ Complete syllabus coverage</li>
-                    <li>âœ“ Interactive H5P activities</li>
-                    <li>âœ“ Past paper practice integrated</li>
-                    <li>âœ“ Spaced retrieval system</li>
-                    <li>âœ“ Same 10X Learning Leap Modelâ„¢</li>
+                    <li>✓ Complete syllabus coverage</li>
+                    <li>✓ Interactive H5P activities</li>
+                    <li>✓ Past paper practice integrated</li>
+                    <li>✓ Spaced retrieval system</li>
+                    <li>✓ Same 10X Learning Leap ModelTM</li>
                   </ul>
                 </div>
 
@@ -1535,103 +1532,6 @@ export default function Home() {
               </div>
             </CardContent>
           </Card>
-        </div>
-      </section>
-
-      {/* SECTION 4A: THE EDUMEUP 8-STEP LEARNING SYSTEM */}
-      <section className="py-20 md:py-28 bg-white">
-        <div className="container-custom max-w-7xl">
-
-          {/* Section Header */}
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            {/* OVERLINE = 10px */}
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
-              8-Step System
-            </p>
-
-            <div className="flex justify-center w-full">
-              {/* H2 â€“ 60px desktop, responsive mobile size */}
-              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
-
-                The EduMeUp 8-Step Learning System
-              </h2>
-            </div>
-
-            {/* H5 emphasis = 24px */}
-            <p className="text-2xl text-black mb-3">
-              From Diagnosis to Exam Mastery - a Complete Learning Loop
-            </p>
-
-            {/* Body 1 = 16px */}
-            <p className="text-base font-semibold text-blue-700">
-              We don't sell content. We run a system.
-            </p>
-          </div>
-          {/* Updated Grid: Centers the last row of cards */}
-          <div className="flex flex-wrap justify-center gap-6 mb-14">
-            {learningSystemSteps.map((item, i) => (
-              <Card
-                key={i}
-                className="group relative border border-slate-200 rounded-2xl bg-white hover:border-blue-200 hover:shadow-xl transition-all w-full sm:w-[calc(50%-12px)] lg:w-[calc(25%-18px)]"
-              >
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="h-10 w-10 rounded-lg bg-blue-50 text-[#2366c9] flex items-center justify-center">
-                      <item.icon className="h-5 w-5" />
-                    </div>
-                    <span className="text-[14px] font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded-md">
-                      {item.step}
-                    </span>
-                  </div>
-
-                  <h3 className="text-2xl font-semibold text-slate-900 leading-tight mb-1">
-                    {item.title}
-                  </h3>
-
-                  <p className="text-[14px] font-medium text-black mb-3">
-                    {item.subtitle}
-                  </p>
-                  <p className="text-[14px] text-slate-700 leading-relaxed">
-                    {item.body}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          <Card className="border-[#2366c9]   border-2   border-blue-200 bg-gradient-to-r from-blue-50 via-white to-blue-50 rounded-2xl shadow-sm">
-            <CardContent className="p-7">
-
-              <div className="flex flex-wrap items-center justify-center gap-3 text-[16px] font-semibold text-slate-800">
-
-                <span>Diagnose</span>
-                <span className="text-blue-500">â†’</span>
-
-                <span>Repair</span>
-                <span className="text-blue-500">â†’</span>
-
-                <span>Learn</span>
-                <span className="text-blue-500">â†’</span>
-
-                <span>Practice</span>
-                <span className="text-blue-500">â†’</span>
-
-                <span>Assess</span>
-                <span className="text-blue-500">â†’</span>
-
-                <span>Correct</span>
-                <span className="text-blue-500">â†’</span>
-
-                <span>Mock</span>
-                <span className="text-blue-500">â†’</span>
-
-                <span className="text-green-700 font-semibold">Succeed</span>
-
-              </div>
-
-            </CardContent>
-          </Card>
-
         </div>
       </section>
 
@@ -1656,21 +1556,21 @@ export default function Home() {
             <div className="min-w-[700px] border-slate-200 rounded-xl overflow-hidden shadow-sm">
               {/* Header Row */}
 
-              <div className="flex  bg-[#2366c9]">
-                <div className="flex-1 p-5 font-semibold text-left border-r border-slate-200 text-white">
+              <div className="flex bg-[#2366c9] text-white text-xs uppercase tracking-wider font-semibold">
+                <div className="flex-1 p-5 border-r border-blue-400/30">
                   Feature
                 </div>
-                <div className="flex-1 p-5 font-semibold text-white text-left border-r border-red-200  ">
+                <div className="flex-1 p-5 border-r border-blue-400/30">
                   Traditional Tutoring
                 </div>
-                <div className="flex-1 p-5 font-semibold text-white text-left  ">
+                <div className="flex-1 p-5">
                   EduMeUp System
                 </div>
               </div>
 
               {/* Rows */}
               {[
-                ["Cost per year", "$2,400 â€“ $3,600+", "~$199 â€“ $360"],
+                ["Cost per year", "$2,400 - $3,600+", "~$199 - $360"],
                 ["Gap identification", "Random, reactive", "Precision AI diagnostic"],
                 ["Foundation repair", "Rarely addressed", "Systematic remedial modules"],
                 ["Retention strategy", "None - hope it sticks", "Spaced retrieval scheduling"],
@@ -1727,14 +1627,14 @@ export default function Home() {
 
           <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-md">
             <table className="w-full min-w-[1000px] text-[14px] text-left">
-              <thead className="bg-slate-50 text-xs uppercase tracking-wider text-black">
+              <thead className="bg-[#2366c9] text-white text-xs uppercase tracking-wider font-semibold">
                 <tr>
-                  <th className="p-4 font-semibold w-1/4 text-white bg-[#2366c9]">Feature</th>
-                  <th className="p-4 font-semibold text-white bg-[#2366c9]">EduMeUp</th>
-                  <th className="p-4 font-semibold text-white bg-[#2366c9]">General AI (ChatGPT/Gemini)</th>
-                  <th className="p-4 font-semibold text-white bg-[#2366c9]">Khanmigo</th>
-                  <th className="p-4 font-semibold text-white bg-[#2366c9]">Kognity</th>
-                  <th className="p-4 font-semibold text-white bg-[#2366c9]">GCSEPod</th>
+                  <th className="p-4 w-1/4">Feature</th>
+                  <th className="p-4">EduMeUp</th>
+                  <th className="p-4">General AI</th>
+                  <th className="p-4">Khanmigo</th>
+                  <th className="p-4">Kognity</th>
+                  <th className="p-4">GCSEPod</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -1930,11 +1830,11 @@ export default function Home() {
                     Traditional Model - 5% Retention
                   </h4>
                   <ul className="space-y-2 text-[14px] text-slate-700">
-                    <li>â€¢ Lectures 5%</li>
-                    <li>â€¢ Textbook reading 10%</li>
-                    <li>â€¢ No diagnostic - gaps accumulate</li>
-                    <li>â€¢ Exam panic - no simulation</li>
-                    <li>â€¢ Tutor dependency - no independence</li>
+                    <li>- Lectures 5%</li>
+                    <li>- Textbook reading 10%</li>
+                    <li>- No diagnostic - gaps accumulate</li>
+                    <li>- Exam panic - no simulation</li>
+                    <li>- Tutor dependency - no independence</li>
                   </ul>
                 </CardContent>
               </Card>
@@ -1946,11 +1846,11 @@ export default function Home() {
                     EduMeUp Model - 50%+ Retention
                   </h4>
                   <ul className="space-y-2 text-[14px] text-slate-700">
-                    <li>â€¢ Interactive H5P activities 50-75%</li>
-                    <li>â€¢ Active retrieval practice 75-90%</li>
-                    <li>â€¢ Diagnostic-first - gaps fixed</li>
-                    <li>â€¢ Timed mock exams - exam ready</li>
-                    <li>â€¢ 8-step system - self-directed</li>
+                    <li>- Interactive H5P activities 50-75%</li>
+                    <li>- Active retrieval practice 75-90%</li>
+                    <li>- Diagnostic-first - gaps fixed</li>
+                    <li>- Timed mock exams - exam ready</li>
+                    <li>- 8-step system - self-directed</li>
                   </ul>
                 </CardContent>
               </Card>
@@ -1982,7 +1882,7 @@ export default function Home() {
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 lg:gap-6">
               {[
                 "Diagnostic\nDay 1",
-                "Repair\nWeeks 1â€“4",
+                "Repair\nWeeks 1-4",
                 "Learn\nOngoing",
                 "Practice\nFrom Day 1",
                 "Assess\nPer Unit",
@@ -2008,16 +1908,16 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-8">
             {[
               {
-                title: "Month 1â€“2: Diagnostic + Repair",
+                title: "Month 1-2: Diagnostic + Repair",
                 points: [
                   "Complete AI diagnostic assessment",
-                  "Identify exact gaps from Grade 6â€“8",
+                  "Identify exact gaps from Grade 6-8",
                   "Begin targeted remedial modules",
                   "No new O-Level content until foundations are solid"
                 ]
               },
               {
-                title: "Month 3â€“6: Interactive Learning + Practice",
+                title: "Month 3-6: Interactive Learning + Practice",
                 points: [
                   "H5P interactive concept modules begin",
                   "Cambridge past paper practice integrated from first lesson",
@@ -2026,7 +1926,7 @@ export default function Home() {
                 ]
               },
               {
-                title: "Month 7â€“10: Deep Mastery + Assessment",
+                title: "Month 7-10: Deep Mastery + Assessment",
                 points: [
                   "Full subject coverage in progress",
                   "Corrective study loops for weak topics",
@@ -2035,7 +1935,7 @@ export default function Home() {
                 ]
               },
               {
-                title: "Month 11â€“12: Mock Exams + Final Readiness",
+                title: "Month 11-12: Mock Exams + Final Readiness",
                 points: [
                   "Full-length timed Cambridge-style mock exams",
                   "Exam strategy and stamina training",
@@ -2057,7 +1957,7 @@ export default function Home() {
                   </h4>
                   <ul className="space-y-3 text-[14px] text-slate-700 font-medium">
                     {phase.points.map((p, j) => (
-                      <li key={j} className="leading-relaxed">â€¢ {p}</li>
+                      <li key={j} className="leading-relaxed">- {p}</li>
                     ))}
                   </ul>
 
@@ -2089,16 +1989,16 @@ export default function Home() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
             {[
-              ["Pre-O-Level Victory Program", "$199/year", "$360/year", "Full prep - Grade 7â€“8 students"],
+              ["Pre-O-Level Victory Program", "$199/year", "$360/year", "Full prep - Grade 7-8 students"],
               ["Complete O-Level Subject Preparation", "$65/year", "N/A", "Individual subject mastery"],
               ["Bridge Courses (Single Subject)", "From $50", "N/A", "Math ($80), Chem ($80), Physics/English ($60), Econ ($50)"],
               ["Bridge Courses Packages", "$170 - $250", "N/A", "Math-Chem-Phys ($170) | All 5 ($250, Save $80)"],
               ["English Language Mastery Courses", "$250", "N/A", "Paper 1 & 2 Complete Package (Save $60)"],
               ["ATP Courses (Physics | Chemistry | Biology)", "$229", "N/A", "Paper 4 practical replacement (Save $148)"],
-              ["Tutor Booking — 1-to-1 Personalised Education", "$80â€“150/month", "-", "Structured 1-on-1 support"],
-              ["Pakistan Matric Programme (Grades 9â€“10)", "$18/mo or $160/yr", "N/A", "Pakistan Board Grades 9â€“10"],
+              ["Tutor Booking — 1-to-1 Personalised Education", "$80-150/month", "-", "Structured 1-on-1 support"],
+              ["Pakistan Matric Programme (Grades 9-10)", "$18/mo or $160/yr", "N/A", "Pakistan Board Grades 9-10"],
               ["Pakistan FSc / ICS Programme", "$20/mo or $199/yr", "N/A", "Intermediate Board students"],
-              ["Pakistan ECAT — Engineering Entry Test", "$140 (2-yr)", "N/A", "Engineering entry test prep"]
+              ["Pakistan ECAT — Engineering Colleges Admission Test", "$140 (2-yr)", "N/A", "Engineering Colleges Admission Test prep"]
             ].map((item, i) => (
               <Card
                 key={i}
@@ -2211,11 +2111,11 @@ export default function Home() {
               What Parents Love Most:
             </h4>
             <ul className="space-y-3 text-[14px] text-slate-700">
-              <li>âœ“ No more "I don't know how the test went" - results instantly visible</li>
-              <li>âœ“ Know which topics need attention before the exam</li>
-              <li>âœ“ Track daily study consistency</li>
-              <li>âœ“ Compare current mastery vs target for O-Level</li>
-              <li>âœ“ Data-backed insights for every conversation with teachers</li>
+              <li>✓ No more "I don't know how the test went" - results instantly visible</li>
+              <li>✓ Know which topics need attention before the exam</li>
+              <li>✓ Track daily study consistency</li>
+              <li>✓ Compare current mastery vs target for O-Level</li>
+              <li>✓ Data-backed insights for every conversation with teachers</li>
             </ul>
           </div>
         </div>
@@ -2304,11 +2204,11 @@ export default function Home() {
                 </p>
 
                 <ul className="space-y-3 text-[14px] text-slate-700">
-                  <li>â€¢ No precise diagnostic of missing skills</li>
-                  <li>â€¢ No foundation repair before advancement</li>
-                  <li>â€¢ No spacing strategy against forgetting</li>
-                  <li>â€¢ No transparent parent visibility</li>
-                  <li>â€¢ No pathway to student independence</li>
+                  <li>- No precise diagnostic of missing skills</li>
+                  <li>- No foundation repair before advancement</li>
+                  <li>- No spacing strategy against forgetting</li>
+                  <li>- No transparent parent visibility</li>
+                  <li>- No pathway to student independence</li>
                 </ul>
               </CardContent>
             </Card>
@@ -2322,11 +2222,11 @@ export default function Home() {
                   EduMeUp combines learning science, interactive technology, and 30+ years of school leadership into one structured mastery platform.
                 </p>
                 <ul className="space-y-3 text-[14px] text-slate-700 mb-6">
-                  <li>âœ“ M.Phil Educational Planning & Management</li>
-                  <li>âœ“ 30+ years as Principal & Deputy Director</li>
-                  <li>âœ“ Cambridge curriculum specialization</li>
-                  <li>âœ“ Research-backed 10X Learning Leap model</li>
-                  <li>âœ“ Moodle + H5P + AI learning ecosystem</li>
+                  <li>✓ M.Phil Educational Planning & Management</li>
+                  <li>✓ 30+ years as Principal & Deputy Director</li>
+                  <li>✓ Cambridge curriculum specialization</li>
+                  <li>✓ Research-backed 10X Learning Leap model</li>
+                  <li>✓ Moodle + H5P + AI learning ecosystem</li>
                 </ul>
                 <p className="text-[14px] italic text-slate-700 border-l-4 border-[#2366c9] pl-5 py-3 bg-blue-50 rounded-r-lg leading-relaxed">
                   "Every student can master difficult subjects when they have a system that finds gaps, repairs them, and builds lasting memory."
@@ -2402,7 +2302,7 @@ export default function Home() {
             {[
               ["Is EduMeUp replacing my child's school or tutor?", "No. EduMeUp is a structured supplemental learning system. It fills gaps that school and tutors leave behind, builds independent learning skills, and significantly reduces - but does not force the elimination of - tutor dependency. Many families use EduMeUp to reduce from 3 tutors to 1 while improving results."],
               ["My child already has tutors. Why would they need EduMeUp?", "Tutors teach - but rarely diagnose, repair foundations, schedule spaced reviews, or simulate timed exams. EduMeUp does all four systematically. It works with tutors, not against them. Tutors can use EduMeUp's diagnostic reports to teach more efficiently."],
-              ["How is this different from YouTube or other online courses?", "YouTube provides content passively. EduMeUp is an active system: it first diagnoses what your child needs, then delivers interactive modules requiring active engagement, then schedules retrieval reviews, then assesses and corrects. Passive consumption = 5â€“20% retention. Active retrieval = 50â€“90% retention."],
+              ["How is this different from YouTube or other online courses?", "YouTube provides content passively. EduMeUp is an active system: it first diagnoses what your child needs, then delivers interactive modules requiring active engagement, then schedules retrieval reviews, then assesses and corrects. Passive consumption = 5-20% retention. Active retrieval = 50-90% retention."],
               ["My child struggles with English. Will the platform work?", "Yes. EduMeUp includes a built-in multilingual translator with audio support, specifically designed for Urdu-medium students transitioning to Cambridge English-medium curriculum. Language barriers are addressed from Day 1."],
               ["Is this suitable for students outside Pakistan?", "Absolutely. The Cambridge O-Level and IGCSE curriculum is international. EduMeUp serves students globally wherever Cambridge exams are taken."],
               ["What if my child doesn't complete the required attendance or tasks?", "For the Teacher-Led program, the 60% Performance Designed Outcome guarantee requires 80% attendance and 80% task completion. For Self-Learning, students work at their own pace. The system tracks all activity so parents can monitor engagement in real time."],
@@ -2418,18 +2318,18 @@ export default function Home() {
                     onClick={() => setOpenFaqIndex(prev => (prev === i ? null : i))}
                     className="w-full text-left flex items-start justify-between gap-4 group"
                   >
-                    <div className="flex items-start gap-3">
+                    <div className="flex items-start gap-4">
                       <HelpCircle className="h-5 w-5 text-[#2366c9] shrink-0 mt-0.5" />
                       <h4 className="text-xl font-medium text-slate-900 group-hover:text-[#2366c9] transition-colors leading-tight">
                         {qa[0]}
                       </h4>
                     </div>
-                    <span className="text-[#2366c9] font-semibold text-2xl leading-none mt-0.5 shrink-0">
-                      {openFaqIndex === i ? "âˆ’" : "+"}
+                    <span className="text-[#2366c9] font-medium text-4xl leading-none mt-[-5px] shrink-0">
+                      {openFaqIndex === i ? "-" : "+"}
                     </span>
                   </button>
                   {openFaqIndex === i && (
-                    <p className="text-[14px] text-slate-700 mt-5 leading-relaxed pl-8">
+                    <p className="text-[14px] text-slate-700 mt-5 leading-relaxed pl-9">
                       {qa[1]}
                     </p>
                   )}
