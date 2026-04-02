@@ -1,16 +1,29 @@
 import { Layout } from "@/components/Layout";
 import { useProgram } from "@/hooks/use-programs";
-import { useRoute, Link } from "wouter";
+import { useRoute, Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CheckCircle2, ChevronLeft, Calendar, Clock, Award, ShieldCheck, Zap, BookOpen } from "lucide-react";
+import { CheckCircle2, ChevronLeft, Calendar, Clock, Award, ShieldCheck, Zap, BookOpen, ShoppingCart } from "lucide-react";
 import { InquiryDialog } from "@/components/InquiryDialog";
 import { motion } from "framer-motion";
+import { useCart } from "@/context/CartContext";
+import { useToast } from "@/hooks/use-toast";
+
+function formatCourseDate(value: string | null, fallback: string) {
+  if (!value) return fallback;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return fallback;
+  return date.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+}
 
 export default function ProgramDetails() {
-  const [, params] = useRoute("/programs/:slug");
-  const slug = params?.slug || "";
+  const [matchesPrograms, programParams] = useRoute("/programs/:slug");
+  const [, courseParams] = useRoute("/courses/:slug");
+  const [, navigate] = useLocation();
+  const slug = (matchesPrograms ? programParams?.slug : courseParams?.slug) || "";
   const { data: program, isLoading } = useProgram(slug);
+  const { addToCart } = useCart();
+  const { toast } = useToast();
 
   if (isLoading) {
     return (
@@ -37,19 +50,49 @@ export default function ProgramDetails() {
     );
   }
 
+  const canBuy = typeof program.price === "number" && program.price > 0;
+
+  const handleAddToCart = () => {
+    if (!canBuy) {
+      window.open(program.lmsCourseUrl, "_blank", "noopener,noreferrer");
+      return;
+    }
+
+    addToCart({
+      programId: program.id,
+      title: program.title,
+      price: program.price || 0,
+    });
+
+    toast({
+      title: "Course added",
+      description: `${program.title} has been added to your cart.`,
+    });
+  };
+
+  const handleBuyNow = () => {
+    if (!canBuy) {
+      window.open(program.lmsCourseUrl, "_blank", "noopener,noreferrer");
+      return;
+    }
+
+    handleAddToCart();
+    navigate("/cart");
+  };
+
   return (
     <Layout>
       {/* Header */}
       <div className="bg-[#2366c9] text-white py-16 md:py-32 relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(37,99,235,0.2)_0%,transparent_50%)]"></div>
         <div className="container-custom relative z-10">
-          <Link href="/programs" className="inline-flex items-center text-blue-400 hover:text-white mb-8 md:mb-12 transition-all font-semibold uppercase tracking-widest text-xs group">
-            <ChevronLeft className="h-4 w-4 mr-2 group-hover:-translate-x-2 transition-transform" /> Back to Programs
+          <Link href="/courses" className="inline-flex items-center text-blue-400 hover:text-white mb-8 md:mb-12 transition-all font-semibold uppercase tracking-widest text-xs group">
+            <ChevronLeft className="h-4 w-4 mr-2 group-hover:-translate-x-2 transition-transform" /> Back to Courses
           </Link>
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 justify-between items-start lg:items-end">
             <div className="flex-1">
               <span className="inline-block px-6 py-2 bg-[#2366c9] text-white rounded-full text-xs font-semibold tracking-[0.3em] uppercase mb-6 md:mb-10 shadow-xl shadow-[#2366c9]/20">
-                {program.category.replace(/_/g, " ")}
+                {(program.categoryName || program.category).replace(/_/g, " ")}
               </span>
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl text-white font-semibold font-display mb-6 md:mb-8 uppercase leading-[0.9] tracking-tighter">{program.title}</h1>
               <p className="text-lg sm:text-xl md:text-2xl text-blue-100 font-medium max-w-3xl leading-relaxed">{program.shortDescription}</p>
@@ -65,15 +108,34 @@ export default function ProgramDetails() {
                 {program.price ? `$${(program.price / 100).toFixed(2)}` : "Enquire"}
               </div>
               <div className="text-blue-400 font-semibold uppercase text-xs tracking-widest mb-6 md:mb-10">per academic term</div>
-              <InquiryDialog 
-                defaultType="enrollment"
-                title={`Enroll in ${program.title}`}
-                trigger={
-                  <Button size="lg" className="w-full bg-[#2366c9] hover:bg-blue-700 text-white font-semibold h-16 md:h-24 rounded-3xl text-lg md:text-xl uppercase tracking-widest shadow-2xl active:scale-95 transition-all border-b-8 border-blue-800">
-                    ENROLL NOW 
-                  </Button>
-                }
-              />
+              <div className="space-y-3">
+                <Button
+                  size="lg"
+                  type="button"
+                  onClick={handleBuyNow}
+                  className="w-full bg-[#2366c9] hover:bg-blue-700 text-white font-semibold h-16 md:h-24 rounded-3xl text-lg md:text-xl uppercase tracking-widest shadow-2xl active:scale-95 transition-all border-b-8 border-blue-800"
+                >
+                  {canBuy ? "Buy & Checkout" : "Open Course"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleAddToCart}
+                  className="w-full h-14 rounded-2xl font-semibold uppercase tracking-widest border-blue-200 text-[#2366c9]"
+                >
+                  <ShoppingCart className="h-4 w-4" />
+                  {canBuy ? "Add To Cart" : "Open In LMS"}
+                </Button>
+                <InquiryDialog 
+                  defaultType="enrollment"
+                  title={`Enroll in ${program.title}`}
+                  trigger={
+                    <Button size="lg" variant="ghost" className="w-full text-slate-600 hover:text-[#2366c9] hover:bg-blue-50 font-semibold h-14 rounded-2xl uppercase tracking-widest">
+                      Ask About This Course
+                    </Button>
+                  }
+                />
+              </div>
             </motion.div>
           </div>
         </div>
@@ -96,7 +158,12 @@ export default function ProgramDetails() {
             <section>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-8 md:mb-12 text-slate-900 uppercase tracking-tighter leading-none">What You'll <span className="text-[#2366c9]">Master</span></h2>
               <div className="grid sm:grid-cols-2 gap-8">
-                {program.features?.map((feature, i) => (
+                {[
+                  program.shortName,
+                  program.categoryName || program.category,
+                  program.format || "online course",
+                  program.visible ? "live in connected LMS" : "hidden course",
+                ].map((feature, i) => (
                   <motion.div 
                     key={i} 
                     whileHover={{ x: 10 }}
@@ -105,7 +172,7 @@ export default function ProgramDetails() {
                     <div className="h-12 w-12 bg-white rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                       <ShieldCheck className="h-6 w-6 text-[#2366c9]" />
                     </div>
-                    <span className="text-slate-900 font-semibold uppercase text-[14px] tracking-widest leading-tight">{feature}</span>
+                    <span className="text-slate-900 font-semibold uppercase text-[14px] tracking-widest leading-tight">{feature.replace(/_/g, " ")}</span>
                   </motion.div>
                 ))}
               </div>
@@ -124,7 +191,7 @@ export default function ProgramDetails() {
                   </div>
                   <div>
                     <p className="text-blue-400 font-semibold uppercase text-[14px] tracking-widest">Next Intake</p>
-                    <p className="font-semibold text-lg uppercase tracking-tight">September 2024</p>
+                    <p className="font-semibold text-lg uppercase tracking-tight">{formatCourseDate(program.startDate, "Self-paced")}</p>
                   </div>
                 </li>
                 <li className="flex items-center gap-6 group/item">
@@ -133,7 +200,7 @@ export default function ProgramDetails() {
                   </div>
                   <div>
                     <p className="text-blue-400 font-semibold uppercase text-[14px] tracking-widest">Duration</p>
-                    <p className="font-semibold text-lg uppercase tracking-tight">6-Month Intensive</p>
+                    <p className="font-semibold text-lg uppercase tracking-tight">{program.endDate ? `Until ${formatCourseDate(program.endDate, "Ongoing")}` : "Ongoing access"}</p>
                   </div>
                 </li>
                 <li className="flex items-center gap-6 group/item">
@@ -141,8 +208,8 @@ export default function ProgramDetails() {
                     <Award className="h-6 w-6 text-blue-400" />
                   </div>
                   <div>
-                    <p className="text-blue-400 font-semibold uppercase text-[14px] tracking-widest">Certification</p>
-                    <p className="font-semibold text-lg uppercase tracking-tight">Mastery Document</p>
+                    <p className="text-blue-400 font-semibold uppercase text-[14px] tracking-widest">Delivery</p>
+                    <p className="font-semibold text-lg uppercase tracking-tight">Connected Moodle LMS</p>
                   </div>
                 </li>
               </ul>
@@ -152,6 +219,18 @@ export default function ProgramDetails() {
               <Zap className="absolute -top-10 -right-10 h-40 w-40 text-white opacity-10 group-hover:scale-125 transition-transform duration-1000" />
               <h3 className="font-semibold text-2xl mb-4 uppercase tracking-tighter">Need Help?</h3>
               <p className="text-blue-100 mb-10 font-medium leading-relaxed">Talk to our lead academic counselors about mapping your personalized success route.</p>
+              <a href={program.lmsCourseUrl} target="_blank" rel="noreferrer" className="block mb-4">
+                <Button className="w-full bg-white text-[#2366c9] hover:bg-blue-50 font-semibold h-16 rounded-2xl text-[14px] uppercase tracking-widest shadow-2xl">
+                  Open Course In LMS
+                </Button>
+              </a>
+              <Button
+                type="button"
+                onClick={handleBuyNow}
+                className="mb-4 w-full bg-emerald-500 text-white hover:bg-emerald-600 font-semibold h-16 rounded-2xl text-[14px] uppercase tracking-widest shadow-2xl"
+              >
+                Proceed To Payment
+              </Button>
               <InquiryDialog 
                 defaultType="contact"
                 title="Academic Consultation"

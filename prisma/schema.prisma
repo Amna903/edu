@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  admin
+  student
+  parent
+  school
+}
+
+model User {
+  id             String   @id @default(cuid())
+  moodleUserId   Int      @unique
+  username       String
+  email          String?
+  firstName      String?
+  lastName       String?
+  profileImage   String?
+  role           UserRole @default(student)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  lastLoginAt    DateTime?
+
+  @@index([role])
+}
+
+model ParentChild {
+  id        String   @id @default(cuid())
+  parentId  Int
+  childId   Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([parentId, childId])
+  @@index([parentId])
+  @@index([childId])
+}
+
+model RegistrationRole {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  role      UserRole
+  createdAt DateTime @default(now())
+
+  @@index([username])
+}
+
+model CourseCatalog {
+  id             String   @id @default(cuid())
+  moodleCourseId Int      @unique
+  shortname      String
+  fullname       String
+  summary        String?
+  categoryId     Int?
+  categoryName   String?
+  isVisible      Boolean  @default(true)
+  price          Float    @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([categoryId])
+  @@index([isVisible])
+}

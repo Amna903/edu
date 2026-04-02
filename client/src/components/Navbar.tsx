@@ -20,6 +20,7 @@ import {
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/context/CartContext";
+import { useAuthUser } from "@/hooks/use-auth";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,6 +36,16 @@ export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [location] = useLocation();
   const { items } = useCart();
+  const { data: user } = useAuthUser();
+
+  const dashboardPath =
+    user?.role === "admin"
+      ? "/dashboard/admin"
+      : user?.role === "parent"
+        ? "/dashboard/parent"
+        : user?.role === "school"
+          ? "/dashboard/school"
+          : "/dashboard/student";
 
   // v2.0 Correct Menu Structure (exact order from spec)
   const navItems: any[] = [
@@ -88,10 +99,10 @@ export function Navbar() {
       label: "My Dashboard",
       icon: Users,
       children: [
-        { href: "/portals/students", label: "Student Portal", icon: GraduationCap },
-        { href: "/portals/parents", label: "Parent Portal", icon: Users },
-        { href: "/portals/teachers", label: "Teacher Portal", icon: GraduationCap },
-        { href: "/portals/schools", label: "School Portal", icon: School },
+        { href: "/dashboard", label: "Student Portal", icon: GraduationCap },
+        { href: "/dashboard", label: "Parent Portal", icon: Users },
+        { href: "/dashboard", label: "Teacher Portal", icon: GraduationCap },
+        { href: "/dashboard", label: "School Portal", icon: School },
       ],
     },
     {
@@ -307,11 +318,30 @@ export function Navbar() {
               )}
             </Button>
           </Link>
-          <Link href="/contact">
-            <Button size="sm" className="hidden sm:flex font-semibold shadow-sm bg-[#2366c9] text-white hover:bg-blue-700">
-              Get Started
-            </Button>
-          </Link>
+          {user ? (
+            <Link href={dashboardPath}>
+              <button
+                type="button"
+                className="hidden sm:flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-sm font-bold text-[#2366c9] transition hover:border-blue-200 hover:bg-blue-50"
+                title="Open dashboard"
+              >
+                {user.firstname?.[0] || user.fullname?.[0] || user.username[0]}
+              </button>
+            </Link>
+          ) : (
+            <>
+              <Link href="/register">
+                <Button size="sm" className="hidden sm:flex font-semibold shadow-sm bg-[#2366c9] text-white hover:bg-blue-700">
+                  Sign Up
+                </Button>
+              </Link>
+              <Link href="/login">
+                <Button variant="outline" size="sm" className="hidden sm:flex font-semibold border-slate-200 text-slate-700 hover:bg-slate-50">
+                  Sign In
+                </Button>
+              </Link>
+            </>
+          )}
           <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
             {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </Button>
@@ -397,17 +427,33 @@ export function Navbar() {
                 );
               })}
               <div className="pt-4 mt-4 border-t">
+                {user ? (
+                  <Link href={dashboardPath} onClick={() => setIsOpen(false)}>
+                    <div className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50">
+                      <Users className="h-4 w-4" />
+                      Dashboard
+                    </div>
+                  </Link>
+                ) : (
+                  <Link href="/login" onClick={() => setIsOpen(false)}>
+                    <div className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50">
+                      Login
+                    </div>
+                  </Link>
+                )}
                 <Link href="/cart" onClick={() => setIsOpen(false)}>
                   <div className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50">
                     <ShoppingCart className="h-4 w-4" />
                     Cart ({items.length})
                   </div>
                 </Link>
-                <Link href="/contact" onClick={() => setIsOpen(false)}>
-                  <Button className="w-full font-semibold margin-top-2 bg-[#2366c9] text-white hover:bg-blue-700 mt-2">
-                    Get Started
-                  </Button>
-                </Link>
+                {!user && (
+                  <Link href="/register" onClick={() => setIsOpen(false)}>
+                    <Button className="w-full font-semibold margin-top-2 bg-[#2366c9] text-white hover:bg-blue-700 mt-2">
+                      Sign Up
+                    </Button>
+                  </Link>
+                )}
               </div>
             </div>
           </motion.div>

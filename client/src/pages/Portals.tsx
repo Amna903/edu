@@ -1,4 +1,3 @@
-import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { GraduationCap, Users, School, ArrowRight } from "lucide-react";
 import { Layout } from "@/components/Layout";
@@ -7,25 +6,25 @@ const portalCards = [
   {
     title: "Student Portal",
     description: "Track mastery progress, assignments, and upcoming practice targets.",
-    href: "/portals/students",
+    href: "/dashboard",
     icon: GraduationCap,
   },
   {
     title: "Parent Portal",
     description: "View real-time performance insights and support your child effectively.",
-    href: "/portals/parents",
+    href: "/dashboard",
     icon: Users,
   },
   {
     title: "Teacher Portal",
     description: "Monitor learners, identify weak topics, and optimize interventions.",
-    href: "/portals/teachers",
+    href: "/dashboard",
     icon: GraduationCap,
   },
   {
     title: "School Portal",
     description: "Get cohort analytics, school-level reporting, and implementation support.",
-    href: "/portals/schools",
+    href: "/dashboard",
     icon: School,
   },
 ];
@@ -50,7 +49,7 @@ export default function Portals() {
 
           <div className="mt-10 grid gap-6 md:grid-cols-2">
             {portalCards.map((card) => (
-              <Link key={card.href} href={card.href}>
+              <a key={card.href} href={card.href}>
                 <div className="group rounded-2xl border border-blue-100 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-blue-300 hover:shadow-md">
                   <card.icon className="h-6 w-6 text-[#2366c9]" />
                   <h2 className="mt-3 text-xl font-semibold text-slate-900">{card.title}</h2>
@@ -60,7 +59,7 @@ export default function Portals() {
                     <ArrowRight className="h-4 w-4" />
                   </span>
                 </div>
-              </Link>
+              </a>
             ))}
           </div>
         </div>

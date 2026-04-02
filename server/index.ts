@@ -2,13 +2,33 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
+import session from "express-session";
+import { env, isProduction, logEnvPresence } from "./config";
 
 const app = express();
 const httpServer = createServer(app);
+logEnvPresence();
 
 declare module "http" {
   interface IncomingMessage {
     rawBody: unknown;
+  }
+}
+
+declare module "express-session" {
+  interface SessionData {
+    moodleToken?: string;
+    moodlePrivateToken?: string;
+    user?: {
+      id: number;
+      username: string;
+      fullname: string;
+      firstname: string | null;
+      lastname: string | null;
+      email: string | null;
+      role: string;
+      profileImageUrl: string | null;
+    };
   }
 }
 
@@ -21,6 +41,19 @@ app.use(
 );
 
 app.use(express.urlencoded({ extended: false }));
+app.use(
+  session({
+    secret: env.sessionSecret,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: isProduction(),
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    },
+  }),
+);
 
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
@@ -78,7 +111,7 @@ app.use((req, res, next) => {
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
-  if (process.env.NODE_ENV === "production") {
+  if (isProduction()) {
     serveStatic(app);
   } else {
     const { setupVite } = await import("./vite");
@@ -89,7 +122,7 @@ app.use((req, res, next) => {
   // Other ports are firewalled. Default to 5000 if not specified.
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
-  const port = parseInt(process.env.PORT || "3001", 10);
+  const port = env.port;
   const listenOptions: {
     port: number;
     host: string;

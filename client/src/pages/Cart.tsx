@@ -5,25 +5,43 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trash2, ShoppingBag, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
 import { Link } from "wouter";
+import { useAuthUser } from "@/hooks/use-auth";
+import { useCheckout } from "@/hooks/use-orders";
+import { useInitPayment } from "@/hooks/use-payments";
 
 export default function Cart() {
   const { items, removeFromCart, clearCart, total } = useCart();
   const { toast } = useToast();
+  const { data: user } = useAuthUser();
+  const checkout = useCheckout();
+  const initPayment = useInitPayment();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
   const handleCheckout = async () => {
     if (items.length === 0) return;
+    if (!user) {
+      toast({
+        title: "Login Required",
+        description: "Please login before checking out.",
+        variant: "destructive",
+      });
+      return;
+    }
     
     setIsCheckingOut(true);
     try {
-      // Dummy userId for session-less demo
-      const userId = "demo-user-" + Math.random().toString(36).substr(2, 9);
-      
-      await apiRequest("POST", "/api/orders", {
-        userId,
+      if (total > 0) {
+        const payment = await initPayment.mutateAsync({
+          items,
+          totalAmount: total,
+        });
+        window.location.assign(payment.checkoutUrl);
+        return;
+      }
+
+      await checkout.mutateAsync({
         items,
         totalAmount: total
       });
@@ -38,7 +56,7 @@ export default function Cart() {
     } catch (error) {
       toast({
         title: "Checkout Failed",
-        description: "There was an error processing your request.",
+        description: error instanceof Error ? error.message : "There was an error processing your request.",
         variant: "destructive"
       });
     } finally {
@@ -131,13 +149,24 @@ export default function Cart() {
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button 
+                  {!user && (
+                    <div className="w-full space-y-3">
+                      <Link href="/login">
+                        <Button className="w-full bg-[#2366c9] hover:bg-blue-700 h-12 text-lg">
+                          Login To Checkout
+                        </Button>
+                      </Link>
+                    </div>
+                  )}
+                  {user && (
+                    <Button 
                     className="w-full bg-emerald-600 hover:bg-emerald-700 h-12 text-lg"
-                    disabled={items.length === 0 || isCheckingOut}
+                    disabled={items.length === 0 || isCheckingOut || checkout.isPending}
                     onClick={handleCheckout}
                   >
-                    {isCheckingOut ? "Processing..." : "Complete Checkout"}
+                    {isCheckingOut || checkout.isPending ? "Processing..." : "Complete Checkout"}
                   </Button>
+                  )}
                 </CardFooter>
               </Card>
             </div>

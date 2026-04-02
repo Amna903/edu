@@ -1,4 +1,5 @@
 import { programs, type Program, type InsertProgram, resources, type Resource, type InsertResource, inquiries, type Inquiry, type InsertInquiry, orders, type Order, type InsertOrder, orderItems, type OrderItem, type InsertOrderItem, enrollments, type Enrollment, type InsertEnrollment } from "@shared/schema";
+import type { CheckoutItem } from "@shared/schema";
 
 export interface IStorage {
   getPrograms(): Promise<Program[]>;
@@ -15,6 +16,22 @@ export interface IStorage {
   createOrderItem(item: InsertOrderItem): Promise<OrderItem>;
   createEnrollment(enrollment: InsertEnrollment): Promise<Enrollment>;
   getUserEnrollments(userId: string): Promise<Enrollment[]>;
+  getOrdersByUserId(userId: string): Promise<Order[]>;
+  getOrderItemsByOrderId(orderId: number): Promise<OrderItem[]>;
+  linkParentToChild(parentUserId: string, childMoodleUserId: number): Promise<void>;
+  getLinkedChildren(parentUserId: string): Promise<number[]>;
+  createPendingPayment(payment: PendingPayment): Promise<void>;
+  getPendingPayment(orderRef: string): Promise<PendingPayment | undefined>;
+  deletePendingPayment(orderRef: string): Promise<void>;
+}
+
+export interface PendingPayment {
+  orderRef: string;
+  userId: string;
+  items: CheckoutItem[];
+  totalAmount: number;
+  tracker?: string;
+  createdAt: Date;
 }
 
 export class MemStorage implements IStorage {
@@ -24,6 +41,8 @@ export class MemStorage implements IStorage {
   private orders: Map<number, Order>;
   private orderItems: Map<number, OrderItem>;
   private enrollments: Map<number, Enrollment>;
+  private parentChildLinks: Map<string, Set<number>>;
+  private pendingPayments: Map<string, PendingPayment>;
   private currentId: { [key: string]: number };
 
   constructor() {
@@ -33,6 +52,8 @@ export class MemStorage implements IStorage {
     this.orders = new Map();
     this.orderItems = new Map();
     this.enrollments = new Map();
+    this.parentChildLinks = new Map();
+    this.pendingPayments = new Map();
     this.currentId = { programs: 1, resources: 1, inquiries: 1, orders: 1, orderItems: 1, enrollments: 1 };
   }
 
@@ -99,6 +120,42 @@ export class MemStorage implements IStorage {
 
   async getUserEnrollments(userId: string): Promise<Enrollment[]> {
     return Array.from(this.enrollments.values()).filter(e => e.userId === userId);
+  }
+
+  async getOrdersByUserId(userId: string): Promise<Order[]> {
+    return Array.from(this.orders.values())
+      .filter((order) => order.userId === userId)
+      .sort((a, b) => {
+        const aTime = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const bTime = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return bTime - aTime;
+      });
+  }
+
+  async getOrderItemsByOrderId(orderId: number): Promise<OrderItem[]> {
+    return Array.from(this.orderItems.values()).filter((item) => item.orderId === orderId);
+  }
+
+  async linkParentToChild(parentUserId: string, childMoodleUserId: number): Promise<void> {
+    const existing = this.parentChildLinks.get(parentUserId) ?? new Set<number>();
+    existing.add(childMoodleUserId);
+    this.parentChildLinks.set(parentUserId, existing);
+  }
+
+  async getLinkedChildren(parentUserId: string): Promise<number[]> {
+    return Array.from(this.parentChildLinks.get(parentUserId) ?? []);
+  }
+
+  async createPendingPayment(payment: PendingPayment): Promise<void> {
+    this.pendingPayments.set(payment.orderRef, payment);
+  }
+
+  async getPendingPayment(orderRef: string): Promise<PendingPayment | undefined> {
+    return this.pendingPayments.get(orderRef);
+  }
+
+  async deletePendingPayment(orderRef: string): Promise<void> {
+    this.pendingPayments.delete(orderRef);
   }
 }
 

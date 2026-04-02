@@ -14,6 +14,7 @@ import Blog from "@/pages/Blog";
 import HowItWorks from "@/pages/HowItWorks";
 import Programs from "@/pages/Programs";
 import ProgramDetails from "@/pages/ProgramDetails";
+import Courses from "@/pages/Courses";
 import Resources from "@/pages/Resources";
 import About from "@/pages/About";
 import Cart from "@/pages/Cart";
@@ -45,6 +46,10 @@ import Privacy from "@/pages/Privacy";
 import Terms from "@/pages/Terms";
 import Cookies from "@/pages/Cookies";
 import AIDiagnostic from "@/pages/programs/AIDiagnostic";
+import Login from "@/pages/Login";
+import Register from "@/pages/Register";
+import Dashboard from "@/pages/Dashboard";
+import PaymentSuccess from "@/pages/PaymentSuccess";
 
 function Router() {
   return (
@@ -59,6 +64,7 @@ function Router() {
       <Route path="/portals/schools" component={Schools} />
       <Route path="/blog" component={Blog} />
       <Route path="/programs" component={Programs} />
+      <Route path="/courses" component={Courses} />
       <Route path="/programs/ai-diagnostic" component={AIDiagnostic} />
       <Route path="/programs/atp-courses" component={ATPCourses} />
       <Route path="/programs/tutor-booking" component={TutorBooking} />
@@ -77,6 +83,7 @@ function Router() {
       
       {/* Dynamic route - always at the end */}
       <Route path="/programs/:slug" component={ProgramDetails} />
+      <Route path="/courses/:slug" component={ProgramDetails} />
       <Route path="/resources" component={Resources} />
       <Route path="/resources/freebies" component={Resources} />
       <Route path="/resources/all" component={AllResources} />
@@ -96,6 +103,20 @@ function Router() {
       <Route path="/privacy" component={Privacy} />
       <Route path="/terms" component={Terms} />
       <Route path="/cookies" component={Cookies} />
+      <Route path="/login" component={Login} />
+      <Route path="/register" component={Register} />
+      <Route path="/dashboard" component={Dashboard} />
+      <Route path="/dashboard/student" component={Dashboard} />
+      <Route path="/dashboard/student/certificates" component={Dashboard} />
+      <Route path="/dashboard/parent" component={Dashboard} />
+      <Route path="/dashboard/school" component={Dashboard} />
+      <Route path="/dashboard/school/analytics" component={Dashboard} />
+      <Route path="/dashboard/admin" component={Dashboard} />
+      <Route path="/dashboard/admin/analytics" component={Dashboard} />
+      <Route path="/dashboard/orders" component={Dashboard} />
+      <Route path="/dashboard/profile" component={Dashboard} />
+      <Route path="/dashboard/support" component={Dashboard} />
+      <Route path="/payment-success" component={PaymentSuccess} />
       <Route component={NotFound} />
     </Switch>
   );
