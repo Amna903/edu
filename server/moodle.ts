@@ -1,4 +1,4 @@
-import type { LmsCourse } from "@shared/schema";
+import type { LmsCourse } from "../shared/schema.js";
 import { env } from "./config.js";
 import { getStoredCourseByMoodleId, getStoredCourseCatalog, upsertCourseCatalogFromMoodle } from "./course-store.js";
 

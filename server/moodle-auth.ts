@@ -1,4 +1,4 @@
-import type { AppRole, AuthUser, LoginInput, RegisterInput } from "@shared/schema";
+import type { AppRole, AuthUser, LoginInput, RegisterInput } from "../shared/schema.js";
 import { env } from "./config.js";
 import { getStoredRoleByMoodleUserId, rememberPendingRegistrationRole, syncUserFromMoodleSession } from "./user-store.js";
 

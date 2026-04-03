@@ -1,5 +1,5 @@
-import { programs, type Program, type InsertProgram, resources, type Resource, type InsertResource, inquiries, type Inquiry, type InsertInquiry, orders, type Order, type InsertOrder, orderItems, type OrderItem, type InsertOrderItem, enrollments, type Enrollment, type InsertEnrollment } from "@shared/schema";
-import type { CheckoutItem } from "@shared/schema";
+import { programs, type Program, type InsertProgram, resources, type Resource, type InsertResource, inquiries, type Inquiry, type InsertInquiry, orders, type Order, type InsertOrder, orderItems, type OrderItem, type InsertOrderItem, enrollments, type Enrollment, type InsertEnrollment } from "../shared/schema.js";
+import type { CheckoutItem } from "../shared/schema.js";
 
 export interface IStorage {
   getPrograms(): Promise<Program[]>;

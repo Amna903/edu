@@ -1,4 +1,4 @@
-import type { CheckoutItem } from "@shared/schema";
+import type { CheckoutItem } from "../shared/schema.js";
 import { env } from "./config.js";
 
 interface SafepayInitResponse {
