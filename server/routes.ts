@@ -4,7 +4,7 @@ import type { Server } from "http";
 import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { z } from "zod";
-import { checkoutRequestSchema, insertInquirySchema, loginInputSchema, parentLinkChildInputSchema, passwordChangeInputSchema, profileUpdateInputSchema, registerInputSchema } from "@shared/schema";
+import { checkoutRequestSchema, insertInquirySchema, loginInputSchema, markNotificationReadInputSchema, parentLinkChildInputSchema, passwordChangeInputSchema, profileUpdateInputSchema, registerInputSchema } from "@shared/schema";
 import { getLmsCourseById, getLmsCourseBySlug, getLmsCourses } from "./moodle";
 import { changeMoodlePassword, fetchCurrentUser, loginWithMoodle, registerWithMoodle, updateMoodleProfile } from "./moodle-auth";
 import { enrolUserInCourse } from "./moodle-commerce";
@@ -50,6 +50,128 @@ export async function registerRoutes(
 
     await storage.deletePendingPayment(orderRef);
     return order.id;
+  };
+
+  const notificationIdFromKey = (key: string) => {
+    let hash = 0;
+    for (let index = 0; index < key.length; index += 1) {
+      hash = ((hash << 5) - hash + key.charCodeAt(index)) | 0;
+    }
+    return Math.abs(hash) + 1;
+  };
+
+  const buildDashboardNotifications = async (input: {
+    userId: number;
+    role: string;
+    fullname: string;
+    email: string | null;
+    token?: string;
+  }) => {
+    const notifications: Array<{
+      id: number;
+      title: string;
+      message: string;
+      createdAt: string;
+      type: "system" | "order" | "support" | "course";
+      actionUrl?: string;
+    }> = [];
+
+    const nowIso = new Date().toISOString();
+
+    notifications.push({
+      id: notificationIdFromKey(`welcome-${input.userId}`),
+      title: "Welcome to your dashboard",
+      message: `Hi ${input.fullname}, your ${input.role} workspace is active and synced.`,
+      createdAt: nowIso,
+      type: "system",
+      actionUrl: getDashboardPath(input.role),
+    });
+
+    const userOrders = await storage.getOrdersByUserId(String(input.userId));
+    userOrders.slice(0, 5).forEach((order) => {
+      notifications.push({
+        id: notificationIdFromKey(`order-${input.userId}-${order.id}`),
+        title: `Order #${order.id} ${order.status === "completed" ? "completed" : "updated"}`,
+        message: `Your order total is $${(order.totalAmount / 100).toFixed(2)}.`,
+        createdAt: order.createdAt ? new Date(order.createdAt).toISOString() : nowIso,
+        type: "order",
+        actionUrl: "/dashboard/orders",
+      });
+    });
+
+    if (input.email) {
+      const tickets = await storage.getInquiriesByEmail(input.email);
+      tickets.slice(0, 5).forEach((ticket) => {
+        notifications.push({
+          id: notificationIdFromKey(`support-${input.userId}-${ticket.id}`),
+          title: `Support ticket ${ticket.status === "new" ? "received" : ticket.status}`,
+          message: ticket.subjectInterest || "Your support request has an update.",
+          createdAt: ticket.createdAt ? new Date(ticket.createdAt).toISOString() : nowIso,
+          type: "support",
+          actionUrl: "/dashboard/support",
+        });
+      });
+    }
+
+    if (input.role === "student" && input.token) {
+      const courses = await getUserCoursesForDashboard(input.token, input.userId);
+      courses.slice(0, 3).forEach((course) => {
+        const progress = Math.round(course.progress || 0);
+        notifications.push({
+          id: notificationIdFromKey(`course-${input.userId}-${course.id}`),
+          title: progress >= 100 ? "Course completed" : "Course progress updated",
+          message: `${course.fullname}: ${progress}% progress`,
+          createdAt: nowIso,
+          type: "course",
+          actionUrl: "/dashboard/student",
+        });
+      });
+    }
+
+    if (input.role === "parent") {
+      const childIds = await getLinkedChildren(input.userId);
+      notifications.push({
+        id: notificationIdFromKey(`parent-linked-${input.userId}`),
+        title: "Linked children status",
+        message: `You currently have ${childIds.length} linked child account${childIds.length === 1 ? "" : "s"}.`,
+        createdAt: nowIso,
+        type: "system",
+        actionUrl: "/dashboard/parent",
+      });
+    }
+
+    if (input.role === "school") {
+      const schoolOrders = await storage.getOrdersByUserId(String(input.userId));
+      const purchasedSeats = schoolOrders.length;
+      notifications.push({
+        id: notificationIdFromKey(`school-seats-${input.userId}`),
+        title: "Seat allocation snapshot",
+        message: `${purchasedSeats} seat purchase order${purchasedSeats === 1 ? "" : "s"} recorded for your institution.`,
+        createdAt: nowIso,
+        type: "system",
+        actionUrl: "/dashboard/school/analytics",
+      });
+    }
+
+    if (input.role === "admin") {
+      notifications.push({
+        id: notificationIdFromKey(`admin-overview-${input.userId}`),
+        title: "Admin analytics ready",
+        message: "System metrics and course activity are available in Admin Analytics.",
+        createdAt: nowIso,
+        type: "system",
+        actionUrl: "/dashboard/admin/analytics",
+      });
+    }
+
+    return notifications.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  };
+
+  const getDashboardPath = (role?: string | null) => {
+    if (role === "admin") return "/dashboard/admin";
+    if (role === "parent") return "/dashboard/parent";
+    if (role === "school") return "/dashboard/school";
+    return "/dashboard/student";
   };
 
   // === INQUIRIES ===
@@ -223,6 +345,24 @@ export async function registerRoutes(
     }
   });
 
+  app.get(api.inquiries.list.path, async (req, res) => {
+    try {
+      if (!req.session.user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const email = req.session.user.email;
+      if (!email) {
+        return res.json([]);
+      }
+
+      const inquiries = await storage.getInquiriesByEmail(email);
+      res.json(inquiries);
+    } catch (err) {
+      res.status(500).json({ message: err instanceof Error ? err.message : "Failed to load support tickets" });
+    }
+  });
+
   // === RESOURCES ===
   app.get(api.resources.list.path, async (req, res) => {
     const category = req.query.category as string | undefined;
@@ -288,20 +428,25 @@ export async function registerRoutes(
       const { items, totalAmount } = checkoutRequestSchema.parse(req.body);
       const userId = String(req.session.user.id);
       const order = await storage.createOrder({ userId, totalAmount, status: "completed" });
+      const isSchoolPurchase = req.session.user.role === "school";
       
       for (const item of items) {
-        await enrolUserInCourse(req.session.user.id, item.programId);
+        if (!isSchoolPurchase) {
+          await enrolUserInCourse(req.session.user.id, item.programId);
+        }
 
         await storage.createOrderItem({
           orderId: order.id,
           programId: item.programId,
           price: item.price
         });
-        
-        await storage.createEnrollment({
-          userId,
-          programId: item.programId
-        });
+
+        if (!isSchoolPurchase) {
+          await storage.createEnrollment({
+            userId,
+            programId: item.programId
+          });
+        }
       }
 
       const response = {
@@ -447,6 +592,42 @@ export async function registerRoutes(
     res.json(response);
   });
 
+  app.get(api.dashboard.notifications.path, async (req, res) => {
+    if (!req.session.user) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+
+    const notifications = await buildDashboardNotifications({
+      userId: req.session.user.id,
+      role: req.session.user.role,
+      fullname: req.session.user.fullname,
+      email: req.session.user.email,
+      token: req.session.moodleToken,
+    });
+
+    const readIds = new Set(req.session.notificationReadIds ?? []);
+
+    res.json({
+      notifications: notifications.map((notification) => ({
+        ...notification,
+        isRead: readIds.has(notification.id),
+      })),
+    });
+  });
+
+  app.patch(api.dashboard.markNotificationRead.path, async (req, res) => {
+    if (!req.session.user) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+
+    const { notificationId } = markNotificationReadInputSchema.parse(req.body);
+    const existingIds = new Set(req.session.notificationReadIds ?? []);
+    existingIds.add(notificationId);
+    req.session.notificationReadIds = Array.from(existingIds);
+
+    res.json({ success: true });
+  });
+
   app.get(api.dashboard.student.path, async (req, res) => {
     if (!req.session.user || !req.session.moodleToken) {
       return res.status(401).json({ message: "Not authenticated" });
@@ -556,6 +737,51 @@ export async function registerRoutes(
       },
       licenses: flatLicenses,
     });
+  });
+
+  app.post(api.dashboard.schoolPurchaseSeats.path, async (req, res) => {
+    try {
+      if (!req.session.user || req.session.user.role !== "school") {
+        return res.status(403).json({ message: "School access required" });
+      }
+
+      const input = api.dashboard.schoolPurchaseSeats.input.parse(req.body);
+      const course = await getLmsCourseById(input.courseId);
+
+      if (!course) {
+        return res.status(404).json({ message: "Course not found" });
+      }
+
+      if (typeof course.price !== "number" || course.price <= 0) {
+        return res.status(400).json({ message: "This course is not configured for seat purchase" });
+      }
+
+      const totalAmount = course.price * input.seats;
+      const order = await storage.createOrder({
+        userId: String(req.session.user.id),
+        totalAmount,
+        status: "completed",
+      });
+
+      for (let index = 0; index < input.seats; index += 1) {
+        await storage.createOrderItem({
+          orderId: order.id,
+          programId: course.id,
+          price: course.price,
+        });
+      }
+
+      res.status(201).json({ success: true, orderId: order.id });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({
+          message: err.errors[0].message,
+          field: err.errors[0].path.join("."),
+        });
+      }
+
+      res.status(500).json({ message: err instanceof Error ? err.message : "Failed to purchase seats" });
+    }
   });
 
   app.get(api.dashboard.admin.path, async (req, res) => {

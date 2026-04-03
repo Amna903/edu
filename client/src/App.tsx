@@ -113,6 +113,7 @@ function Router() {
       <Route path="/dashboard/school/analytics" component={Dashboard} />
       <Route path="/dashboard/admin" component={Dashboard} />
       <Route path="/dashboard/admin/analytics" component={Dashboard} />
+      <Route path="/dashboard/notifications" component={Dashboard} />
       <Route path="/dashboard/orders" component={Dashboard} />
       <Route path="/dashboard/profile" component={Dashboard} />
       <Route path="/dashboard/support" component={Dashboard} />

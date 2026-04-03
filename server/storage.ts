@@ -11,6 +11,7 @@ export interface IStorage {
   createResource(resource: InsertResource): Promise<Resource>;
   
   createInquiry(inquiry: InsertInquiry): Promise<Inquiry>;
+  getInquiriesByEmail(email: string): Promise<Inquiry[]>;
   
   createOrder(order: InsertOrder): Promise<Order>;
   createOrderItem(item: InsertOrderItem): Promise<OrderItem>;
@@ -95,6 +96,16 @@ export class MemStorage implements IStorage {
     const inquiry: Inquiry = { ...insertInquiry, id, createdAt: new Date() };
     this.inquiries.set(id, inquiry);
     return inquiry;
+  }
+
+  async getInquiriesByEmail(email: string): Promise<Inquiry[]> {
+    return Array.from(this.inquiries.values())
+      .filter((inquiry) => inquiry.email === email)
+      .sort((a, b) => {
+        const aTime = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const bTime = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return bTime - aTime;
+      });
   }
 
   async createOrder(insertOrder: InsertOrder): Promise<Order> {

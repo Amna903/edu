@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { BarChart3, BookOpen, CreditCard, GraduationCap, LayoutDashboard, LifeBuoy, LogOut, Shield, UserCircle2, Users } from "lucide-react";
+import { BarChart3, Bell, BookOpen, Check, CreditCard, GraduationCap, LayoutDashboard, LifeBuoy, LogOut, RefreshCw, Shield, UserCircle2, Users } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,10 +8,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
+import SchoolPurchaseSeatsCard from "@/components/dashboard/SchoolPurchaseSeatsCard";
+import SchoolAnalyticsClient from "@/components/dashboard/SchoolAnalyticsClient";
 import { useAuthUser, useLogout } from "@/hooks/use-auth";
 import { useOrders } from "@/hooks/use-orders";
 import { useChangePassword, useUpdateProfile } from "@/hooks/use-profile";
-import { useAdminDashboard, useLinkChild, useParentDashboard, useSchoolDashboard, useStudentCertificates, useStudentDashboard } from "@/hooks/use-dashboard";
+import { useAdminDashboard, useDashboardNotifications, useLinkChild, useMarkNotificationRead, useParentDashboard, useSchoolDashboard, useStudentCertificates, useStudentDashboard, useSupportTickets } from "@/hooks/use-dashboard";
 
 function getDashboardPath(role?: string | null) {
   if (role === "admin") return "/dashboard/admin";
@@ -20,10 +22,11 @@ function getDashboardPath(role?: string | null) {
   return "/dashboard/student";
 }
 
-function getDashboardMenu(role?: string | null) {
+function getDashboardMenu(role?: string | null, unreadNotifications = 0) {
   const common = [
     { href: role ? getDashboardPath(role) : "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { href: "/dashboard/profile", label: "Profile", icon: UserCircle2 },
+    { href: "/dashboard/notifications", label: "Notifications", icon: Bell, badge: unreadNotifications > 0 ? (unreadNotifications > 99 ? "99+" : String(unreadNotifications)) : null },
     { href: "/dashboard/support", label: "Support", icon: LifeBuoy },
     { href: "/dashboard/orders", label: "Orders", icon: CreditCard },
   ];
@@ -56,6 +59,9 @@ export default function Dashboard() {
   const schoolDashboard = useSchoolDashboard(user?.role === "school");
   const adminDashboard = useAdminDashboard(user?.role === "admin");
   const linkChild = useLinkChild();
+  const supportTickets = useSupportTickets(user !== undefined);
+  const notifications = useDashboardNotifications(Boolean(user));
+  const markNotificationRead = useMarkNotificationRead();
 
   const [profileForm, setProfileForm] = useState({
     firstname: "",
@@ -72,10 +78,24 @@ export default function Dashboard() {
   });
   const [supportForm, setSupportForm] = useState({
     subject: "",
+    category: "Technical",
+    priority: "Medium",
     message: "",
+    attachmentName: "",
   });
   const [supportState, setSupportState] = useState({ error: "", success: "", pending: false });
   const [childIdInput, setChildIdInput] = useState("");
+  const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (selectedTicketId !== null) {
+      return;
+    }
+
+    if (supportTickets.data && supportTickets.data.length > 0) {
+      setSelectedTicketId(supportTickets.data[0].id);
+    }
+  }, [selectedTicketId, supportTickets.data]);
 
   const effectiveProfile = {
     firstname: profileForm.firstname || user?.firstname || "",
@@ -87,14 +107,18 @@ export default function Dashboard() {
     description: profileForm.description || user?.description || "",
   };
 
-  const menu = useMemo(() => getDashboardMenu(user?.role), [user?.role]);
+  const unreadNotifications = notifications.data?.notifications.filter((notification) => !notification.isRead).length ?? 0;
+  const menu = useMemo(() => getDashboardMenu(user?.role, unreadNotifications), [user?.role, unreadNotifications]);
   const onMainDashboard = location === "/dashboard" || location === getDashboardPath(user?.role);
   const onProfile = location === "/dashboard/profile";
+  const onNotifications = location === "/dashboard/notifications";
   const onOrders = location === "/dashboard/orders";
   const onSupport = location === "/dashboard/support";
   const onStudentCertificates = location === "/dashboard/student/certificates";
   const onSchoolAnalytics = location === "/dashboard/school/analytics";
   const onAdminAnalytics = location === "/dashboard/admin/analytics";
+  const unreadUpdates = supportTickets.data?.filter((ticket) => ticket.status === "new").length ?? 0;
+  const selectedTicket = supportTickets.data?.find((ticket) => ticket.id === selectedTicketId) ?? null;
 
   return (
     <Layout>
@@ -144,6 +168,11 @@ export default function Dashboard() {
                       >
                         <Icon className="h-4 w-4" />
                         <span>{item.label}</span>
+                        {item.badge ? (
+                          <span className={`ml-auto rounded-full px-2 py-0.5 text-[10px] font-black ${active ? "bg-white text-[#2366c9]" : "bg-red-500 text-white"}`}>
+                            {item.badge}
+                          </span>
+                        ) : null}
                       </div>
                     </Link>
                   );
@@ -255,30 +284,43 @@ export default function Dashboard() {
               )}
 
               {onMainDashboard && user.role === "school" && schoolDashboard.data && (
-                <div className="space-y-6">
-                  <div className="grid gap-4 md:grid-cols-3">
-                    <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Purchased Seats</p><p className="mt-2 text-3xl font-black text-slate-900">{schoolDashboard.data.stats.purchasedSeats}</p></CardContent></Card>
-                    <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Assigned Seats</p><p className="mt-2 text-3xl font-black text-slate-900">{schoolDashboard.data.stats.assignedSeats}</p></CardContent></Card>
-                    <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Active Courses</p><p className="mt-2 text-3xl font-black text-slate-900">{schoolDashboard.data.stats.activeCourses}</p></CardContent></Card>
-                  </div>
-                  <Card>
-                    <CardHeader><CardTitle>Seat Allocation</CardTitle></CardHeader>
-                    <CardContent className="grid gap-4">
-                      {schoolDashboard.data.licenses.map((license) => (
-                        <div key={`${license.courseId}-${license.courseName}`} className="rounded-3xl border border-slate-200 p-4">
-                          <div className="flex items-center justify-between gap-4">
-                            <div>
-                              <p className="font-bold text-slate-900">{license.courseName}</p>
-                              <p className="text-sm text-slate-500">Course ID {license.courseId}</p>
-                            </div>
-                            <div className="rounded-full bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-700">
-                              {license.assignedSeats}/{license.totalSeats}
+                <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+                  <div className="space-y-6">
+                    <div className="grid gap-4 md:grid-cols-3">
+                      <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Purchased Seats</p><p className="mt-2 text-3xl font-black text-slate-900">{schoolDashboard.data.stats.purchasedSeats}</p></CardContent></Card>
+                      <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Assigned Seats</p><p className="mt-2 text-3xl font-black text-slate-900">{schoolDashboard.data.stats.assignedSeats}</p></CardContent></Card>
+                      <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Active Courses</p><p className="mt-2 text-3xl font-black text-slate-900">{schoolDashboard.data.stats.activeCourses}</p></CardContent></Card>
+                    </div>
+                    <Card>
+                      <CardHeader><CardTitle>Seat Allocation</CardTitle></CardHeader>
+                      <CardContent className="grid gap-4">
+                        {schoolDashboard.data.licenses.map((license) => (
+                          <div key={`${license.courseId}-${license.courseName}`} className="rounded-3xl border border-slate-200 p-4">
+                            <div className="flex items-center justify-between gap-4">
+                              <div>
+                                <p className="font-bold text-slate-900">{license.courseName}</p>
+                                <p className="text-sm text-slate-500">Course ID {license.courseId}</p>
+                              </div>
+                              <div className="rounded-full bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-700">
+                                {license.assignedSeats}/{license.totalSeats}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
-                    </CardContent>
-                  </Card>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  <div className="space-y-6">
+                    <SchoolPurchaseSeatsCard />
+                    <Card className="bg-slate-900 text-white">
+                      <CardContent className="space-y-3 p-6">
+                        <p className="text-sm font-semibold uppercase tracking-[0.22em] text-blue-300">Need Help?</p>
+                        <p className="text-sm leading-7 text-slate-300">Contact our support team for customized enterprise plans and pricing.</p>
+                        <Button className="bg-white text-slate-900 hover:bg-blue-50">Contact Support</Button>
+                      </CardContent>
+                    </Card>
+                  </div>
                 </div>
               )}
 
@@ -325,27 +367,10 @@ export default function Dashboard() {
               )}
 
               {onSchoolAnalytics && schoolDashboard.data && (
-                <Card>
-                  <CardHeader><CardTitle>School Analytics</CardTitle></CardHeader>
-                  <CardContent className="grid gap-4 md:grid-cols-3">
-                    <div className="rounded-3xl bg-slate-50 p-5">
-                      <p className="text-sm text-slate-500">Utilization Rate</p>
-                      <p className="mt-2 text-3xl font-black text-slate-900">
-                        {schoolDashboard.data.stats.purchasedSeats > 0
-                          ? Math.round((schoolDashboard.data.stats.assignedSeats / schoolDashboard.data.stats.purchasedSeats) * 100)
-                          : 0}%
-                      </p>
-                    </div>
-                    <div className="rounded-3xl bg-slate-50 p-5">
-                      <p className="text-sm text-slate-500">Courses Running</p>
-                      <p className="mt-2 text-3xl font-black text-slate-900">{schoolDashboard.data.stats.activeCourses}</p>
-                    </div>
-                    <div className="rounded-3xl bg-slate-50 p-5">
-                      <p className="text-sm text-slate-500">Unassigned Seats</p>
-                      <p className="mt-2 text-3xl font-black text-slate-900">{Math.max(schoolDashboard.data.stats.purchasedSeats - schoolDashboard.data.stats.assignedSeats, 0)}</p>
-                    </div>
-                  </CardContent>
-                </Card>
+                <SchoolAnalyticsClient
+                  schoolName={user.fullname}
+                  licenses={schoolDashboard.data.licenses}
+                />
               )}
 
               {onAdminAnalytics && adminDashboard.data && (
@@ -362,6 +387,75 @@ export default function Dashboard() {
                       <p className="text-sm text-slate-500">Active Catalog Coverage</p>
                       <p className="mt-2 text-3xl font-black text-slate-900">{adminDashboard.data.stats.activeCourses}</p>
                     </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {onNotifications && (
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <CardTitle>Notifications</CardTitle>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 px-2 text-xs text-slate-600"
+                      onClick={async () => {
+                        await notifications.refetch();
+                      }}
+                    >
+                      <RefreshCw className="mr-2 h-3.5 w-3.5" />
+                      Refresh
+                    </Button>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {notifications.data?.notifications.length ? (
+                      notifications.data.notifications.map((notification) => (
+                        <div
+                          key={notification.id}
+                          className={`rounded-3xl border p-5 ${notification.isRead ? "border-slate-200 bg-white" : "border-blue-200 bg-blue-50/40"}`}
+                        >
+                          <div className="flex items-start justify-between gap-4">
+                            <div>
+                              <p className="text-sm font-bold text-slate-900">{notification.title}</p>
+                              <p className="mt-1 text-xs text-slate-500">{new Date(notification.createdAt).toLocaleString()}</p>
+                              <p className="mt-3 text-sm text-slate-700">{notification.message}</p>
+                              {notification.actionUrl ? (
+                                <button
+                                  type="button"
+                                  onClick={() => navigate(notification.actionUrl || "/dashboard")}
+                                  className="mt-3 inline-flex text-xs font-semibold text-[#2366c9]"
+                                >
+                                  Open related section
+                                </button>
+                              ) : null}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {!notification.isRead ? (
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={async () => {
+                                    await markNotificationRead.mutateAsync(notification.id);
+                                  }}
+                                >
+                                  <Check className="mr-2 h-4 w-4" />
+                                  Mark as read
+                                </Button>
+                              ) : (
+                                <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">Read</span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-6 text-slate-600">
+                        <p className="text-sm font-semibold text-slate-900">No notifications yet.</p>
+                        <p className="mt-2 text-sm">New account, order, support, and course updates will appear here.</p>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               )}
@@ -450,68 +544,210 @@ export default function Dashboard() {
               )}
 
               {onSupport && (
-                <Card>
-                  <CardHeader><CardTitle>Support</CardTitle></CardHeader>
-                  <CardContent>
-                    <form
-                      className="space-y-4"
-                      onSubmit={async (event) => {
-                        event.preventDefault();
-                        setSupportState({ error: "", success: "", pending: true });
-                        try {
-                          const response = await fetch("/api/inquiries", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                              type: "contact",
-                              name: user.fullname,
-                              email: user.email || "",
-                              role: user.role,
-                              subjectInterest: supportForm.subject,
-                              message: supportForm.message,
-                            }),
-                          });
-                          const body = await response.json();
-                          if (!response.ok) {
-                            throw new Error(body.message || "Failed to submit support request");
+                <div className="grid gap-6 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
+                  <Card className="border-blue-100 shadow-sm">
+                    <CardContent className="space-y-5 p-6">
+                      <div className="space-y-2">
+                        <p className="text-sm font-semibold uppercase tracking-[0.22em] text-blue-600">Support Center</p>
+                        <p className="text-sm text-slate-600">Submit tickets, track status, and receive support responses.</p>
+                        <p className="text-sm font-semibold text-slate-900">Unread Updates: {unreadUpdates}</p>
+                      </div>
+
+                      <form
+                        className="space-y-4"
+                        onSubmit={async (event) => {
+                          event.preventDefault();
+                          setSupportState({ error: "", success: "", pending: true });
+                          try {
+                            const response = await fetch("/api/inquiries", {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({
+                                type: "contact",
+                                name: user.fullname,
+                                email: user.email || "",
+                                role: user.role,
+                                subjectInterest: supportForm.category,
+                                learningMode: supportForm.priority,
+                                message: `Subject: ${supportForm.subject}\n\nCategory: ${supportForm.category}\nPriority: ${supportForm.priority}\nAttachment: ${supportForm.attachmentName || "No file attached"}\n\n${supportForm.message}`,
+                              }),
+                            });
+                            const body = await response.json();
+                            if (!response.ok) {
+                              throw new Error(body.message || "Failed to submit support request");
+                            }
+                            setSupportForm({ subject: "", category: "Technical", priority: "Medium", message: "", attachmentName: "" });
+                            setSelectedTicketId(body.id ?? null);
+                            await supportTickets.refetch();
+                            setSupportState({ error: "", success: "Ticket submitted successfully.", pending: false });
+                          } catch (error) {
+                            setSupportState({
+                              error: error instanceof Error ? error.message : "Failed to submit support request",
+                              success: "",
+                              pending: false,
+                            });
                           }
-                          setSupportForm({ subject: "", message: "" });
-                          setSupportState({ error: "", success: "Support request submitted successfully.", pending: false });
-                        } catch (error) {
-                          setSupportState({
-                            error: error instanceof Error ? error.message : "Failed to submit support request",
-                            success: "",
-                            pending: false,
-                          });
-                        }
-                      }}
-                    >
-                      <div className="space-y-2">
-                        <Label htmlFor="support-subject">Subject</Label>
-                        <Input
-                          id="support-subject"
-                          value={supportForm.subject}
-                          onChange={(event) => setSupportForm((current) => ({ ...current, subject: event.target.value }))}
-                          placeholder="Billing, access, dashboard issue, etc."
-                        />
+                        }}
+                      >
+                        <div className="space-y-2">
+                          <Label htmlFor="support-subject">Subject</Label>
+                          <Input
+                            id="support-subject"
+                            value={supportForm.subject}
+                            onChange={(event) => setSupportForm((current) => ({ ...current, subject: event.target.value }))}
+                            placeholder="I cannot access my course after purchase"
+                          />
+                        </div>
+
+                        <div className="grid gap-4 md:grid-cols-2">
+                          <div className="space-y-2">
+                            <Label htmlFor="support-category">Category</Label>
+                            <select
+                              id="support-category"
+                              value={supportForm.category}
+                              onChange={(event) => setSupportForm((current) => ({ ...current, category: event.target.value }))}
+                              className="h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700"
+                            >
+                              <option>Technical</option>
+                              <option>Billing</option>
+                              <option>Account</option>
+                              <option>Course Access</option>
+                              <option>Other</option>
+                            </select>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="support-priority">Priority</Label>
+                            <select
+                              id="support-priority"
+                              value={supportForm.priority}
+                              onChange={(event) => setSupportForm((current) => ({ ...current, priority: event.target.value }))}
+                              className="h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700"
+                            >
+                              <option>Low</option>
+                              <option>Medium</option>
+                              <option>High</option>
+                              <option>Urgent</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="support-message">Description</Label>
+                          <Textarea
+                            id="support-message"
+                            value={supportForm.message}
+                            onChange={(event) => setSupportForm((current) => ({ ...current, message: event.target.value }))}
+                            placeholder="Describe the issue with enough detail so support can reproduce it quickly"
+                            className="min-h-32"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="support-attachment">Attachments</Label>
+                          <Input
+                            id="support-attachment"
+                            type="file"
+                            onChange={(event) => setSupportForm((current) => ({ ...current, attachmentName: event.target.files?.[0]?.name || "" }))}
+                          />
+                          {supportForm.attachmentName && <p className="text-xs text-slate-500">Attached: {supportForm.attachmentName}</p>}
+                        </div>
+
+                        {supportState.error && <p className="text-sm text-red-600">{supportState.error}</p>}
+                        {supportState.success && <p className="text-sm text-emerald-600">{supportState.success}</p>}
+
+                        <Button type="submit" className="bg-[#2366c9] text-white hover:bg-blue-700">
+                          {supportState.pending ? "Submitting..." : "Submit Ticket"}
+                        </Button>
+                      </form>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border-slate-200 shadow-sm">
+                    <CardHeader className="space-y-2 border-b border-slate-100 pb-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <CardTitle>My Tickets</CardTitle>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 px-2 text-xs text-slate-600"
+                          onClick={async () => {
+                            await supportTickets.refetch();
+                          }}
+                        >
+                          <RefreshCw className="mr-2 h-3.5 w-3.5" />
+                          Refresh
+                        </Button>
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="support-message">Message</Label>
-                        <Textarea
-                          id="support-message"
-                          value={supportForm.message}
-                          onChange={(event) => setSupportForm((current) => ({ ...current, message: event.target.value }))}
-                          placeholder="Describe the issue clearly so we can help faster."
-                        />
-                      </div>
-                      {supportState.error && <p className="text-sm text-red-600">{supportState.error}</p>}
-                      {supportState.success && <p className="text-sm text-emerald-600">{supportState.success}</p>}
-                      <Button type="submit" className="bg-[#2366c9] text-white hover:bg-blue-700">
-                        {supportState.pending ? "Submitting..." : "Submit Support Request"}
-                      </Button>
-                    </form>
-                  </CardContent>
-                </Card>
+                    </CardHeader>
+                    <CardContent className="space-y-4 p-6">
+                      {supportTickets.data && supportTickets.data.length > 0 ? (
+                        <>
+                          <div className="space-y-3 max-h-72 overflow-auto pr-1">
+                            {supportTickets.data.map((ticket) => (
+                              <button
+                                key={ticket.id}
+                                type="button"
+                                onClick={() => setSelectedTicketId(ticket.id)}
+                                className={`w-full rounded-2xl border p-4 text-left transition ${
+                                  selectedTicketId === ticket.id
+                                    ? "border-[#2366c9] bg-blue-50"
+                                    : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
+                                }`}
+                              >
+                                <div className="flex items-center justify-between gap-3">
+                                  <div>
+                                    <p className="text-sm font-semibold text-slate-900">{ticket.subjectInterest || "Support Ticket"}</p>
+                                    <p className="mt-1 text-xs text-slate-500">{ticket.type} • {ticket.status}</p>
+                                  </div>
+                                  <p className="text-[11px] text-slate-400">
+                                    {ticket.createdAt ? new Date(ticket.createdAt).toLocaleDateString() : ""}
+                                  </p>
+                                </div>
+                                <p className="mt-2 line-clamp-2 text-xs leading-5 text-slate-600">
+                                  {ticket.message || "No details provided."}
+                                </p>
+                              </button>
+                            ))}
+                          </div>
+
+                          <div className="rounded-3xl bg-slate-50 p-5">
+                            {selectedTicket ? (
+                              <div className="space-y-3">
+                                <div className="flex items-start justify-between gap-3">
+                                  <div>
+                                    <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Selected Ticket</p>
+                                    <h3 className="mt-1 text-base font-semibold text-slate-900">{selectedTicket.subjectInterest || "Support Ticket"}</h3>
+                                  </div>
+                                  <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-600">
+                                    {selectedTicket.status}
+                                  </span>
+                                </div>
+                                <div className="space-y-1 text-sm text-slate-600">
+                                  <p><span className="font-semibold text-slate-900">Category:</span> {selectedTicket.subjectInterest || "Technical"}</p>
+                                  <p><span className="font-semibold text-slate-900">Priority:</span> {selectedTicket.learningMode || "Medium"}</p>
+                                  <p><span className="font-semibold text-slate-900">Created:</span> {selectedTicket.createdAt ? new Date(selectedTicket.createdAt).toLocaleString() : ""}</p>
+                                  <p className="whitespace-pre-line pt-2 text-slate-700">{selectedTicket.message}</p>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="space-y-2 text-slate-600">
+                                <p className="text-sm font-semibold text-slate-900">No tickets yet.</p>
+                                <p className="text-sm">Select a ticket to view full details.</p>
+                              </div>
+                            )}
+                          </div>
+                        </>
+                      ) : (
+                        <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-6 text-slate-600">
+                          <p className="text-sm font-semibold text-slate-900">No tickets yet.</p>
+                          <p className="mt-2 text-sm">Select a ticket to view full details.</p>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
               )}
             </section>
           </div>

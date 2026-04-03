@@ -1,6 +1,6 @@
 
 import { z } from 'zod';
-import { insertInquirySchema, insertResourceSchema, inquiries, resources, programs, lmsCourseSchema, authUserSchema, loginInputSchema, registerInputSchema, checkoutRequestSchema, orderHistorySchema, passwordChangeInputSchema, profileUpdateInputSchema, studentDashboardSchema, parentDashboardSchema, schoolDashboardSchema, adminDashboardSchema, parentLinkChildInputSchema, paymentInitRequestSchema, paymentInitResponseSchema, paymentVerifyRequestSchema, paymentVerifyResponseSchema, registerResponseSchema, studentCertificateSchema } from './schema';
+import { insertInquirySchema, insertResourceSchema, inquiries, resources, programs, lmsCourseSchema, authUserSchema, loginInputSchema, registerInputSchema, checkoutRequestSchema, orderHistorySchema, passwordChangeInputSchema, profileUpdateInputSchema, studentDashboardSchema, parentDashboardSchema, schoolDashboardSchema, adminDashboardSchema, parentLinkChildInputSchema, paymentInitRequestSchema, paymentInitResponseSchema, paymentVerifyRequestSchema, paymentVerifyResponseSchema, registerResponseSchema, studentCertificateSchema, schoolSeatPurchaseInputSchema, dashboardNotificationListSchema, markNotificationReadInputSchema, markNotificationReadResponseSchema } from './schema';
 
 export const errorSchemas = {
   validation: z.object({
@@ -24,6 +24,14 @@ export const api = {
       responses: {
         201: z.custom<typeof inquiries.$inferSelect>(),
         400: errorSchemas.validation,
+      },
+    },
+    list: {
+      method: 'GET' as const,
+      path: '/api/inquiries' as const,
+      responses: {
+        200: z.array(z.custom<typeof inquiries.$inferSelect>()),
+        401: errorSchemas.notFound,
       },
     },
   },
@@ -191,11 +199,36 @@ export const api = {
         200: schoolDashboardSchema,
       },
     },
+    schoolPurchaseSeats: {
+      method: 'POST' as const,
+      path: '/api/dashboard/school/purchase-seats' as const,
+      input: schoolSeatPurchaseInputSchema,
+      responses: {
+        201: z.object({ success: z.literal(true), orderId: z.number() }),
+      },
+    },
     admin: {
       method: 'GET' as const,
       path: '/api/dashboard/admin' as const,
       responses: {
         200: adminDashboardSchema,
+      },
+    },
+    notifications: {
+      method: 'GET' as const,
+      path: '/api/dashboard/notifications' as const,
+      responses: {
+        200: dashboardNotificationListSchema,
+        401: errorSchemas.notFound,
+      },
+    },
+    markNotificationRead: {
+      method: 'PATCH' as const,
+      path: '/api/dashboard/notifications/read' as const,
+      input: markNotificationReadInputSchema,
+      responses: {
+        200: markNotificationReadResponseSchema,
+        401: errorSchemas.notFound,
       },
     },
   },

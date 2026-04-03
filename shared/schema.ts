@@ -308,6 +308,33 @@ export const paymentVerifyResponseSchema = z.object({
   orderId: z.number(),
 });
 
+export const schoolSeatPurchaseInputSchema = z.object({
+  courseId: z.number().int().positive(),
+  seats: z.number().int().min(1),
+});
+
+export const dashboardNotificationSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  message: z.string(),
+  createdAt: z.string(),
+  isRead: z.boolean(),
+  actionUrl: z.string().optional(),
+  type: z.enum(["system", "order", "support", "course"]),
+});
+
+export const dashboardNotificationListSchema = z.object({
+  notifications: z.array(dashboardNotificationSchema),
+});
+
+export const markNotificationReadInputSchema = z.object({
+  notificationId: z.number(),
+});
+
+export const markNotificationReadResponseSchema = z.object({
+  success: z.literal(true),
+});
+
 // === TYPES ===
 export type Inquiry = typeof inquiries.$inferSelect;
 export type InsertInquiry = z.infer<typeof insertInquirySchema>;
@@ -336,6 +363,10 @@ export type AdminDashboard = z.infer<typeof adminDashboardSchema>;
 export type PaymentInitRequest = z.infer<typeof paymentInitRequestSchema>;
 export type PaymentInitResponse = z.infer<typeof paymentInitResponseSchema>;
 export type PaymentVerifyRequest = z.infer<typeof paymentVerifyRequestSchema>;
+export type SchoolSeatPurchaseInput = z.infer<typeof schoolSeatPurchaseInputSchema>;
+export type DashboardNotification = z.infer<typeof dashboardNotificationSchema>;
+export type DashboardNotificationList = z.infer<typeof dashboardNotificationListSchema>;
+export type MarkNotificationReadInput = z.infer<typeof markNotificationReadInputSchema>;
 
 export type Order = typeof orders.$inferSelect;
 export type InsertOrder = typeof orders.$inferInsert;

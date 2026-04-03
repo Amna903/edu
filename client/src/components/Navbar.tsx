@@ -151,14 +151,14 @@ export function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/95 backdrop-blur-sm supports-[backdrop-filter]:bg-white/80">
-      <div className="w-full px-3 lg:px-5 flex h-16 items-center">
+      <div className="w-full px-3 lg:px-5 flex h-12 items-center">
         <div className="hidden md:flex items-center flex-1 min-w-0">
           {/* Logo */}
           <Link href="/" className="flex items-center shrink-0">
             <img
               src={logoImage}
               alt="EduMeUp Logo"
-              className="h-8 sm:h-9 lg:h-10 w-auto object-contain"
+              className="h-6 sm:h-7 lg:h-8 w-auto object-contain"
             />
           </Link>
 
@@ -171,7 +171,7 @@ export function Navbar() {
                   <Link key={item.href} href={item.href}>
                     <div
                       title={item.label}
-                      className={`flex items-center gap-1 px-2 lg:px-2.5 py-2 text-[12px] xl:text-[13px] font-medium transition-colors rounded-lg whitespace-nowrap ${
+                      className={`flex items-center gap-1 px-2 lg:px-2.5 py-1.5 text-[10px] xl:text-[11px] font-medium transition-colors rounded-lg whitespace-nowrap ${
                         isActive(item.href)
                           ? "bg-blue-50 text-[#2366c9]"
                           : "text-slate-700 hover:text-slate-900 hover:bg-slate-50"
@@ -195,7 +195,7 @@ export function Navbar() {
                     }`}
                   >
                     <Link href={item.mainHref}>
-                      <div className="flex items-center gap-1 px-2 lg:px-2.5 py-2 text-[12px] xl:text-[13px] font-medium">
+                      <div className="flex items-center gap-1 px-2 lg:px-2.5 py-1.5 text-[10px] xl:text-[11px] font-medium">
                         <item.icon className="hidden 2xl:block h-4 w-4 shrink-0" />
                         <span>{item.label}</span>
                       </div>
@@ -218,15 +218,15 @@ export function Navbar() {
                             .map((groupSection: any, idx: number) => (
                               <div key={groupSection.label}>
                                 {idx > 0 && <DropdownMenuSeparator className="my-2" />}
-                                <DropdownMenuLabel className="px-2 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                <DropdownMenuLabel className="px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-slate-500">
                                   {groupSection.label}
                                 </DropdownMenuLabel>
                                 <div className="space-y-1">
                                   {groupSection.children.map((child: any) => (
                                     <DropdownMenuItem key={child.href} asChild>
-                                      <Link href={child.href} className="flex items-center gap-2 w-full cursor-pointer rounded px-2 py-1.5 text-xs">
-                                        <child.icon className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-                                        <span className="text-slate-700 text-xs">{child.label}</span>
+                                      <Link href={child.href} className="flex items-center gap-2 w-full cursor-pointer rounded px-2 py-1 text-[10px]">
+                                        <child.icon className="h-3 w-3 shrink-0 text-slate-400" />
+                                        <span className="text-slate-700 text-[10px]">{child.label}</span>
                                       </Link>
                                     </DropdownMenuItem>
                                   ))}
@@ -240,15 +240,15 @@ export function Navbar() {
                             .filter((groupSection: any) => groupSection.label === "Pakistan Curriculum")
                             .map((groupSection: any) => (
                               <div key={groupSection.label}>
-                                <DropdownMenuLabel className="px-2 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                <DropdownMenuLabel className="px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-slate-500">
                                   {groupSection.label}
                                 </DropdownMenuLabel>
                                 <div className="space-y-1">
                                   {groupSection.children.map((child: any) => (
                                     <DropdownMenuItem key={child.href} asChild>
-                                      <Link href={child.href} className="flex items-center gap-2 w-full cursor-pointer rounded px-2 py-1.5 text-xs">
-                                        <child.icon className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-                                        <span className="text-slate-700 text-xs">{child.label}</span>
+                                      <Link href={child.href} className="flex items-center gap-2 w-full cursor-pointer rounded px-2 py-1 text-[10px]">
+                                        <child.icon className="h-3 w-3 shrink-0 text-slate-400" />
+                                        <span className="text-slate-700 text-[10px]">{child.label}</span>
                                       </Link>
                                     </DropdownMenuItem>
                                   ))}
@@ -302,7 +302,7 @@ export function Navbar() {
           <img
             src={logoImage}
             alt="EduMeUp Logo"
-            className="h-8 w-auto object-contain"
+            className="h-6 w-auto object-contain"
           />
         </Link>
 
@@ -310,9 +310,9 @@ export function Navbar() {
         <div className="flex items-center gap-2 ml-auto shrink-0">
           <Link href="/cart">
             <Button variant="ghost" size="icon" className="relative">
-              <ShoppingCart className="h-5 w-5" />
+              <ShoppingCart className="h-4 w-4" />
               {items.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center">
+                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-[9px] font-semibold rounded-full w-4.5 h-4.5 flex items-center justify-center">
                   {items.length}
                 </span>
               )}
@@ -322,7 +322,7 @@ export function Navbar() {
             <Link href={dashboardPath}>
               <button
                 type="button"
-                className="hidden sm:flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-sm font-bold text-[#2366c9] transition hover:border-blue-200 hover:bg-blue-50"
+                className="hidden sm:flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-[10px] font-bold text-[#2366c9] transition hover:border-blue-200 hover:bg-blue-50"
                 title="Open dashboard"
               >
                 {user.firstname?.[0] || user.fullname?.[0] || user.username[0]}
@@ -331,12 +331,12 @@ export function Navbar() {
           ) : (
             <>
               <Link href="/register">
-                <Button size="sm" className="hidden sm:flex font-semibold shadow-sm bg-[#2366c9] text-white hover:bg-blue-700">
+                <Button size="sm" className="hidden sm:flex h-7 px-2.5 text-[10px] font-semibold shadow-sm bg-[#2366c9] text-white hover:bg-blue-700">
                   Sign Up
                 </Button>
               </Link>
               <Link href="/login">
-                <Button variant="outline" size="sm" className="hidden sm:flex font-semibold border-slate-200 text-slate-700 hover:bg-slate-50">
+                <Button variant="outline" size="sm" className="hidden sm:flex h-7 px-2.5 text-[10px] font-semibold border-slate-200 text-slate-700 hover:bg-slate-50">
                   Sign In
                 </Button>
               </Link>
@@ -363,7 +363,7 @@ export function Navbar() {
                   return (
                     <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)}>
                       <div
-                        className={`flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
+                        className={`flex items-center gap-2 rounded-lg px-4 py-2.5 text-[12px] font-medium transition-colors ${
                           isActive(item.href)
                             ? "bg-blue-50 text-[#2366c9]"
                             : "text-slate-700 hover:bg-slate-50"
@@ -379,7 +379,7 @@ export function Navbar() {
                 return (
                   <div key={item.label} className="space-y-1">
                     <Link href={item.mainHref} onClick={() => setIsOpen(false)}>
-                      <div className="flex items-center justify-between rounded-lg px-4 py-2.5 text-xs font-semibold text-slate-500 uppercase tracking-wider hover:text-slate-700 hover:bg-slate-50 border border-transparent hover:border-slate-200">
+                      <div className="flex items-center justify-between rounded-lg px-4 py-2 text-[9px] font-semibold text-slate-500 uppercase tracking-wider hover:text-slate-700 hover:bg-slate-50 border border-transparent hover:border-slate-200">
                         <span>{item.label}</span>
                         <ChevronRight className="h-3.5 w-3.5 opacity-70" />
                       </div>
@@ -388,13 +388,13 @@ export function Navbar() {
                       if (child.section) {
                         return (
                           <div key={child.label} className="space-y-1">
-                            <div className="px-4 py-1.5 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                            <div className="px-4 py-1 text-[9px] font-bold text-slate-400 uppercase tracking-wider">
                               {child.label}
                             </div>
                             {child.children.map((subChild: any) => (
                               <Link key={subChild.href} href={subChild.href} onClick={() => setIsOpen(false)}>
                                 <div
-                                  className={`flex items-center gap-2 rounded-lg px-8 py-2.5 text-xs font-medium transition-colors ${
+                                  className={`flex items-center gap-2 rounded-lg px-8 py-2 text-[10px] font-medium transition-colors ${
                                     isActive(subChild.href)
                                       ? "bg-blue-50 text-[#2366c9]"
                                       : "text-slate-700 hover:bg-slate-50"
@@ -411,7 +411,7 @@ export function Navbar() {
                       return (
                         <Link key={child.href} href={child.href} onClick={() => setIsOpen(false)}>
                           <div
-                            className={`flex items-center gap-2 rounded-lg px-8 py-2.5 text-xs font-medium transition-colors ${
+                            className={`flex items-center gap-2 rounded-lg px-8 py-2 text-[10px] font-medium transition-colors ${
                               isActive(child.href)
                                 ? "bg-blue-50 text-[#2366c9]"
                                 : "text-slate-700 hover:bg-slate-50"
@@ -436,20 +436,20 @@ export function Navbar() {
                   </Link>
                 ) : (
                   <Link href="/login" onClick={() => setIsOpen(false)}>
-                    <div className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50">
+                    <div className="flex items-center gap-2 rounded-lg px-4 py-2.5 text-[12px] font-medium text-slate-700 hover:bg-slate-50">
                       Login
                     </div>
                   </Link>
                 )}
                 <Link href="/cart" onClick={() => setIsOpen(false)}>
-                  <div className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50">
+                  <div className="flex items-center gap-2 rounded-lg px-4 py-2.5 text-[12px] font-medium text-slate-700 hover:bg-slate-50">
                     <ShoppingCart className="h-4 w-4" />
                     Cart ({items.length})
                   </div>
                 </Link>
                 {!user && (
                   <Link href="/register" onClick={() => setIsOpen(false)}>
-                    <Button className="w-full font-semibold margin-top-2 bg-[#2366c9] text-white hover:bg-blue-700 mt-2">
+                    <Button className="w-full h-8 text-[12px] font-semibold margin-top-2 bg-[#2366c9] text-white hover:bg-blue-700 mt-2">
                       Sign Up
                     </Button>
                   </Link>

@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@shared/routes";
+import type { SchoolSeatPurchaseInput } from "@shared/schema";
 
 export function useStudentDashboard(enabled = true) {
   return useQuery({
@@ -79,6 +80,83 @@ export function useAdminDashboard(enabled = true) {
       const res = await fetch(api.dashboard.admin.path, { credentials: "include" });
       if (!res.ok) throw new Error("Failed to load admin dashboard");
       return api.dashboard.admin.responses[200].parse(await res.json());
+    },
+  });
+}
+
+export function useSupportTickets(enabled = true) {
+  return useQuery({
+    queryKey: [api.inquiries.list.path],
+    enabled,
+    queryFn: async () => {
+      const res = await fetch(api.inquiries.list.path, { credentials: "include" });
+      if (res.status === 401) return [];
+      if (!res.ok) throw new Error("Failed to load support tickets");
+      return api.inquiries.list.responses[200].parse(await res.json());
+    },
+  });
+}
+
+export function useSchoolSeatPurchase() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: SchoolSeatPurchaseInput) => {
+      const res = await fetch(api.dashboard.schoolPurchaseSeats.path, {
+        method: api.dashboard.schoolPurchaseSeats.method,
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(input),
+      });
+
+      const body = await res.json();
+      if (!res.ok) {
+        throw new Error(body.message || "Failed to purchase seats");
+      }
+
+      return api.dashboard.schoolPurchaseSeats.responses[201].parse(body);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [api.dashboard.school.path] });
+      await queryClient.invalidateQueries({ queryKey: [api.orders.list.path] });
+    },
+  });
+}
+
+export function useDashboardNotifications(enabled = true) {
+  return useQuery({
+    queryKey: [api.dashboard.notifications.path],
+    enabled,
+    queryFn: async () => {
+      const res = await fetch(api.dashboard.notifications.path, { credentials: "include" });
+      if (res.status === 401) return { notifications: [] };
+      if (!res.ok) throw new Error("Failed to load notifications");
+      return api.dashboard.notifications.responses[200].parse(await res.json());
+    },
+  });
+}
+
+export function useMarkNotificationRead() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (notificationId: number) => {
+      const res = await fetch(api.dashboard.markNotificationRead.path, {
+        method: api.dashboard.markNotificationRead.method,
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ notificationId }),
+      });
+
+      const body = await res.json();
+      if (!res.ok) {
+        throw new Error(body.message || "Failed to mark notification as read");
+      }
+
+      return api.dashboard.markNotificationRead.responses[200].parse(body);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [api.dashboard.notifications.path] });
     },
   });
 }

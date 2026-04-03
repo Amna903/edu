@@ -62,21 +62,21 @@ export function Footer() {
 
   return (
     <footer className="overflow-x-hidden bg-slate-900 text-slate-100">
-      <div className="container-custom py-16">
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-[0.9fr_0.95fr_1.2fr_1fr_0.85fr_0.95fr] xl:gap-4">
+      <div className="container-custom py-10">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-[0.9fr_0.95fr_1.2fr_1fr_0.85fr_0.95fr] xl:gap-3">
           
           {/* Brand Column */}
-          <div className="min-w-0 space-y-5">
+          <div className="min-w-0 space-y-4">
             <div className="flex items-center space-x-2">
-              <div className="h-10 w-10 rounded-lg bg-[#2366c9] flex items-center justify-center">
-                <GraduationCap className="h-6 w-6 text-white" />
+              <div className="h-8 w-8 rounded-lg bg-[#2366c9] flex items-center justify-center">
+                <GraduationCap className="h-5 w-5 text-white" />
               </div>
-              <span className="font-display text-2xl font-bold text-white">Edumeup</span>
+              <span className="font-display text-xl font-bold text-white">Edumeup</span>
             </div>
-            <p className="text-sm leading-relaxed text-slate-300 [text-shadow:0_0_10px_rgba(226,232,240,0.2)]">
+            <p className="text-xs leading-relaxed text-slate-300 [text-shadow:0_0_10px_rgba(226,232,240,0.2)]">
               A complete science-powered learning ecosystem - built for ambitious learners and high-performance schools worldwide.
             </p>
-            <div className="flex space-x-4">
+            <div className="flex space-x-3">
               {[
                 { Icon: Facebook, href: "#", label: "Facebook" },
                 { Icon: Twitter, href: "#", label: "Twitter / X" },
@@ -92,22 +92,22 @@ export function Footer() {
                   rel="noreferrer"
                   className="text-slate-300 hover:text-white transition-colors [text-shadow:0_0_8px_rgba(226,232,240,0.18)]"
                 >
-                  <Icon className="h-5 w-5" />
+                  <Icon className="h-4 w-4" />
                 </a>
               ))}
             </div>
-            <p className="text-sm text-slate-400 [text-shadow:0_0_8px_rgba(226,232,240,0.14)]">
+            <p className="text-xs text-slate-400 [text-shadow:0_0_8px_rgba(226,232,240,0.14)]">
               Built on 27+ years of Cambridge classroom experience and cognitive science.
             </p>
           </div>
 
           {/* Quick Links */}
           <div className="min-w-0">
-            <h3 className="mb-5 font-display text-base font-semibold text-slate-50 [text-shadow:0_0_14px_rgba(226,232,240,0.28)]">Quick Links</h3>
-            <ul className="space-y-3">
+            <h3 className="mb-4 font-display text-sm font-semibold text-slate-50 [text-shadow:0_0_14px_rgba(226,232,240,0.28)]">Quick Links</h3>
+            <ul className="space-y-2">
               {quickLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="break-words text-sm leading-snug text-slate-200 hover:text-white transition-colors [text-shadow:0_0_10px_rgba(226,232,240,0.22)]">
+                  <Link href={link.href} className="break-words text-xs leading-snug text-slate-200 hover:text-white transition-colors [text-shadow:0_0_10px_rgba(226,232,240,0.22)]">
                     {link.label}
                   </Link>
                 </li>
@@ -117,11 +117,11 @@ export function Footer() {
 
           {/* Cambridge / IGCSE Programmes */}
           <div className="min-w-0">
-            <h3 className="mb-5 font-display text-base font-semibold text-slate-50 [text-shadow:0_0_14px_rgba(226,232,240,0.28)]">Cambridge / IGCSE Programmes</h3>
-            <ul className="space-y-3">
+            <h3 className="mb-4 font-display text-sm font-semibold text-slate-50 [text-shadow:0_0_14px_rgba(226,232,240,0.28)]">Cambridge / IGCSE Programmes</h3>
+            <ul className="space-y-2">
               {cambridgeProgrammes.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="break-words text-sm leading-snug text-slate-200 hover:text-white transition-colors [text-shadow:0_0_10px_rgba(226,232,240,0.22)]">
+                  <Link href={link.href} className="break-words text-xs leading-snug text-slate-200 hover:text-white transition-colors [text-shadow:0_0_10px_rgba(226,232,240,0.22)]">
                     {link.label}
                   </Link>
                 </li>
@@ -131,11 +131,11 @@ export function Footer() {
 
           {/* Resources & Workbooks */}
           <div className="min-w-0">
-            <h3 className="mb-5 font-display text-base font-semibold text-slate-50 [text-shadow:0_0_14px_rgba(226,232,240,0.28)]">Resources & Workbooks</h3>
-            <ul className="space-y-3">
+            <h3 className="mb-4 font-display text-sm font-semibold text-slate-50 [text-shadow:0_0_14px_rgba(226,232,240,0.28)]">Resources & Workbooks</h3>
+            <ul className="space-y-2">
               {resourceLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="break-words text-sm leading-snug text-slate-200 hover:text-white transition-colors [text-shadow:0_0_10px_rgba(226,232,240,0.22)]">
+                  <Link href={link.href} className="break-words text-xs leading-snug text-slate-200 hover:text-white transition-colors [text-shadow:0_0_10px_rgba(226,232,240,0.22)]">
                     {link.label}
                   </Link>
                 </li>
@@ -159,21 +159,21 @@ export function Footer() {
 
           {/* Free Interactive Modules */}
           <div className="min-w-0 flex flex-col">
-            <h3 className="mb-5 font-display text-base font-semibold text-slate-50">Free Modules (15)</h3>
-            <div className="grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2 lg:grid-cols-1">
-              <ul className="space-y-3">
+            <h3 className="mb-4 font-display text-sm font-semibold text-slate-50">Free Modules (15)</h3>
+            <div className="grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-2 lg:grid-cols-1">
+              <ul className="space-y-2">
                 {freeModules.slice(0, 8).map((link) => (
                   <li key={link.href}>
-                    <a href={link.href} target="_blank" rel="noreferrer" className="break-words text-sm leading-snug text-slate-200 hover:text-white transition-colors">
+                    <a href={link.href} target="_blank" rel="noreferrer" className="break-words text-xs leading-snug text-slate-200 hover:text-white transition-colors">
                       {link.label}
                     </a>
                   </li>
                 ))}
               </ul>
-              <ul className="space-y-3">
+              <ul className="space-y-2">
                 {freeModules.slice(8).map((link) => (
                   <li key={link.href}>
-                    <a href={link.href} target="_blank" rel="noreferrer" className="break-words text-sm leading-snug text-slate-200 hover:text-white transition-colors">
+                    <a href={link.href} target="_blank" rel="noreferrer" className="break-words text-xs leading-snug text-slate-200 hover:text-white transition-colors">
                       {link.label}
                     </a>
                   </li>
@@ -183,14 +183,14 @@ export function Footer() {
           </div>
 
           {/* Pakistan Programmes mobile accordion */}
-          <details className="md:col-span-2 rounded-lg border border-slate-800 bg-slate-900/40 p-4 xl:hidden">
-            <summary className="cursor-pointer list-none font-display text-base font-semibold text-slate-50 [text-shadow:0_0_14px_rgba(226,232,240,0.28)]">
+          <details className="md:col-span-2 rounded-lg border border-slate-800 bg-slate-900/40 p-3 xl:hidden">
+            <summary className="cursor-pointer list-none font-display text-sm font-semibold text-slate-50 [text-shadow:0_0_14px_rgba(226,232,240,0.28)]">
               Pakistan Programmes
             </summary>
-            <ul className="mt-4 space-y-3">
+            <ul className="mt-3 space-y-2">
               {pakistanProgrammes.map((link) => (
                 <li key={`mobile-${link.href}`}>
-                  <Link href={link.href} className="break-words text-sm leading-snug text-slate-200 hover:text-white transition-colors [text-shadow:0_0_10px_rgba(226,232,240,0.22)]">
+                  <Link href={link.href} className="break-words text-xs leading-snug text-slate-200 hover:text-white transition-colors [text-shadow:0_0_10px_rgba(226,232,240,0.22)]">
                     {link.label}
                   </Link>
                 </li>
@@ -200,14 +200,14 @@ export function Footer() {
 
           {/* Contact */}
           <div className="min-w-0">
-            <h3 className="mb-5 font-display text-base font-semibold text-slate-50 [text-shadow:0_0_14px_rgba(226,232,240,0.28)]">Contact Us</h3>
-            <ul className="space-y-3 text-sm text-slate-200 [text-shadow:0_0_10px_rgba(226,232,240,0.2)]">
+            <h3 className="mb-4 font-display text-sm font-semibold text-slate-50 [text-shadow:0_0_14px_rgba(226,232,240,0.28)]">Contact Us</h3>
+            <ul className="space-y-2 text-xs text-slate-200 [text-shadow:0_0_10px_rgba(226,232,240,0.2)]">
               <li className="flex items-center gap-3">
-                <Phone className="h-5 w-5 shrink-0 text-[#2366c9]" />
+                <Phone className="h-4 w-4 shrink-0 text-[#2366c9]" />
                 <span>+92 300 1234567</span>
               </li>
               <li className="flex items-center gap-3">
-                <Mail className="h-5 w-5 shrink-0 text-[#2366c9]" />
+                <Mail className="h-4 w-4 shrink-0 text-[#2366c9]" />
                 <span>info@edumeup.com</span>
               </li>
               <li className="text-slate-300">We respond within 24 hours</li>
@@ -232,7 +232,7 @@ export function Footer() {
       </div>
 
       <div className="border-t border-slate-800 bg-slate-950/80">
-        <div className="container-custom flex flex-col gap-3 py-5 text-xs text-slate-400 [text-shadow:0_0_8px_rgba(226,232,240,0.16)] md:flex-row md:items-center md:justify-between md:text-sm">
+        <div className="container-custom flex flex-col gap-2 py-4 text-[11px] text-slate-400 [text-shadow:0_0_8px_rgba(226,232,240,0.16)] md:flex-row md:items-center md:justify-between md:text-xs">
           <p>&copy; {new Date().getFullYear()} EduMeUp.com | All Rights Reserved</p>
           <p className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <Link href="/privacy" className="text-slate-300 hover:text-white underline-offset-2 hover:underline">

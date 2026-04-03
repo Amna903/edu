@@ -19,6 +19,7 @@ declare module "express-session" {
   interface SessionData {
     moodleToken?: string;
     moodlePrivateToken?: string;
+    notificationReadIds?: number[];
     user?: {
       id: number;
       username: string;

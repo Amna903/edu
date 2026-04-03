@@ -35,6 +35,7 @@ export function useCheckout() {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: [api.orders.list.path] });
+      await queryClient.invalidateQueries({ queryKey: [api.dashboard.school.path] });
     },
   });
 }
