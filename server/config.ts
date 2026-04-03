@@ -1,9 +1,8 @@
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// In a bundled environment, process.cwd() reliably points to the project root
+const ROOT_DIR = process.cwd();
 
 function loadEnvFile(filePath: string) {
   if (!fs.existsSync(filePath)) return;
@@ -31,8 +30,9 @@ function loadEnvFile(filePath: string) {
   }
 }
 
-loadEnvFile(path.resolve(__dirname, "..", ".env"));
-loadEnvFile(path.resolve(__dirname, "..", ".env.local"));
+// Locate env files from the project root regardless of build structure
+loadEnvFile(path.resolve(ROOT_DIR, ".env"));
+loadEnvFile(path.resolve(ROOT_DIR, ".env.local"));
 
 function toInt(value: string | undefined, fallback: number) {
   const parsed = Number.parseInt(String(value ?? ""), 10);
