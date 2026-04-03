@@ -1,5 +1,5 @@
 import type { AppRole } from "@shared/schema";
-import { prisma } from "./prisma";
+import { prisma } from "./prisma.js";
 
 type StoredRole = "admin" | "student" | "parent" | "school";
 

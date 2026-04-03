@@ -1,4 +1,4 @@
-import { env } from "./config";
+import { env } from "./config.js";
 
 function getAdminToken() {
   return env.moodle.adminToken || "";
