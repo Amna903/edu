@@ -1,8 +1,7 @@
-import { PrismaClient } from "@prisma/client";
+// server/prisma.ts
+import { PrismaClient } from '@prisma/client'; // correct for TS + ESM
 
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
-};
+const globalForPrisma = globalThis as unknown as { prisma: PrismaClient | undefined };
 
 export const prisma =
   globalForPrisma.prisma ??
