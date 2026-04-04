@@ -1,13 +1,15 @@
 import express, { type Request, Response, NextFunction } from "express";
-import { registerRoutes } from "./routes";
-import { serveStatic } from "./static";
+import { registerRoutes } from "./routes.js";
+import { serveStatic } from "./static.js";
 import { createServer } from "http";
 import session from "express-session";
-import { env, isProduction, logEnvPresence } from "./config";
+import { env, isProduction, logEnvPresence } from "./config.js";
 
 const app = express();
 const httpServer = createServer(app);
 logEnvPresence();
+
+const isVercelServerless = process.env.VERCEL === "1";
 
 declare module "http" {
   interface IncomingMessage {
@@ -93,7 +95,7 @@ app.use((req, res, next) => {
   next();
 });
 
-(async () => {
+export const ready = (async () => {
   await registerRoutes(httpServer, app);
 
   app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
@@ -123,24 +125,28 @@ app.use((req, res, next) => {
   // Other ports are firewalled. Default to 5000 if not specified.
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
-  const port = env.port;
-  const listenOptions: {
-    port: number;
-    host: string;
-    reusePort?: boolean;
-  } = {
-    port,
-    host: "0.0.0.0",
-  };
+  if (!isVercelServerless) {
+    const port = env.port;
+    const listenOptions: {
+      port: number;
+      host: string;
+      reusePort?: boolean;
+    } = {
+      port,
+      host: "0.0.0.0",
+    };
 
-  if (process.platform !== "win32") {
-    listenOptions.reusePort = true;
+    if (process.platform !== "win32") {
+      listenOptions.reusePort = true;
+    }
+
+    httpServer.listen(
+      listenOptions,
+      () => {
+        log(`serving on port ${port}`);
+      },
+    );
   }
-
-  httpServer.listen(
-    listenOptions,
-    () => {
-      log(`serving on port ${port}`);
-    },
-  );
 })();
+
+export { app };

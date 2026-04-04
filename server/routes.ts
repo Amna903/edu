@@ -1,17 +1,17 @@
 
 import type { Express } from "express";
 import type { Server } from "http";
-import { storage } from "./storage";
-import { api } from "@shared/routes";
+import { storage } from "./storage.js";
+import { api } from "../shared/routes.js";
 import { z } from "zod";
-import { checkoutRequestSchema, insertInquirySchema, loginInputSchema, markNotificationReadInputSchema, parentLinkChildInputSchema, passwordChangeInputSchema, profileUpdateInputSchema, registerInputSchema } from "@shared/schema";
-import { getLmsCourseById, getLmsCourseBySlug, getLmsCourses } from "./moodle";
-import { changeMoodlePassword, fetchCurrentUser, loginWithMoodle, registerWithMoodle, updateMoodleProfile } from "./moodle-auth";
-import { enrolUserInCourse } from "./moodle-commerce";
-import { getStudentActivityTimelineForDashboard, getStudentCertificatesForDashboard, getStudentGradesForDashboard, getUserCoursesForDashboard } from "./moodle-dashboard";
-import { buildOrigin, createSafepayCheckout } from "./payments";
-import { env } from "./config";
-import { getLinkedChildren, getStoredUserByMoodleUserId, linkParentToChild } from "./user-store";
+import { checkoutRequestSchema, insertInquirySchema, loginInputSchema, markNotificationReadInputSchema, parentLinkChildInputSchema, passwordChangeInputSchema, profileUpdateInputSchema, registerInputSchema } from "../shared/schema.js";
+import { getLmsCourseById, getLmsCourseBySlug, getLmsCourses } from "./moodle.js";
+import { changeMoodlePassword, fetchCurrentUser, loginWithMoodle, registerWithMoodle, updateMoodleProfile } from "./moodle-auth.js";
+import { enrolUserInCourse } from "./moodle-commerce.js";
+import { getStudentActivityTimelineForDashboard, getStudentCertificatesForDashboard, getStudentGradesForDashboard, getUserCoursesForDashboard } from "./moodle-dashboard.js";
+import { buildOrigin, createSafepayCheckout } from "./payments.js";
+import { env } from "./config.js";
+import { getLinkedChildren, getStoredUserByMoodleUserId, linkParentToChild } from "./user-store.js";
 
 export async function registerRoutes(
   httpServer: Server,

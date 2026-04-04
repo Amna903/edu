@@ -1,4 +1,4 @@
-import { env } from "./config";
+import { env } from "./config.js";
 
 function getMoodleBaseUrl() {
   const baseUrl = env.moodle.baseUrl;

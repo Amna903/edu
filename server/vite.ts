@@ -5,10 +5,10 @@ import viteConfig from "../vite.config";
 import fs from "fs";
 import path from "path";
 import { nanoid } from "nanoid";
-import url from "url";
 
 const viteLogger = createLogger();
-const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
+// Use the project root directory
+const ROOT_DIR = process.cwd();
 
 export async function setupVite(server: Server, app: Express) {
   const serverOptions = {
@@ -33,23 +33,20 @@ export async function setupVite(server: Server, app: Express) {
 
   app.use(vite.middlewares);
 
-  // Catch-all route to serve index.html
   app.get(/^(?!\/api).*/, async (req, res, next) => {
     const urlPath = req.originalUrl;
     try {
       const isDev = process.env.NODE_ENV !== "production";
 
-      // Absolute path to client folder
+      // Use absolute paths resolved from the project root
       const clientRoot = isDev
-        ? path.resolve(__dirname, "..", "client") 
-        : path.resolve(__dirname, "..", "dist", "public");
+        ? path.resolve(ROOT_DIR, "client") 
+        : path.resolve(ROOT_DIR, "dist", "public");
 
       const clientTemplate = path.join(clientRoot, "index.html"); 
 
-      // Read index.html
       const template = await fs.promises.readFile(clientTemplate, "utf-8");
 
-      // Cache-busting for dev
       const finalTemplate = isDev
         ? template.replace(`src="/src/main.tsx"`, `src="/src/main.tsx?v=${nanoid()}"`)
         : template;
@@ -57,7 +54,9 @@ export async function setupVite(server: Server, app: Express) {
       const page = await vite.transformIndexHtml(urlPath, finalTemplate);
       res.status(200).set({ "Content-Type": "text/html" }).end(page);
     } catch (err) {
-      vite.ssrFixStacktrace(err as Error);
+      if (err instanceof Error) {
+        vite.ssrFixStacktrace(err);
+      }
       next(err);
     }
   });

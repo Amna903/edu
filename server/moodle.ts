@@ -1,6 +1,6 @@
-import type { LmsCourse } from "@shared/schema";
-import { env } from "./config";
-import { getStoredCourseByMoodleId, getStoredCourseCatalog, upsertCourseCatalogFromMoodle } from "./course-store";
+import type { LmsCourse } from "../shared/schema.js";
+import { env } from "./config.js";
+import { getStoredCourseByMoodleId, getStoredCourseCatalog, upsertCourseCatalogFromMoodle } from "./course-store.js";
 
 interface MoodleCourse {
   id: number;

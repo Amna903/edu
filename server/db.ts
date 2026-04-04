@@ -2,7 +2,7 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import pg from "pg";
 import * as schema from "@shared/schema";
-import { env, isProduction } from "./config";
+import { env } from "./config";
 
 const { Pool } = pg;
 
@@ -12,8 +12,8 @@ if (!env.databaseUrl) {
   );
 }
 
-export const pool = new Pool({
-  connectionString: env.databaseUrl,
+  import * as schema from "../shared/schema.js";
+  import { env, isProduction } from "./config.js";
   max: isProduction() ? 1 : 10,
   idleTimeoutMillis: isProduction() ? 0 : 30000,
 });
