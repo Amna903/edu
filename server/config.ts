@@ -46,10 +46,33 @@ function splitCsv(value: string | undefined) {
     .filter(Boolean);
 }
 
+function firstDefined(...values: Array<string | undefined>) {
+  for (const value of values) {
+    if (value && value.trim()) {
+      return value.trim();
+    }
+  }
+
+  return "";
+}
+
 export const env = {
   nodeEnv: process.env.NODE_ENV || "development",
   port: toInt(process.env.PORT, 3001),
-  databaseUrl: process.env.DATABASE_URL || "",
+  databaseUrl: firstDefined(
+    process.env.DATABASE_URL,
+    process.env.POSTGRES_URL,
+    process.env.NEON_DATABASE_URL,
+  ),
+  databaseUrlDirect: firstDefined(
+    process.env.DIRECT_URL,
+    process.env.DATABASE_URL_UNPOOLED,
+    process.env.POSTGRES_URL_NON_POOLING,
+    process.env.NEON_DATABASE_URL_UNPOOLED,
+    process.env.DATABASE_URL,
+    process.env.POSTGRES_URL,
+    process.env.NEON_DATABASE_URL,
+  ),
   sessionSecret: process.env.SESSION_SECRET || "edu-dev-session-secret",
 
   debug: process.env.DEBUG || "",
@@ -121,6 +144,7 @@ export function logEnvPresence() {
     moodleSignupToken: Boolean(env.moodle.signupToken),
     moodleAdminManage: Boolean(env.moodle.adminManageToken),
     databaseUrl: Boolean(env.databaseUrl),
+    databaseUrlDirect: Boolean(env.databaseUrlDirect),
     sessionSecret: Boolean(env.sessionSecret),
   });
 }

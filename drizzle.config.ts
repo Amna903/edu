@@ -1,7 +1,10 @@
 import { defineConfig } from "drizzle-kit";
+import { env } from "./server/config";
 
-if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL, ensure the database is provisioned");
+if (!env.databaseUrlDirect) {
+  throw new Error(
+    "DATABASE_URL or DIRECT_URL must be set for Drizzle migrations",
+  );
 }
 
 export default defineConfig({
@@ -9,6 +12,6 @@ export default defineConfig({
   schema: "./shared/schema.ts",
   dialect: "postgresql",
   dbCredentials: {
-    url: process.env.DATABASE_URL,
+    url: env.databaseUrlDirect,
   },
 });
