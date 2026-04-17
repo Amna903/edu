@@ -8,6 +8,7 @@ import { InquiryDialog } from "@/components/InquiryDialog";
 import { motion } from "framer-motion";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
+import { formatMoneyFromMinorUnits } from "@/lib/currency";
 
 function formatCourseDate(value: string | null, fallback: string) {
   if (!value) return fallback;
@@ -105,7 +106,7 @@ export default function ProgramDetails() {
             >
               <div className="absolute top-0 right-0 bg-[#2366c9] text-white font-semibold text-[14px] px-8 py-3 rounded-bl-3xl uppercase tracking-widest">Pricing</div>
               <div className="text-4xl sm:text-5xl font-medium mb-2 text-slate-900 tracking-tighter leading-none">
-                {program.price ? `$${(program.price / 100).toFixed(2)}` : "Enquire"}
+                {program.price ? formatMoneyFromMinorUnits(program.price) : "Enquire"}
               </div>
               <div className="text-blue-400 font-semibold uppercase text-xs tracking-widest mb-6 md:mb-10">per academic term</div>
               <div className="space-y-3">

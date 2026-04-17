@@ -17,7 +17,7 @@ const fallbackPrograms: LmsCourse[] = [
     imageUrl: null,
     startDate: null,
     endDate: null,
-    price: 36000,
+    price: 100,
     visible: true,
     lmsCourseUrl: "#",
   },

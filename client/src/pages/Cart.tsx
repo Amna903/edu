@@ -9,6 +9,7 @@ import { Link } from "wouter";
 import { useAuthUser } from "@/hooks/use-auth";
 import { useCheckout } from "@/hooks/use-orders";
 import { useInitPayment } from "@/hooks/use-payments";
+import { formatMoneyFromMinorUnits } from "@/lib/currency";
 
 export default function Cart() {
   const { items, removeFromCart, clearCart, total } = useCart();
@@ -112,7 +113,7 @@ export default function Cart() {
                       <div>
                         <h3 className="font-semibold text-lg">{item.title}</h3>
                         <p className="text-emerald-600 font-semibold">
-                          ${(item.price / 100).toFixed(2)}
+                          {formatMoneyFromMinorUnits(item.price)}
                         </p>
                       </div>
                       <Button 
@@ -137,15 +138,15 @@ export default function Cart() {
                 <CardContent className="space-y-4">
                   <div className="flex justify-between text-black">
                     <span>Subtotal</span>
-                    <span>${(total / 100).toFixed(2)}</span>
+                    <span>{formatMoneyFromMinorUnits(total)}</span>
                   </div>
                   <div className="flex justify-between text-black">
                     <span>Tax</span>
-                    <span>$0.00</span>
+                    <span>{formatMoneyFromMinorUnits(0)}</span>
                   </div>
                   <div className="border-t pt-4 flex justify-between font-semibold text-xl">
                     <span>Total</span>
-                    <span className="text-emerald-600">${(total / 100).toFixed(2)}</span>
+                    <span className="text-emerald-600">{formatMoneyFromMinorUnits(total)}</span>
                   </div>
                 </CardContent>
                 <CardFooter>

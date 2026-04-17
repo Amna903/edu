@@ -6,6 +6,7 @@ import { Link, useLocation } from "wouter";
 import type { LmsCourse } from "@shared/schema";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
+import { formatMoneyFromMinorUnits } from "@/lib/currency";
 
 interface ProgramCardProps {
   program: LmsCourse;
@@ -69,7 +70,7 @@ export function ProgramCard({ program }: ProgramCardProps) {
         <div className="space-y-3 mb-8 text-[14px] font-black uppercase tracking-widest text-[#2366c9]">
           <div>{program.shortName}</div>
           {program.format && <div>{program.format}</div>}
-          {program.price ? <div>${(program.price / 100).toFixed(2)}</div> : <div>Open in LMS</div>}
+          {program.price ? <div>{formatMoneyFromMinorUnits(program.price)}</div> : <div>Open in LMS</div>}
         </div>
       </CardContent>
 
