@@ -66,13 +66,20 @@ export class MemStorage implements IStorage {
     return Array.from(this.programs.values()).find(p => p.slug === slug);
   }
 
-  async createProgram(insertProgram: InsertProgram): Promise<Program> {
+async createProgram(insertProgram: InsertProgram): Promise<Program> {
     const id = this.currentId.programs++;
-    const program: Program = { ...insertProgram, id };
+    const program: Program = { 
+      ...insertProgram, 
+      id, 
+      createdAt: new Date(), // Add this
+      price: insertProgram.price ?? null,
+      prices: insertProgram.prices ?? null,
+      features: insertProgram.features ?? null,
+      isPopular: insertProgram.isPopular ?? false
+    };
     this.programs.set(id, program);
     return program;
   }
-
   async getResources(category?: string, subject?: string): Promise<Resource[]> {
     let all = Array.from(this.resources.values());
     if (category) all = all.filter(r => r.category === category);
@@ -83,17 +90,34 @@ export class MemStorage implements IStorage {
   async getResource(id: number): Promise<Resource | undefined> {
     return this.resources.get(id);
   }
-
-  async createResource(insertResource: InsertResource): Promise<Resource> {
+async createResource(insertResource: InsertResource): Promise<Resource> {
     const id = this.currentId.resources++;
-    const resource: Resource = { ...insertResource, id };
+    const resource: Resource = { 
+      ...insertResource, 
+      id, 
+      createdAt: new Date(), // Add this
+      downloadCount: 0,      // Add this
+      subject: insertResource.subject ?? null,
+      thumbnailUrl: insertResource.thumbnailUrl ?? null,
+      isFree: insertResource.isFree ?? false
+    };
     this.resources.set(id, resource);
     return resource;
   }
-
-  async createInquiry(insertInquiry: InsertInquiry): Promise<Inquiry> {
+async createInquiry(insertInquiry: InsertInquiry): Promise<Inquiry> {
     const id = this.currentId.inquiries++;
-    const inquiry: Inquiry = { ...insertInquiry, id, createdAt: new Date() };
+    const inquiry: Inquiry = { 
+      ...insertInquiry, 
+      id, 
+      status: "pending", // Add this default status
+      createdAt: new Date(),
+      phone: insertInquiry.phone ?? null,
+      role: insertInquiry.role ?? null,
+      gradeLevel: insertInquiry.gradeLevel ?? null,
+      subjectInterest: insertInquiry.subjectInterest ?? null,
+      learningMode: insertInquiry.learningMode ?? null,
+      message: insertInquiry.message ?? null,
+    };
     this.inquiries.set(id, inquiry);
     return inquiry;
   }
@@ -108,9 +132,14 @@ export class MemStorage implements IStorage {
       });
   }
 
-  async createOrder(insertOrder: InsertOrder): Promise<Order> {
+async createOrder(insertOrder: InsertOrder): Promise<Order> {
     const id = this.currentId.orders++;
-    const order: Order = { ...insertOrder, id, createdAt: new Date() };
+    const order: Order = { 
+      ...insertOrder, 
+      id, 
+      status: insertOrder.status ?? "pending", // Ensure status is a string, not undefined
+      createdAt: new Date() 
+    };
     this.orders.set(id, order);
     return order;
   }

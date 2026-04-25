@@ -26,9 +26,9 @@ function getMoodleBaseUrl() {
 }
 
 function getMoodleToken() {
-  return env.moodle.manageToken || env.moodle.token || env.moodle.adminToken || "";
+  // Use adminManageToken instead of manageToken
+  return env.moodle.adminManageToken || env.moodle.token || env.moodle.adminToken || "";
 }
-
 function stripHtml(value: string | undefined) {
   return (value || "")
     .replace(/<[^>]*>/g, " ")
