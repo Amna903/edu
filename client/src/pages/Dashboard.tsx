@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
+import { AIChatLauncher } from "@/components/AIChatLauncher";
 import SchoolPurchaseSeatsCard from "@/components/dashboard/SchoolPurchaseSeatsCard";
 import SchoolAnalyticsClient from "@/components/dashboard/SchoolAnalyticsClient";
 import { useAuthUser, useLogout } from "@/hooks/use-auth";
@@ -259,6 +260,11 @@ export default function Dashboard() {
                     <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600">
                       Your Moodle-connected data is now surfaced inside `edu`, including profile, orders, enrollments, role dashboards, and the new signup flow.
                     </p>
+                    {user.role === "student" && (
+                      <div className="mt-5">
+                        <AIChatLauncher className="bg-[#2366c9] text-white hover:bg-[#1c56aa]" />
+                      </div>
+                    )}
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="rounded-3xl bg-white p-4 shadow-sm">
