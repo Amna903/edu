@@ -7,7 +7,12 @@ const ROOT_DIR = process.cwd();
 function loadEnvFile(filePath: string) {
   if (!fs.existsSync(filePath)) return;
 
-  const content = fs.readFileSync(filePath, "utf8");
+  // Use utf8 to automatically handle most common encodings, and trim BOM if present
+  let content = fs.readFileSync(filePath, "utf8");
+  if (content.charCodeAt(0) === 0xFEFF) {
+    content = content.slice(1);
+  }
+
   for (const rawLine of content.split(/\r?\n/)) {
     const line = rawLine.trim();
     if (!line || line.startsWith("#")) continue;
@@ -16,7 +21,8 @@ function loadEnvFile(filePath: string) {
     if (separatorIndex === -1) continue;
 
     const key = line.slice(0, separatorIndex).trim();
-    if (!key || process.env[key] !== undefined) continue;
+    // Only skip if the variable is ALREADY defined AND not empty
+    if (!key || (process.env[key] !== undefined && process.env[key] !== "")) continue;
 
     let value = line.slice(separatorIndex + 1).trim();
     if (
@@ -31,8 +37,19 @@ function loadEnvFile(filePath: string) {
 }
 
 // Locate env files from the project root regardless of build structure
-loadEnvFile(path.resolve(ROOT_DIR, ".env"));
-loadEnvFile(path.resolve(ROOT_DIR, ".env.local"));
+const envFiles = [
+  path.resolve(ROOT_DIR, ".env"),
+  path.resolve(ROOT_DIR, ".env.local"),
+  path.resolve(ROOT_DIR, "server", ".env"),
+  path.resolve(ROOT_DIR, "server", ".env.local")
+];
+
+for (const f of envFiles) {
+  if (fs.existsSync(f)) {
+    console.log(`[env] Found env file: ${f}`);
+    loadEnvFile(f);
+  }
+}
 
 function toInt(value: string | undefined, fallback: number) {
   const parsed = Number.parseInt(String(value ?? ""), 10);

@@ -276,7 +276,7 @@ export default function ForStudents() {
 
             <p className="text-slate-600 font-semibold mb-8">The earlier you start, the stronger your foundation.</p>
             <div className="flex flex-wrap justify-center gap-2 mb-8">
-              {["45,000+ Practice Questions", "Past Papers 2010-2025", "80% Mastery Gates", "ATP Pathway to 38-40/40"].map((signal, i) => (
+              {["45,000+ Practice Questions", "Past Papers 2010-2025", "80% Mastery Gates", "ATP Pathway to 38-40/40", "Global Access Scholarship available"].map((signal, i) => (
                 <span key={i} className="px-3 py-1 rounded-full border border-blue-200 bg-blue-50 text-[14px] md:text-xs font-semibold uppercase tracking-wide text-[#2366c9]">
                   {signal}
                 </span>

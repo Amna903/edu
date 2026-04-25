@@ -44,16 +44,16 @@ export async function getUserCoursesForDashboard(token: string, userId: number) 
   return Array.isArray(data) ? data : [];
 }
 
-export async function getStudentGradesForDashboard(userId: number) {
-  const adminToken = getAdminToken();
-  if (!adminToken) return [];
-  const courses = await getUserCoursesForDashboard(adminToken, userId);
+export async function getStudentGradesForDashboard(userId: number, token?: string) {
+  const effectiveToken = token || getAdminToken();
+  if (!effectiveToken) return [];
+  const courses = await getUserCoursesForDashboard(effectiveToken, userId);
 
   const grades = await Promise.all(
     courses.map(async (course: any) => {
       try {
         const gradeData = await moodleWebserviceGetLocal<any>(
-          adminToken,
+          effectiveToken,
           "gradereport_user_get_grade_items",
           new URLSearchParams({
             courseid: String(course.id),

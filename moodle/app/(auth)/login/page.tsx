@@ -1,0 +1,108 @@
+'use client';
+import { useState, Suspense } from 'react';
+import { loginWithCredentialsAction } from './actions';
+import { useRouter, useSearchParams } from 'next/navigation';
+import MoodleBackgroundLogin from '@/components/MoodleBackgroundLogin';
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <LoginForm />
+        </Suspense>
+    );
+}
+
+function LoginForm() {
+    const [formData, setFormData] = useState({ username: '', password: '' });
+    const [error, setError] = useState('');
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const callbackUrl = searchParams.get('callbackUrl');
+
+    const [loginResult, setLoginResult] = useState<{ token: string, privateToken: string } | null>(null);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError('');
+
+        try {
+            const result = await loginWithCredentialsAction(
+                formData.username,
+                formData.password,
+                callbackUrl
+            );
+
+            if (!result.success || !result.redirectPath) {
+                setError(result.error || 'Invalid credentials');
+                return;
+            }
+
+            console.log('[auth][client] login result success');
+
+            // Set result to trigger MoodleBackgroundLogin
+            if (result.token && result.privateToken) {
+                setLoginResult({ token: result.token, privateToken: result.privateToken });
+            }
+
+            // Small delay to let the iframe trigger, then redirect
+            setTimeout(() => {
+                router.push(result.redirectPath!);
+            }, 1000);
+
+        } catch (err) {
+            setError('Login failed: ' + (err instanceof Error ? err.message : 'Unknown error'));
+        }
+    };
+
+    return (
+        <div className="flex min-h-screen items-center justify-center bg-gray-100">
+            {loginResult && (
+                <MoodleBackgroundLogin
+                    token={loginResult.token}
+                    privateToken={loginResult.privateToken}
+                />
+            )}
+            <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md w-96">
+                <h1 className="text-2xl font-bold mb-6 text-center text-blue-600">LMS Login</h1>
+
+                {error && <div className="bg-red-50 text-red-600 p-3 rounded mb-4 text-sm">{error}</div>}
+
+                <div className="mb-4">
+                    <label className="block text-sm font-medium mb-1 text-blue-600">Username</label>
+                    <input
+                        type="text"
+                        required
+                        suppressHydrationWarning
+                        className="w-full border p-2 rounded text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        value={formData.username}
+                        onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                    />
+                </div>
+
+                <div className="mb-6 relative">
+                    <label className="block text-sm font-medium mb-1 text-blue-600">Password</label>
+                    <input
+                        type="password"
+                        required
+                        suppressHydrationWarning
+                        className="w-full border p-2 rounded text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        value={formData.password}
+                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    />
+                    <div className="absolute top-1 right-0">
+                        <a href="/forgot-password" className="text-xs text-blue-500 hover:text-blue-700 font-medium">Forgot Password?</a>
+                    </div>
+                </div>
+
+                <div className="space-y-4">
+                    <button type="submit" className="w-full bg-blue-600 font-bold text-white p-3 rounded hover:bg-blue-700 transition-colors">
+                        Sign In
+                    </button>
+                    <div className="text-center text-sm text-gray-500">
+                        Don't have an account? <a href="/register" className="text-blue-600 font-bold hover:underline">Register</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    );
+}

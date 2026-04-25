@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { BarChart3, Bell, BookOpen, Check, CreditCard, GraduationCap, LayoutDashboard, LifeBuoy, LogOut, RefreshCw, Shield, UserCircle2, Users } from "lucide-react";
+import { BarChart3, Bell, BookOpen, Check, CreditCard, ExternalLink, GraduationCap, LayoutDashboard, LifeBuoy, LogOut, RefreshCw, Shield, UserCircle2, Users } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -44,6 +44,40 @@ function getDashboardMenu(role?: string | null, unreadNotifications = 0) {
   }
 
   return common;
+}
+
+function CourseImage({ imageUrl, title }: { imageUrl?: string | null; title: string }) {
+  const [hasError, setHasError] = useState(false);
+
+  if (imageUrl && !hasError) {
+    return (
+      <img
+        src={imageUrl}
+        alt={title}
+        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+        onError={() => setHasError(true)}
+      />
+    );
+  }
+
+  const initials = title
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
+  return (
+    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#2366c9] to-[#4f46e5] text-white">
+      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/graphy.png')] opacity-20"></div>
+      <div className="relative z-10 flex flex-col items-center gap-2">
+        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm text-3xl font-black">
+          {initials}
+        </div>
+        <span className="text-[10px] font-bold uppercase tracking-widest opacity-60">Learning Module</span>
+      </div>
+    </div>
+  );
 }
 
 export default function Dashboard() {
@@ -105,6 +139,26 @@ export default function Dashboard() {
     country: profileForm.country || user?.country || "",
     phone: profileForm.phone || user?.phone || "",
     description: profileForm.description || user?.description || "",
+  };
+
+  const [launchingCourseId, setLaunchingCourseId] = useState<number | null>(null);
+
+  const handleLaunchCourse = (courseId: number, lmsCourseUrl: string) => {
+    // Open blank window immediately to prevent popup blocker
+    const newWindow = window.open('about:blank', '_blank');
+    if (!newWindow) {
+      alert("Please allow popups for this site to launch courses.");
+      return;
+    }
+
+    setLaunchingCourseId(courseId);
+    
+    // The lmsCourseUrl is our proxy route /api/dashboard/student/course-login/:id
+    // which handles the auto-login logic on the server
+    newWindow.location.href = lmsCourseUrl;
+    
+    // Clear loading state after a delay
+    setTimeout(() => setLaunchingCourseId(null), 2000);
   };
 
   const unreadNotifications = notifications.data?.notifications.filter((notification) => !notification.isRead).length ?? 0;
@@ -226,20 +280,91 @@ export default function Dashboard() {
                     <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Completed</p><p className="mt-2 text-3xl font-black text-slate-900">{studentDashboard.data.stats.completedCourses}</p></CardContent></Card>
                     <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Average Progress</p><p className="mt-2 text-3xl font-black text-slate-900">{studentDashboard.data.stats.averageProgress}%</p></CardContent></Card>
                   </div>
-                  <Card>
-                    <CardHeader><CardTitle>My Courses</CardTitle></CardHeader>
-                    <CardContent className="space-y-4">
-                      {studentDashboard.data.courses.map((course) => (
-                        <div key={course.id} className="rounded-3xl border border-slate-200 p-4">
-                          <div className="flex items-start justify-between gap-3">
-                            <div>
-                              <p className="font-bold text-slate-900">{course.title}</p>
-                              <p className="mt-1 text-sm text-slate-500">Grade: {course.grade || "N/A"}</p>
+                  <Card className="border-0 shadow-none bg-transparent">
+                    <CardHeader className="px-0"><CardTitle className="text-2xl font-black">My Enrolled Courses</CardTitle></CardHeader>
+                    <CardContent className="px-0">
+                      {studentDashboard.data.courses.length > 0 ? (
+                        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                          {studentDashboard.data.courses.map((course) => (
+                            <div key={course.id} className="group relative flex flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white transition-all hover:shadow-2xl hover:shadow-blue-100/40">
+                              <div className="aspect-[16/10] w-full overflow-hidden bg-slate-100 relative">
+                                <CourseImage imageUrl={course.imageUrl} title={course.title} />
+                              </div>
+                              <div className="flex flex-1 flex-col p-7">
+                                <div className="flex items-center gap-2">
+                                  <span className="rounded-full bg-blue-50 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-[#2366c9]">
+                                    {course.shortName || "Course"}
+                                  </span>
+                                  {course.completed && (
+                                    <span className="rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-emerald-600">
+                                      Completed
+                                    </span>
+                                  )}
+                                </div>
+                                <h3 className="mt-4 line-clamp-2 min-h-[3rem] text-lg font-extrabold leading-tight text-slate-900 group-hover:text-[#2366c9]">
+                                  {course.title}
+                                </h3>
+                                
+                                <div className="mt-8">
+                                  <div className="flex items-center justify-between gap-2 text-xs font-bold">
+                                    <span className="text-slate-400 uppercase tracking-tighter">Your Progress</span>
+                                    <span className="text-[#2366c9]">{Math.round(course.progress)}%</span>
+                                  </div>
+                                  <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
+                                    <div 
+                                      className="h-full rounded-full bg-gradient-to-r from-[#2366c9] to-indigo-500 transition-all duration-1000 ease-out" 
+                                      style={{ width: `${course.progress}%` }} 
+                                    />
+                                  </div>
+                                </div>
+
+                                <div className="mt-8 flex items-center justify-between gap-4">
+                                  <div className="min-w-0">
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Current Grade</p>
+                                    <p className="mt-1 font-black text-slate-900">{course.grade || "N/A"}</p>
+                                  </div>
+                                </div>
+
+                                <div className="mt-8">
+                                  <button 
+                                    onClick={() => handleLaunchCourse(course.id, course.lmsCourseUrl || "#")}
+                                    disabled={launchingCourseId === course.id}
+                                    className={`inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-[#2366c9] px-6 py-4 text-sm font-black text-white shadow-xl shadow-blue-200 transition-all hover:scale-[1.02] hover:bg-blue-700 active:scale-[0.98] ${launchingCourseId === course.id ? "opacity-70 cursor-not-allowed" : ""}`}
+                                  >
+                                    {launchingCourseId === course.id ? (
+                                      <>
+                                        <RefreshCw className="h-4 w-4 animate-spin" />
+                                        <span>Launching...</span>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <span>Continue Learning</span>
+                                        <ExternalLink className="h-4 w-4" />
+                                      </>
+                                    )}
+                                  </button>
+                                </div>
+                              </div>
                             </div>
-                            <div className="rounded-full bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-700">{Math.round(course.progress)}%</div>
-                          </div>
+                          ))}
                         </div>
-                      ))}
+                      ) : (
+                        <div className="flex flex-col items-center justify-center py-20 text-center bg-white rounded-3xl border border-dashed border-slate-200">
+                          <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+                            <BookOpen className="h-12 w-12" />
+                          </div>
+                          <h3 className="text-2xl font-black text-slate-900">Your learning journey starts here!</h3>
+                          <p className="mt-3 max-w-sm text-slate-500 font-medium">
+                            You haven't enrolled in any courses yet. Explore our high-impact preparation programs and start excelling today.
+                          </p>
+                          <Button 
+                            className="mt-10 bg-[#2366c9] text-white hover:bg-blue-700 font-bold px-10 py-7 rounded-2xl shadow-2xl shadow-blue-200 transition-all hover:translate-y-[-2px] active:scale-95" 
+                            onClick={() => navigate("/programs")}
+                          >
+                            Browse Programs
+                          </Button>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 </div>

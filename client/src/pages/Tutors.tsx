@@ -1,4 +1,4 @@
-﻿import { Layout } from "@/components/Layout";
+import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
@@ -1775,7 +1775,7 @@ export default function Tutors() {
           Free test + 20-minute honest recommendation.
         </p>
         <Link
-          href="/diagnostic"
+          href="/programs/ai-diagnostic"
           className="inline-block bg-[#2366c9] text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-600 transition"
         >
           Start Free Diagnostic
@@ -1791,7 +1791,7 @@ export default function Tutors() {
           If your scenario fits structured tutoring support.
         </p>
         <Link
-          href="/portals/teachers"
+          href="/for-teachers"
           className="inline-block bg-gray-100 text-slate-900 px-6 py-3 rounded-xl font-semibold hover:bg-gray-200 transition"
         >
           Apply as Student
@@ -1807,7 +1807,7 @@ export default function Tutors() {
           For qualified educators ready to join EduMeUp.
         </p>
         <Link
-          href="/portals/teachers"
+          href="/for-teachers"
           className="inline-block bg-gray-100 text-slate-900 px-6 py-3 rounded-xl font-semibold hover:bg-gray-200 transition"
         >
           Apply as Tutor

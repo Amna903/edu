@@ -158,6 +158,7 @@ export async function registerWithMoodle(input: RegisterInput): Promise<Register
       (typeof signupResponse === "object" && signupResponse !== null && signupResponse.success === true);
 
     if (!signupSucceeded) {
+      console.log("[moodle] Signup response:", signupResponse);
       throw new Error("Registration was submitted but Moodle did not confirm success");
     }
 

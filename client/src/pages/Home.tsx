@@ -2,7 +2,7 @@ import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Zap, Target, LineChart, Trophy, BookOpen, UserCheck, CheckCircle2, MessageSquare, HelpCircle, ShieldCheck, Brain, Layers, Search, RefreshCw, MousePointer2, BarChart3, GraduationCap as GraduationIcon, ArrowRight, Download, Calendar, PlayCircle, Star } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { InquiryDialog } from "@/components/InquiryDialog";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
@@ -172,6 +172,7 @@ const strategies = [
 ];
 
 export default function Home() {
+  const [, setLocation] = useLocation();
   const [checkedItems, setCheckedItems] = useState<number[]>([]);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const { formatPrice } = useCurrency();
@@ -249,12 +250,7 @@ export default function Home() {
     },
   ];
 
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+
 
   return (
     <Layout>
@@ -327,9 +323,9 @@ export default function Home() {
               <div className="max-w-5xl mx-auto p-4 md:p-6">
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
                   {[
-                    { label: "STUDENT", id: "student-section", icon: Brain },
-                    { label: "SCHOOL", id: "school-section", icon: GraduationIcon },
-                    { label: "TEACHER", id: "teacher-section", icon: BookOpen },
+                    { label: "STUDENT", href: "/for-students", icon: Brain },
+                    { label: "SCHOOL", href: "/for-schools", icon: GraduationIcon },
+                    { label: "TEACHER", href: "/for-teachers", icon: BookOpen },
                     { label: "PARENT", href: "/for-parents", icon: UserCheck }
                   ].map((role) => (
                     <motion.button
@@ -337,12 +333,8 @@ export default function Home() {
                       whileHover={{ scale: 1.01 }}
                       whileTap={{ scale: 0.99 }}
                       onClick={() => {
-                        if ("href" in role && role.href) {
-                          window.location.href = role.href;
-                          return;
-                        }
-                        if ("id" in role && role.id) {
-                          scrollToSection(role.id);
+                        if (role.href) {
+                          setLocation(role.href);
                         }
                       }}
                       className="w-full bg-white hover:bg-blue-50 px-4 py-3.5 md:py-4 rounded-xl transition-all border border-blue-200 hover:border-blue-300 shadow-sm hover:shadow-md group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2366c9]/40"
@@ -354,7 +346,7 @@ export default function Home() {
                     </motion.button>
                   ))}
                 </div>
-                <p className="text-center text-[11px] md:text-xs text-black mt-5">Click to jump to your relevant section</p>
+                <p className="text-center text-[11px] md:text-xs text-black mt-5">Click to explore your relevant section</p>
               </div>
             </div>
           </section>

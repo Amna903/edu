@@ -429,7 +429,7 @@ export async function registerRoutes(
       const userId = String(req.session.user.id);
       const order = await storage.createOrder({ userId, totalAmount, status: "completed" });
       const isSchoolPurchase = req.session.user.role === "school";
-      
+
       for (const item of items) {
         if (!isSchoolPurchase) {
           await enrolUserInCourse(req.session.user.id, item.programId);
@@ -633,21 +633,49 @@ export async function registerRoutes(
       return res.status(401).json({ message: "Not authenticated" });
     }
 
-    const [courses, grades, activities] = await Promise.all([
-      getUserCoursesForDashboard(req.session.moodleToken, req.session.user.id),
-      getStudentGradesForDashboard(req.session.user.id),
-      getStudentActivityTimelineForDashboard(req.session.moodleToken, req.session.user.id),
-    ]);
+    let courses: any[] = [];
+    let grades: any[] = [];
+    let activities: any[] = [];
+
+    const moodleUrl = env.moodle.baseUrl;
+
+    try {
+      const [coursesRes, gradesRes, activitiesRes] = await Promise.all([
+        getUserCoursesForDashboard(req.session.moodleToken, req.session.user.id),
+        getStudentGradesForDashboard(req.session.user.id, req.session.moodleToken),
+        getStudentActivityTimelineForDashboard(req.session.moodleToken, req.session.user.id),
+      ]);
+      courses = coursesRes;
+      grades = gradesRes;
+      activities = activitiesRes;
+    } catch (err) {
+      console.error("Dashboard data fetch error:", err);
+      // Try to at least get courses if the Promise.all failed
+      try {
+        courses = await getUserCoursesForDashboard(req.session.moodleToken, req.session.user.id);
+      } catch (innerErr) {
+        console.error("Fallback courses fetch error:", innerErr);
+      }
+    }
 
     const courseRows = courses.map((course: any) => {
       const grade = grades.find((item) => item.courseId === course.id);
       return {
         id: course.id,
         title: course.fullname,
+        shortName: course.shortname || "",
         progress: course.progress || 0,
         completed: Boolean(course.completed),
         grade: grade?.grade || null,
         percentage: grade?.percentage ?? null,
+        imageUrl: (() => {
+          const rawUrl = course.courseimage || (course.overviewfiles && course.overviewfiles[0]?.fileurl) || null;
+          if (rawUrl && rawUrl.includes("webservice/pluginfile.php")) {
+            return `${rawUrl}${rawUrl.includes("?") ? "&" : "?"}wstoken=${req.session.moodleToken}`;
+          }
+          return rawUrl;
+        })(),
+        lmsCourseUrl: `${moodleUrl}/course/view.php?id=${course.id}`,
       };
     });
 
@@ -684,21 +712,33 @@ export async function registerRoutes(
     const childIds = await getLinkedChildren(req.session.user.id);
     const children = await Promise.all(
       childIds.map(async (childId) => {
-        const grades = await getStudentGradesForDashboard(childId);
-        const storedUser = await getStoredUserByMoodleUserId(childId);
-        return {
-          id: childId,
-          moodleUserId: childId,
-          name: [storedUser?.firstName, storedUser?.lastName].filter(Boolean).join(" ") || storedUser?.username || `Child ${childId}`,
-          email: storedUser?.email || "Linked from Moodle",
-          courses: grades.map((grade) => ({
-            id: grade.courseId,
-            courseName: grade.courseName,
-            progress: grade.progress,
-            grade: grade.grade,
-            percentage: grade.percentage,
-          })),
-        };
+        try {
+          const grades = await getStudentGradesForDashboard(childId);
+          const storedUser = await getStoredUserByMoodleUserId(childId);
+          return {
+            id: childId,
+            moodleUserId: childId,
+            name: [storedUser?.firstName, storedUser?.lastName].filter(Boolean).join(" ") || storedUser?.username || `Child ${childId}`,
+            email: storedUser?.email || "Linked from Moodle",
+            courses: grades.map((grade) => ({
+              id: grade.courseId,
+              courseName: grade.courseName,
+              progress: grade.progress,
+              grade: grade.grade,
+              percentage: grade.percentage,
+            })),
+          };
+        } catch (err) {
+          console.error(`Failed to fetch dashboard data for child ${childId}:`, err);
+          const storedUser = await getStoredUserByMoodleUserId(childId);
+          return {
+            id: childId,
+            moodleUserId: childId,
+            name: [storedUser?.firstName, storedUser?.lastName].filter(Boolean).join(" ") || storedUser?.username || `Child ${childId}`,
+            email: storedUser?.email || "Linked from Moodle",
+            courses: [],
+          };
+        }
       }),
     );
 
@@ -827,7 +867,7 @@ async function seedDatabase() {
       category: "pre_o_level",
       shortDescription: "12-Month Teacher-Led Complete O-Level Preparation",
       fullDescription: "Ideal for Grade 7-8 students entering O-Level within 12 months. Includes live teacher-led classes, 30-40% O-Level syllabus coverage, and complete diagnostic & remedial plans.",
-      price: 36000, 
+      price: 36000,
       prices: { "PK": 36000, "GB": 30000, "US": 36000 },
       features: [
         "Complete Diagnostic & Remedial",
@@ -845,7 +885,7 @@ async function seedDatabase() {
       category: "o_level",
       shortDescription: "Comprehensive 2-year program for O-Level success.",
       fullDescription: "Full coverage of all O-Level subjects with guaranteed results. Includes access to all resources, mock exams, and personalized feedback.",
-      price: 45000, 
+      price: 45000,
       features: [
         "Full Syllabus Coverage",
         "10+ Years Past Paper Practice",
@@ -890,3 +930,4 @@ async function seedDatabase() {
     });
   }
 }
+

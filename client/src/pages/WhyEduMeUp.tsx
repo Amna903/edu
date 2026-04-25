@@ -4,6 +4,7 @@ import { ArrowRight, CheckCircle2, XCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
+import { InquiryDialog } from "@/components/InquiryDialog";
 
 const stats = [
   { value: "90%", label: "FORGOTTEN", sub: "of learning lost within 6 days without review" },
@@ -112,11 +113,15 @@ export default function WhyEduMeUp() {
                   See How It Works <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <Link href="/programs/ai-diagnostic">
-                <Button variant="outline" className="border-2 border-[#2366c9] text-[#2366c9] font-semibold text-[14px] py-3 px-6">
-                  Start Free Diagnostic
-                </Button>
-              </Link>
+              <InquiryDialog
+                defaultType="diagnostic"
+                title="Free Diagnostic Assessment"
+                trigger={
+                  <Button variant="outline" className="border-2 border-[#2366c9] text-[#2366c9] font-semibold text-[14px] py-3 px-6">
+                    Start Free Diagnostic
+                  </Button>
+                }
+              />
             </div>
           </motion.div>
         </div>
@@ -285,11 +290,15 @@ export default function WhyEduMeUp() {
             EduMeUp diagnoses where your child is, then builds a system that ensures they never forget what they learn.
           </p>
           <div className="flex flex-col md:flex-row justify-center gap-6 max-w-5xl mx-auto">
-            <Link href="/programs/ai-diagnostic">
-              <Button size="lg" className="w-full md:w-auto min-w-[260px] bg-white text-[#2366c9] hover:bg-blue-50 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
-                Start Your Free Diagnostic <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
+            <InquiryDialog
+              defaultType="diagnostic"
+              title="Free Diagnostic Assessment"
+              trigger={
+                <Button size="lg" className="w-full md:w-auto min-w-[260px] bg-white text-[#2366c9] hover:bg-blue-50 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+                  Start Your Free Diagnostic <ArrowRight className="h-4 w-4" />
+                </Button>
+              }
+            />
             <Link href="/why-edumeup/how-it-works">
               <Button size="lg" variant="outline" className="w-full md:w-auto min-w-[260px] border border-white/30 text-white hover:bg-white/10 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
                 See How the System Works <ArrowRight className="h-4 w-4" />

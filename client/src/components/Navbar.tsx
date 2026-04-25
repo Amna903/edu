@@ -99,10 +99,10 @@ export function Navbar() {
       label: "My Dashboard",
       icon: Users,
       children: [
-        { href: "/dashboard", label: "Student Portal", icon: GraduationCap },
-        { href: "/dashboard", label: "Parent Portal", icon: Users },
-        { href: "/dashboard", label: "Teacher Portal", icon: GraduationCap },
-        { href: "/dashboard", label: "School Portal", icon: School },
+        { href: "/for-students", label: "Student Portal", icon: GraduationCap },
+        { href: "/for-parents", label: "Parent Portal", icon: Users },
+        { href: "/for-teachers", label: "Teacher Portal", icon: GraduationCap },
+        { href: "/for-schools", label: "School Portal", icon: School },
       ],
     },
     {

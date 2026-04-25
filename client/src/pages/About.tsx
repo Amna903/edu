@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { InquiryDialog } from "@/components/InquiryDialog";
 
 export default function About() {
   return (
@@ -598,9 +599,15 @@ export default function About() {
             Experience the science of success
           </p>
           <div className="flex flex-col md:flex-row justify-center gap-6 max-w-5xl mx-auto">
-            <Button size="lg" className="w-full md:w-auto min-w-[260px] bg-white text-[#2366c9] hover:bg-blue-50 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
-              Start Free Diagnostic <ArrowRight className="h-4 w-4" />
-            </Button>
+            <InquiryDialog
+              defaultType="diagnostic"
+              title="Free Diagnostic Assessment"
+              trigger={
+                <Button size="lg" className="w-full md:w-auto min-w-[260px] bg-white text-[#2366c9] hover:bg-blue-50 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+                  Start Free Diagnostic <ArrowRight className="h-4 w-4" />
+                </Button>
+              }
+            />
             <Button size="lg" variant="outline" className="w-full md:w-auto min-w-[260px] border border-white/30 text-white hover:bg-white/10 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
               Talk to Expert <ArrowRight className="h-4 w-4" />
             </Button>

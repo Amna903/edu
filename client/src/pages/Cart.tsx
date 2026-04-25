@@ -148,6 +148,12 @@ export default function Cart() {
                     <span>Total</span>
                     <span className="text-emerald-600">{formatMoneyFromMinorUnits(total)}</span>
                   </div>
+                  
+                  <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 mt-4">
+                    <p className="text-[13px] text-blue-800 font-medium">
+                      Do you qualify for our scholarship? <Link href="/pricing#scholarship" className="underline font-bold hover:text-blue-900">Check here</Link> before paying.
+                    </p>
+                  </div>
                 </CardContent>
                 <CardFooter>
                   {!user && (

@@ -202,10 +202,13 @@ export const passwordChangeInputSchema = z.object({
 export const studentDashboardCourseSchema = z.object({
   id: z.number(),
   title: z.string(),
+  shortName: z.string(),
   progress: z.number(),
   completed: z.boolean(),
   grade: z.string().nullable(),
   percentage: z.number().nullable(),
+  imageUrl: z.string().nullable().optional(),
+  lmsCourseUrl: z.string().optional(),
 });
 
 export const studentDashboardActivitySchema = z.object({

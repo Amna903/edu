@@ -6,25 +6,25 @@ const portalCards = [
   {
     title: "Student Portal",
     description: "Track mastery progress, assignments, and upcoming practice targets.",
-    href: "/dashboard",
+    href: "/for-students",
     icon: GraduationCap,
   },
   {
     title: "Parent Portal",
     description: "View real-time performance insights and support your child effectively.",
-    href: "/dashboard",
+    href: "/for-parents",
     icon: Users,
   },
   {
     title: "Teacher Portal",
     description: "Monitor learners, identify weak topics, and optimize interventions.",
-    href: "/dashboard",
+    href: "/for-teachers",
     icon: GraduationCap,
   },
   {
     title: "School Portal",
     description: "Get cohort analytics, school-level reporting, and implementation support.",
-    href: "/dashboard",
+    href: "/for-schools",
     icon: School,
   },
 ];

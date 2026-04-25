@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useLocation } from "wouter";
-import { GraduationCap, School, Users, CheckCircle2 } from "lucide-react";
+import { GraduationCap, School, Users, CheckCircle2, Eye, EyeOff } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -47,6 +47,7 @@ function validatePassword(password: string) {
 export default function Register() {
   const [, navigate] = useLocation();
   const register = useRegister();
+  const [showPassword, setShowPassword] = useState(false);
   const [role, setRole] = useState<AppRole>("student");
   const [localError, setLocalError] = useState("");
   const [result, setResult] = useState<null | {
@@ -213,12 +214,22 @@ export default function Register() {
 
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={form.password}
-                    onChange={(event) => setForm((current) => ({ ...current, password: event.target.value }))}
-                  />
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      value={form.password}
+                      onChange={(event) => setForm((current) => ({ ...current, password: event.target.value }))}
+                      className="pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    >
+                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
+                  </div>
                   <p className="text-xs text-slate-500">
                     Use 8+ characters with uppercase, lowercase, a number, and a special character.
                   </p>

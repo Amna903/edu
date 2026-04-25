@@ -2,6 +2,7 @@ import { Layout } from "@/components/Layout";
 import { useProgram } from "@/hooks/use-programs";
 import { useRoute, Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CheckCircle2, ChevronLeft, Calendar, Clock, Award, ShieldCheck, Zap, BookOpen, ShoppingCart } from "lucide-react";
 import { InquiryDialog } from "@/components/InquiryDialog";
@@ -105,8 +106,11 @@ export default function ProgramDetails() {
               className="bg-white p-6 sm:p-10 md:p-12 rounded-[2rem] sm:rounded-[4rem] border-[10px] border-blue-900/50 w-full lg:min-w-[380px] lg:w-auto shadow-2xl relative overflow-hidden group"
             >
               <div className="absolute top-0 right-0 bg-[#2366c9] text-white font-semibold text-[14px] px-8 py-3 rounded-bl-3xl uppercase tracking-widest">Pricing</div>
-              <div className="text-4xl sm:text-5xl font-medium mb-2 text-slate-900 tracking-tighter leading-none">
+              <div className="text-4xl sm:text-5xl font-medium mb-2 text-slate-900 tracking-tighter leading-none flex items-center gap-3">
                 {program.price ? formatMoneyFromMinorUnits(program.price) : "Enquire"}
+                {canBuy && (
+                  <Badge className="bg-blue-50 text-[#2366c9] border border-blue-100 text-[10px] uppercase px-2 py-0 h-5">Scholarship available</Badge>
+                )}
               </div>
               <div className="text-blue-400 font-semibold uppercase text-xs tracking-widest mb-6 md:mb-10">per academic term</div>
               <div className="space-y-3">

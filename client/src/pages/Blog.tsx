@@ -1,4 +1,4 @@
-﻿import { Layout } from "@/components/Layout";
+import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Search, ArrowRight, ChevronRight } from "lucide-react";
@@ -319,7 +319,7 @@ export default function Blog() {
                 <p className="text-[14px] text-blue-200 font-medium">{inlineCta.sub}</p>
               </div>
               <div className="flex flex-col items-start md:items-end gap-3 min-w-[220px]">
-                <Link href="/portals/parents">
+                <Link href="/for-parents">
                   <Button className="bg-[#2366c9] hover:bg-blue-500 text-white font-medium" data-cta="diagnostic">
                     Take Free Diagnostic â†’
                   </Button>
@@ -354,7 +354,7 @@ export default function Blog() {
               <p className="text-xs font-medium uppercase tracking-widest text-[#2366c9]">Not sure where to start?</p>
               <h3 className="text-xl font-semibold text-slate-900">Find Your Starting Point</h3>
               <p className="text-[14px] text-slate-700">Sample lessons, essay frameworks, and diagnostic pathways in one place.</p>
-              <Link href="/portals/parents">
+              <Link href="/for-parents">
                 <Button className="bg-[#2366c9] hover:bg-blue-500 text-white font-medium">Take Diagnostic</Button>
               </Link>
             </div>
