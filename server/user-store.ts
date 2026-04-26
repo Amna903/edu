@@ -21,6 +21,56 @@ export async function rememberPendingRegistrationRole(username: string, role: Ap
   });
 }
 
+export async function rememberPendingSignup(input: {
+  username: string;
+  email: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  role: AppRole;
+}) {
+  const normalizedUsername = input.username.trim().toLowerCase();
+  const normalizedEmail = input.email.trim().toLowerCase();
+
+  await prisma.pendingSignup.upsert({
+    where: { username: normalizedUsername },
+    update: {
+      email: normalizedEmail,
+      firstName: input.firstName ?? undefined,
+      lastName: input.lastName ?? undefined,
+      role: input.role,
+      status: "pending_confirmation",
+      confirmedAt: null,
+    },
+    create: {
+      username: normalizedUsername,
+      email: normalizedEmail,
+      firstName: input.firstName ?? null,
+      lastName: input.lastName ?? null,
+      role: input.role,
+      status: "pending_confirmation",
+    },
+  });
+}
+
+export async function getPendingSignupByUsername(username: string) {
+  return prisma.pendingSignup.findUnique({
+    where: { username: username.trim().toLowerCase() },
+  });
+}
+
+export async function markPendingSignupConfirmed(input: { username: string; moodleUserId?: number }) {
+  const normalizedUsername = input.username.trim().toLowerCase();
+
+  await prisma.pendingSignup.update({
+    where: { username: normalizedUsername },
+    data: {
+      status: "confirmed",
+      moodleUserId: input.moodleUserId ?? undefined,
+      confirmedAt: new Date(),
+    },
+  }).catch(() => undefined);
+}
+
 export async function syncUserFromMoodleSession(input: {
   moodleUserId: number;
   username: string;

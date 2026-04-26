@@ -1,6 +1,6 @@
 import type { AppRole, AuthUser, LoginInput, RegisterInput } from "../shared/schema.js";
 import { env } from "./config.js";
-import { getStoredRoleByMoodleUserId, rememberPendingRegistrationRole, syncUserFromMoodleSession } from "./user-store.js";
+import { getPendingSignupByUsername, getStoredRoleByMoodleUserId, markPendingSignupConfirmed, rememberPendingRegistrationRole, rememberPendingSignup, syncUserFromMoodleSession } from "./user-store.js";
 
 interface MoodleLoginResponse {
   token?: string;
@@ -35,6 +35,10 @@ interface MoodleUserRecord {
   profileimageurl?: string;
 }
 
+interface MoodleUsersResponse {
+  users?: MoodleUserRecord[];
+}
+
 interface MoodleCreateUserRow {
   id?: number;
   username?: string;
@@ -61,8 +65,17 @@ function getServiceName() {
 }
 
 function getAdminToken() {
-  const token = env.moodle.adminToken || env.moodle.signupToken;
-  if (!token) throw new Error("MOODLE_ADMIN_TOKEN or MOODLE_SIGNUP_TOKEN is not configured");
+  const token =
+    env.moodle.adminUpdateToken ||
+    env.moodle.adminManageToken ||
+    env.moodle.adminToken ||
+    env.moodle.token ||
+    env.moodle.signupToken;
+  if (!token) {
+    throw new Error(
+      "MOODLE_ADMIN_UPDATE, MOODLE_ADMIN_MANAGE, MOODLE_ADMIN_TOKEN, MOODLE_TOKEN, or MOODLE_SIGNUP_TOKEN is not configured",
+    );
+  }
   return token;
 }
 
@@ -114,6 +127,39 @@ async function moodlePost<T>(token: string, wsfunction: string, params: URLSearc
   return data as T;
 }
 
+async function moodleUserExists(username: string) {
+  const normalizedUsername = username.trim().toLowerCase();
+  const candidateTokens: string[] = [];
+  try {
+    candidateTokens.push(getAdminToken());
+  } catch {
+    // Ignore missing admin token and try public token fallback.
+  }
+  if (env.moodle.token) {
+    candidateTokens.push(env.moodle.token);
+  }
+
+  for (const token of candidateTokens) {
+    try {
+      const users = await moodlePost<MoodleUserRecord[]>(
+        token,
+        "core_user_get_users_by_field",
+        new URLSearchParams({
+          field: "username",
+          "values[0]": normalizedUsername,
+        }),
+      );
+      if (Array.isArray(users) && users.length > 0) {
+        return true;
+      }
+    } catch {
+      // Continue fallback chain.
+    }
+  }
+
+  return false;
+}
+
 export async function loginWithMoodle(input: LoginInput): Promise<{ token: string; privateToken: string | null; user: AuthUser }> {
   const params = new URLSearchParams({
     username: input.username.trim(),
@@ -139,27 +185,50 @@ export async function registerWithMoodle(input: RegisterInput): Promise<Register
   const normalizedEmail = input.email.trim().toLowerCase();
 
   await rememberPendingRegistrationRole(normalizedUsername, input.role);
+  await rememberPendingSignup({
+    username: normalizedUsername,
+    email: normalizedEmail,
+    firstName: input.firstname.trim(),
+    lastName: input.lastname.trim(),
+    role: input.role,
+  });
 
   if (env.moodle.signupToken) {
-    const signupResponse = await moodlePost<MoodleSignupResponse | boolean>(
-      env.moodle.signupToken,
-      "auth_email_signup_user",
-      new URLSearchParams({
-        username: normalizedUsername,
-        password: input.password,
-        firstname: input.firstname.trim(),
-        lastname: input.lastname.trim(),
-        email: normalizedEmail,
-      }),
-    );
+    let signupSucceeded = false;
+    try {
+      const signupResponse = await moodlePost<MoodleSignupResponse | boolean>(
+        env.moodle.signupToken,
+        "auth_email_signup_user",
+        new URLSearchParams({
+          username: normalizedUsername,
+          password: input.password,
+          firstname: input.firstname.trim(),
+          lastname: input.lastname.trim(),
+          email: normalizedEmail,
+        }),
+      );
 
-    const signupSucceeded =
-      signupResponse === true ||
-      (typeof signupResponse === "object" && signupResponse !== null && signupResponse.success === true);
+      signupSucceeded =
+        signupResponse === true ||
+        (typeof signupResponse === "object" && signupResponse !== null && signupResponse.success === true);
+
+      if (!signupSucceeded) {
+        console.log("[moodle] Signup response:", signupResponse);
+      }
+    } catch (error) {
+      const userAlreadyCreated = await moodleUserExists(normalizedUsername);
+      if (userAlreadyCreated) {
+        signupSucceeded = true;
+      } else {
+        throw error;
+      }
+    }
 
     if (!signupSucceeded) {
-      console.log("[moodle] Signup response:", signupResponse);
-      throw new Error("Registration was submitted but Moodle did not confirm success");
+      const userAlreadyCreated = await moodleUserExists(normalizedUsername);
+      if (!userAlreadyCreated) {
+        throw new Error("Registration was submitted but Moodle did not confirm success");
+      }
     }
 
     return {
@@ -210,19 +279,72 @@ export async function fetchCurrentUser(token: string): Promise<AuthUser> {
     throw new Error(data.message || "Unable to load user profile");
   }
 
-  let details: MoodleUserRecord | null = null;
+  const candidateTokens: string[] = [];
   try {
-    const records = await moodlePost<MoodleUserRecord[]>(
-      getAdminToken(),
-      "core_user_get_users_by_field",
-      new URLSearchParams({
-        field: "id",
-        "values[0]": String(data.userid),
-      }),
-    );
-    details = Array.isArray(records) ? records[0] || null : null;
+    candidateTokens.push(getAdminToken());
   } catch {
-    details = null;
+    // Continue with session token fallback
+  }
+  candidateTokens.push(token);
+
+  let details: MoodleUserRecord | null = null;
+
+  for (const currentToken of candidateTokens) {
+    if (details?.email) break;
+
+    try {
+      const byId = await moodlePost<MoodleUserRecord[]>(
+        currentToken,
+        "core_user_get_users_by_field",
+        new URLSearchParams({
+          field: "id",
+          "values[0]": String(data.userid),
+        }),
+      );
+      const record = Array.isArray(byId) ? byId[0] || null : null;
+      if (record) {
+        details = record;
+        if (record.email) break;
+      }
+    } catch {
+      // Try the next lookup strategy
+    }
+
+    try {
+      const byUsername = await moodlePost<MoodleUserRecord[]>(
+        currentToken,
+        "core_user_get_users_by_field",
+        new URLSearchParams({
+          field: "username",
+          "values[0]": data.username,
+        }),
+      );
+      const record = Array.isArray(byUsername) ? byUsername[0] || null : null;
+      if (record) {
+        details = record;
+        if (record.email) break;
+      }
+    } catch {
+      // Try the next lookup strategy
+    }
+
+    try {
+      const byCriteria = await moodlePost<MoodleUsersResponse>(
+        currentToken,
+        "core_user_get_users",
+        new URLSearchParams({
+          "criteria[0][key]": "username",
+          "criteria[0][value]": data.username,
+        }),
+      );
+      const record = Array.isArray(byCriteria?.users) ? byCriteria.users[0] || null : null;
+      if (record) {
+        details = record;
+        if (record.email) break;
+      }
+    } catch {
+      // Ignore and continue fallback chain
+    }
   }
 
   const resolvedRole =
@@ -234,10 +356,18 @@ export async function fetchCurrentUser(token: string): Promise<AuthUser> {
     moodleUserId: data.userid,
     username: data.username,
     role: resolvedRole,
-    email: details?.email || null,
+    email:
+      details?.email ||
+      (await getPendingSignupByUsername(data.username))?.email ||
+      (data.username.includes("@") ? data.username : null),
     firstName: details?.firstname || data.firstname || null,
     lastName: details?.lastname || data.lastname || null,
     profileImage: details?.profileimageurl || details?.profileimageurlsmall || data.userpictureurl || null,
+  });
+
+  await markPendingSignupConfirmed({
+    username: data.username,
+    moodleUserId: data.userid,
   });
 
   return {
@@ -246,7 +376,7 @@ export async function fetchCurrentUser(token: string): Promise<AuthUser> {
     fullname: details?.fullname || data.fullname,
     firstname: details?.firstname || data.firstname || null,
     lastname: details?.lastname || data.lastname || null,
-    email: details?.email || null,
+    email: details?.email || syncedUser.email || (data.username.includes("@") ? data.username : null),
     role: syncedUser.role,
     profileImageUrl: details?.profileimageurl || details?.profileimageurlsmall || data.userpictureurl || null,
     city: details?.city || null,
@@ -264,7 +394,7 @@ export async function updateMoodleProfile(userId: number, input: {
   country?: string;
   phone?: string;
   description?: string;
-}) {
+}, sessionToken?: string) {
   const params = new URLSearchParams({
     "users[0][id]": String(userId),
     "users[0][firstname]": input.firstname,
@@ -277,7 +407,15 @@ export async function updateMoodleProfile(userId: number, input: {
   if (input.phone) params.append("users[0][phone1]", input.phone);
   if (input.description) params.append("users[0][description]", input.description);
 
-  await moodlePost(getAdminToken(), "core_user_update_users", params);
+  try {
+    await moodlePost(getAdminToken(), "core_user_update_users", params);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "";
+    if (!sessionToken || !message.toLowerCase().includes("invalid token")) {
+      throw error;
+    }
+    await moodlePost(sessionToken, "core_user_update_users", params);
+  }
   return true;
 }
 

@@ -15,6 +15,11 @@ enum UserRole {
   school
 }
 
+enum SignupStatus {
+  pending_confirmation
+  confirmed
+}
+
 model User {
   id             String   @id @default(cuid())
   moodleUserId   Int      @unique
@@ -29,6 +34,22 @@ model User {
   lastLoginAt    DateTime?
 
   @@index([role])
+}
+
+model PendingSignup {
+  id          String       @id @default(cuid())
+  username    String       @unique
+  email       String
+  firstName   String?
+  lastName    String?
+  role        UserRole
+  status      SignupStatus @default(pending_confirmation)
+  moodleUserId Int?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  confirmedAt DateTime?
+
+  @@index([status])
 }
 
 model ParentChild {

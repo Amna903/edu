@@ -33,6 +33,7 @@ export default function EditProfileForm({ initialData }: EditProfileFormProps) {
         try {
             const res = await fetch("/api/profile/update", {
                 method: "POST",
+                credentials: "include",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
             });
@@ -41,11 +42,12 @@ export default function EditProfileForm({ initialData }: EditProfileFormProps) {
                 setIsEditing(false);
                 router.refresh();
             } else {
-                alert("Failed to update profile.");
+                const data = await res.json();
+                alert(data.message || "Failed to update profile.");
             }
         } catch (error) {
             console.error("Error updating profile", error);
-            alert("An error occurred");
+            alert("An error occurred while updating your profile.");
         } finally {
             setLoading(false);
         }

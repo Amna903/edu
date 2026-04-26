@@ -135,7 +135,7 @@ export default function Dashboard() {
   const effectiveProfile = {
     firstname: profileForm.firstname || user?.firstname || "",
     lastname: profileForm.lastname || user?.lastname || "",
-    email: profileForm.email || user?.email || "",
+    email: user?.email || (user?.username?.includes("@") ? user.username : ""),
     city: profileForm.city || user?.city || "",
     country: profileForm.country || user?.country || "",
     phone: profileForm.phone || user?.phone || "",
@@ -599,7 +599,10 @@ export default function Dashboard() {
                       className="grid gap-4 md:grid-cols-2"
                       onSubmit={async (event) => {
                         event.preventDefault();
-                        await updateProfile.mutateAsync(effectiveProfile);
+                        await updateProfile.mutateAsync({
+                          ...effectiveProfile,
+                          email: effectiveProfile.email || undefined,
+                        });
                         setProfileForm({
                           firstname: "",
                           lastname: "",
@@ -613,7 +616,7 @@ export default function Dashboard() {
                     >
                       <div className="space-y-2"><Label htmlFor="firstname">First Name</Label><Input id="firstname" value={effectiveProfile.firstname} onChange={(event) => setProfileForm((current) => ({ ...current, firstname: event.target.value }))} /></div>
                       <div className="space-y-2"><Label htmlFor="lastname">Last Name</Label><Input id="lastname" value={effectiveProfile.lastname} onChange={(event) => setProfileForm((current) => ({ ...current, lastname: event.target.value }))} /></div>
-                      <div className="space-y-2"><Label htmlFor="email">Email</Label><Input id="email" type="email" value={effectiveProfile.email} onChange={(event) => setProfileForm((current) => ({ ...current, email: event.target.value }))} /></div>
+                      <div className="space-y-2"><Label htmlFor="email">Email</Label><Input id="email" type="text" value={effectiveProfile.email || "No email linked to this account"} disabled className="cursor-not-allowed bg-slate-100 text-slate-600" /></div>
                       <div className="space-y-2"><Label htmlFor="phone">Phone</Label><Input id="phone" value={effectiveProfile.phone} onChange={(event) => setProfileForm((current) => ({ ...current, phone: event.target.value }))} /></div>
                       <div className="space-y-2"><Label htmlFor="city">City</Label><Input id="city" value={effectiveProfile.city} onChange={(event) => setProfileForm((current) => ({ ...current, city: event.target.value }))} /></div>
                       <div className="space-y-2"><Label htmlFor="country">Country</Label><Input id="country" value={effectiveProfile.country} onChange={(event) => setProfileForm((current) => ({ ...current, country: event.target.value }))} /></div>

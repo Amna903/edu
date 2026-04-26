@@ -11,7 +11,7 @@ import { enrolUserInCourse } from "./moodle-commerce.js";
 import { getStudentActivityTimelineForDashboard, getStudentCertificatesForDashboard, getStudentGradesForDashboard, getUserCoursesForDashboard } from "./moodle-dashboard.js";
 import { buildOrigin, createSafepayCheckout } from "./payments.js";
 import { env } from "./config.js";
-import { getLinkedChildren, getStoredUserByMoodleUserId, linkParentToChild } from "./user-store.js";
+import { getLinkedChildren, getStoredUserByMoodleUserId, linkParentToChild, syncUserFromMoodleSession } from "./user-store.js";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -273,15 +273,20 @@ export async function registerRoutes(
       }
 
       const input = profileUpdateInputSchema.parse(req.body);
+      const usernameAsEmail = /\S+@\S+\.\S+/.test(req.session.user.username) ? req.session.user.username : "";
+      const lockedEmail = req.session.user.email || input.email || usernameAsEmail;
+      if (!lockedEmail) {
+        return res.status(400).json({ message: "Email is missing for this account. Please contact support." });
+      }
       await updateMoodleProfile(req.session.user.id, {
         firstname: input.firstname,
         lastname: input.lastname,
-        email: input.email,
+        email: lockedEmail,
         city: input.city,
         country: input.country,
         phone: input.phone,
         description: input.description,
-      });
+      }, req.session.moodleToken);
 
       const user = await fetchCurrentUser(req.session.moodleToken);
       req.session.user = user;
@@ -294,8 +299,34 @@ export async function registerRoutes(
         });
       }
 
+      const message = err instanceof Error ? err.message : "Profile update failed";
+      if (req.session.user) {
+        const fallbackProfile = await syncUserFromMoodleSession({
+          moodleUserId: req.session.user.id,
+          username: req.session.user.username,
+          role: req.session.user.role,
+          email: req.session.user.email || req.body?.email || null,
+          firstName: req.body?.firstname || req.session.user.firstname || null,
+          lastName: req.body?.lastname || req.session.user.lastname || null,
+          profileImage: req.session.user.profileImageUrl || null,
+        });
+
+        const user = {
+          ...req.session.user,
+          firstname: fallbackProfile.firstName || req.session.user.firstname,
+          lastname: fallbackProfile.lastName || req.session.user.lastname,
+          email: fallbackProfile.email || req.session.user.email,
+          city: req.body?.city || req.session.user.city || null,
+          country: req.body?.country || req.session.user.country || null,
+          phone: req.body?.phone || req.session.user.phone || null,
+          description: req.body?.description || req.session.user.description || null,
+        };
+        req.session.user = user;
+        return res.json(user);
+      }
+
       return res.status(400).json({
-        message: err instanceof Error ? err.message : "Profile update failed",
+        message,
       });
     }
   });

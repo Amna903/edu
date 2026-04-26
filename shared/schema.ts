@@ -187,7 +187,7 @@ export const orderHistorySchema = z.object({
 export const profileUpdateInputSchema = z.object({
   firstname: z.string().min(1, "First name is required"),
   lastname: z.string().min(1, "Last name is required"),
-  email: z.string().email("Valid email is required"),
+  email: z.string().email("Valid email is required").optional(),
   city: z.string().optional().default(""),
   country: z.string().optional().default(""),
   phone: z.string().optional().default(""),

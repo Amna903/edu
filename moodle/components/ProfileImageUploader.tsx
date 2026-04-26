@@ -18,6 +18,7 @@ export default function ProfileImageUploader({ currentImage }: { currentImage?: 
         try {
             const res = await fetch('/api/profile/image', {
                 method: 'POST',
+                credentials: 'include',
                 body: formData,
             });
 
