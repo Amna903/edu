@@ -1,5 +1,7 @@
 import { programs, type Program, type InsertProgram, resources, type Resource, type InsertResource, inquiries, type Inquiry, type InsertInquiry, orders, type Order, type InsertOrder, orderItems, type OrderItem, type InsertOrderItem, enrollments, type Enrollment, type InsertEnrollment } from "../shared/schema.js";
 import type { CheckoutItem } from "../shared/schema.js";
+import { db } from "./db.js";
+import { desc, eq } from "drizzle-orm";
 
 export interface IStorage {
   getPrograms(): Promise<Program[]>;
@@ -12,6 +14,9 @@ export interface IStorage {
   
   createInquiry(inquiry: InsertInquiry): Promise<Inquiry>;
   getInquiriesByEmail(email: string): Promise<Inquiry[]>;
+  getAllInquiries(): Promise<Inquiry[]>;
+  getInquiryById(id: number): Promise<Inquiry | undefined>;
+  updateInquiry(id: number, updates: Partial<Inquiry>): Promise<Inquiry | undefined>;
   
   createOrder(order: InsertOrder): Promise<Order>;
   createOrderItem(item: InsertOrderItem): Promise<OrderItem>;
@@ -105,31 +110,50 @@ async createResource(insertResource: InsertResource): Promise<Resource> {
     return resource;
   }
 async createInquiry(insertInquiry: InsertInquiry): Promise<Inquiry> {
-    const id = this.currentId.inquiries++;
-    const inquiry: Inquiry = { 
-      ...insertInquiry, 
-      id, 
-      status: "pending", // Add this default status
-      createdAt: new Date(),
-      phone: insertInquiry.phone ?? null,
-      role: insertInquiry.role ?? null,
-      gradeLevel: insertInquiry.gradeLevel ?? null,
-      subjectInterest: insertInquiry.subjectInterest ?? null,
-      learningMode: insertInquiry.learningMode ?? null,
-      message: insertInquiry.message ?? null,
-    };
-    this.inquiries.set(id, inquiry);
-    return inquiry;
+    const [created] = await db
+      .insert(inquiries)
+      .values({
+        ...insertInquiry,
+        status: "new",
+        phone: insertInquiry.phone ?? null,
+        role: insertInquiry.role ?? null,
+        gradeLevel: insertInquiry.gradeLevel ?? null,
+        subjectInterest: insertInquiry.subjectInterest ?? null,
+        learningMode: insertInquiry.learningMode ?? null,
+        message: insertInquiry.message ?? null,
+      })
+      .returning();
+
+    return created;
   }
 
   async getInquiriesByEmail(email: string): Promise<Inquiry[]> {
-    return Array.from(this.inquiries.values())
-      .filter((inquiry) => inquiry.email === email)
-      .sort((a, b) => {
-        const aTime = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-        const bTime = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-        return bTime - aTime;
-      });
+    return db
+      .select()
+      .from(inquiries)
+      .where(eq(inquiries.email, email))
+      .orderBy(desc(inquiries.createdAt));
+  }
+
+  async getAllInquiries(): Promise<Inquiry[]> {
+    return db.select().from(inquiries).orderBy(desc(inquiries.createdAt));
+  }
+
+  async getInquiryById(id: number): Promise<Inquiry | undefined> {
+    const [ticket] = await db.select().from(inquiries).where(eq(inquiries.id, id)).limit(1);
+    return ticket;
+  }
+
+  async updateInquiry(id: number, updates: Partial<Inquiry>): Promise<Inquiry | undefined> {
+    const [updated] = await db
+      .update(inquiries)
+      .set({
+        ...updates,
+      })
+      .where(eq(inquiries.id, id))
+      .returning();
+
+    return updated;
   }
 
 async createOrder(insertOrder: InsertOrder): Promise<Order> {

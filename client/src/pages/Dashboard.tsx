@@ -28,7 +28,7 @@ function getDashboardMenu(role?: string | null, unreadNotifications = 0) {
     { href: role ? getDashboardPath(role) : "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { href: "/dashboard/profile", label: "Profile", icon: UserCircle2 },
     { href: "/dashboard/notifications", label: "Notifications", icon: Bell, badge: unreadNotifications > 0 ? (unreadNotifications > 99 ? "99+" : String(unreadNotifications)) : null },
-    { href: "/dashboard/support", label: "Support", icon: LifeBuoy },
+    { href: role === "admin" ? "/dashboard/admin/support" : "/dashboard/support", label: "Support", icon: LifeBuoy },
     { href: "/dashboard/orders", label: "Orders", icon: CreditCard },
   ];
 
@@ -119,6 +119,7 @@ export default function Dashboard() {
     attachmentName: "",
   });
   const [supportState, setSupportState] = useState({ error: "", success: "", pending: false });
+  const [adminReplyState, setAdminReplyState] = useState({ message: "", error: "", success: "", pending: false });
   const [childIdInput, setChildIdInput] = useState("");
   const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
 
@@ -131,6 +132,17 @@ export default function Dashboard() {
       setSelectedTicketId(supportTickets.data[0].id);
     }
   }, [selectedTicketId, supportTickets.data]);
+
+  useEffect(() => {
+    if (!user) return;
+    if (user.role === "admin" && location === "/dashboard/support") {
+      navigate("/dashboard/admin/support");
+      return;
+    }
+    if (user.role !== "admin" && location === "/dashboard/admin/support") {
+      navigate("/dashboard/support");
+    }
+  }, [location, navigate, user]);
 
   const effectiveProfile = {
     firstname: profileForm.firstname || user?.firstname || "",
@@ -169,11 +181,22 @@ export default function Dashboard() {
   const onNotifications = location === "/dashboard/notifications";
   const onOrders = location === "/dashboard/orders";
   const onSupport = location === "/dashboard/support";
+  const onAdminSupport = location === "/dashboard/admin/support";
   const onStudentCertificates = location === "/dashboard/student/certificates";
   const onSchoolAnalytics = location === "/dashboard/school/analytics";
   const onAdminAnalytics = location === "/dashboard/admin/analytics";
   const unreadUpdates = supportTickets.data?.filter((ticket) => ticket.status === "new").length ?? 0;
   const selectedTicket = supportTickets.data?.find((ticket) => ticket.id === selectedTicketId) ?? null;
+
+  async function readJsonSafely(response: Response): Promise<Record<string, unknown>> {
+    const raw = await response.text();
+    if (!raw.trim()) return {};
+    try {
+      return JSON.parse(raw) as Record<string, unknown>;
+    } catch {
+      return { message: raw };
+    }
+  }
 
   return (
     <Layout>
@@ -677,7 +700,143 @@ export default function Dashboard() {
                 </Card>
               )}
 
-              {onSupport && (
+              {onAdminSupport && user.role === "admin" && (
+                <div className="space-y-6">
+                  <Card className="border-slate-200 shadow-sm">
+                    <CardHeader className="space-y-2 border-b border-slate-100 pb-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <CardTitle>Support Queue</CardTitle>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 px-2 text-xs text-slate-600"
+                          onClick={async () => {
+                            await supportTickets.refetch();
+                          }}
+                        >
+                          <RefreshCw className="mr-2 h-3.5 w-3.5" />
+                          Refresh
+                        </Button>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-4 p-6">
+                      {supportTickets.data && supportTickets.data.length > 0 ? (
+                        <div className="space-y-3 max-h-72 overflow-auto pr-1">
+                          {supportTickets.data.map((ticket) => (
+                            <button
+                              key={ticket.id}
+                              type="button"
+                              onClick={() => setSelectedTicketId(ticket.id)}
+                              className={`w-full rounded-2xl border p-4 text-left transition ${
+                                selectedTicketId === ticket.id
+                                  ? "border-[#2366c9] bg-blue-50"
+                                  : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
+                              }`}
+                            >
+                              <div className="flex items-center justify-between gap-3">
+                                <div>
+                                  <p className="text-sm font-semibold text-slate-900">{ticket.subjectInterest || "Support Ticket"}</p>
+                                  <p className="mt-1 text-xs text-slate-500">{ticket.type} • {ticket.status}</p>
+                                </div>
+                                <p className="text-[11px] text-slate-400">
+                                  {ticket.createdAt ? new Date(ticket.createdAt).toLocaleDateString() : ""}
+                                </p>
+                              </div>
+                              <p className="mt-2 text-xs text-slate-600">From: {ticket.email || "Unknown user"}</p>
+                            </button>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-6 text-slate-600">
+                          <p className="text-sm font-semibold text-slate-900">No tickets yet.</p>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border-slate-200 shadow-sm">
+                    <CardContent className="space-y-4 p-6">
+                      {selectedTicket ? (
+                        <>
+                          <div className="space-y-1">
+                            <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Selected Ticket</p>
+                            <h3 className="text-lg font-semibold text-slate-900">{selectedTicket.subjectInterest || "Support Ticket"}</h3>
+                            <p className="text-sm text-slate-600">From: {selectedTicket.email || "Unknown user"}</p>
+                          </div>
+
+                          <div className="rounded-3xl bg-slate-50 p-5">
+                            <p className="whitespace-pre-line text-sm text-slate-700">{selectedTicket.message || "No details provided."}</p>
+                          </div>
+
+                          <div className="space-y-2 border-t border-slate-200 pt-4">
+                            <Label htmlFor="admin-ticket-reply">Reply To This Ticket</Label>
+                            <Textarea
+                              id="admin-ticket-reply"
+                              value={adminReplyState.message}
+                              onChange={(event) => setAdminReplyState((current) => ({ ...current, message: event.target.value, error: "", success: "" }))}
+                              placeholder="Write your reply to this ticket"
+                              className="min-h-28"
+                            />
+                            {adminReplyState.error && <p className="text-sm text-red-600">{adminReplyState.error}</p>}
+                            {adminReplyState.success && <p className="text-sm text-emerald-600">{adminReplyState.success}</p>}
+                            <Button
+                              className="bg-slate-900 text-white hover:bg-slate-800"
+                              onClick={async () => {
+                                if (!selectedTicketId) return;
+                                const replyText = adminReplyState.message.trim();
+                                if (!replyText) {
+                                  setAdminReplyState((current) => ({ ...current, error: "Reply message is required" }));
+                                  return;
+                                }
+                                setAdminReplyState((current) => ({ ...current, pending: true, error: "", success: "" }));
+                                try {
+                                  const response = await fetch(`/api/inquiries/${selectedTicketId}/reply`, {
+                                    method: "POST",
+                                    headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({ message: replyText }),
+                                  });
+                                  const body = await readJsonSafely(response);
+                                  if (!response.ok) {
+                                    const maybeMessage =
+                                      typeof body.message === "string" && body.message.trim()
+                                        ? body.message
+                                        : "Failed to send reply";
+                                    if (
+                                      typeof body.message === "string" &&
+                                      body.message.includes("<!DOCTYPE")
+                                    ) {
+                                      throw new Error(
+                                        "Reply API returned HTML instead of JSON. Make sure you are running the EDU app backend and opening the EDU dashboard.",
+                                      );
+                                    }
+                                    throw new Error(maybeMessage);
+                                  }
+                                  await supportTickets.refetch();
+                                  setAdminReplyState({ message: "", error: "", success: "Reply sent to ticket.", pending: false });
+                                } catch (error) {
+                                  setAdminReplyState((current) => ({
+                                    ...current,
+                                    error: error instanceof Error ? error.message : "Failed to send reply",
+                                    pending: false,
+                                  }));
+                                }
+                              }}
+                              disabled={adminReplyState.pending}
+                            >
+                              {adminReplyState.pending ? "Sending..." : "Send Reply To Ticket"}
+                            </Button>
+                          </div>
+                        </>
+                      ) : (
+                        <p className="text-sm text-slate-600">Select a ticket from above to view details and reply.</p>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+
+              {onSupport && user.role !== "admin" && (
                 <div className="grid gap-6 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
                   <Card className="border-blue-100 shadow-sm">
                     <CardContent className="space-y-5 p-6">

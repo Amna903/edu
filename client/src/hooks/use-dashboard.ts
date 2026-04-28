@@ -127,6 +127,10 @@ export function useDashboardNotifications(enabled = true) {
   return useQuery({
     queryKey: [api.dashboard.notifications.path],
     enabled,
+    refetchInterval: enabled ? 10000 : false,
+    refetchIntervalInBackground: true,
+    refetchOnWindowFocus: true,
+    staleTime: 0,
     queryFn: async () => {
       const res = await fetch(api.dashboard.notifications.path, { credentials: "include" });
       if (res.status === 401) return { notifications: [] };

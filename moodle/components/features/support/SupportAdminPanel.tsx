@@ -140,7 +140,10 @@ export default function SupportAdminPanel() {
       setCurrentAdminUserId(queue.currentAdminUserId);
       setTeamMembers(members as SupportUser[]);
 
-      if (!selectedTicketId && queue.tickets.length > 0) {
+      if (queue.tickets.length === 0) {
+        setSelectedTicketId(null);
+        setSelectedTicket(null);
+      } else if (!selectedTicketId || !queue.tickets.some((ticket) => ticket.id === selectedTicketId)) {
         setSelectedTicketId(queue.tickets[0].id);
       }
     } catch (err) {
@@ -294,8 +297,8 @@ export default function SupportAdminPanel() {
       {message && <p className="text-sm font-semibold text-emerald-700">{message}</p>}
       {error && <p className="text-sm font-semibold text-red-700">{error}</p>}
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <section className="bg-white rounded-3xl border border-slate-200 p-5 shadow-sm xl:col-span-1">
+      <div className="space-y-6">
+        <section className="bg-white rounded-3xl border border-slate-200 p-5 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-black text-slate-900">Tickets</h2>
             <button onClick={loadQueue} className="text-xs font-black uppercase tracking-wider text-indigo-600">
@@ -308,7 +311,7 @@ export default function SupportAdminPanel() {
           ) : tickets.length === 0 ? (
             <p className="text-sm text-slate-500">No tickets match current filters.</p>
           ) : (
-            <div className="space-y-3 max-h-[680px] overflow-y-auto pr-1">
+            <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1">
               {tickets.map((ticket) => (
                 <button
                   key={ticket.id}
@@ -336,7 +339,7 @@ export default function SupportAdminPanel() {
           )}
         </section>
 
-        <section className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm xl:col-span-2">
+        <section className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
           {!selectedTicket || !selectedSummary ? (
             <p className="text-sm text-slate-500">Select a ticket to manage it.</p>
           ) : (
@@ -433,6 +436,12 @@ export default function SupportAdminPanel() {
               </div>
 
               <form onSubmit={handleReply} className="space-y-3 border-t border-slate-200 pt-4">
+                <div>
+                  <h4 className="text-sm font-black text-slate-900 uppercase tracking-wider">Reply To This Ticket</h4>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Your response will be sent to the ticket owner and shown in their support portal.
+                  </p>
+                </div>
                 <textarea
                   value={replyMessage}
                   onChange={(e) => setReplyMessage(e.target.value)}
@@ -454,7 +463,7 @@ export default function SupportAdminPanel() {
                   className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm"
                 />
                 <button className="rounded-xl px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white text-sm font-black uppercase tracking-wider">
-                  Send Response
+                  Send Reply To Customer
                 </button>
               </form>
             </div>

@@ -11,12 +11,41 @@ import { enrolUserInCourse } from "./moodle-commerce.js";
 import { getStudentActivityTimelineForDashboard, getStudentCertificatesForDashboard, getStudentGradesForDashboard, getUserCoursesForDashboard } from "./moodle-dashboard.js";
 import { buildOrigin, createSafepayCheckout } from "./payments.js";
 import { env } from "./config.js";
-import { getLinkedChildren, getStoredUserByMoodleUserId, linkParentToChild, syncUserFromMoodleSession } from "./user-store.js";
+import { getStoredUserByMoodleUserId, linkParentToChild, syncUserFromMoodleSession } from "./user-store.js";
 
 export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
+  const notificationReadByUser = new Map<number, Set<number>>();
+
+  const aiSupportWebhookUrl =
+    process.env.AI_SUPPORT_WEBHOOK_URL ??
+    "https://n8n.edumeup.com/webhook/f0a0ac6f-f667-404a-9b13-74d11dd68632";
+
+  const extractAiReply = (payload: unknown): string => {
+    if (!payload) return "";
+    if (typeof payload === "string") return payload.trim();
+    if (Array.isArray(payload)) {
+      for (const item of payload) {
+        const nested = extractAiReply(item);
+        if (nested) return nested;
+      }
+      return "";
+    }
+    if (typeof payload === "object") {
+      const record = payload as Record<string, unknown>;
+      const keys = ["reply", "message", "response", "output", "text", "answer"];
+      for (const key of keys) {
+        const value = record[key];
+        if (typeof value === "string" && value.trim()) return value.trim();
+        const nested = extractAiReply(value);
+        if (nested) return nested;
+      }
+    }
+    return "";
+  };
+
   const finalizePaidOrder = async (orderRef: string, tracker?: string) => {
     const pending = await storage.getPendingPayment(orderRef);
     if (!pending) {
@@ -60,13 +89,7 @@ export async function registerRoutes(
     return Math.abs(hash) + 1;
   };
 
-  const buildDashboardNotifications = async (input: {
-    userId: number;
-    role: string;
-    fullname: string;
-    email: string | null;
-    token?: string;
-  }) => {
+  const buildDashboardNotifications = async (input: { userId: number; email: string | null }) => {
     const notifications: Array<{
       id: number;
       title: string;
@@ -76,24 +99,13 @@ export async function registerRoutes(
       actionUrl?: string;
     }> = [];
 
-    const nowIso = new Date().toISOString();
-
-    notifications.push({
-      id: notificationIdFromKey(`welcome-${input.userId}`),
-      title: "Welcome to your dashboard",
-      message: `Hi ${input.fullname}, your ${input.role} workspace is active and synced.`,
-      createdAt: nowIso,
-      type: "system",
-      actionUrl: getDashboardPath(input.role),
-    });
-
     const userOrders = await storage.getOrdersByUserId(String(input.userId));
     userOrders.slice(0, 5).forEach((order) => {
       notifications.push({
         id: notificationIdFromKey(`order-${input.userId}-${order.id}`),
         title: `Order #${order.id} ${order.status === "completed" ? "completed" : "updated"}`,
         message: `Your order total is $${(order.totalAmount / 100).toFixed(2)}.`,
-        createdAt: order.createdAt ? new Date(order.createdAt).toISOString() : nowIso,
+        createdAt: order.createdAt ? new Date(order.createdAt).toISOString() : new Date().toISOString(),
         type: "order",
         actionUrl: "/dashboard/orders",
       });
@@ -106,72 +118,14 @@ export async function registerRoutes(
           id: notificationIdFromKey(`support-${input.userId}-${ticket.id}`),
           title: `Support ticket ${ticket.status === "new" ? "received" : ticket.status}`,
           message: ticket.subjectInterest || "Your support request has an update.",
-          createdAt: ticket.createdAt ? new Date(ticket.createdAt).toISOString() : nowIso,
+          createdAt: ticket.createdAt ? new Date(ticket.createdAt).toISOString() : new Date().toISOString(),
           type: "support",
           actionUrl: "/dashboard/support",
         });
       });
     }
 
-    if (input.role === "student" && input.token) {
-      const courses = await getUserCoursesForDashboard(input.token, input.userId);
-      courses.slice(0, 3).forEach((course) => {
-        const progress = Math.round(course.progress || 0);
-        notifications.push({
-          id: notificationIdFromKey(`course-${input.userId}-${course.id}`),
-          title: progress >= 100 ? "Course completed" : "Course progress updated",
-          message: `${course.fullname}: ${progress}% progress`,
-          createdAt: nowIso,
-          type: "course",
-          actionUrl: "/dashboard/student",
-        });
-      });
-    }
-
-    if (input.role === "parent") {
-      const childIds = await getLinkedChildren(input.userId);
-      notifications.push({
-        id: notificationIdFromKey(`parent-linked-${input.userId}`),
-        title: "Linked children status",
-        message: `You currently have ${childIds.length} linked child account${childIds.length === 1 ? "" : "s"}.`,
-        createdAt: nowIso,
-        type: "system",
-        actionUrl: "/dashboard/parent",
-      });
-    }
-
-    if (input.role === "school") {
-      const schoolOrders = await storage.getOrdersByUserId(String(input.userId));
-      const purchasedSeats = schoolOrders.length;
-      notifications.push({
-        id: notificationIdFromKey(`school-seats-${input.userId}`),
-        title: "Seat allocation snapshot",
-        message: `${purchasedSeats} seat purchase order${purchasedSeats === 1 ? "" : "s"} recorded for your institution.`,
-        createdAt: nowIso,
-        type: "system",
-        actionUrl: "/dashboard/school/analytics",
-      });
-    }
-
-    if (input.role === "admin") {
-      notifications.push({
-        id: notificationIdFromKey(`admin-overview-${input.userId}`),
-        title: "Admin analytics ready",
-        message: "System metrics and course activity are available in Admin Analytics.",
-        createdAt: nowIso,
-        type: "system",
-        actionUrl: "/dashboard/admin/analytics",
-      });
-    }
-
     return notifications.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  };
-
-  const getDashboardPath = (role?: string | null) => {
-    if (role === "admin") return "/dashboard/admin";
-    if (role === "parent") return "/dashboard/parent";
-    if (role === "school") return "/dashboard/school";
-    return "/dashboard/student";
   };
 
   // === INQUIRIES ===
@@ -264,6 +218,67 @@ export async function registerRoutes(
   app.post(api.auth.logout.path, async (req, res) => {
     req.session.destroy(() => undefined);
     res.json({ success: true });
+  });
+
+  app.post("/api/support/ai", async (req, res) => {
+    try {
+      if (!req.session.user) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      if (req.session.user.role !== "student") {
+        return res.status(403).json({ error: "Only students can use AI support chat" });
+      }
+
+      const msg = typeof req.body?.msg === "string" ? req.body.msg.trim() : "";
+      if (!msg) {
+        return res.status(400).json({ error: "Message is required" });
+      }
+
+      const webhookUrl = new URL(aiSupportWebhookUrl);
+      webhookUrl.searchParams.set("student_id", String(req.session.user.id));
+      webhookUrl.searchParams.set("msg", msg);
+
+      const webhookResponse = await fetch(webhookUrl.toString(), {
+        method: "GET",
+        headers: { Accept: "application/json, text/plain, */*" },
+      });
+
+      const rawText = await webhookResponse.text();
+      let payload: unknown = rawText;
+      if (rawText.trim()) {
+        try {
+          payload = JSON.parse(rawText);
+        } catch {
+          payload = rawText;
+        }
+      }
+
+      if (!webhookResponse.ok) {
+        return res.status(502).json({
+          error: "AI support service is unavailable",
+          status: webhookResponse.status,
+          contentType: webhookResponse.headers.get("content-type") ?? null,
+          details: typeof payload === "string" ? payload : undefined,
+        });
+      }
+
+      const reply = extractAiReply(payload);
+      if (!reply) {
+        return res.status(502).json({
+          error: "AI service returned no reply text",
+          status: webhookResponse.status,
+          contentType: webhookResponse.headers.get("content-type") ?? null,
+          details: typeof payload === "string" ? payload.slice(0, 500) : JSON.stringify(payload).slice(0, 500),
+        });
+      }
+
+      return res.json({ ok: true, reply });
+    } catch (err) {
+      return res.status(500).json({
+        error: err instanceof Error ? err.message : "Failed to reach AI service",
+      });
+    }
   });
 
   app.post(api.auth.updateProfile.path, async (req, res) => {
@@ -382,6 +397,11 @@ export async function registerRoutes(
         return res.status(401).json({ message: "Not authenticated" });
       }
 
+      if (req.session.user.role === "admin") {
+        const allInquiries = await storage.getAllInquiries();
+        return res.json(allInquiries);
+      }
+
       const email = req.session.user.email;
       if (!email) {
         return res.json([]);
@@ -391,6 +411,45 @@ export async function registerRoutes(
       res.json(inquiries);
     } catch (err) {
       res.status(500).json({ message: err instanceof Error ? err.message : "Failed to load support tickets" });
+    }
+  });
+
+  app.post("/api/inquiries/:id/reply", async (req, res) => {
+    try {
+      if (!req.session.user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+      if (req.session.user.role !== "admin") {
+        return res.status(403).json({ message: "Only admin can reply to support tickets" });
+      }
+
+      const ticketId = Number(req.params.id);
+      if (!Number.isFinite(ticketId)) {
+        return res.status(400).json({ message: "Invalid ticket id" });
+      }
+
+      const replyMessage = typeof req.body?.message === "string" ? req.body.message.trim() : "";
+      if (!replyMessage) {
+        return res.status(400).json({ message: "Reply message is required" });
+      }
+
+      const ticket = await storage.getInquiryById(ticketId);
+      if (!ticket) {
+        return res.status(404).json({ message: "Ticket not found" });
+      }
+
+      const authorName = req.session.user.fullname || req.session.user.username || "Support";
+      const previousMessage = ticket.message ?? "";
+      const mergedMessage = `${previousMessage}\n\n--- Support Reply (${authorName}) ---\n${replyMessage}`.trim();
+
+      const updated = await storage.updateInquiry(ticketId, {
+        message: mergedMessage,
+        status: "contacted",
+      });
+
+      return res.json(updated);
+    } catch (err) {
+      return res.status(500).json({ message: err instanceof Error ? err.message : "Failed to send reply" });
     }
   });
 
@@ -630,13 +689,10 @@ export async function registerRoutes(
 
     const notifications = await buildDashboardNotifications({
       userId: req.session.user.id,
-      role: req.session.user.role,
-      fullname: req.session.user.fullname,
       email: req.session.user.email,
-      token: req.session.moodleToken,
     });
 
-    const readIds = new Set(req.session.notificationReadIds ?? []);
+    const readIds = notificationReadByUser.get(req.session.user.id) ?? new Set<number>();
 
     res.json({
       notifications: notifications.map((notification) => ({
@@ -652,9 +708,9 @@ export async function registerRoutes(
     }
 
     const { notificationId } = markNotificationReadInputSchema.parse(req.body);
-    const existingIds = new Set(req.session.notificationReadIds ?? []);
+    const existingIds = notificationReadByUser.get(req.session.user.id) ?? new Set<number>();
     existingIds.add(notificationId);
-    req.session.notificationReadIds = Array.from(existingIds);
+    notificationReadByUser.set(req.session.user.id, existingIds);
 
     res.json({ success: true });
   });
