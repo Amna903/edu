@@ -1,2445 +1,875 @@
-import { Layout } from "@/components/Layout";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Zap, Target, LineChart, Trophy, BookOpen, UserCheck, CheckCircle2, MessageSquare, HelpCircle, ShieldCheck, Brain, Layers, Search, RefreshCw, MousePointer2, BarChart3, GraduationCap as GraduationIcon, ArrowRight, Download, Calendar, PlayCircle, Star } from "lucide-react";
-import { Link, useLocation } from "wouter";
-import { InquiryDialog } from "@/components/InquiryDialog";
-import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
-import { useCurrency } from "@/hooks/use-currency";
-import React from "react";
-const tiers = [
-  {
-    tier: "CHARTER TIER",
-    limit: "10 Founding Schools",
-    desc: "Permanent charter status + 20% lifetime discount + founder privileges.",
-    status: "6 spots remaining",
-    color: "bg-[#2366c9]",
-    textColor: "text-white",
-  },
-  {
-    tier: "GROWTH TIER",
-    limit: "Unlimited Schools",
-    desc: "Full platform access with onboarding support.",
-    status: "Available",
-    color: "bg-white",
-    textColor: "text-gray-900",
-  },
-  {
-    tier: "ENTERPRISE TIER",
-    limit: "Custom Institutions",
-    desc: "Dedicated infrastructure and enterprise integrations.",
-    status: "Contact Sales",
-    color: "bg-gray-900",
-    textColor: "text-white",
-  },
-];
-const stats = [
-  { value: "91%", label: "PASS RATE", sub: "Designed to Achieve - vs 35% National Average" },
-  { value: "47%", label: "A/A* GRADES", sub: "Designed to Achieve - vs 18% Traditional" },
-  { value: "75%+", label: "RETENTION", sub: "Designed to Achieve - vs 5-10% Traditional" },
-  { value: "85%+", label: "COST SAVINGS", sub: "Designed to Achieve - vs $2,400-3,600/yr Tutors" },
+import { useState, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
+
+// ── CSS injected once ──────────────────────────────────────────────────────────
+const styles = `
+  @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap');
+
+  :root {
+    --primary: #2366c9;
+    --primary-dark: #1a4fa0;
+    --primary-darker: #0B3C5D;
+    --primary-light: #EFF6FF;
+    --primary-border: #BFDBFE;
+    --orange: #F97316;
+    --green: #16A34A;
+    --teal: #0D9488;
+    --purple: #7C3AED;
+    --amber: #D97706;
+    --red: #DC2626;
+    --lgrey: #F5F7FA;
+    --mgrey: #E2E8F0;
+    --dgrey: #475569;
+    --text: #1E293B;
+    --body: #334155;
+    --sidebar-w: 220px;
+    --nav-h: 64px;
+  }
+
+  .emu-body * { margin:0; padding:0; box-sizing:border-box; }
+  .emu-body { font-family:'DM Sans',sans-serif; font-size:16px; color:var(--text); background:#fff; }
+
+  /* MOCK BANNER */
+  .emu-mock-banner { background:linear-gradient(90deg,var(--primary) 0%,var(--primary-darker) 100%); color:#fff; text-align:center; padding:12px; font-size:13px; font-weight:600; letter-spacing:.3px; }
+  .emu-mock-banner span { background:rgba(255,255,255,.15); border-radius:4px; padding:2px 8px; margin-left:8px; font-size:11px; }
+
+  /* NAVBAR */
+  .emu-navbar { position:fixed; top:0; left:0; right:0; height:var(--nav-h); background:rgba(35,102,201,.15); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); display:flex; align-items:center; justify-content:space-between; padding:0 32px; z-index:1000; transition:background .3s,box-shadow .3s; border-bottom:1px solid rgba(255,255,255,.1); }
+  .emu-navbar.scrolled { background:var(--primary); box-shadow:0 2px 20px rgba(0,0,0,.2); }
+  .emu-nav-logo { font-family:'Sora',sans-serif; font-weight:800; font-size:22px; color:#fff; letter-spacing:-.5px; }
+  .emu-nav-logo span { color:#facc15; }
+  .emu-nav-links { display:flex; gap:28px; align-items:center; }
+  .emu-nav-links a { font-size:14px; font-weight:500; color:rgba(255,255,255,.85); text-decoration:none; transition:color .2s; }
+  .emu-nav-links a:hover { color:#fff; }
+  .emu-nav-cta { background:white; color:var(--primary); font-family:'DM Sans',sans-serif; font-weight:700; font-size:14px; padding:10px 20px; border-radius:6px; border:none; cursor:pointer; }
+  .emu-nav-cta:hover { background:#f0f6ff; }
+
+  /* PAGE WRAPPER */
+  .emu-page-wrapper { display:flex; padding-top:calc(var(--nav-h) + 36px); }
+
+  /* SIDEBAR */
+  .emu-sidebar { width:var(--sidebar-w); flex-shrink:0; position:sticky; top:var(--nav-h); height:calc(100vh - var(--nav-h)); overflow-y:auto; background:#fff; border-right:1px solid var(--mgrey); padding:24px 16px; }
+  .emu-sidebar-label { font-size:10px; font-weight:700; letter-spacing:1.5px; color:var(--dgrey); text-transform:uppercase; margin-bottom:12px; padding-left:12px; }
+  .emu-sidebar-group { margin-bottom:20px; }
+  .emu-sidebar-group-title { font-size:11px; font-weight:600; color:var(--primary); text-transform:uppercase; letter-spacing:.8px; padding:6px 12px; margin-bottom:4px; }
+  .emu-sidebar-link { display:block; padding:7px 12px; font-size:13px; font-weight:500; color:var(--dgrey); text-decoration:none; border-radius:6px; border-left:3px solid transparent; transition:all .2s; margin-bottom:2px; cursor:pointer; }
+  .emu-sidebar-link:hover, .emu-sidebar-link.active { color:var(--primary); background:var(--primary-light); border-left-color:var(--primary); }
+  .emu-sidebar-diag { background:var(--primary); color:#ffff; border-radius:8px; padding:14px; margin-bottom:20px; text-align:center; }
+  .emu-sidebar-diag p { font-size:12px; color:#ffff;font-weight:600; margin-bottom:8px; line-height:1.4; }
+  .emu-sidebar-diag button { background:#fff; color:var(--primary); font-size:11px; font-weight:700; padding:7px 14px; border:none; border-radius:5px; cursor:pointer; width:100%; }
+
+  /* MAIN */
+  .emu-main { flex:1; min-width:0; }
+
+  /* HERO */
+  .emu-hero { background:linear-gradient(135deg,var(--primary-darker) 0%,var(--primary) 50%,#2e75d4 100%); padding:72px 60px 60px; position:relative; overflow:hidden; }
+  .emu-hero::before { content:''; position:absolute; top:-100px; right:-100px; width:500px; height:500px; background:radial-gradient(circle,rgba(255,255,255,.08) 0%,transparent 70%); border-radius:50%; }
+  .emu-hero-eyebrow { font-size:12px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#facc15; margin-bottom:16px; }
+  .emu-hero h1 { font-family:'Sora',sans-serif; font-size:48px; font-weight:800; color:#fff; line-height:1.1; margin-bottom:20px; max-width:800px; letter-spacing:-1px; }
+  .emu-hero h1 em { color:#facc15; font-style:normal; }
+  .emu-hero-sub { font-size:18px; color:rgba(255,255,255,.80); margin-bottom:32px; font-weight:400; max-width:600px; }
+  .emu-hero-bullets { display:grid; grid-template-columns:1fr 1fr; gap:10px 32px; margin-bottom:36px; max-width:720px; }
+  .emu-hero-bullet { display:flex; align-items:flex-start; gap:10px; font-size:14px; color:rgba(255,255,255,.88); font-weight:500; }
+  .emu-hero-bullet-icon { color:#4ade80; font-size:15px; margin-top:1px; flex-shrink:0; font-weight:700; }
+  .emu-hero-ctas { display:flex; gap:14px; align-items:center; margin-bottom:48px; flex-wrap:wrap; }
+  .emu-btn-primary { background:white; color:var(--primary); font-family:'DM Sans',sans-serif; font-weight:700; font-size:15px; padding:14px 28px; border-radius:8px; border:none; cursor:pointer; transition:all .2s; }
+  .emu-btn-primary:hover { background:#f0f6ff; transform:translateY(-1px); box-shadow:0 8px 24px rgba(0,0,0,.15); }
+  .emu-btn-secondary { background:transparent; color:#fff; font-family:'DM Sans',sans-serif; font-weight:600; font-size:15px; padding:13px 26px; border-radius:8px; border:2px solid rgba(255,255,255,.45); cursor:pointer; transition:all .2s; }
+  .emu-btn-secondary:hover { border-color:#fff; background:rgba(255,255,255,.1); }
+  .emu-hero-microcopy { font-size:12px; color:rgba(255,255,255,.5); margin-top:-8px; }
+
+  /* STAT CARDS */
+  .emu-stat-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; max-width:800px; margin-top:40px; }
+  .emu-stat-card { background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.18); border-radius:12px; padding:20px 16px; text-align:center; backdrop-filter:blur(8px); border-top:3px solid; }
+  .emu-stat-card:nth-child(1) { border-top-color:#4ade80; }
+  .emu-stat-card:nth-child(2) { border-top-color:#facc15; }
+  .emu-stat-card:nth-child(3) { border-top-color:#38bdf8; }
+  .emu-stat-card:nth-child(4) { border-top-color:#c084fc; }
+  .emu-stat-num { font-family:'Sora',sans-serif; font-size:36px; font-weight:800; color:#fff; line-height:1; margin-bottom:6px; }
+  .emu-stat-label { font-size:13px; font-weight:600; color:rgba(255,255,255,.9); margin-bottom:4px; }
+  .emu-stat-sub { font-size:11px; color:rgba(255,255,255,.55); line-height:1.3; }
+
+  /* STAKEHOLDER STRIP */
+  .emu-stakeholder-strip { background:#fff; border-bottom:1px solid var(--mgrey); padding:16px 60px; display:flex; gap:12px; align-items:center; position:sticky; top:var(--nav-h); z-index:100; }
+  .emu-strip-label { font-size:13px; font-weight:600; color:var(--dgrey); margin-right:8px; white-space:nowrap; }
+  .emu-strip-btn { padding:9px 20px; border-radius:24px; border:2px solid var(--mgrey); font-size:13px; font-weight:600; cursor:pointer; transition:all .2s; background:#fff; color:var(--dgrey); }
+  .emu-strip-btn:hover, .emu-strip-btn.active { border-color:var(--primary); background:var(--primary); color:#fff; }
+
+  /* SECTIONS */
+  .emu-section { padding:64px 60px; }
+  .emu-section-eyebrow { font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--primary); margin-bottom:10px; }
+  .emu-section-title { font-family:'Sora',sans-serif; font-size:34px; font-weight:700; color:#0f172a; margin-bottom:14px; line-height:1.2; letter-spacing:-.5px; }
+  .emu-section-sub { font-size:17px; color:var(--body); max-width:680px; line-height:1.65; margin-bottom:40px; }
+
+  /* DIAGNOSTIC BANNER */
+  .emu-diag-banner { background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%); padding:36px 60px; display:flex; align-items:center; justify-content:space-between; gap:24px; }
+  .emu-diag-banner h2 { font-family:'Sora',sans-serif; font-size:26px; font-weight:700; color:#fff; margin-bottom:8px; }
+  .emu-diag-banner p { font-size:15px; color:rgba(255,255,255,.85); max-width:580px; line-height:1.55; }
+  .emu-btn-white { background:#fff; color:var(--primary); font-family:'DM Sans',sans-serif; font-weight:700; font-size:14px; padding:13px 26px; border-radius:8px; border:none; cursor:pointer; white-space:nowrap; }
+  .emu-btn-white:hover { background:#f0f6ff; }
+
+  /* PROBLEM */
+  .emu-problem-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:36px; }
+  .emu-problem-col { border-radius:12px; padding:28px; }
+  .emu-problem-col.bad { background:#FFF0F0; border:1px solid #FECACA; border-top:4px solid var(--red); }
+  .emu-problem-col.good { background:var(--primary-light); border:1px solid var(--primary-border); border-top:4px solid var(--primary); }
+  .emu-problem-col h3 { font-family:'Sora',sans-serif; font-size:17px; font-weight:700; margin-bottom:16px; }
+  .emu-problem-col.bad h3 { color:var(--red); }
+  .emu-problem-col.good h3 { color:var(--primary); }
+  .emu-problem-item { display:flex; gap:10px; margin-bottom:10px; font-size:14px; color:var(--body); align-items:flex-start; }
+  .emu-problem-result-bad { margin-top:14px; font-size:13px; font-weight:700; color:var(--red); }
+  .emu-problem-result-good { margin-top:14px; font-size:13px; font-weight:700; color:var(--primary); }
+  .emu-retention-table { width:100%; border-collapse:collapse; border-radius:10px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,.06); }
+  .emu-retention-table th { padding:14px 20px; font-family:'Sora',sans-serif; font-size:14px; font-weight:700; }
+  .emu-retention-table th:first-child { background:#FFF0F0; color:var(--red); border-right:2px solid #fff; }
+  .emu-retention-table th:last-child { background:var(--primary-light); color:var(--primary); }
+  .emu-retention-table td { padding:11px 20px; font-size:13px; color:var(--body); border-top:1px solid var(--mgrey); }
+  .emu-retention-table td:first-child { background:#fffafb; border-right:2px solid #fff; }
+  .emu-retention-table td:last-child { background:#f0f7ff; }
+  .emu-retention-cite { font-size:11px; color:var(--dgrey); font-style:italic; margin-top:12px; text-align:right; }
+
+  /* 8-STEP MODEL */
+  .emu-steps-flow { display:grid; grid-template-columns:repeat(4,1fr); gap:0; margin-bottom:12px; }
+  .emu-step-row2 { display:grid; grid-template-columns:repeat(4,1fr); gap:0; }
+  .emu-step-card { padding:24px 20px; position:relative; }
+  .emu-step-card::after { content:'▶'; position:absolute; right:-8px; top:50%; transform:translateY(-50%); font-size:16px; color:rgba(255,255,255,.4); z-index:1; }
+  .emu-step-card:last-child::after { display:none; }
+  .emu-step-num { font-family:'Sora',sans-serif; font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; opacity:.7; margin-bottom:6px; color:#fff; }
+  .emu-step-title { font-family:'Sora',sans-serif; font-size:16px; font-weight:700; color:#fff; margin-bottom:8px; }
+  .emu-step-desc { font-size:12px; color:rgba(255,255,255,.82); line-height:1.5; margin-bottom:8px; }
+  .emu-step-ref { font-size:10px; color:rgba(255,255,255,.55); font-style:italic; }
+
+  /* DIFFERENTIATORS */
+  .emu-diff-table { width:100%; border-collapse:collapse; border-radius:12px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,.07); }
+  .emu-diff-table tr:nth-child(odd) td { background:#fff; }
+  .emu-diff-table tr:nth-child(even) td { background:var(--lgrey); }
+  .emu-diff-icon-cell { width:60px; text-align:center; font-size:24px; padding:20px 16px; vertical-align:middle; }
+  .emu-diff-main { padding:20px 24px; vertical-align:top; border-left:3px solid; }
+  .emu-diff-main h4 { font-family:'Sora',sans-serif; font-size:16px; font-weight:700; color:#0f172a; margin-bottom:6px; }
+  .emu-diff-main p { font-size:13px; color:var(--body); line-height:1.55; }
+  .emu-diff-research { padding:20px 24px; vertical-align:top; background:#EFF6FF !important; border-left:3px solid var(--primary) !important; width:42%; }
+  .emu-diff-research-label { font-size:10px; font-weight:700; letter-spacing:1px; color:var(--primary); text-transform:uppercase; margin-bottom:6px; }
+  .emu-diff-research p { font-size:12px; color:var(--body); line-height:1.5; font-style:italic; }
+
+  /* PROGRAMMES */
+  .emu-prog-level { margin-bottom:36px; }
+  .emu-prog-level-label { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+  .emu-prog-level-badge { color:#fff; font-size:11px; font-weight:700; padding:4px 12px; border-radius:20px; letter-spacing:.5px; }
+  .emu-prog-level-title { font-family:'Sora',sans-serif; font-size:20px; font-weight:700; color:#0f172a; }
+  .emu-prog-scroll { display:flex; gap:16px; overflow-x:auto; padding-bottom:8px; scrollbar-width:thin; }
+  .emu-prog-card { flex-shrink:0; width:220px; background:#fff; border-radius:12px; border:1px solid var(--mgrey); border-top:4px solid; padding:20px; transition:transform .2s,box-shadow .2s; cursor:pointer; }
+  .emu-prog-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(35,102,201,.12); }
+  .emu-prog-card-icon { font-size:28px; margin-bottom:10px; }
+  .emu-prog-card h4 { font-family:'Sora',sans-serif; font-size:15px; font-weight:700; color:#0f172a; margin-bottom:6px; }
+  .emu-prog-level-tag { font-size:11px; color:var(--dgrey); margin-bottom:10px; font-style:italic; }
+  .emu-prog-card p { font-size:12px; color:var(--body); line-height:1.5; margin-bottom:12px; }
+  .emu-prog-card-link { font-size:12px; font-weight:700; color:var(--primary); text-decoration:none; }
+  .emu-english-highlight { background:linear-gradient(135deg,var(--primary-light) 0%,#f0fdf4 100%); border:1px solid var(--primary-border); border-radius:14px; padding:28px 32px; margin-bottom:20px; }
+  .emu-english-highlight h3 { font-family:'Sora',sans-serif; font-size:20px; font-weight:700; color:var(--primary); margin-bottom:10px; }
+  .emu-english-highlight p { font-size:14px; color:var(--body); line-height:1.65; margin-bottom:16px; }
+  .emu-english-pathway { display:flex; gap:0; align-items:center; flex-wrap:wrap; }
+  .emu-eng-step { background:var(--primary); color:#fff; font-size:12px; font-weight:600; padding:8px 14px; border-radius:6px; white-space:nowrap; }
+  .emu-eng-arrow { color:var(--dgrey); font-size:18px; margin:0 6px; }
+
+  /* INTERNATIONAL */
+  .emu-intl-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:32px; }
+  .emu-intl-card { background:#fff; border-radius:12px; padding:24px 28px; border:1px solid var(--mgrey); border-left:5px solid; }
+  .emu-intl-card h3 { font-family:'Sora',sans-serif; font-size:18px; font-weight:700; color:#0f172a; margin-bottom:12px; }
+  .emu-intl-card p { font-size:14px; color:var(--body); line-height:1.65; margin-bottom:14px; }
+  .emu-intl-tag-row { display:flex; flex-wrap:wrap; gap:8px; }
+  .emu-intl-tag { background:var(--primary-light); color:var(--primary); font-size:12px; font-weight:600; padding:5px 12px; border-radius:20px; border:1px solid var(--primary-border); }
+
+  /* RESEARCH STRIP */
+  .emu-research-strip { display:grid; grid-template-columns:repeat(6,1fr); gap:0; border-radius:12px; overflow:hidden; }
+  .emu-research-tile { padding:28px 16px; text-align:center; }
+  .emu-research-stat { font-family:'Sora',sans-serif; font-size:32px; font-weight:800; color:#fff; margin-bottom:6px; }
+  .emu-research-label { font-size:12px; color:rgba(255,255,255,.85); line-height:1.4; margin-bottom:6px; font-weight:500; }
+  .emu-research-src { font-size:10px; color:rgba(255,255,255,.55); font-style:italic; }
+
+  /* AI CARDS */
+  .emu-ai-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+  .emu-ai-card { background:#fff; border-radius:12px; padding:24px; border:1px solid var(--mgrey); transition:all .2s; border-top:4px solid transparent; }
+  .emu-ai-card:hover { border-top-color:var(--primary); transform:translateY(-3px); box-shadow:0 8px 24px rgba(35,102,201,.1); }
+  .emu-ai-card-icon { font-size:32px; margin-bottom:12px; }
+  .emu-ai-card h3 { font-family:'Sora',sans-serif; font-size:16px; font-weight:700; color:#0f172a; margin-bottom:8px; }
+  .emu-ai-card p { font-size:13px; color:var(--body); line-height:1.55; margin-bottom:10px; }
+  .emu-ai-card-ref { font-size:11px; color:var(--dgrey); font-style:italic; }
+
+  /* STAKEHOLDER CARDS */
+  .emu-stakeholder-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; }
+  .emu-sth-card { border-radius:12px; padding:28px 22px; border:1px solid var(--mgrey); border-top:5px solid; background:#fff; }
+  .emu-sth-icon { font-size:36px; margin-bottom:12px; }
+  .emu-sth-card h3 { font-family:'Sora',sans-serif; font-size:18px; font-weight:700; margin-bottom:16px; }
+  .emu-sth-benefit { display:flex; gap:8px; font-size:13px; color:var(--body); margin-bottom:8px; align-items:flex-start; }
+  .emu-sth-cta { margin-top:16px; font-size:13px; font-weight:700; color:var(--primary); display:block; text-decoration:none; cursor:pointer; }
+
+  /* COMPARE TABLE */
+  .emu-compare-table { width:100%; border-collapse:collapse; border-radius:12px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,.07); }
+  .emu-compare-table th { padding:14px 20px; font-family:'Sora',sans-serif; font-size:14px; font-weight:700; }
+  .emu-compare-table th:first-child { background:var(--lgrey); color:var(--dgrey); text-align:left; }
+  .emu-compare-table th:nth-child(2) { background:#FFF0F0; color:var(--red); }
+  .emu-compare-table th:last-child { background:var(--primary); color:#fff; }
+  .emu-compare-table td { padding:12px 20px; font-size:13px; color:var(--body); border-top:1px solid var(--mgrey); }
+  .emu-compare-table td:first-child { font-weight:600; color:#0f172a; background:var(--lgrey); }
+  .emu-compare-table td:nth-child(2) { background:#fffafb; }
+  .emu-compare-table td:last-child { background:var(--primary-light); color:var(--primary); font-weight:600; }
+
+  /* TESTIMONIALS */
+  .emu-testi-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-bottom:32px; }
+  .emu-testi-card { background:#fff; border-radius:12px; padding:28px; border:1px solid var(--mgrey); position:relative; }
+  .emu-testi-quote { font-size:64px; color:var(--primary); opacity:.08; font-family:Georgia,serif; position:absolute; top:12px; left:20px; line-height:1; }
+  .emu-testi-text { font-size:14px; color:var(--body); line-height:1.65; font-style:italic; margin-bottom:16px; padding-top:8px; }
+  .emu-testi-author { font-size:13px; font-weight:700; color:var(--primary); }
+  .emu-testi-role { font-size:12px; color:var(--dgrey); }
+  .emu-trust-row { display:flex; gap:24px; justify-content:center; flex-wrap:wrap; margin-top:8px; }
+  .emu-trust-badge { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--primary); background:var(--primary-light); border-radius:24px; padding:8px 18px; border:1px solid var(--primary-border); }
+
+  /* FREE RESOURCES */
+  .emu-res-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-bottom:28px; }
+  .emu-res-card { background:#fff; border-radius:12px; padding:24px; border:1px solid var(--mgrey); border-top:4px solid; }
+  .emu-res-card-icon { font-size:32px; margin-bottom:12px; }
+  .emu-res-card h3 { font-family:'Sora',sans-serif; font-size:16px; font-weight:700; color:#0f172a; margin-bottom:6px; }
+  .emu-res-card p { font-size:13px; color:var(--body); line-height:1.55; margin-bottom:12px; }
+  .emu-res-card-link { font-size:13px; font-weight:700; color:var(--primary); text-decoration:none; }
+
+  /* BOTTOM CTA */
+  .emu-bottom-cta { background:linear-gradient(135deg,var(--primary-darker) 0%,var(--primary) 100%); padding:64px 60px; text-align:center; }
+  .emu-bottom-cta h2 { font-family:'Sora',sans-serif; font-size:36px; font-weight:800; color:#fff; margin-bottom:14px; letter-spacing:-.5px; }
+  .emu-bottom-cta p { font-size:17px; color:rgba(255,255,255,.75); max-width:580px; margin:0 auto 32px; line-height:1.65; }
+  .emu-cta-group { display:flex; gap:16px; justify-content:center; }
+
+  /* FOOTER */
+  .emu-footer { background:var(--primary-darker); padding:56px 60px 24px; }
+  .emu-footer-grid { display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:48px; margin-bottom:48px; }
+  .emu-footer-col h4 { font-family:'Sora',sans-serif; font-size:14px; font-weight:700; color:#fff; margin-bottom:16px; }
+  .emu-footer-col p, .emu-footer-col a { font-size:13px; color:rgba(255,255,255,.55); text-decoration:none; display:block; margin-bottom:8px; }
+  .emu-footer-col a:hover { color:rgba(255,255,255,.85); }
+  .emu-footer-logo { font-family:'Sora',sans-serif; font-size:22px; font-weight:800; color:#fff; margin-bottom:10px; }
+  .emu-footer-logo span { color:#facc15; }
+  .emu-footer-divider { border-top:1px solid rgba(255,255,255,.08); padding-top:20px; display:flex; justify-content:space-between; align-items:center; }
+  .emu-footer-copy { font-size:12px; color:rgba(255,255,255,.35); }
+`;
+
+// ── DATA ───────────────────────────────────────────────────────────────────────
+const heroBullets = [
+  "Science-backed: Diagnostic → Remedy → Interactive → Practice → Mock",
+  "Moving students from confusion to confidence in every subject",
+  "Converting passive study → 50%+ active, long-term mastery",
+  "Overcoming the brain's natural rapid-forgetting problem",
+  "Enhancing self-learning skills and learner independence",
+  "International curriculum mastery for conceptual & unseen exams",
+  "Empowering all stakeholders — students, teachers, schools, parents",
+  "Overcoming language barriers and reducing tutor dependency",
 ];
 
-const masteryCycleSteps = [
-  {
-    step: 1,
-    title: "Diagnostic Analysis",
-    purpose: "Identifies each learner's conceptual gaps before instruction begins",
-    research: "Black & Wiliam (1998) - formative and diagnostic assessment improves learning outcomes",
-  },
-  {
-    step: 2,
-    title: "Remedial Concept Repair",
-    purpose: "Targeted micro-lessons rebuild missing foundational knowledge",
-    research: "Bloom (1984) - mastery learning shows targeted corrective instruction dramatically improves achievement",
-  },
-  {
-    step: 3,
-    title: "Interactive Learning",
-    purpose: "H5P-powered active engagement replaces passive video consumption",
-    research: "Freeman et al. (2014) - active learning significantly improves student performance in STEM courses",
-  },
-  {
-    step: 4,
-    title: "Past Paper Practice",
-    purpose: "Authentic Cambridge past questions build exam familiarity and strategy",
-    research: "Bartlett (2009) - exam preparation improves through practice with authentic past papers",
-  },
-  {
-    step: 5,
-    title: "Retrieval Practice",
-    purpose: "Scheduled recall sessions defeat the forgetting curve",
-    research: "Roediger & Karpicke (2006) - retrieval practice improves long-term retention more than repeated study",
-  },
-  {
-    step: 6,
-    title: "Formative Assessment",
-    purpose: "Continuous check-ins identify gaps before they compound",
-    research: "Black & Wiliam (1998) - formative assessment significantly improves student achievement",
-  },
-  {
-    step: 7,
-    title: "Corrective Study",
-    purpose: "Personalised feedback and targeted revision restore mastery",
-    research: "Hattie & Timperley (2007) - feedback and corrective instruction strongly impact learning outcomes",
-  },
-  {
-    step: 8,
-    title: "Time-Bound Mock Exams",
-    purpose: "Simulated exams develop timing, stamina, and exam strategy",
-    research: "Bjork & Bjork (2011) - testing under exam conditions as desirable difficulties improves performance",
-  },
+const statCards = [
+  { num: "75%+", label: "Retention Rate", sub: "vs passive study (Cepeda et al., 2006)" },
+  { num: "55%", label: "Failure Rate Drop", sub: "active vs passive learning (Freeman et al., 2014)" },
+  { num: "10–15×", label: "Retention Advantage", sub: "practice by doing (Dunlosky et al., 2013)" },
+  { num: "2.0", label: "Effect Size — Mastery", sub: "highest in educational psychology (Bloom, 1984)" },
+];
+
+const steps1 = [
+  { num: "Step 1", title: "Diagnostic Analysis", desc: "AI pinpoints exact conceptual gaps before teaching begins", ref: "Black & Wiliam (1998)", bg: "var(--primary)", br: "10px 0 0 10px" },
+  { num: "Step 2", title: "Remedial Concept Repair", desc: "Targeted micro-lessons rebuild foundational understanding", ref: "Bloom (1984)", bg: "#1d59b8", br: "0" },
+  { num: "Step 3", title: "Interactive Learning", desc: "H5P active modules — no passive video consumption", ref: "Freeman et al. (2014)", bg: "#1a4fa0", br: "0" },
+  { num: "Step 4", title: "Past Paper Practice", desc: "Authentic Cambridge past questions from Day 1", ref: "Bartlett (2009)", bg: "#163f85", br: "0 10px 10px 0" },
+];
+const steps2 = [
+  { num: "Step 5", title: "Retrieval Practice", desc: "Scheduled recall sessions defeat the forgetting curve", ref: "Roediger & Karpicke (2006)", bg: "#0e3d80", br: "10px 0 0 10px" },
+  { num: "Step 6", title: "Formative Assessment", desc: "Continuous check-ins catch gaps before they compound", ref: "Black & Wiliam (1998)", bg: "#0B3C5D", br: "0" },
+  { num: "Step 7", title: "Corrective Study", desc: "AI-driven personalised feedback restores mastery", ref: "Hattie & Timperley (2007)", bg: "#0d3255", br: "0" },
+  { num: "Step 8", title: "Mock Exam Simulation", desc: "Full Cambridge-format simulations build stamina & strategy", ref: "Bjork & Bjork (2011)", bg: "#0a2844", br: "0 10px 10px 0" },
+];
+
+const differentiators = [
+  { icon: "🎯", title: "Diagnostic-First — Always", desc: "No student begins a course without first taking an AI-powered diagnostic. We assess where you are before we teach you anything — so no time is wasted on content you already know.", research: "Mastery Learning (Bloom, 1984): students taught after diagnostic placement outperform non-diagnosed peers by effect size 2.0 — the highest recorded in educational psychology.", iconBg: "var(--primary)", borderColor: "var(--teal)", topBr: "10px 0 0 0", botBr: "" },
+  { icon: "🖥", title: "Practice by Doing — No Passive Video", desc: "Every module requires student action: H5P drag-and-drop, structured writing, calculations with instant feedback. There are no lecture videos. Learning happens through doing.", research: "Freeman et al. (2014): active learning produces 55% lower failure rates than passive instruction. Dunlosky et al. (2013): practice by doing improves retention 10–15x over re-reading.", iconBg: "var(--primary-dark)", borderColor: "var(--primary)", topBr: "", botBr: "" },
+  { icon: "🖼", title: "Dual Coding — Text and Visuals Together", desc: "Every concept is taught with both a written explanation and an explanatory diagram. Not decorative images — visual representations that directly illustrate the concept being taught.", research: "Mayer (2009): students who receive explanatory text and visuals learn 89% more than text alone. Paivio (1986): dual coding activates two separate memory systems simultaneously.", iconBg: "#163f85", borderColor: "var(--purple)", topBr: "", botBr: "" },
+  { icon: "🔁", title: "Spaced Retrieval — Not Cramming", desc: "Topic quizzes placed at the end of every module interrupt the forgetting curve. Cumulative quizzes resurface earlier topics at scientifically optimal intervals — built into the course structure.", research: "Roediger & Karpicke (2006): 52% retention advantage for retrieval over restudy at one month. Cepeda et al. (2006): spaced learning produces 10–30% higher retention than massed study.", iconBg: "var(--primary-darker)", borderColor: "var(--green)", topBr: "", botBr: "" },
+  { icon: "📊", title: "Feedback That Teaches — Not Just Marks", desc: "Every wrong answer is followed by the correct answer, why the student's answer was wrong, and what the examiner expects. No score-and-move-on. Feedback is the learning mechanism.", research: "Hattie (2009): feedback has an effect size of 0.73 — placing it in the top 10 most powerful influences on learning across 800+ meta-analyses covering 250 million students.", iconBg: "#0d3066", borderColor: "var(--primary-dark)", topBr: "", botBr: "" },
+  { icon: "🔬", title: "Cambridge Examiner Intelligence", desc: "EduMeUp's content is informed by Cambridge examiner insights — identifying the exact errors that cost students marks year after year. Our AI Tutor delivers AO-standard feedback, not generic answers.", research: "Sweller (1988): worked example instruction + expert insight outperforms problem-solving alone by effect size 0.57. Perkins & Salomon (1989): surface pattern-matching fails under novel exam conditions.", iconBg: "#0a2244", borderColor: "var(--red)", topBr: "", botBr: "0 0 0 10px" },
+];
+
+const lowerSecondaryCards = [
+  { icon: "🗣", title: "English Language", level: "Grade 6–8", desc: "Vocabulary, comprehension, writing mechanics across all three grade levels. Foundation for the full English pathway.", color: "var(--teal)" },
+  { icon: "📐", title: "Mathematics", level: "Grade 6–8", desc: "Linear equations, geometry, probability, mensuration — systematic foundation before O-Level entry.", color: "var(--primary)" },
+  { icon: "🔬", title: "Physics", level: "Grade 6–8", desc: "Forces, energy, circuits, waves — conceptual foundations built systematically before O-Level.", color: "var(--primary-dark)" },
+  { icon: "⚗", title: "Chemistry", level: "Grade 6–8", desc: "Matter, atomic structure, acids/bases, chemical equations — strong foundation for O-Level Chemistry.", color: "var(--primary-darker)" },
+  { icon: "🧬", title: "Biology", level: "Grade 6–8", desc: "Cells, photosynthesis, genetics, immunity — complete three-grade life science foundation.", color: "var(--green)" },
+];
+
+const bridgeCards = [
+  { icon: "🌉", title: "English Bridge", level: "Pre-O-Level", desc: "ESL1 → ESL2 → Bridge B1+→B2. Structured English pathway to exam readiness.", color: "var(--primary)" },
+  { icon: "🌉", title: "Mathematics Bridge", level: "Pre-O-Level", desc: "40 modules covering the full pre-O-Level mathematics foundation. 80% mastery gates.", color: "var(--primary-dark)" },
+  { icon: "🌉", title: "Physics Bridge", level: "Pre-O-Level", desc: "14 modules building the conceptual physics foundation for O-Level entry.", color: "var(--primary-darker)" },
+  { icon: "🌉", title: "Chemistry Bridge", level: "Pre-O-Level", desc: "18 modules — vetted content, H5P retrieval at every stage, factually verified.", color: "var(--teal)" },
+  { icon: "🌉", title: "Economics Bridge", level: "Pre-O-Level", desc: "Core economic concepts and analysis skills before O-Level Economics begins.", color: "var(--amber)" },
+];
+
+const researchTiles = [
+  { stat: "89%", label: "more learning: text + visuals vs text alone", src: "Mayer, 2009", bg: "var(--primary)" },
+  { stat: "10–15×", label: "retention: practice by doing vs re-reading", src: "Dunlosky et al., 2013", bg: "var(--primary-dark)" },
+  { stat: "55%", label: "lower failure rate: active vs passive", src: "Freeman et al., 2014", bg: "#163f85" },
+  { stat: "0.73", label: "effect size of feedback — top 10 influences", src: "Hattie, 2009", bg: "var(--primary-darker)" },
+  { stat: "52%", label: "retention advantage at one month: retrieval vs restudy", src: "Roediger & Karpicke, 2006", bg: "#0d3066" },
+  { stat: "2.0", label: "effect size of mastery learning — highest in edu. psychology", src: "Bloom, 1984", bg: "#0a2244" },
+];
+
+const aiCards = [
+  { icon: "🎯", title: "Smart Gap Detection", desc: "Identifies each student's exact weak topics before teaching begins — so no time is wasted on already-mastered content.", ref: "Black & Wiliam (1998) — Formative assessment improves outcomes by 0.4–0.7 SD" },
+  { icon: "💬", title: "AI Tutor — Cambridge Standard", desc: "24/7 tutoring that delivers AO-standard feedback — the same depth an expert examiner would provide. Available any time, on any device.", ref: "VanLehn (2011) — Intelligent tutoring effect size d=0.76" },
+  { icon: "📊", title: "Predictive Risk Alerts", desc: "Identifies at-risk students 30–45 days before exams — giving schools, teachers, and parents time to intervene before it is too late.", ref: "Baker & Inventado (2014) — Early risk detection" },
+  { icon: "📅", title: "Smart Study Scheduling", desc: "Retrieval sessions are scheduled at the scientifically optimal moment for each student's individual forgetting curve — delivered via WhatsApp and email.", ref: "Cepeda et al. (2006) — Spaced retrieval scheduling" },
+  { icon: "👨‍👩‍👧", title: "Parent Visibility System", desc: "Automatic weekly progress reports and score-drop alerts keep families informed — real data, not general reassurance.", ref: "Epstein (2005) — Parental monitoring improves achievement" },
+  { icon: "📝", title: "Personalised Assessment", desc: "Every assessment is matched to each student's current level and gap profile — not a generic test everyone sits regardless of where they are.", ref: "Brusilovsky (2001) — Adaptive testing reduces teacher workload" },
 ];
 
 const stakeholders = [
-  {
-    title: "STUDENTS",
-    colorClass: "border-t-[#1e1b4b]",
-    bulletColorClass: "bg-[#2366c9]",
-    features: [
-      "Personalised learning pathways",
-      "AI-powered diagnostic analysis",
-      "Interactive H5P mastery modules",
-      "Cambridge past paper practice",
-      "Retrieval practice & spaced repetition",
-      "Metacognitive progress tracking",
-    ],
-  },
-  {
-    title: "TEACHERS",
-    colorClass: "border-t-teal-500",
-    bulletColorClass: "bg-teal-500",
-    features: [
-      "Cambridge exam system training",
-      "One-day & SMK workshops",
-      "Bloom's-aligned lesson resources",
-      "AI teaching insights & automation",
-      "Professional learning communities",
-      "Competency gap development plans",
-    ],
-  },
-  {
-    title: "SCHOOLS",
-    colorClass: "border-t-[#2366c9]",
-    bulletColorClass: "bg-[#2366c9]",
-    features: [
-      "Full school partnership model",
-      "Real-time analytics dashboards",
-      "White-label platform option",
-      "Curriculum quality assurance",
-      "Admin reporting automation",
-      "Teacher performance monitoring",
-    ],
-  },
-  {
-    title: "PARENTS",
-    colorClass: "border-t-amber-500",
-    bulletColorClass: "bg-amber-500",
-    features: [
-      "Progress dashboards & alerts",
-      "Parent training modules",
-      "Home-support activity guides",
-      "Early learning gap identification",
-      "School-home communication",
-      "Co-facilitation strategies",
-    ],
-  },
+  { icon: "👨‍🎓", title: "Students", color: "var(--green)", checkColor: "var(--green)", benefits: ["Free AI Diagnostic — find your starting point before studying", "Interactive courses — practice by doing, not passive watching", "AI Tutor available 24/7 for Cambridge-standard subject help", "Dashboard tracks mastery topic by topic, in real time", "Pre-O-Level Certification available in 4 subjects"], cta: "→ For Students Page" },
+  { icon: "👨‍👩‍👧", title: "Parents", color: "var(--primary)", checkColor: "var(--primary)", benefits: ["Linked parent dashboard — real data, not verbal updates", "Instant WhatsApp alert when your child's score drops", "Parent Guides: O-Level system explained clearly", "Group discount for siblings or study partners", "Evidence-based reassurance — not marketing claims"], cta: "→ For Parents Page" },
+  { icon: "🏫", title: "Teachers", color: "var(--amber)", checkColor: "var(--amber)", benefits: ["Use AI diagnostics for classroom placement — no guesswork", "Download free lesson plan templates immediately", "Cambridge Teacher Mastery Workshop with CPD certificate", "AI teaching tools reduce preparation time significantly", "Subject Mastery Knowledge training per Cambridge subject"], cta: "→ Teacher Training Page" },
+  { icon: "🏛", title: "Schools", color: "var(--primary-darker)", checkColor: "var(--primary-darker)", benefits: ["Bulk enrolment with centralised school-level analytics", "Complete teacher professional development package", "Custom diagnostic programmes aligned to your school calendar", "Real-time principal dashboard — all students, all subjects", "White-label platform with your school branding"], cta: "→ For Schools Page" },
 ];
 
-const platformComparisonData = [
-  ['Research-Backed Learning Science', 'Full 8-step cycle', 'Partial', 'Limited', 'Partial', 'Minimal'],
-  ['Personalised Diagnostic Pathways', 'AI-powered, real-time', 'Prompt-based only', 'None', 'Partial', 'Partial'],
-  ['Interactive Modules (No Passive Video)', 'H5P throughout', 'None', 'Video-only', 'Partial', 'Video-only'],
-  ['Retrieval + Spaced Repetition System', 'Built-in, automated', 'None', 'None', 'Partial', 'None'],
-  ['Full Stakeholder Ecosystem', 'All four groups', 'None', 'Students only', 'Students only', 'Students only'],
-  ['Cambridge / O-Level Specialisation', 'Purpose-built', 'Generic', 'Generic', 'Yes', 'Yes'],
-  ['Bridge / Early Prep Courses (Gr 7-8)', 'Unique - 5 subjects', 'None', 'None', 'None', 'None'],
-  ['School Partnership B2B Model', 'Complete partnership', 'None', 'None', 'Limited', 'None'],
-  ['AI Diagnostic + Chatbot Support', 'Integrated, curriculum-linked', 'General purpose', 'Partial', 'Partial', 'Partial'],
-  ['Dual Curriculum (National + International)', 'Full dual coverage', 'None', 'None', 'None', 'None'],
+const compareRows = [
+  ["Gap Identification", "Random, reactive — often too late", "AI diagnostic before teaching begins"],
+  ["Foundation Repair", "Rarely addressed systematically", "Structured remedial modules built in"],
+  ["Retention Strategy", "None — hope it sticks", "AI-scheduled spaced retrieval system"],
+  ["Past Paper Practice", "Ad hoc, teacher-dependent", "Cambridge past papers integrated from Day 1"],
+  ["Parent Visibility", "Monthly verbal updates (if any)", "Real-time dashboard + weekly AI reports"],
+  ["Availability", "3 hours/week maximum", "24/7 on any device"],
+  ["Student Independence", "Dependency increases over time", "Self-learning skills built into every step"],
+  ["Future Skills Development", "Exam-only focus", "Learn-how-to-learn, metacognition, self-regulation built in"],
 ];
 
-const strategies = [
-  { title: "Diagnostic", desc: "Identify gaps before you start", icon: Search },
-  { title: "Personalized", desc: "Teacher-guided pathways", icon: UserCheck },
-  { title: "Active Learning", desc: "Practice by doing", icon: Zap },
-  { title: "Spaced Repetition", desc: "Review at optimal intervals", icon: RefreshCw },
-  { title: "Dual Coding", desc: "Visual + verbal learning", icon: Brain },
-  { title: "Retrieval", desc: "Frequent low-stakes quizzes", icon: Target },
-  { title: "Interleaved", desc: "Mix topics for depth", icon: Layers },
-  { title: "Mastery", desc: "True understanding tracking", icon: LineChart }
+const testimonials = [
+  { text: "For the first time, I can actually see exactly where my child is struggling — not just hear 'he'll be fine' from the tutor. The weekly report tells me exactly what to ask about.", author: "A.K. — Parent", role: "O-Level student, Mathematics" },
+  { text: "I used to rely on three tutors. After EduMeUp, I reduced to one — and my grades improved significantly. The diagnostic showed me what I actually needed to work on.", author: "S.M. — O-Level Student", role: "Physics & Chemistry" },
+  { text: "We partnered with EduMeUp and immediately had something genuinely innovative to offer parents and students. The teacher training alone transformed how our staff deliver Cambridge lessons.", author: "F.H. — School Principal", role: "School Partnership Programme" },
 ];
 
-export default function Home() {
-  const [, setLocation] = useLocation();
-  const [checkedItems, setCheckedItems] = useState<number[]>([]);
-  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
-  const { formatPrice } = useCurrency();
+const freeResources = [
+  { icon: "⚡", title: "Magic Sheets", desc: "One-page dual-coded concept summaries per subject. Download free samples for Physics, Chemistry, Maths, and more. Visual + text for maximum retention.", link: "Download Free →", color: "var(--primary)" },
+  { icon: "🖥", title: "Interactive Module Samples", desc: "One free H5P module per subject. Experience the actual learning format — not a video, not a screenshot. See exactly how practice by doing works.", link: "Open Free Module →", color: "var(--teal)" },
+  { icon: "📝", title: "Sample Workbooks", desc: "4–6 page deep-dives covering one topic per workbook. Explanations, worked examples, practice questions — the same depth as paid courses.", link: "Download Free →", color: "var(--primary-darker)" },
+];
 
-  const handleCheck = (index: number) => {
-    setCheckedItems(prev =>
-      prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]
-    );
-  };
+// ── COMPONENTS ─────────────────────────────────────────────────────────────────
+function SectionWrapper({ id, bg = "#fff", children }) {
+  return (
+    <section id={id} className="emu-section" style={{ background: bg }}>
+      {children}
+    </section>
+  );
+}
 
-  const getResult = () => {
-    const count = checkedItems.length;
-    if (count === 0) return null;
-    if (count <= 1) return {
-      title: "✓ Your child may already be well-prepared.",
-      desc: "But take our free diagnostic to confirm - you might be surprised by hidden gaps!",
-      color: "text-[#2366c9]"
-    };
-    if (count <= 3) return {
-      title: "EduMeUp can help, but may not be critical urgency.",
-      desc: "Consider a prevention strategy. Explore Bridge Courses and Diagnostic Tools.",
-      color: "text-[#2366c9]"
-    };
-    return {
-      title: "Your child is exactly who we designed EduMeUp for.",
-      desc: "",
-      color: "text-blue-700"
-    };
-  };
+// ── MAIN COMPONENT ─────────────────────────────────────────────────────────────
+export default function EduMeUpHomepage() {
+  const [scrolled, setScrolled] = useState(false);
+  const [activeStrip, setActiveStrip] = useState("👨‍🎓 Student");
 
-  const result = getResult();
+  useEffect(() =>{
+    const styleEl = document.createElement("style");
+    styleEl.textContent = styles;
+    document.head.appendChild(styleEl);
+    return () => document.head.removeChild(styleEl);
+  }, []);
 
-  const learningSystemSteps = [
-    {
-      step: "STEP 1",
-      title: "PRECISION DIAGNOSTIC",
-      subtitle: "Step 1 of 8",
-      body: "A 90-minute AI-powered diagnostic maps your child's exact knowledge gaps before a single lesson begins. We don't guess - we measure. Every student starts with a personalised gap report so learning is targeted from Day 1.",
-      icon: Target,
-    },
-    {
-      step: "STEP 2",
-      title: "TARGETED FOUNDATION REPAIR",
-      subtitle: "Step 2 of 8",
-      body: "Identified gaps are closed through structured remedial modules - not glossed over. Weak foundations from Grade 6-8 are rebuilt concept by concept before any O-Level material is introduced. You cannot build a strong house on a cracked foundation.",
-      icon: Layers,
-    },
-    {
-      step: "STEP 3",
-      title: "INTERACTIVE CONCEPT MASTERY",
-      subtitle: "Step 3 of 8",
-      body: "No passive reading. No lecture-style videos. Every concept is delivered through H5P-powered interactive modules requiring the student to engage, respond, and demonstrate understanding - because passive consumption produces only 5-20% retention.",
-      icon: Zap,
-    },
-    {
-      step: "STEPS 4 & 5",
-      title: "CAMBRIDGE PAST PAPER PRACTICE + RETRIEVAL",
-      subtitle: "Steps 4 & 5 of 8",
-      body: "Students practice using real Cambridge O-Level past papers from the very first lesson - not just at the end. Practice is reinforced through active retrieval tasks scheduled at scientifically optimal intervals (Day 1, 3, 7, 14, 30, 90) to rewire memory pathways and prevent forgetting.",
-      icon: BookOpen,
-    },
-    {
-      step: "STEPS 6 & 7",
-      title: "FORMATIVE ASSESSMENT + CORRECTIVE STUDY",
-      subtitle: "Steps 6 & 7 of 8",
-      body: "After every unit, smart formative assessments check what hasn't stuck. Students are automatically routed back for corrective study on weak areas - not pushed forward with hidden gaps. The system finds the holes and fills them before they compound.",
-      icon: LineChart,
-    },
-    {
-      step: "STEP 8",
-      title: "TIME-BOUND MOCK EXAM SIMULATION",
-      subtitle: "Step 8 of 8",
-      body: "Full-length, timed Cambridge-style mock exams build exam stamina, pressure management, and final readiness. Students face the real experience before the real day - so on exam day, there are no surprises.",
-      icon: Calendar,
-    },
-  ];
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 60);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
-
+  const stripOptions = ["👨‍🎓 Student", "👨‍👩‍👧 Parent", "🏫 Teacher", "🏛 School"];
 
   return (
-    <Layout>
+    <div className="emu-body">
+      {/* MOCK BANNER */}
+      <div className="emu-mock-banner">
+        EduMeUp Homepage — Visual Mockup V4
+        <span>For Chief Advisor Review — Not for Public Use</span>
+      </div>
 
+      {/* NAVBAR */}
+      <nav className={`emu-navbar${scrolled ? " scrolled" : ""}`}>
+        <div className="emu-nav-logo">Edu<span>Me</span>Up</div>
+        <div className="emu-nav-links">
+          <a href="#programmes">Courses ▾</a>
+          <a href="#lower-secondary">Lower Secondary</a>
+          <a href="#bridge">Bridge Courses</a>
+          <a href="#certification">Certification</a>
+          <a href="#schools">For Schools</a>
+          <a href="#free-resources">Free Resources</a>
+          <a href="#research-strip">Research &amp; RnD</a>
+        </div>
+        <button className="emu-nav-cta">Free Diagnostic</button>
+      </nav>
 
+      {/* PAGE WRAPPER */}
+      <div className="emu-page-wrapper">
+        {/* SIDEBAR */}
+        <aside className="emu-sidebar">
+          <div className="emu-sidebar-diag">
+            <p>Start here — it's free</p>
+            <button>Take Free Diagnostic →</button>
+          </div>
+          <p className="emu-sidebar-label">On This Page</p>
+          {[
+            { group: "Learn", links: [["#problem","The Problem"],["#mastery","8-Step Model"],["#differentiators","Differentiators"],["#programmes","All Programmes"]] },
+            { group: "Cambridge", links: [["#intl","International Fit"],["#research-strip","Research Basis"],["#ai-support","AI Support"]] },
+            { group: "Who It's For", links: [["#stakeholders","Students"],["#stakeholders","Parents"],["#stakeholders","Teachers"],["#schools","Schools"]] },
+            { group: "Explore Free", links: [["#free-resources","Free Resource Zone"],["#compare","Why EduMeUp?"],["#testimonials","Testimonials"]] },
+          ].map(({ group, links }) => (
+            <div className="emu-sidebar-group" key={group}>
+              <div className="emu-sidebar-group-title">{group}</div>
+              {links.map(([href, label]) => (
+                <a key={label} href={href} className="emu-sidebar-link">{label}</a>
+              ))}
+            </div>
+          ))}
+        </aside>
 
-      {/* SECTION 1: HERO */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-blue-50/80 to-white py-16 md:py-24">
-        <div className="container-custom relative z-10">
+        {/* MAIN */}
+        <main className="emu-main">
 
-          {/* SECTION 1: 10X LEARNING LEAP MODEL (EXACT IMAGE MATCH) */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="max-w-5xl mx-auto border-slate-900 pl-6 md:pl-8 py-2 mb-16 text-left"
-          >
-            <h1 className="text-5xl md:text-[4.5rem] font-bold text-slate-900 mb-6 tracking-tight leading-none">
-              10X Learning Leap Model
-            </h1>
-            <h2 className="text-3xl md:text-[2.5rem] font-semibold text-slate-900 leading-snug mb-6">
-              The Research-Backed Learning Ecosystem That Replaces Traditional 5% Passive Learning With 50%+ Active Mastery
-            </h2>
-            <p className="text-sm md:text-base italic text-slate-600">
-              "Based on active learning research: Dale (1969) and Freeman et al. (2014)"
-            </p>
-          </motion.div>
-
-          {/* SECTION 2: IGCSE / O-Level Total Mastery System */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1 }}
-            className="max-w-[54rem] mx-auto mb-16"
-          >
-            {/* Background color ko slate-50 jaisa rakha gaya hai taake Pic 1 se match kare */}
-            <div className="bg-[#f8fafc] p-8 rounded-2xl border border-blue-100 shadow-sm">
-              <h3 className="text-xl md:text-[1.6rem] font-semibold text-slate-900 mb-6 flex items-center gap-2">
-                {/* Blue Dot */}
-                <div className="h-2 w-2 bg-[#2366c9] rounded-full shrink-0"></div>
-                IGCSE / O-Level Total Mastery System
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-y-5 gap-x-8">
-                {[
-                  "Moving Students from Confusion to Confidence",
-                  "5% Passive Retention to 50% Active Mastery",
-                  "Overcoming Brain Problem of Rapid Forgetting",
-                  "Enhancing self-learning skills & capabilities",
-                  "Mastery for Conceptual & Unseen Exams",
-                  "Empowering all education stakeholders",
-                  "Overcoming Language & Tutor dependency"
-                ].map((item, idx) => (
-                  <div key={idx} className="flex items-start gap-3">
-                    {/* Solid Light Green Circle with Thick Checkmark (Exact Pic 1 match) */}
-                    <div className="mt-0.5 bg-green-100 rounded-full p-1 shrink-0">
-                      <svg className="h-3.5 w-3.5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={4}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                    <span className="text-[15px] md:text-base font-medium text-slate-700 leading-snug">{item}</span>
+          {/* HERO */}
+          <section id="hero" className="emu-hero" style={{ paddingTop: 80 }}>
+            <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+              <div className="emu-hero-eyebrow">Cambridge O-Level &amp; IGCSE Preparation · Grade 6 through O-Level</div>
+              <h1>The World's Most Comprehensive<br /><em>Cambridge Education Ecosystem</em></h1>
+              <p className="emu-hero-sub">Research-validated. Diagnostic-first. Built on the science of how memory actually works.</p>
+              <div className="emu-hero-bullets">
+                {heroBullets.map((b, i) => (
+                  <div className="emu-hero-bullet" key={i}>
+                    <span className="emu-hero-bullet-icon">✓</span>{b}
                   </div>
                 ))}
               </div>
-            </div>
-          </motion.div>
-
-          {/* SECTION 3: USER PATH NAVIGATION */}
-          <section className="py-10 md:py-12 border-b border-blue-100">
-            <div className="container-custom">
-              <div className="max-w-5xl mx-auto p-4 md:p-6">
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-                  {[
-                    { label: "STUDENT", href: "/for-students", icon: Brain },
-                    { label: "SCHOOL", href: "/for-schools", icon: GraduationIcon },
-                    { label: "TEACHER", href: "/for-teachers", icon: BookOpen },
-                    { label: "PARENT", href: "/for-parents", icon: UserCheck }
-                  ].map((role) => (
-                    <motion.button
-                      key={role.label}
-                      whileHover={{ scale: 1.01 }}
-                      whileTap={{ scale: 0.99 }}
-                      onClick={() => {
-                        if (role.href) {
-                          setLocation(role.href);
-                        }
-                      }}
-                      className="w-full bg-white hover:bg-blue-50 px-4 py-3.5 md:py-4 rounded-xl transition-all border border-blue-200 hover:border-blue-300 shadow-sm hover:shadow-md group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2366c9]/40"
-                    >
-                      <div className="mx-auto h-12 w-12 md:h-16 md:w-16 bg-blue-100 text-[#2366c9] flex items-center justify-center mb-2">
-                        <role.icon className="h-7 w-7 md:h-9 md:w-9" />
-                      </div>
-                      <span className="tracking-[0.1em] text-[11px] md:text-xs font-semibold uppercase text-slate-800">{role.label}</span>
-                    </motion.button>
-                  ))}
-                </div>
-                <p className="text-center text-[11px] md:text-xs text-black mt-5">Click to explore your relevant section</p>
+              <div className="emu-hero-ctas">
+                <button className="emu-btn-primary">GET FREE AI DIAGNOSTIC</button>
+                <button className="emu-btn-secondary">EXPLORE PROGRAMMES</button>
               </div>
-            </div>
+              <p className="emu-hero-microcopy">No account required · No credit card · No commitment</p>
+              <div className="emu-stat-row">
+                {statCards.map((s, i) => (
+                  <div className="emu-stat-card" key={i}>
+                    <div className="emu-stat-num">{s.num}</div>
+                    <div className="emu-stat-label">{s.label}</div>
+                    <div className="emu-stat-sub">{s.sub}</div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
           </section>
 
-          {/* SECTION 4, 5 & 6: TEXT, BUTTONS, AND STATS */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="max-w-4xl mx-auto mt-10"
-          >
-            <div className="text-center w-full">
-              <div className="inline-block bg-blue-100 text-[#2366c9] px-6 py-3 rounded-full font-semibold text-base my-6 border border-blue-200">
-                Research shows 90% of passive learning is forgotten within six days.
-              </div>
-
-              <p className="text-base text-slate-700 max-w-3xl mx-auto leading-relaxed mt-4 mb-2">
-                EduMeUp diagnoses exactly where each learner stands, then rebuilds their understanding through a structured, science-backed 8-step mastery cycle - producing up to 10x better retention than passive learning methods.
-              </p>
-
-              <p className="text-lg font-semibold text-[#2366c9] mb-8">
-                EduMeUp engineers learning — using methods proven to work.
-              </p>
-
-              <p className="text-sm text-black mb-12">
-                Built for ambitious learners and high-performance schools worldwide.
-              </p>
-
-              <div className="flex flex-col sm:flex-row justify-center gap-4 mb-12">
-                <InquiryDialog
-                  defaultType="diagnostic"
-                  title="Free Diagnostic Assessment"
-                  trigger={
-                    <Button className="bg-[#2366c9] hover:bg-blue-700 font-semibold text-white text-[14px] py-3 px-6">
-                      START FREE DIAGNOSTIC NOW <ArrowRight className="ml-2 h-5 w-5" />
-                    </Button>
-                  }
-                />
-                <Button
-                  variant="outline"
-                  className="border-2 border-[#2366c9] text-[#2366c9] font-semibold text-[14px] py-3 px-6"
-                >
-                  SEE HOW THE SYSTEM WORKS <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </div>
-
-              {/* Stat Cards */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
-                {stats.map((stat, i) => (
-                  <motion.div
-                    key={i}
-                    whileHover={{ y: -4 }}
-                    className="bg-white p-6 rounded-xl border border-blue-100 shadow-sm hover:shadow-md hover:border-blue-300 transition-all"
-                  >
-                    <div className="text-[34px] font-semibold text-[#2366c9] mb-2">{stat.value}</div>
-                    <div className="text-[14px] font-semibold text-black uppercase tracking-wide mb-2">{stat.label}</div>
-                    <div className="text-[14px] text-black">{stat.sub}</div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-      {/* SECTION 1A: SCHOOL VALUE STRIP */}
-      <section id="school-section" className="bg-[#2366c9] text-white py-20 relative overflow-hidden">
-        <div className="container-custom relative z-10">
-          <div className="max-w-6xl mx-auto">
-
-            {/* Section Header */}
-            <div className="text-center max-w-3xl mx-auto mb-16">
-              {/* Section Header */}
-              <div className="text-center max-w-full mx-auto mb-16">
-                <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
-                  For Schools & Educational Institutions
-                </p>
-                <div className="flex justify-center w-full">
-                  <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white font-semibold leading-[1.1] mb-7 text-center tracking-tight px-4">
-                    Transform Your School into a Centre of Excellence
-                  </h2>
-                </div>
-
-                <p className="text-base font-normal tracking-[0.5px] text-slate-300 leading-relaxed max-w-3xl mx-auto text-left">
-                  Running a strong Cambridge school today requires more than good teachers.
-                  EduMeUp provides a complete academic infrastructure your leadership team can deploy immediately, allowing your school to focus
-                  on admissions, management, and growth.
-                </p>
-              </div>
-            </div>
-            {/* Feature Grid */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-
-              {/* Teacher Development */}
-              <div className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-[#2366c9] transition-all duration-300 group">
-                <h3 className="text-2xl font-semibold text-[#2366c9] mb-4">
-                  Teacher & Academic Development
-                </h3>
-                <ul className="text-[14px] text-black space-y-3 leading-relaxed">
-                  <li>SMK-Aligned Teacher Training</li>
-                  <li>Bridge Programs (Grade 7 &rarr; O-Level)</li>
-                  <li>Diagnostic Gap Analysis & Remedial Repair</li>
-                </ul>
-              </div>
-
-              {/* Learning Infrastructure */}
-              <div className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-[#2366c9] transition-all duration-300 group">
-                <h3 className="text-2xl font-semibold text-[#2366c9] mb-4">
-                  Learning Infrastructure
-                </h3>
-                <ul className="text-[14px] text-black space-y-3 leading-relaxed">
-                  <li>Curriculum-Mapped Interactive Courses</li>
-                  <li>O-Level Past Paper Retrieval Systems</li>
-                  <li>Formative Assessments & Correction Programs</li>
-                  <li>Full Mock Exam Simulation System</li>
-                </ul>
-              </div>
-
-              {/* Whole School Support */}
-              <div className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-[#2366c9] transition-all duration-300 group">
-                <h3 className="text-2xl font-semibold text-[#2366c9] mb-4">
-                  Whole-School Empowerment
-                </h3>
-                <ul className="text-[14px] text-black space-y-3 leading-relaxed">
-                  <li>Student, Teacher & Parent Resources</li>
-                  <li>Administration Tools & Academic Trackers</li>
-                  <li>Management Templates & Proformas</li>
-                </ul>
-              </div>
-
-              {/* Technology */}
-              <div className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-[#2366c9] transition-all duration-300 group">
-                <h3 className="text-2xl font-semibold text-[#2366c9] mb-4">
-                  Platform & Technology
-                </h3>
-                <ul className="text-[14px] text-black space-y-3 leading-relaxed">
-                  <li>White-Label School Platform</li>
-                  <li>AI Learning Support & Chatbot</li>
-                  <li>Multilingual Audio Translation</li>
-                  <li>Continuous Expert Support</li>
-                </ul>
-              </div>
-            </div>
-
-            {/* Advantage Section */}
-            <div className="bg-white border border-blue-800/50 rounded-2xl p-10 text-center mb-12">
-              <h3 className="text-2xl font-semibold mb-4 text-[#2366c9]">
-                The EduMeUp Advantage
-              </h3>
-              <p className="text-base text-black max-w-3xl mx-auto text-left leading-relaxed mb-6">
-                Most schools invest heavily in facilities and staffing but lack
-                the structured academic systems required for international curriculum success.
-                EduMeUp equips your school with research-backed Cambridge preparation systems,
-                expert-designed content from Grade 1 to O-Level, and technology-enabled learning
-                all at a fraction of the cost of building these systems internally.
-              </p>
-            </div>
-
-            {/* CTA */}
-            <div className="flex flex-col md:flex-row gap-6 justify-center">
-              <Link href="/for-schools/partnership">
-                <Button className="bg-white text-slate-900 hover:bg-blue-50 font-semibold px-8 h-12 rounded-lg text-[14px] shadow-lg transition-all">
-                  Explore School Partnership
-                </Button>
-              </Link>
-
-              <Link href="/for-schools/partnership">
-                <Button className="bg-[#2366c9] hover:bg-blue-700 text-white font-semibold px-8 h-12 rounded-lg text-[14px] shadow-lg transition-all">
-                  Book a Consultation for Your School
-                </Button>
-              </Link>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 1B: WHO EDUMEUP IS FOR */}
-      <section className="py-24 bg-gradient-to-b from-white to-slate-50">
-        <div className="container-custom">
-          {/* SECTION 1B: WHO EDUMEUP IS FOR */}
-          <div className="text-center max-w-full mx-auto mb-16">
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
-              Who This Is For
-            </p>
-            <div className="flex justify-center w-full">
-              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
-                Who this Platform is Designed for
-              </h2>
-            </div>
-          </div>
-          <div className="grid md:grid-cols-2 gap-6">
-            <Card className="border-[#2366c9]   border-2  border-2 group p-6 rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-lg transition-all duration-300">
-              <CardContent className="p-0">
-                <ul className="space-y-3 text-[14px] text-slate-700 font-medium">
-                  <li className="flex items-start gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
-                    Students in Grade 7-8 preparing for O-Level / IGCSE
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
-                    Students struggling despite heavy tutoring
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
-                    Students transitioning from national to Cambridge/IGCSE standards
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
-                    Learners who want structured, independent mastery - not tutor dependency
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
-
-            <Card className="border-[#2366c9]   border-2  border-2 group p-6 rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-lg transition-all duration-300">
-              <CardContent className="p-0">
-                <ul className="space-y-3 text-[14px] text-slate-700 font-medium">
-                  <li className="flex items-start gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
-                    Families seeking a structured, low-cost tutor alternative
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
-                    Parents wanting real-time visibility on their child's progress
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
-                    Students who want to become independent self-directed learners
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
-                    Schools seeking to demonstrate extraordinary value to parents
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* 8-Step Mastery Cycle Table */}
-      <section className="py-20 bg-blue-50/50">
-        <div className="container-custom max-w-6xl">
-          <div className="text-center w-full mb-12">
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
-              THE SCIENCE BEHIND THE SYSTEM
-            </p>
-            <div className="flex justify-center w-full">
-              <h2 className="text-4xl md:text-6xl font-semibold text-slate-900 mb-4">
-                The EduMeUp 8-Step Research-Backed Mastery Cycle
-              </h2>
-            </div>
-            <p className="text-lg text-black font-medium text-left">
-              Every learner on EduMeUp follows a structured cycle grounded in Bloom's Mastery Learning, Retrieval Practice, Spaced Repetition, Cognitive Load Theory, and Active Learning science - for deep understanding and long-term retention.
-            </p>
-          </div>
-
-          {/* Desktop Table */}
-          <div className="w-full">
-
-            {/* Header */}
-            <div className="grid grid-cols-[60px_minmax(0,_1.5fr)_minmax(0,_2.5fr)_minmax(0,_3fr)] bg-[#2366c9] text-white text-xs uppercase tracking-wider font-semibold">   <div className="p-4 text-center">#</div>
-              <div className="p-4 border-l border-blue-400/30">Step</div>
-              <div className="p-4 border-l border-blue-400/30">Purpose</div>
-              <div className="p-4 border-l border-blue-400/30">Research Reference</div>
-            </div>
-
-            {/* Rows */}
-            {masteryCycleSteps.map((item, index) => (
-              <div
-                key={item.step}
-                className="grid grid-cols-[60px_minmax(0,_1.5fr)_minmax(0,_2.5fr)_minmax(0,_3fr)] border-b border-blue-50" >
-                <div className="p-4 flex justify-center">
-                  <span className="h-6 w-6 flex items-center justify-center rounded-full bg-[#2366c9] text-white text-xs font-bold">
-                    {item.step}
-                  </span>
-                </div>
-
-                <div className="p-4 border-l border-slate-200 text-[14px] font-semibold text-black">
-                  {item.title}
-                </div>
-
-                <div className="p-4 border-l border-slate-200 text-[14px] text-black">
-                  {item.purpose}
-                </div>
-
-                <div className="p-4 border-l border-slate-200 text-[14px] italic text-black">
-                  {item.research}
-                </div>
-              </div>
+          {/* STAKEHOLDER STRIP */}
+          <div className="emu-stakeholder-strip">
+            <span className="emu-strip-label">Find what's right for you:</span>
+            {stripOptions.map((opt) => (
+              <button
+                key={opt}
+                className={`emu-strip-btn${activeStrip === opt ? " active" : ""}`}
+                onClick={() => setActiveStrip(opt)}
+              >{opt}</button>
             ))}
           </div>
 
-          {/* Mobile Cards */}
-
-
-          <div className="text-center mt-10">
-            <Link href="/research" className="text-[14px] font-semibold text-[#2366c9] hover:underline">
-              See the full research basis <ArrowRight className="inline h-4 w-4" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION: STAKEHOLDER ECOSYSTEM */}
-      <section className="py-20 bg-white">
-        <div className="container-custom max-w-8xl">
-          <div className="text-center w-full mb-12">
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
-              COMPLETE ECOSYSTEM
-            </p>
-            <h2 className="text-4xl md:text-6xl font-semibold text-slate-900 mb-4 text-center">
-              A Complete Ecosystem Empowering Every Stakeholder
-            </h2>
-            <p className="text-lg text-black font-medium text-left">
-              EduMeUp is designed not just for students. It empowers the entire educational community - making it the only platform in the advanced international education market to serve all four stakeholder groups with purpose-built tools.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {stakeholders.map((stakeholder) => (
-              <div
-                key={stakeholder.title}
-                className={`group rounded-2xl p-6 border-t-4 ${stakeholder.colorClass} bg-slate-50 shadow-sm 
-        transition-all duration-300 ease-in-out
-        hover:-translate-y-2 hover:shadow-xl hover:bg-white hover:border-l hover:border-r hover:border-b hover:border-slate-200`}
-              >
-                <a
-                  href="#"
-                  className="text-lg font-bold uppercase tracking-wider text-slate-800 group-hover:text-[#2366c9] transition-colors duration-300"
-                >
-                  {stakeholder.title}
-                </a>
-
-                <ul className="mt-4 space-y-3">
-                  {stakeholder.features.map((feature, i) => (
-                    <li key={i} className="flex items-start gap-2 text-[14px] text-black font-medium group-hover:translate-x-1 transition-transform duration-300">
-                      <span className={`mt-1.5 h-1.5 w-1.5 rounded-full ${stakeholder.bulletColorClass} flex-shrink-0`}></span>
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 2: THE SCIENCE OF EXAM MASTERY */}
-      <section className="py-16 md:py-24 bg-white">
-        <div className="container-custom">
-          <div className="text-center max-w-4xl mx-auto mb-16">
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
-              Research Engine
-            </p>
-            <div className="flex justify-center w-full overflow-hidden">
-              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
-                The Science of Exam Mastery
-              </h2>
-            </div>
-            <p className="text-base text-slate-700 font-medium">
-              Research-Validated Active Retention Engine
-            </p>
-          </div>
-
-          <Card className="border-[#2366c9]   border-2  border-2 grid md:grid-cols-2 gap-0 border border-blue-200 rounded-xl overflow-hidden shadow-md">
-            <div className="bg-slate-50 p-8 border-r border-blue-200 text-left">
-              <div className="mb-8 text-center">
-                <div className="h-1 w-16 bg-red-600 mx-auto rounded-full mb-4"></div>
-                <h4 className="text-2xl font-semibold text-slate-900 mb-2 leading-tight">
-                  Your Brain is Built to Forget
-                </h4>
-                {/* OVERLINE = 10px */}
-                <p className="text-red-600 font-semibold text-[14px]">The Traditional Crisis</p>
-              </div>
-
-              <div className="space-y-6">
-                <div className="bg-white p-6 rounded-lg border border-red-200 shadow-sm text-left">
-                  <h5 className="font-semibold text-slate-900 text-lg mb-4 border-b border-red-200 pb-3">
-                    Key Statistics / Evidence
-                  </h5>
-                  <ul className="space-y-4">
-                    {[
-                      { val: "42%", txt: "lost in 20 minutes (Ebbinghaus, 1885)" },
-                      { val: "70%", txt: "lost in 24 hours (Murre & Dros, 2015)" },
-                      { val: "90%", txt: "irretrievable in 30 days (Cepeda et al., 2006)" }
-                    ].map((stat, i) => (
-                      <li key={i} className="flex items-center gap-4 group transition-all">
-                        <div className="text-[34px] font-semibold text-red-600 w-16 shrink-0">{stat.val}</div>
-                        <span className="font-medium text-slate-700 text-[14px] leading-snug">{stat.txt}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="bg-white p-6 rounded-lg border border-red-200 shadow-sm">
-                  <div className="flex justify-center"><div className="relative w-80 h-52 mb-8 border-l-2 border-b-2 border-slate-300">
-                    <div className="absolute left-[-65px] top-1/2 -rotate-90 text-[14px] font-semibold text-black">Retention (%)</div>
-                    <div className="absolute left-[-40px] top-0 text-[14px] font-semibold text-black">100%</div>
-                    <div className="absolute left-[-30px] bottom-0 text-[14px] font-semibold text-black">0%</div>
-                    <div className="absolute bottom-[-30px] left-1/2 -translate-x-1/2 text-[14px] font-semibold text-black">Time</div>
-                    <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                      <path d="M 0 0 Q 10 80 100 90" fill="none" stroke="red" strokeWidth="2" />
-                    </svg>
-                  </div></div>
-                  <p className="text-center font-semibold text-red-600 text-xs">
-                    Without Review: 100% Mastery drops to 10% Retention in 30 days
-                  </p>
-                </div>
+          {/* DIAGNOSTIC BANNER */}
+          <div className="emu-diag-banner">
+            <div>
+              <h2>Not Sure Where to Start? The Diagnostic Does That for You.</h2>
+              <p>Free · 30 minutes · No account required. Get a personalised gap analysis, a recommended starting point, and a clear study sequence — before you invest a single hour in the wrong area.</p>
+              <div style={{ marginTop: 12, fontSize: 13, color: "rgba(255,255,255,.75)" }}>
+                Available for: Physics · Chemistry · Mathematics · English Language · Economics
               </div>
             </div>
+            <button className="emu-btn-white">TAKE FREE DIAGNOSTIC NOW</button>
+          </div>
 
-            <div className="bg-[#2366c9] p-8 text-white relative text-left">
-              <div className="absolute inset-0 bg-[#2366c9]/10 pointer-events-none"></div>
-              <div className="mb-8 text-center relative z-10">
-                <div className="h-1 w-16 bg-white mx-auto rounded-full mb-4"></div>
-                <h4 className="text-2xl font-semibold text-white mb-2 leading-tight">
-                  We're Built to Stop Forgetting
-                </h4>
-                {/* OVERLINE = 10px */}
-                <p className="text-blue-100 font-semibold text-[14px]">The EduMeUp Solution</p>
-              </div>
-
-              <div className="space-y-6 relative z-10">
-                <div className="bg-blue-500/40 p-6 rounded-lg border border-blue-400 backdrop-blur text-left">
-                  <h5 className="font-semibold text-white text-lg mb-4 border-b border-blue-400 pb-3">
-                    Our System Fights Forgetting
-                  </h5>
-                  <ul className="space-y-4">
-                    {[
-                      { t: "1. Spaced Reviews", s: "Optimal intervals (Day 1, 3, 7, 14, 30, 90)", icon: RefreshCw },
-                      { t: "2. Interactive H5P", s: "Active recall via 1000+ activities", icon: Zap },
-                      { t: "3. Dual-Coding", s: "2Ã— memory strength via Text+Visual (Paivio, 1971)", icon: Brain }
-                    ].map((step, i) => (
-                      <li key={i} className="group/item transition-all flex gap-3">
-                        <step.icon className="h-6 w-6 text-white group-hover/item:rotate-12 transition-transform flex-shrink-0 mt-0.5" />
-                        <div>
-                          <p className="font-semibold text-white text-base">{step.t}</p>
-                          <p className="text-white font-medium text-xs opacity-90">{step.s}</p>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className=" bg-blue-700/50 p-6 rounded-lg border border-blue-400 shadow-sm">
-                  <div className="flex justify-center">   <div className=" relative w-80 h-60 mb-8 border-l border-b border-blue-300">
-                    <div className="absolute left-[-65px] top-1/2 -rotate-90 text-[14px] font-semibold text-blue-200">Retention (%)</div>
-                    <div className="absolute left-[-45px] top-0 text-[14px] font-semibold text-blue-200">100%</div>
-                    <div className="absolute left-[-35px] bottom-0 text-[14px] font-semibold text-blue-200">0%</div>
-                    <div className="absolute bottom-[-30px] left-1/2 -translate-x-1/2 text-[14px] font-semibold text-blue-200">Time</div>
-
-
-                    <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                      <path d="M 0 0 L 5 30 L 15 20 L 30 35 L 50 25 L 70 30 L 85 20 L 100 15" fill="none" stroke="white" strokeWidth="2" />
-                    </svg></div>
-                  </div>
-                  <p className="text-center font-semibold text-white text-xs">
-                    EduMeUp: 100% &rarr; 95% &rarr; 90% &rarr; 85%+ (maintained long-term retention)
-                  </p>
-                </div>
-              </div>
-            </div>
-          </Card>
-
-          <Card className="border-[#2366c9]   border-2  rounded-2xl overflow-hidden shadow-sm mt-12">
-            <CardContent className="p-8">
-              {/* H5 = 24px */}
-              <h4 className="text-2xl font-semibold text-center text-slate-900 mb-10">
-                Passive vs Active Learning
-                <span className="block text-[14px] font-medium text-black mt-2">
-                  Why Traditional Methods Fail
-                </span>
-              </h4>
-              <div className="grid md:grid-cols-2 gap-8">
-                {/* PASSIVE */}
-                <div className="bg-red-50 border border-red-200 rounded-xl p-6">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="bg-red-500 text-white p-2 rounded-lg">
-                      <BookOpen className="h-5 w-5" />
-                    </div>
-                    <h5 className="font-semibold text-red-700 text-lg">Passive Methods</h5>
-                  </div>
-
-                  <ul className="space-y-4">
-                    {[
-                      { name: "Lectures", val: "5%" },
-                      { name: "Reading Textbooks", val: "10%" },
-                      { name: "Watching Videos", val: "20%" }
-                    ].map((item, i) => (
-                      <li key={i} className="flex justify-between items-center bg-white p-3 rounded-lg border border-red-200">
-                        <span className="text-[14px] font-medium text-slate-700">{item.name}</span>
-                        <span className="text-red-600 font-semibold text-[14px]">{item.val}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <p className="text-xs text-black mt-4">
-                    *Dale's Cone of Learning (1969), updated Freeman et al. (2014)
-                  </p>
-                </div>
-
-                {/* ACTIVE */}
-                <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 relative">
-                  <div className="absolute -top-3 right-4 bg-[#2366c9] text-white text-xs px-3 py-1 rounded-full font-semibold">
-                    EduMeUp Method
-                  </div>
-
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="bg-[#2366c9] text-white p-2 rounded-lg">
-                      <Brain className="h-5 w-5" />
-                    </div>
-                    <h5 className="font-semibold text-blue-700 text-lg">Active Methods</h5>
-                  </div>
-
-                  <ul className="space-y-4">
-                    {[
-                      { name: "Discussion & Practice", val: "50%" },
-                      { name: "Practice by Doing", val: "75%" },
-                      { name: "Teaching Others", val: "90%" }
-                    ].map((item, i) => (
-                      <li key={i} className="flex justify-between items-center bg-white p-3 rounded-lg border border-blue-200">
-                        <span className="text-[14px] font-medium text-slate-700">{item.name}</span>
-                        <span className="text-[#2366c9] font-semibold text-[14px]">{item.val}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <p className="text-xs text-black mt-4">
-                    *Freeman et al. (2014)
-                  </p>
-                </div>
-              </div>
-              <div className="text-center mt-10">
-                <p className="text-[14px] italic text-black mb-5">
-                  Traditional education often relies on less effective methods - then wonders why students struggle to retain information after exams.
-                </p>
-
-                {/* BUTTON = 14px */}
-                <Button className="bg-[#2366c9] hover:bg-blue-700 text-white font-semibold px-6 py-3 text-[14px]">
-                  EXPERIENCE ACTIVE LEARNING - REGISTER
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-
-      {/* SECTION 3: IS EDUMEUP RIGHT FOR YOUR CHILD? */}
-      <section id="parent-section" className="py-16 md:py-24 bg-white">
-        <div className="container-custom">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="text-left">
-              <p className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-[#2366c9] mb-5">
-                Parent Fit Check
-              </p>
-              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold mb-4 leading-[1.05] tracking-tight ">
-                Is EduMeUp Right for Your Child?
-              </h2>
-              <h2 className="text-2xl font-semibold text-slate-800 mb-6 leading-tight">
-                Take This Quick Check (30 Seconds)
-              </h2>
-              <p className="text-base text-black mb-12 leading-relaxed font-medium italic border-b border-slate-200 pb-4">
-                Check all that apply to your child:
-              </p>
-
-              <div className="grid sm:grid-cols-1 gap-3 mb-16">
+          {/* THE PROBLEM */}
+          <SectionWrapper id="problem" bg="#fff">
+            <div className="emu-section-eyebrow">The Research</div>
+            <div className="emu-section-title">The Problem Is Not Effort. It Is Method.</div>
+            <p className="emu-section-sub">Hundreds of thousands of students prepare for Cambridge O-Level each year — many study for hours, attend academies, use online platforms — and still underperform. Research has identified exactly why.</p>
+            <div className="emu-problem-grid">
+              <div className="emu-problem-col bad">
+                <h3>❌ What Conventional Study Does</h3>
                 {[
-                  "Currently in Grade 7 or 8 (entering O-Level within 12 months)",
-                  "Scored below 70% in recent school exams",
-                  "Struggles with Math, Physics, Chemistry, or English",
-                  "Has learning gaps from Grade 6-7 that were never properly fixed",
-                  "Switching from Urdu medium to English medium",
-                  "Switching from national curriculum to Cambridge / IGCSE",
-                  "School has 35+ students per class (limited individual attention)",
-                  "Family cannot afford $200-300/month private tutors for 2-3 years",
-                  "You want child to become an independent learner (not tutor-dependent)",
-                  "You want research-backed results, not \"we'll try our best\""
-                ].map((item, i) => (
-                  <motion.div
-                    key={i}
-                    whileHover={{ x: 10 }}
-                    onClick={() => handleCheck(i)}
-                    className={`flex items-center gap-4 p-4 rounded-lg cursor-pointer transition-all border ${checkedItems.includes(i)
-                        ? "bg-blue-50 border-[#2366c9]"
-                        : "bg-white border-slate-200"
-                      }`}
-                  >
-                    <div
-                      className={`h-5 w-5 rounded-md border-2 flex items-center justify-center transition-all shrink-0 ${checkedItems.includes(i)
-                          ? "bg-[#2366c9] border-[#2366c9]"
-                          : "bg-white border-slate-300"
-                        }`}
-                    >
-                      {checkedItems.includes(i) && <CheckCircle2 className="h-4 w-4 text-white" />}
-                    </div>
-                    <span
-                      className={`text-[14px] font-medium leading-snug ${checkedItems.includes(i) ? "text-slate-900" : "text-black"
-                        }`}
-                    >
-                      {item}
-                    </span>
-                  </motion.div>
+                  "Passive watching of video lectures — low engagement, low retention",
+                  "Re-reading notes and textbooks — creates familiarity, not understanding",
+                  "Cramming large amounts without spacing — collapses within days",
+                  "Moving forward when earlier topics are unresolved — gaps compound",
+                  "No feedback on whether understanding is real or illusory",
+                ].map((t, i) => (
+                  <div className="emu-problem-item" key={i}>
+                    <span style={{ color: "var(--red)", fontWeight: 700, flexShrink: 0 }}>✗</span>{t}
+                  </div>
                 ))}
+                <div className="emu-problem-result-bad">Result: familiarity without understanding — collapse under exam pressure</div>
               </div>
-
-              <AnimatePresence>
-                {result && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    className={`p-8 rounded-xl border border-blue-200 bg-white shadow-md relative overflow-hidden`}
-                  >
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#2366c9] to-blue-400"></div>
-                    <h3 className={`text-2xl font-semibold mb-4 mt-2 ${result.color}`}>{result.title}</h3>
-                    {checkedItems.length <= 3 && (
-                      <p className="text-base text-slate-700 font-medium leading-relaxed mb-8">{result.desc}</p>
-                    )}
-                    {checkedItems.length >= 4 && (
-                      <>
-                        <p className="text-[14px] text-red-600 font-semibold mb-4">URGENT ACTION RECOMMENDED</p>
-                        <p className="text-[14px] font-semibold text-slate-800 mb-3">EduMeUp will:</p>
-                        <ul className="space-y-1 text-[14px] text-slate-700 mb-6">
-                          <li>✓ Fix ALL gaps systematically</li>
-                          <li>✓ Build strong O-Level foundations</li>
-                          <li>✓ Develop self-learning capabilities</li>
-                          <li>✓ Eliminate need for expensive tutors</li>
-                          <li>✓ Support strong O-Level results</li>
-                        </ul>
-                        <p className="text-[14px] text-red-600 font-semibold mb-6">
-                          Every month you wait = More gaps accumulate = Harder and more expensive to fix later.
-                        </p>
-                      </>
-                    )}
-                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                      <div className="w-full sm:w-auto">
-                        <InquiryDialog
-                          defaultType="diagnostic"
-                          title="Free Diagnostic"
-                          trigger={
-                            <Button className="w-full bg-[#2366c9] hover:bg-blue-700 font-semibold min-h-[3.25rem] h-auto py-3 px-4 rounded-lg text-[14px] text-white whitespace-normal leading-tight text-center">
-                              {checkedItems.length <= 1
-                                ? "TAKE FREE DIAGNOSTIC ANYWAY ->"
-                                : checkedItems.length <= 3
-                                  ? "TAKE FREE DIAGNOSTIC ->"
-                                  : "START FREE DIAGNOSTIC NOW ->"}
-                            </Button>
-                          }
-                        />
-                      </div>
-                      <Link href="/programs" className="w-full sm:w-auto">
-                        <Button
-                          variant="outline"
-                          className="w-full border border-[#2366c9] text-[#2366c9] hover:bg-blue-50 font-semibold min-h-[3.25rem] h-auto py-3 px-4 rounded-lg text-[14px] whitespace-normal leading-tight text-center"
-                        >
-                          {checkedItems.length <= 3 ? "EXPLORE BRIDGE COURSES ->" : "ENROLL IN PRE-O-LEVEL VICTORY ->"}
-                        </Button>
-                      </Link>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              <div className="emu-problem-col good">
+                <h3>✅ What Research Says Actually Works</h3>
+                {[
+                  "Active practice — doing, not watching (Freeman et al., 2014)",
+                  "Retrieval practice — testing before re-reading (Roediger & Karpicke, 2006)",
+                  "Spaced repetition — review at optimal intervals (Cepeda et al., 2006)",
+                  "Mastery gates — no advancement until 80% secured (Bloom, 1984)",
+                  "Diagnostic-first — know gaps before studying (Black & Wiliam, 1998)",
+                ].map((t, i) => (
+                  <div className="emu-problem-item" key={i}>
+                    <span style={{ color: "var(--primary)", fontWeight: 700, flexShrink: 0 }}>✓</span>{t}
+                  </div>
+                ))}
+                <div className="emu-problem-result-good">Result: durable memory, transferable understanding, exam-ready performance</div>
+              </div>
             </div>
-
-            <div className="relative">
-              <div className="absolute -inset-10 bg-blue-100/50 rounded-full blur-[100px] animate-pulse"></div>
-              <Card className="border-[#2366c9]   border-2  border-2 relative border rounded-2xl overflow-hidden shadow-lg bg-white text-left">
-                <CardContent className="p-0">
-                  <div className="bg-[#2366c9] p-8 text-center text-white relative">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-[#2366c9]"></div>
-                    <h3 className="text-2xl font-semibold mb-3 text-white">The EduMeUp Promise</h3>
-                    <p className="text-blue-100 font-medium text-[14px]">For Committed Students</p>
-                  </div>
-                  <div className="p-12 space-y-12">
-                    <div className="text-center">
-                      <div className="text-5xl font-semibold text-blue-600 mb-3">60%+</div>
-                      <p className="text-2xl font-semibold text-blue-900 leading-tight">Guaranteed Minimum Result</p>
-                      <p className="text-[14px] font-medium text-black mt-3 max-w-xs mx-auto italic">
-                        When following our research-backed learning pathway and completing retrieval tasks.
-                      </p>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-6">
-                      <div className="text-center p-6 bg-slate-50 rounded-lg border border-slate-200">
-                        <Trophy className="h-8 w-8 text-yellow-500 mx-auto mb-3" />
-                        <p className="font-semibold text-slate-900 text-xs">A* Excellence</p>
-                      </div>
-                      <div className="text-center p-6 bg-slate-50 rounded-lg border border-slate-200">
-                        <ShieldCheck className="h-8 w-8 text-green-500 mx-auto mb-3" />
-                        <p className="font-semibold text-slate-900 text-xs">Risk Free</p>
-                      </div>
-                    </div>
-
-                    <div className="bg-blue-50 p-8 rounded-lg text-center border border-blue-200">
-                      <p className="text-left text-base text-slate-700 font-medium leading-relaxed italic">
-                        "We don't just teach. We ensure your child develops the capability to learn any subject independently for the rest of their lives."
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+            <div style={{ marginBottom: 14 }}>
+              <span style={{ fontFamily: "'Sora',sans-serif", fontWeight: 700, fontSize: 17, color: "#0f172a" }}>
+                Retention: Without vs With Timely Reviews
+              </span>
             </div>
-          </div>
-        </div>
-      </section>
-      {/* SECTION 4: OUR COMPLETE PROGRAMS */}
-      <section className="py-24 bg-gradient-to-b from-slate-100 via-white to-slate-50">
-        <div className="container-custom max-w-7xl">
-          <div className="text-center max-w-4xl mx-auto mb-20">
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
-              All Programs</p>
-            <div className="flex justify-center w-full">
-              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
-                Find the Right Program for Your Child
-              </h2>
-            </div>
-            <p className="text-base text-black">
-              Built on Learning Science, Validated by Research
-            </p>
-            <p className="text-[14px] text-black mt-3">Each program card links to its own full detail page. On this homepage, all CTAs focus on seeing details, free demo, or free diagnostic.</p>
-          </div>
-
-          <Card className="border-[#2366c9]  border-2 rounded-3xl bg-white shadow-lg mb-16">
-            <CardContent className="p-8 text-left space-y-5">
-
-              <p className="text-xs font-semibold text-[#2366c9] uppercase tracking-wider">Featured</p>
-              <h3 className="text-3xl font-semibold text-slate-900">PRE-O-LEVEL VICTORY PROGRAM</h3>
-              <p className="text-[14px] font-semibold text-slate-700">The complete bridge from middle school to O-Level mastery.</p>
-              <p className="text-[14px] text-slate-700">The complete bridge from middle school to Cambridge O-Level readiness.</p>
-              <p className="text-[14px] text-slate-700">Repair Grade 6-8 gaps, complete Bridge Program, and cover 30-40% of O-Level syllabus - equivalent to O1 preparation.</p>
-              <p className="text-[14px] font-semibold text-slate-900">THREE-IN-ONE PROGRAM:</p>
-              <ul className="text-[14px] text-slate-700 space-y-1">
-                <li>✓ Grade 6-8 Deficiency Repair - Close all foundational gaps</li>
-                <li>✓ Complete O-Level Bridge Program - Smooth Cambridge transition </li>
-                <li>✓ O-Level Syllabus Coverage - Master 30-40% of O1 content</li>
-              </ul>
-
-              <p className="text-[14px] font-semibold text-slate-900">TWO LEARNING MODES:</p>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-[14px] text-slate-700 space-y-2">
-                  <p className="font-semibold text-slate-900">ONLINE SELF-LEARNING  </p>
-                  <p>- 9 subjects: English, Math, Physics, Chemistry, Biology, Urdu, Islamiyat, History, Geography</p>
-                  <p>- Self-paced learning with full platform access</p>
-                  <p>- Interactive activities, diagnostic tests, AI support</p>
-                  <p>- Certificate on 60%+ completion</p>
-                  <p>- Flexible start anytime</p>
-                  <p><span className="font-semibold">Best For:</span> Self-motivated students, budget-conscious families</p>
-                </div>
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-[14px] text-slate-700 space-y-2">
-                  <p className="font-semibold text-slate-900">TEACHER-LED CLASSES  </p>
-                  <p>- Everything in Self-Learning PLUS:</p>
-                  <p>- Live classes: 2.5-3 hours/day, 5 days/week (Sep-May)</p>
-                  <p>- Expert teachers (rotating by subject)</p>
-                  <p>- Online + Physical (Lahore - Phase 1)</p>
-                  <p>- Group learning environment</p>
-                  <p>- 60% Performance Designed Outcome* on actual O-Level papers from covered syllabus</p>
-                  <p>(*80% attendance + 80% task completion required)</p>
-                  <p><span className="font-semibold">Best For:</span> Students needing structure and guaranteed readiness</p>
-                </div>
-              </div>
-
-              <p className="text-[14px] font-semibold text-slate-900">WHO IT'S FOR:</p>
-              <ul className="text-[14px] text-slate-700 space-y-1">
-                <li>- Grade 7-8 students preparing for O-Level</li>
-                <li>- Post-Grade 8 students needing O-Level preparation</li>
-                <li>- Students transitioning from local to Cambridge curriculum</li>
-                <li>- Anyone wanting O1-level readiness</li>
-              </ul>
-              <p className="text-[14px] text-slate-700">SUCCESS RATE: 90%+ for students meeting program requirements</p>
-              <p className="text-[14px] text-slate-700">Research Foundation: Mastery learning & scaffolding (Bloom, 1968; Rosenshine, 2012)</p>
-              <p className="text-[14px] text-slate-700"> 20% discount when purchasing multiple programs</p>
-              <Link href="/programs" className="w-full sm:w-auto inline-block">
-                <Button className="bg-[#2366c9] hover:bg-blue-700">SEE FULL PROGRAM DETAILS <ArrowRight className="ml-2 h-4 w-4" /></Button>
-              </Link>
-            </CardContent>
-          </Card>
-
-          <div className="grid lg:grid-cols-2 gap-8 mb-10">
-
-            {/* CARD 1 */}
-            <Card className="border-[#2366c9]   border-2    rounded-3xl bg-white shadow-sm hover:shadow-xl transition-all duration-300">
-              <CardContent className="p-8 flex flex-col h-full text-left">
-
-                <div className="space-y-4">
-
-                  <h3 className="text-2xl font-semibold text-slate-900">
-                    COMPLETE O-LEVEL SUBJECT PREPARATION
-                  </h3>
-
-                  <p className="text-[14px] font-semibold text-slate-700">
-                    Full Syllabus Coverage + Exam Readiness - Understand - Cover - Practice
-                  </p>
-
-                  <p className="text-[14px] text-slate-700">
-                    Self-paced programs for complete O-Level subject mastery with continuous exam-style practice integrated from Day 1.
-                  </p>
-
-                  <p className="text-[14px] font-semibold text-slate-900">INCLUDES:</p>
-
-                  <ul className="text-[14px] text-slate-700 space-y-1">
-                    <li>- Complete syllabus coverage (100%)</li>
-                    <li>- 1,000+ interactive H5P activities</li>
-                    <li>- 2,000+ past paper questions integrated from first lesson</li>
-                    <li>- Spaced retrieval system (automated reviews)</li>
-                    <li>- Mock exams with enhanced solutions</li>
-                    <li>- Progress tracking dashboard</li>
-                  </ul>
-
-                  <p className="text-[14px] text-slate-700">
-                    AVAILABLE SUBJECTS: Math, Physics, Chemistry, Biology, Urdu, Islamiat,
-                    Pakistan Studies, Economics, Business Studies
-                  </p>
-
-                  <p className="text-[14px] text-slate-700">
-                    DELIVERY: Self-Learning (24/7 access)
-                  </p>
-
-                  <p className="text-[14px] text-slate-700">
-                    DURATION: Flexible - complete at your own pace
-                  </p>
-
-
-
-
-                  <p className="text-[14px] text-slate-700">
-                    Research Foundation: Spiral learning & retrieval practice
-                    (Bruner, 1960; Karpicke & Roediger, 2008)
-                  </p>
-
-                </div>
-
-                {/* BUTTONS */}
-                <div className="mt-auto pt-6 flex flex-col sm:flex-row gap-3">
-
-                  <Link href="/programs" className="w-full">
-                    <Button className="w-full bg-[#2366c9] hover:bg-blue-700 text-white">
-                      READ MORE
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </Link>
-
-                  <Button className="w-full bg-white border border-[#2366c9] text-[#2366c9] hover:bg-blue-50">
-                    REGISTER
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-
-                </div>
-
-              </CardContent>
-            </Card>
-
-
-            {/* CARD 2 */}
-            <Card className="border-[#2366c9]   border-2   rounded-3xl bg-white shadow-sm hover:shadow-xl transition-all duration-300">
-              <CardContent className="p-8 flex flex-col h-full text-left">
-
-                <div className="space-y-4">
-
-                  <h3 className="text-2xl font-semibold text-slate-900">
-                    REAL-TIME EXAM PREPARATION
-                  </h3>
-
-                  <p className="text-[14px] font-semibold text-slate-700">
-                    Master Cambridge Past Papers with Enhanced Solutions
-                  </p>
-
-                  <p className="text-[14px] text-slate-700">
-                    Practice with actual Cambridge O-Level past papers under exam
-                    conditions - then learn from detailed, enhanced solutions instantly.
-                  </p>
-
-                  <p className="text-[14px] font-semibold text-slate-900">
-                    WHAT YOU GET:
-                  </p>
-
-                  <ul className="text-[14px] text-slate-700 space-y-1">
-                    <li>✓ 20+ Actual Cambridge Past Papers per subject</li>
-                    <li>✓ Timed Exam Experience - Real exam limits</li>
-                    <li>✓ Instant Enhanced Solutions - MCQ explanations</li>
-                    <li>✓ Essay Paper Solutions - Model answers</li>
-                    <li>✓ 2-Year Access - Unlimited practice</li>
-                    <li>✓ 8 Core Subjects coverage</li>
-                  </ul>
-
-                  <p className="text-[14px] text-slate-700">
-                    PERFECT FOR: Last-minute exam preparation (3-6 months),
-                    year-round practice, understanding Cambridge marking schemes,
-                    and identifying weak areas.
-                  </p>
-
-                  <p className="text-[14px] text-slate-700">
-                    DELIVERY: Self-Learning (on-demand)
-                  </p>
-
-                  <p className="text-[14px] text-slate-700">
-                    AVAILABILITY: Standalone - no subscription required
-                  </p>
-
-
-
-                </div>
-
-                {/* BUTTONS */}
-                <div className="mt-auto pt-6 flex flex-col sm:flex-row gap-3">
-
-                  <Button className="w-full bg-[#2366c9] hover:bg-blue-700 text-white">
-                    START EXAM PREP
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-
-                  <Button className="w-full bg-white border border-[#2366c9] text-[#2366c9] hover:bg-blue-50">
-                    VIEW SAMPLE PAPER
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-
-                </div>
-
-              </CardContent>
-            </Card>
-
-          </div>
-
-          <Card className="border-[#2366c9]   border-2  rounded-3xl bg-white shadow-sm mb-10">
-            <CardContent className="p-8 text-left space-y-4">
-              <h3 className="text-2xl font-semibold text-slate-900">ENGLISH LANGUAGE MASTERY COURSES</h3>
-              <p className="text-[14px] font-semibold text-slate-700">Cambridge O-Level Paper 1 & Paper 2 - Targeted Skill Development</p>
-              <p className="text-[14px] text-slate-700">Standalone Program - Not Included in Any Bundle</p>
-              <p className="text-[14px] text-slate-700">Two dedicated courses - one for each English Language paper - built entirely from real Cambridge past papers, official Band 1 rubrics, and proven exam technique training.</p>
-
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="rounded-xl border border-slate-200 bg-blue-50/40 p-4 text-[14px] text-slate-700 space-y-2">
-                  <p className="font-semibold text-slate-900">COURSE 1 - COMPREHENSION MASTERY (Paper 1) </p>
-                  <p>Built around 8 complete Cambridge past paper modules. Each past paper is taught through a 9-step Learning Mastery System.</p>
-                  <p>✓ Full vocabulary preview before each reading passage</p>
-                  <p>✓ Scanning & skimming technique training per text</p>
-                  <p>✓ MCQs with complete justifications - not just answer keys</p>
-                  <p>✓ Actual Cambridge exam questions with model answers</p>
-                  <p>✓ Questions categorised as Literal / Inferential / Evaluative - the exact taxonomy Cambridge examiners use</p>
-                  <p>✓ Exam Skills Tip for each question type</p>
-                  <p>✓ Higher-order Challenge Corner for Band 1 performance</p>
-                  <p>✓ 100% interactive H5P - no passive reading or videos</p>
-                  <p>Perfect For: Students who lose marks on inference and "own words" questions - the 2 most common failure points in Paper 1.</p>
-
-                  <p className="font-semibold text-slate-900">PERFECT FOR - COMPREHENSION MASTERY (Paper 1)</p>
-                  <p>✓ Students who find the answer but lose marks writing it</p>
-                  <p>✓ Students who copy text instead of answering in own words</p>
-                  <p>✓ Students who cannot distinguish Literal from Inferential questions</p>
-                  <p>✓ Students who re-read passages repeatedly and run out of time</p>
-                  <p>✓ Students aiming for Band 1 but stuck just below it</p>
-                </div>
-
-                <div className="rounded-xl border border-slate-200 bg-blue-50/40 p-4 text-[14px] text-slate-700 space-y-2">
-                  <p className="font-semibold text-slate-900">COURSE 2 - COMPOSITION MASTERY (Paper 2)  </p>
-                  <p>Three progressive courses take students from Band 3 writing to Band 1 excellence - step by step:</p>
-                  <p> F1 - Essay Types & Structure</p>
-                  <p> F2 - 10-Day Band 3 to Band 1 Bridge</p>
-                  <p> Complete Mastery - Band 3 to Band 1 - The Cambridge Composition Transformation Course with complete training</p>
-                  <p>✓ 120+ H5P interactive activities</p>
-                  <p>✓ 30+ authentic O-Level exam prompts</p>
-                  <p>✓ 4 timed essays under real exam conditions</p>
-                  <p>✓ Official Band 1 rubric taught and applied throughout</p>
-                  <p>✓ 60+ vocabulary words - all from O-Level past papers</p>
-                  <p>✓ AI Chatbot support integrated</p>
-                  <p>✓ Portfolio tracks growth from first to final essay</p>
-                  <p>✓ Certificate on completion</p>
-
-
-                  <p className="font-semibold text-slate-900">PERFECT FOR - COMPOSITION MASTERY (Paper 2)</p>
-                  <p>✓ Students whose essays are "correct" but never rise above Band 3</p>
-                  <p>✓ Students who go blank when they see the exam prompt</p>
-                  <p>✓ Students using simple, repetitive vocabulary they cannot upgrade</p>
-                  <p>✓ Students who only attempt Narrative and avoid other essay types</p>
-                  <p>✓ Students who have never been shown - sentence by sentence - exactly what separates their writing from Band 1</p>
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-3 gap-3 pt-2">
-                <Link href="/programs/english-mastery" className="w-full">
-                  <Button className="w-full bg-[#2366c9] hover:bg-blue-700 text-white flex-col py-6 h-auto">
-                    <span className="flex items-center font-semibold">ENROLL IN COMPREHENSION <ArrowRight className="ml-2 h-4 w-4" /></span>
-                    <span className="text-xs font-normal opacity-80 mt-1">$110</span>
-                  </Button>
-                </Link>
-                <Link href="/programs/english-mastery" className="w-full">
-                  <Button className="w-full bg-[#2366c9] hover:bg-blue-700 text-white flex-col py-6 h-auto">
-                    <span className="flex items-center font-semibold">ENROLL IN COMPOSITION <ArrowRight className="ml-2 h-4 w-4" /></span>
-                    <span className="text-xs font-normal opacity-80 mt-1">5 Courses - $160 (was $200)</span>
-                  </Button>
-                </Link>
-                <Link href="/programs/english-mastery" className="w-full">
-                  <Button className="w-full bg-[#2366c9] hover:bg-blue-700 text-white flex-col py-6 h-auto">
-                    <span className="flex items-center font-semibold">GET BOTH - BUNDLE <ArrowRight className="ml-2 h-4 w-4" /></span>
-                    <span className="text-xs font-normal opacity-80 mt-1">$250 (Save $60)</span>
-                  </Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="grid lg:grid-cols-3 gap-6 mb-10">
-
-            {/* CARD 1 */}
-            <Card className="border-[#2366c9]   border-2   rounded-3xl bg-white shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
-              <CardContent className="p-6 flex flex-col h-full justify-between">
-
-                <div className="space-y-3">
-                  <h3 className="text-xl font-semibold text-slate-900">FOUNDATIONAL O-LEVEL BRIDGE COURSES</h3>
-                  <p className="text-[14px] font-semibold text-slate-700">Fix Weak Foundations Before O-Level Starts - Diagnose - Repair - Strengthen</p>
-                  <p className="text-[14px] text-slate-700">Targeted remedial courses fixing Grade 6-8 gaps before entering O-Level. Prevents compounding knowledge gaps.</p>
-                  <p className="text-[14px] text-slate-700">Results: Designed to support 60%+ in standard tests.</p>
-                </div>
-
-                {/* BUTTONS */}
-                <div className="grid gap-2 mt-6">
-                  <Link href="/programs/bridge-courses" className="w-full">
-                    <Button className="w-full bg-[#2366c9] hover:bg-blue-700 text-white">
-                      START BRIDGE COURSES <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </Link>
-                  <InquiryDialog
-                    defaultType="diagnostic"
-                    title="Free Diagnostic"
-                    trigger={
-                      <Button className="w-full bg-white border border-[#2366c9] text-[#2366c9] hover:bg-blue-50">
-                        FREE DIAGNOSTIC FIRST <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
-                    }
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* CARD 2 */}
-            <Card className="border-[#2366c9]   border-2   rounded-3xl bg-white shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
-              <CardContent className="p-6 flex flex-col h-full justify-between">
-
-                <div className="space-y-3">
-                  <h3 className="text-xl font-semibold text-slate-900">ATP COURSES (PHYSICS | CHEMISTRY | BIOLOGY)</h3>
-                  <p className="text-[14px] font-semibold text-slate-700">Virtual Lab Training for Unseen Practical Exams - Unseen - Analytical - Conceptual</p>
-                  <p className="text-[14px] text-slate-700">Complete replacement for O-Level Paper 4 (Practical) with virtual lab skill development and unseen question training.</p>
-                  <p className="text-[14px] text-slate-700">NOTE: NOT included in annual packages - separate add-on</p>
-                </div>
-
-                {/* BUTTONS */}
-                <div className="grid gap-2 mt-6">
-                  <Link href="/programs/atp-courses" className="w-full">
-                    <Button className="w-full bg-[#2366c9] hover:bg-blue-700 text-white">
-                      START ATP COURSES <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </Link>
-                  <Button className="w-full bg-white border border-[#2366c9] text-[#2366c9] hover:bg-blue-50">
-                    VIEW SAMPLE ACTIVITIES <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* CARD 3 */}
-            <Card className="border-[#2366c9]   border-2   rounded-3xl bg-white shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
-              <CardContent className="p-6 flex flex-col h-full justify-between">
-
-                <div className="space-y-3">
-                  <h3 className="text-xl font-semibold text-slate-900">TUTOR BOOKING — 1-TO-1 PERSONALISED EDUCATION</h3>
-                  <p className="text-[14px] font-semibold text-slate-700">Better Than Traditional Providers - Same Price, 10X Support</p>
-                  <p className="text-[14px] text-slate-700">Professional tutor matching service with FREE platform resources for both students and teachers. Quality guaranteed.</p>
-                  <p className="text-[14px] text-slate-700">NO EXTRA CHARGES - Just teacher fee. All platform resources 100% FREE.</p>
-                </div>
-
-                {/* BUTTONS */}
-                <div className="grid gap-2 mt-6">
-                  <Link href="/programs/tutor-booking" className="w-full">
-                    <Button className="w-full bg-[#2366c9] hover:bg-blue-700 text-white">
-                      REQUEST A TUTOR <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </Link>
-                  <Button className="w-full bg-white border border-[#2366c9] text-[#2366c9] hover:bg-blue-50">
-                    BECOME A TUTOR <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-          </div>
-
-          <Card className="border-[#2366c9] border-2 rounded-3xl bg-white shadow-sm mb-10">
-            <CardContent className="p-8">
-              <h3 className="text-2xl font-semibold text-center text-slate-900 mb-8 uppercase tracking-tight">
-                Pakistan Board & ECAT Programs
-              </h3>
-              <div className="grid md:grid-cols-3 gap-6">
-
-                {/* MATRIC CARD */}
-                <div className="p-6 rounded-xl border border-blue-100 bg-blue-50/30 text-left flex flex-col h-full">
-                  <div className="mb-6">
-                    <h4 className="font-bold text-slate-900 text-lg mb-2">
-                      MATRIC <span className="text-xs font-medium text-slate-500">(Grades 9-10)</span>
-                    </h4>
-                    <p className="text-[14px] text-slate-700 leading-relaxed">
-                      <span className="font-semibold">Subjects:</span> English, Math, Physics, Chemistry, Biology
-                    </p>
-                  </div>
-                  <div className="mt-auto">
-                    <Link href="/programs/matric" className="w-full">
-                      <Button className="w-full bg-[#2366c9] hover:bg-blue-700 font-semibold py-5">
-                        ENROLL NOW <ArrowRight className="ml-2 h-2 w-4" />
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
-
-                {/* FSc / ICS CARD */}
-                <div className="p-6 rounded-xl border border-blue-100 bg-blue-50/30 text-left flex flex-col h-full">
-                  <div className="mb-6">
-                    <h4 className="font-bold text-slate-900 text-lg mb-2">
-                      FSc / ICS <span className="text-xs font-medium text-slate-500">(Intermediate)</span>
-                    </h4>
-                    <p className="text-[14px] text-slate-700 leading-relaxed">
-                      <span className="font-semibold">Subjects:</span> English, Math, Physics, Chemistry, Biology
-                    </p>
-                  </div>
-                  <div className="mt-auto">
-                    <Link href="/programs/fsc-ics" className="w-full">
-                      <Button className="w-full bg-[#2366c9] hover:bg-blue-700 font-semibold py-5">
-                        ENROLL NOW <ArrowRight className="ml-2 h-2 w-4" />
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
-
-                {/* ECAT CARD */}
-                <div className="p-6 rounded-xl border border-blue-100 bg-blue-50/30 text-left flex flex-col h-full">
-                  <div className="mb-6">
-                    <h4 className="font-bold text-slate-900 text-lg mb-2">
-                      ECAT <span className="text-xs font-medium text-slate-500">(Engineering Colleges Admission Test)</span>
-                    </h4>
-                    <p className="text-[14px] text-slate-700 leading-relaxed">
-                      <span className="font-semibold">Subjects:</span> Math, Physics, Chemistry, English
-                    </p>
-                  </div>
-                  <div className="mt-auto">
-                    <Link href="/programs/ecat" className="w-full">
-                      <Button className="w-full bg-[#2366c9] hover:bg-blue-700 font-semibold py-5">
-                        ENROLL NOW <ArrowRight className="ml-2 h-2 w-4" />
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
-
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-[#2366c9]   border-2  border-2 rounded-3xl border border-blue-200 bg-gradient-to-r from-blue-50 to-white shadow-sm\">
-            <CardContent className="p-8 md:p-10">
-              <div className="max-w-4xl mx-auto text-center">
-                <h3 className="text-2xl md:text-3xl font-semibold text-slate-900 mb-3">COMING IN FEW MONTHS: A-LEVEL SUBJECTS</h3>
-                <p className="text-black mb-4">Expanding to A-Level with the same research-backed 8-Step methodology.</p>
-                <p className="text-[14px] text-slate-700 mb-6">Initial Subjects (In Development): Mathematics (AS + A2), Physics (AS + A2), Chemistry (AS + A2), Biology (AS + A2), Economics (AS + A2), Business Studies (AS + A2)</p>
-
-                <div className="max-w-xl mx-auto text-left mb-8">
-                  <ul className="text-[14px] text-slate-700 space-y-2">
-                    <li>✓ Complete syllabus coverage</li>
-                    <li>✓ Interactive H5P activities</li>
-                    <li>✓ Past paper practice integrated</li>
-                    <li>✓ Spaced retrieval system</li>
-                    <li>✓ Same 10X Learning Leap ModelTM</li>
-                  </ul>
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
-                  <Button className="w-full sm:w-auto min-w-[250px] bg-[#2366c9] hover:bg-blue-700">NOTIFY ME WHEN LAUNCHED</Button>
-                  <Button variant="outline" className="w-full sm:w-auto min-w-[220px] border-[#2366c9] text-[#2366c9]">EXPRESS INTEREST</Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-      <section className="py-20 md:py-28 bg-slate-50">
-        <div className="container-custom max-w-6xl mx-auto">
-
-          <div className="text-center mb-12">
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
-              Tutoring Comparison
-            </p>
-            <div className="flex justify-center w-full">
-              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
-                Why Traditional Tutoring Often Fails
-              </h2>
-            </div>
-            <p className="text-base text-black">
-              Compare traditional tutoring to our structured, research-backed EduMeUp system
-            </p>
-          </div>
-
-          <div className="overflow-x-auto">
-            <div className="min-w-[700px] border-slate-200 rounded-xl overflow-hidden shadow-sm">
-              {/* Header Row */}
-
-              <div className="flex bg-[#2366c9] text-white text-xs uppercase tracking-wider font-semibold">
-                <div className="flex-1 p-5 border-r border-blue-400/30">
-                  Feature
-                </div>
-                <div className="flex-1 p-5 border-r border-blue-400/30">
-                  Traditional Tutoring
-                </div>
-                <div className="flex-1 p-5">
-                  EduMeUp System
-                </div>
-              </div>
-
-              {/* Rows */}
-              {[
-                ["Cost per year", "$2,400 - $3,600+", "~$199 - $360"],
-                ["Gap identification", "Random, reactive", "Precision AI diagnostic"],
-                ["Foundation repair", "Rarely addressed", "Systematic remedial modules"],
-                ["Retention strategy", "None - hope it sticks", "Spaced retrieval scheduling"],
-                ["Past paper practice", "Ad hoc, teacher-dependent", "Integrated from Day 1"],
-                ["Parent visibility", "Monthly verbal updates", "Real-time progress dashboard"],
-                ["Student independence", "Increases dependency", "Builds self-learning skills"],
-                ["Availability", "3 hours/week max", "24/7 on any device"],
-                ["Language support", "None", "Multilingual + audio translation"],
-                ["Mock exam readiness", "No structured simulation", "Full timed Cambridge mocks"]
-              ].map((row, i) => (
-                <div
-                  key={i}
-                  className={`flex border-t ${i % 2 === 0 ? "bg-slate-50" : "bg-white"
-                    } hover:bg-slate-100/50 transition-colors`}
-                >
-                  <div className="flex-1 p-5 font-medium text-slate-800 text-left border-r border-slate-200">
-                    {row[0]}
-                  </div>
-                  <div className="flex-1 p-5 text-red-700 text-[14px] text-left border-r border-red-200">
-                    {row[1]}
-                  </div>
-                  <div className="flex-1 p-5 text-green-700 text-[14px] text-left">
-                    {row[2]}
-                  </div>
+            <table className="emu-retention-table">
+              <thead>
+                <tr>
+                  <th>❌ Without Timely Reviews</th>
+                  <th>✅ With EduMeUp Spaced Reviews</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Day 1: 100% → Day 2: 58%</td><td>Day 1: 100% → After Review 1: 100%</td></tr>
+                <tr><td>Day 6: 26% → Day 31: 21%</td><td>Day 6: 80% → After Review 2: 95%</td></tr>
+                <tr><td>Day 60: ~3% retained</td><td>Day 31: 85%+ → After Review 3: 98%</td></tr>
+                <tr>
+                  <td style={{ color: "var(--red)", fontWeight: 600 }}>Result: Panic. Tutor dependency. Exam failure.</td>
+                  <td style={{ color: "var(--primary)", fontWeight: 600 }}>Result: Independent mastery. Exam confidence.</td>
+                </tr>
+              </tbody>
+            </table>
+            <p className="emu-retention-cite">Research basis: Ebbinghaus (1885), Murre &amp; Dros (2015), Cepeda et al. (2006)</p>
+          </SectionWrapper>
+
+          {/* 8-STEP MODEL */}
+          <SectionWrapper id="mastery" bg="var(--lgrey)">
+            <div className="emu-section-eyebrow">The 10X Learning Leap Model</div>
+            <div className="emu-section-title">8-Step Research-Backed Mastery Cycle</div>
+            <p className="emu-section-sub">Every learner on EduMeUp follows a structured pathway grounded in five decades of cognitive science — converting passive study into 50%+ active, long-term mastery.</p>
+            <div className="emu-steps-flow">
+              {steps1.map((s) => (
+                <div key={s.num} className="emu-step-card" style={{ background: s.bg, borderRadius: s.br }}>
+                  <div className="emu-step-num">{s.num}</div>
+                  <div className="emu-step-title">{s.title}</div>
+                  <div className="emu-step-desc">{s.desc}</div>
+                  <div className="emu-step-ref">{s.ref}</div>
                 </div>
               ))}
             </div>
-          </div>
-          <div className="mt-12 text-center">
-            <Button className="bg-[#2366c9] hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-xl text-[14px] shadow-md transition-all">
-              See Full Program Advantages <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
-
-        </div>
-      </section>
-
-      {/* SECTION: PLATFORM COMPARISON */}
-      <section className="py-20 md:py-28 bg-white">
-        <div className="container-custom max-w-7xl">
-          <div className="text-center max-w-4xl mx-auto mb-16">
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
-              PLATFORM COMPARISON
-            </p>
-            <div className="flex justify-center w-full">
-              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
-                How EduMeUp Compares to Other EdTech Platforms
-              </h2>
+            <div className="emu-step-row2">
+              {steps2.map((s) => (
+                <div key={s.num} className="emu-step-card" style={{ background: s.bg, borderRadius: s.br }}>
+                  <div className="emu-step-num">{s.num}</div>
+                  <div className="emu-step-title">{s.title}</div>
+                  <div className="emu-step-desc">{s.desc}</div>
+                  <div className="emu-step-ref">{s.ref}</div>
+                </div>
+              ))}
             </div>
-            <p className="text-lg text-black font-medium">
-              Most EdTech platforms deliver content. EduMeUp delivers learning transformation. The difference is structural - not cosmetic.
-            </p>
-          </div>
+          </SectionWrapper>
 
-          <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-md">
-            <table className="w-full min-w-[1000px] text-[14px] text-left">
-              <thead className="bg-[#2366c9] text-white text-xs uppercase tracking-wider font-semibold">
-                <tr>
-                  <th className="p-4 w-1/4">Feature</th>
-                  <th className="p-4">EduMeUp</th>
-                  <th className="p-4">General AI</th>
-                  <th className="p-4">Khanmigo</th>
-                  <th className="p-4">Kognity</th>
-                  <th className="p-4">GCSEPod</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {platformComparisonData.map((row, i) => (
-                  <tr key={i} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="p-4 font-semibold text-slate-800">{row[0]}</td>
-                    <td className="p-4 font-medium text-green-800 bg-green-50/70 border-x border-green-200">{row[1]}</td>
-                    {row.slice(2).map((cell, j) => (
-                      <td key={j} className={`p-4 font-medium ${cell.toLowerCase() === 'none' ? 'text-red-600' : 'text-black'}`}>
-                        {cell}
-                      </td>
-                    ))}
+          {/* DIFFERENTIATORS */}
+          <SectionWrapper id="differentiators" bg="#fff">
+            <div className="emu-section-eyebrow">Why Choose EduMeUp</div>
+            <div className="emu-section-title">Six Differentiators That Set This Platform Apart</div>
+            <p className="emu-section-sub">Every differentiator is grounded in peer-reviewed research — not marketing language. Each one maps to a specific, documented failure in conventional learning that EduMeUp resolves.</p>
+            <table className="emu-diff-table">
+              <tbody>
+                {differentiators.map((d, i) => (
+                  <tr key={i}>
+                    <td className="emu-diff-icon-cell" style={{ background: d.iconBg, borderRadius: d.topBr || d.botBr || "" }}>{d.icon}</td>
+                    <td className="emu-diff-main" style={{ borderLeftColor: d.borderColor }}>
+                      <h4>{d.title}</h4>
+                      <p>{d.desc}</p>
+                    </td>
+                    <td className="emu-diff-research">
+                      <div className="emu-diff-research-label">Research Basis</div>
+                      <p>{d.research}</p>
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>
-        </div>
-      </section>
+          </SectionWrapper>
 
-      {/* SECTION 4C: PLATFORM FEATURES */}
-      <section className="py-20 md:py-28 bg-slate-50">
-        <div className="container-custom max-w-6xl mx-auto">
+          {/* PROGRAMMES */}
+          <SectionWrapper id="programmes" bg="var(--lgrey)">
+            <div className="emu-section-eyebrow">All Programmes</div>
+            <div className="emu-section-title">Find the Right Programme — Whatever Stage You Are At</div>
+            <p className="emu-section-sub">From Grade 6 foundation through Cambridge O-Level completion — every programme follows the 8-step mastery cycle. Group discount available: organiser 65%, group members 80%.</p>
 
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
-              Platform Features
-            </p>
-            <div className="flex justify-center w-full overflow-hidden">
-              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
-                PLATFORM FEATURES
-              </h2>
-            </div>
-            <p className="text-base text-black">
-              The tools that make independent mastery possible
-            </p>
-          </div>
-
-          {/* Features Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                title: "AI Chatbot - Expert on Demand",
-                body: "24/7 subject-expert chatbot for instant doubt-solving, concept explanations, and exam strategy guidance."
-              },
-              {
-                title: "Multilingual Translator + Audio",
-                body: "Built-in translation in 100+ languages with text-to-audio support for Urdu-medium and multilingual learners."
-              },
-              {
-                title: "H5P Interactive Activities",
-                body: "1,000+ interactive exercises across 40+ activity types to convert passive study into active recall and mastery."
-              },
-              {
-                title: "Parent Progress Dashboard",
-                body: "Real-time mastery, consistency, weak-topic alerts, and predicted exam readiness in one transparent dashboard."
-              }
-            ].map((feature, i) => (
-              <Card
-                key={i}
-                className="group border border-blue-100 rounded-3xl bg-white shadow-md hover:shadow-xl transition-all duration-300 p-8 flex flex-col items-start"
-              >
-                <h3 className="text-2xl font-semibold text-slate-900 mb-4 group-hover:text-[#2366c9] transition-colors leading-tight">
-                  {feature.title}
-                </h3>
-                <p className="text-[14px] text-black leading-relaxed mt-auto">
-                  {feature.body}
-                </p>
-              </Card>
-            ))}
-          </div>
-
-          <div className="mt-16 text-center">
-            <Button className="bg-[#2366c9] hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-xl shadow-md transition-all text-[14px]">
-              Explore All Features <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </div>
-
-        </div>
-      </section>
-      <section className="py-20 bg-white">
-        <div className="container-custom max-w-6xl">
-          <div className="text-center max-w-4xl mx-auto mb-16">
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
-              WHAT SETS US APART
-            </p>
-            <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-4">
-              What Makes EduMeUp Unique
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              "Research-backed learning science",
-              "AI-powered diagnostics",
-              "Interactive H5P learning modules",
-              "Retrieval practice & spaced repetition",
-              "Topic-by-topic interactive mastery modules (Grades 1 through O-Level)",
-              "Past paper mastery system",
-              "Bridge courses for early preparation (Grades 7-8)",
-              "Teacher professional development & Cambridge training",
-              "School Partnership B2B Model",
-            ].map((item, i) => (
-              <div key={i} className="flex items-start gap-3 p-4 bg-slate-50 rounded-lg border border-slate-200">
-                <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
-                <span className="text-[14px] font-semibold text-slate-700">{item}</span>
+            {/* Lower Secondary */}
+            <div className="emu-prog-level" id="lower-secondary">
+              <div className="emu-prog-level-label">
+                <span className="emu-prog-level-badge" style={{ background: "var(--teal)" }}>Level 1</span>
+                <span className="emu-prog-level-title">Lower Secondary — Grade 6 to 8</span>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 5: THE 10X LEARNING LEAP MODEL */}
-      <section className="py-16 md:py-24 bg-gradient-to-b from-blue-50 via-white to-blue-50 relative overflow-hidden">
-        <div className="absolute -top-20 -right-20 h-64 w-64 rounded-full bg-blue-200/40 blur-3xl" aria-hidden="true"></div>
-        <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-indigo-200/30 blur-3xl" aria-hidden="true"></div>
-
-        <div className="container-custom relative z-10">
-          <div className="text-center max-w-5xl mx-auto mb-14">
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
-              Research Architecture
-            </p>
-            <div className="flex justify-center w-full overflow-hidden">
-              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
-                The 10X Learning Leap Model
-              </h2>
-            </div>
-            <p className="text-base text-slate-700">
-              Why EduMeUp Students Retain 10X More - The Science + The System
-            </p>
-          </div>
-
-          <div className="mb-14">
-            <h3 className="text-2xl md:text-3xl font-semibold text-slate-900 text-center mb-8">
-              The Science Behind 10X Retention
-            </h3>
-
-            <div className="grid md:grid-cols-3 gap-6">
-              <Card className="border-[#2366c9]   border-2   border-blue-100 rounded-2xl bg-white/90 backdrop-blur shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
-                <CardContent className="p-6 text-left">
-                  <h4 className="text-xl font-semibold text-slate-900 mb-2">
-                    Mastery Learning
-                  </h4>
-                  <p className="text-[14px] text-[#2366c9] font-semibold mb-3">
-                    Bloom (1968)
-                  </p>
-                  <p className="text-[15px] text-slate-700 leading-relaxed">
-                    Students must master each concept before advancing. No topic is left partially understood.
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-[#2366c9]   border-2   border-blue-100 rounded-2xl bg-white/90 backdrop-blur shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
-                <CardContent className="p-6 text-left">
-                  <h4 className="text-xl font-semibold text-slate-900 mb-2">
-                    Spaced Retrieval
-                  </h4>
-                  <p className="text-[14px] text-[#2366c9] font-semibold mb-3">
-                    Ebbinghaus (1885), Cepeda (2006)
-                  </p>
-                  <p className="text-[15px] text-slate-700 leading-relaxed">
-                    Reviewing at 1, 3, 7, 14, 30, 90 day intervals rebuilds memory traces and prevents forgetting.
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-[#2366c9]   border-2   border-blue-100 rounded-2xl bg-white/90 backdrop-blur shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
-                <CardContent className="p-6 text-left">
-                  <h4 className="text-xl font-semibold text-slate-900 mb-2">
-                    Active Recall
-                  </h4>
-                  <p className="text-[14px] text-[#2366c9] font-semibold mb-3">
-                    Karpicke & Roediger (2008)
-                  </p>
-                  <p className="text-[15px] text-slate-700 leading-relaxed">
-                    Retrieving information from memory is more effective than re-reading. Every H5P activity forces retrieval.
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-
-          <div>
-            <h3 className="text-2xl md:text-3xl font-semibold text-slate-900 text-center mb-8">
-              How EduMeUp Delivers 10X - At a Glance
-            </h3>
-
-            <div className="grid md:grid-cols-2 gap-6">
-              <Card className="border-[#2366c9]   border-2   border-red-200 rounded-2xl bg-white shadow-sm hover:shadow-lg transition-all overflow-hidden">
-                <CardContent className="p-6 text-left">
-                  <div className="h-1 w-full rounded-full bg-red-500 mb-5"></div>
-                  <h4 className="text-xl font-semibold text-red-600 mb-4">
-                    Traditional Model - 5% Retention
-                  </h4>
-                  <ul className="space-y-2 text-[14px] text-slate-700">
-                    <li>- Lectures 5%</li>
-                    <li>- Textbook reading 10%</li>
-                    <li>- No diagnostic - gaps accumulate</li>
-                    <li>- Exam panic - no simulation</li>
-                    <li>- Tutor dependency - no independence</li>
-                  </ul>
-                </CardContent>
-              </Card>
-
-              <Card className="border-[#2366c9]   border-2   border-green-200 rounded-2xl bg-white shadow-sm hover:shadow-lg transition-all overflow-hidden">
-                <CardContent className="p-6 text-left">
-                  <div className="h-1 w-full rounded-full bg-green-500 mb-5"></div>
-                  <h4 className="text-xl font-semibold text-green-700 mb-4">
-                    EduMeUp Model - 50%+ Retention
-                  </h4>
-                  <ul className="space-y-2 text-[14px] text-slate-700">
-                    <li>- Interactive H5P activities 50-75%</li>
-                    <li>- Active retrieval practice 75-90%</li>
-                    <li>- Diagnostic-first - gaps fixed</li>
-                    <li>- Timed mock exams - exam ready</li>
-                    <li>- 8-step system - self-directed</li>
-                  </ul>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 6: STUDENT SUCCESS PATH */}
-      <section id="student-section" className="py-20 md:py-28 bg-gradient-to-b from-blue-50 via-white to-slate-50">
-        <div className="container-custom">
-
-          <div className="text-center max-w-4xl mx-auto mb-16">
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
-              Guided Timeline
-            </p>
-            <div className="flex justify-center w-full">
-              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
-                Your Child's Journey
-              </h2>
-            </div>
-            <p className="text-base text-black">
-              A clear, step-by-step pathway - nothing left to chance
-            </p>
-          </div>
-          <div className="relative mb-16">
-            <div className="hidden lg:block absolute top-6 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-200 via-[#2366c9] to-blue-200"></div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 lg:gap-6">
-              {[
-                "Diagnostic\nDay 1",
-                "Repair\nWeeks 1-4",
-                "Learn\nOngoing",
-                "Practice\nFrom Day 1",
-                "Assess\nPer Unit",
-                "Correct\nAuto-routed",
-                "Mock Exam\nPre-finals",
-                "Succeed\nO-Level Day"
-              ].map((node, i) => (
-                <div
-                  key={i}
-                  className="relative rounded-xl h-[110%] border border-blue-100 bg-white p-5 text-center shadow-sm hover:shadow-lg transition hover:-translate-y-1"
-                >
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-7 h-7 rounded-full bg-[#2366c9] text-white text-[14px] flex items-center justify-center font-semibold shadow-sm">
-                    {i + 1}
+              <div className="emu-prog-scroll">
+                {lowerSecondaryCards.map((c) => (
+                  <div className="emu-prog-card" key={c.title} style={{ borderTopColor: c.color }}>
+                    <div className="emu-prog-card-icon">{c.icon}</div>
+                    <h4>{c.title}</h4>
+                    <div className="emu-prog-level-tag">{c.level}</div>
+                    <p>{c.desc}</p>
+                    <a className="emu-prog-card-link" href="#">Lower Secondary →</a>
                   </div>
-                  <p className="text-xs font-semibold text-slate-700 whitespace-pre-line pt-4 leading-tight">
-                    {node}
-                  </p>
+                ))}
+              </div>
+            </div>
+
+            {/* English Pathway */}
+            <div className="emu-english-highlight" id="english-pathway">
+              <h3>🗣 English Language — A Complete, Purposeful Pathway from Foundation to O-Level Mastery</h3>
+              <p>Unlike platforms where English courses are isolated purchases, every EduMeUp English course is purpose-built as part of a connected, progressive pathway. Each course is a complete standalone programme — but together they form a seamless journey from foundation level to full Cambridge O-Level English mastery.</p>
+              <div className="emu-english-pathway">
+                {["Grade 6–8 English (Foundation)", "ESL1 (A2 Level)", "ESL2 (B1 Level)", "O-Level English Bridge (B1+→B2)"].map((step, i) => (
+                  <span key={i} style={{ display: "flex", alignItems: "center" }}>
+                    <span className="emu-eng-step">{step}</span>
+                    <span className="emu-eng-arrow">→</span>
+                  </span>
+                ))}
+                <span className="emu-eng-step" style={{ background: "var(--green)" }}>O-Level English Mastery</span>
+              </div>
+              <p style={{ marginTop: 14, fontSize: 13, color: "var(--dgrey)", fontStyle: "italic" }}>
+                Diagnostic-first entry at any level · Each course is complete as a standalone · Together they form a full roadmap
+              </p>
+            </div>
+
+            {/* Bridge Courses */}
+            <div className="emu-prog-level" id="bridge">
+              <div className="emu-prog-level-label">
+                <span className="emu-prog-level-badge" style={{ background: "var(--primary-darker)" }}>Level 2</span>
+                <span className="emu-prog-level-title">Bridge Courses — Pre-O-Level Foundation</span>
+              </div>
+              <div className="emu-prog-scroll">
+                {bridgeCards.map((c) => (
+                  <div className="emu-prog-card" key={c.title} style={{ borderTopColor: c.color }}>
+                    <div className="emu-prog-card-icon">{c.icon}</div>
+                    <h4>{c.title}</h4>
+                    <div className="emu-prog-level-tag">{c.level}</div>
+                    <p>{c.desc}</p>
+                    <a className="emu-prog-card-link" href="#">Bridge Courses →</a>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Certification */}
+            <div id="certification" style={{ background: "linear-gradient(135deg,var(--primary-light),#f0fdf4)", borderRadius: 14, padding: "28px 32px", marginBottom: 32, border: "1px solid var(--primary-border)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 24, flexWrap: "wrap" }}>
+                <div>
+                  <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "1.5px", color: "var(--primary)", textTransform: "uppercase", marginBottom: 8 }}>EduMeUp Qualification</div>
+                  <h3 style={{ fontFamily: "'Sora',sans-serif", fontSize: 22, fontWeight: 700, color: "#0f172a", marginBottom: 10 }}>Pre-O-Level Certification — Prove Your Readiness</h3>
+                  <p style={{ fontSize: 14, color: "var(--body)", lineHeight: 1.65, maxWidth: 580, marginBottom: 12 }}>Complete a Bridge Course and pass the end-of-course exam at 75%+ to earn the EduMeUp Pre-O-Level Certificate — confirming readiness for O-Level study. Included in Bridge Course fee.</p>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: "var(--primary)" }}>Phase 1: English Language · Mathematics · Physics · Chemistry</div>
+                  <div style={{ fontSize: 11, color: "var(--dgrey)", fontStyle: "italic", marginTop: 8 }}>⚠ EduMeUp internal qualification only — not affiliated with Cambridge Assessment International Education</div>
+                </div>
+                <button className="emu-btn-primary" style={{ background: "var(--primary)", color: "#fff", flexShrink: 0 }}>Learn About Certification →</button>
+              </div>
+            </div>
+          </SectionWrapper>
+
+          {/* CAMBRIDGE + INTERNATIONAL */}
+          <SectionWrapper id="intl" bg="#fff">
+            <div className="emu-section-eyebrow">Cambridge &amp; Beyond</div>
+            <div className="emu-section-title">Built for Cambridge. Ready for Any Conceptual Exam System.</div>
+            <p className="emu-section-sub">Cambridge O-Level is the benchmark — but the skills, knowledge, and study methods EduMeUp builds transfer to any education system based on conceptual understanding and unseen exam application.</p>
+            <div className="emu-intl-grid">
+              <div className="emu-intl-card" style={{ borderLeftColor: "var(--primary)" }}>
+                <h3>🎓 The Cambridge Benchmark</h3>
+                <p>Every piece of EduMeUp content is built to the standard Cambridge examiners apply when marking. The syllabus scope, the assessment objectives, the mark scheme language, the expected depth of answer — all are built around Cambridge O-Level requirements, which represent the gold standard for rigorous conceptual examination at secondary level.</p>
+                <p>When a student can answer an unseen Cambridge question correctly, they have demonstrated genuine understanding — not pattern recognition.</p>
+                <div className="emu-intl-tag-row">
+                  {["Cambridge O-Level", "Cambridge IGCSE", "O-Level Pakistan", "O-Level Sri Lanka"].map(t => <span key={t} className="emu-intl-tag">{t}</span>)}
+                </div>
+              </div>
+              <div className="emu-intl-card" style={{ borderLeftColor: "var(--primary-dark)" }}>
+                <h3>🌍 Ready for Other International Systems</h3>
+                <p>Conceptual, unseen-exam education systems around the world share a fundamental characteristic: they test understanding, not memorisation. The syllabus chapters differ — but the method of preparation is the same. A student built for unseen Cambridge questions is prepared for any exam system that rewards reasoning over rote recall.</p>
+                <p>The 8-step mastery cycle transfers directly: diagnose, build understanding, retrieve, apply to unseen problems.</p>
+                <div className="emu-intl-tag-row">
+                  {["IGCSE Globally", "IB MYP Foundation", "UAE Curriculum", "Malaysian O-Level", "African O-Level"].map(t => <span key={t} className="emu-intl-tag">{t}</span>)}
+                </div>
+              </div>
+            </div>
+          </SectionWrapper>
+
+          {/* RESEARCH STRIP */}
+          <section id="research-strip" className="emu-section" style={{ padding: "48px 60px", background: "var(--lgrey)" }}>
+            <div className="emu-section-eyebrow" style={{ marginBottom: 20 }}>Research in Numbers</div>
+            <div className="emu-research-strip">
+              {researchTiles.map((t, i) => (
+                <div key={i} className="emu-research-tile" style={{ background: t.bg }}>
+                  <div className="emu-research-stat">{t.stat}</div>
+                  <div className="emu-research-label">{t.label}</div>
+                  <div className="emu-research-src">{t.src}</div>
                 </div>
               ))}
             </div>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            {[
-              {
-                title: "Month 1-2: Diagnostic + Repair",
-                points: [
-                  "Complete AI diagnostic assessment",
-                  "Identify exact gaps from Grade 6-8",
-                  "Begin targeted remedial modules",
-                  "No new O-Level content until foundations are solid"
-                ]
-              },
-              {
-                title: "Month 3-6: Interactive Learning + Practice",
-                points: [
-                  "H5P interactive concept modules begin",
-                  "Cambridge past paper practice integrated from first lesson",
-                  "Spaced retrieval reviews scheduled automatically",
-                  "Formative checks at end of each unit"
-                ]
-              },
-              {
-                title: "Month 7-10: Deep Mastery + Assessment",
-                points: [
-                  "Full subject coverage in progress",
-                  "Corrective study loops for weak topics",
-                  "Regular unit-based formative assessments",
-                  "Parent dashboard updated in real time"
-                ]
-              },
-              {
-                title: "Month 11-12: Mock Exams + Final Readiness",
-                points: [
-                  "Full-length timed Cambridge-style mock exams",
-                  "Exam strategy and stamina training",
-                  "Final weak-topic corrective loops",
-                  "Student enters exam day prepared and confident"
-                ]
-              }
-            ].map((phase, i) => (
-              <Card
-                key={i}
-                className="border border-slate-200 rounded-2xl bg-white shadow-md hover:shadow-xl transition-all"
-              >
-                <CardContent className="p-8">
-                  <h4 className="flex items-center gap-3 text-2xl font-semibold text-slate-900 mb-6 leading-tight">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-[#2366c9] text-base font-semibold shrink-0">
-                      {i + 1}
-                    </span>
-                    {phase.title}
-                  </h4>
-                  <ul className="space-y-3 text-[14px] text-slate-700 font-medium">
-                    {phase.points.map((p, j) => (
-                      <li key={j} className="leading-relaxed">- {p}</li>
-                    ))}
-                  </ul>
-
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-        </div>
-      </section>
-
-      {/* SECTION 7: PRICING COMPARISON CARDS */}
-      {/* SECTION: PRICE INTELLIGENCE */}
-      <section id="teacher-section" className="py-20 md:py-28 bg-slate-50">
-        <div className="container-custom">
-          <div className="text-center max-w-4xl mx-auto mb-14">
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
-              Price Intelligence
+            <p style={{ textAlign: "center", marginTop: 20 }}>
+              <a href="#research" style={{ fontSize: 14, fontWeight: 700, color: "var(--primary)", textDecoration: "none" }}>
+                Read the full research basis on every design decision → Research &amp; RnD Page
+              </a>
             </p>
-            <div className="flex justify-center w-full">
-              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
-                Transparent Pricing - No Hidden Fees
-              </h2>
+          </section>
+
+          {/* AI SUPPORT */}
+          <SectionWrapper id="ai-support" bg="#fff">
+            <div className="emu-section-eyebrow">AI-Powered Support</div>
+            <div className="emu-section-title">24/7 Intelligent Support — Solving What Traditional Methods Cannot</div>
+            <p className="emu-section-sub">EduMeUp's AI layer works continuously — personalising learning, identifying risk, alerting stakeholders, and delivering feedback that meets Cambridge standard. Proprietary. Benefit-focused. Always on.</p>
+            <div className="emu-ai-grid">
+              {aiCards.map((c) => (
+                <div key={c.title} className="emu-ai-card">
+                  <div className="emu-ai-card-icon">{c.icon}</div>
+                  <h3>{c.title}</h3>
+                  <p>{c.desc}</p>
+                  <div className="emu-ai-card-ref">{c.ref}</div>
+                </div>
+              ))}
             </div>
-            <p className="text-base text-black">
-              World-class Cambridge preparation at a fraction of tutor costs
-            </p>
-          </div>
+          </SectionWrapper>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-            {[
-              ["Pre-O-Level Victory Program", "$199/year", "$360/year", "Full prep - Grade 7-8 students"],
-              ["Complete O-Level Subject Preparation", "$65/year", "N/A", "Individual subject mastery"],
-              ["Bridge Courses (Single Subject)", "From $50", "N/A", "Math ($80), Chem ($80), Physics/English ($60), Econ ($50)"],
-              ["Bridge Courses Packages", "$170 - $250", "N/A", "Math-Chem-Phys ($170) | All 5 ($250, Save $80)"],
-              ["English Language Mastery Courses", "$250", "N/A", "Paper 1 & 2 Complete Package (Save $60)"],
-              ["ATP Courses (Physics | Chemistry | Biology)", "$229", "N/A", "Paper 4 practical replacement (Save $148)"],
-              ["Tutor Booking — 1-to-1 Personalised Education", "$80-150/month", "-", "Structured 1-on-1 support"],
-              ["Pakistan Matric Programme (Grades 9-10)", "$18/mo or $160/yr", "N/A", "Pakistan Board Grades 9-10"],
-              ["Pakistan FSc / ICS Programme", "$20/mo or $199/yr", "N/A", "Intermediate Board students"],
-              ["Pakistan ECAT — Engineering Colleges Admission Test", "$140 (2-yr)", "N/A", "Engineering Colleges Admission Test prep"]
-            ].map((item, i) => (
-              <Card
-                key={i}
-                className="border border-slate-200 rounded-2xl bg-white shadow-md hover:shadow-xl transition hover:-translate-y-1 flex flex-col"
-              >
-                <CardContent className="p-7 flex flex-col justify-between h-full">
-                  <div className="mb-1">
-                    <h3 className="text-2xl font-semibold text-slate-900 mb-2 leading-tight">
-                      {item[0]}
-                    </h3>
-                    <p className="text-xs text-black">{item[3]}</p>
-                  </div>
-
-
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-        </div>
-      </section>
-
-      {/* SECTION 8: PARENT TRANSPARENCY DASHBOARD */}
-      <section className="py-16 md:py-24 bg-white">
-        <div className="container-custom">
-          <div className="text-center max-w-5xl mx-auto mb-12">
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
-              Parent Control Room
-            </p>
-            <div className="flex justify-center w-full">
-              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
-                Parents See Everything
-              </h2>
-            </div>
-            <p className="text-base text-black">
-              Real-time visibility into your child's learning - not just exam results
-            </p>
-          </div>
-
-          <Card className="border-[#2366c9]   border-2  rounded-2xl bg-slate-50 shadow-sm mb-10">
-            <CardContent className="p-6 md:p-10">
-              {/* OVERLINE = 10px */}
-              <h4 className="text-[14px] font-semibold text-slate-700 uppercase tracking-wide mb-6">
-                Parent Dashboard Mockup
-              </h4>
-
-              <div className="grid lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 space-y-6">
-                  {[
-                    ["Math Mastery", 82],
-                    ["Physics Mastery", 74],
-                    ["Chemistry Mastery", 68]
-                  ].map(([subject, percent], i) => (
-                    <div key={i}>
-                      <div className="flex justify-between text-[14px] text-black mb-2 font-medium">
-                        <span>{subject}</span>
-                        <span>{percent}%</span>
-                      </div>
-                      <div className="h-3 bg-slate-200 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-blue-600 rounded-full transition-all"
-                          style={{ width: `${percent}%` }}
-                        ></div>
-                      </div>
+          {/* STAKEHOLDERS */}
+          <SectionWrapper id="stakeholders" bg="var(--lgrey)">
+            <div className="emu-section-eyebrow">Who It's For</div>
+            <div className="emu-section-title">EduMeUp Supports Everyone in the Learning Journey</div>
+            <div className="emu-stakeholder-grid">
+              {stakeholders.map((s) => (
+                <div key={s.title} className="emu-sth-card" style={{ borderTopColor: s.color }}>
+                  <div className="emu-sth-icon">{s.icon}</div>
+                  <h3 style={{ color: s.color }}>{s.title}</h3>
+                  {s.benefits.map((b, i) => (
+                    <div key={i} className="emu-sth-benefit">
+                      <span style={{ color: s.checkColor, fontWeight: 700, flexShrink: 0 }}>✓</span>{b}
                     </div>
                   ))}
+                  <a className="emu-sth-cta" href="#">{s.cta}</a>
                 </div>
+              ))}
+            </div>
+          </SectionWrapper>
 
-                <div className="rounded-xl border border-slate-200 bg-white p-6">
-                  <p className="text-xs font-semibold text-slate-700 mb-4">Topic Heat Map</p>
-                  <div className="grid grid-cols-4 gap-2">
-                    {[
-                      "bg-green-400", "bg-green-500", "bg-yellow-300", "bg-red-400",
-                      "bg-green-500", "bg-yellow-300", "bg-yellow-400", "bg-red-500",
-                      "bg-green-400", "bg-green-500", "bg-yellow-300", "bg-orange-400"
-                    ].map((color, i) => (
-                      <div key={i} className={`h-8 rounded ${color}`}></div>
-                    ))}
-                  </div>
+          {/* COMPARE TABLE */}
+          <SectionWrapper id="compare" bg="#fff">
+            <div className="emu-section-eyebrow">Platform Comparison</div>
+            <div className="emu-section-title">Why Traditional Tutoring Often Falls Short</div>
+            <p className="emu-section-sub">A structured, science-backed system versus reactive, gap-filled traditional approaches.</p>
+            <table className="emu-compare-table">
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th>🔴 Traditional Tutoring</th>
+                  <th>🔵 EduMeUp System</th>
+                </tr>
+              </thead>
+              <tbody>
+                {compareRows.map(([feat, trad, emu]) => (
+                  <tr key={feat}>
+                    <td>{feat}</td>
+                    <td>{trad}</td>
+                    <td>{emu}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </SectionWrapper>
+
+          {/* TESTIMONIALS */}
+          <SectionWrapper id="testimonials" bg="var(--lgrey)">
+            <div className="emu-section-eyebrow">Social Proof</div>
+            <div className="emu-section-title">What Students, Parents &amp; Schools Say</div>
+            <div className="emu-testi-grid">
+              {testimonials.map((t) => (
+                <div key={t.author} className="emu-testi-card">
+                  <div className="emu-testi-quote">"</div>
+                  <p className="emu-testi-text">{t.text}</p>
+                  <div className="emu-testi-author">{t.author}</div>
+                  <div className="emu-testi-role">{t.role}</div>
                 </div>
+              ))}
+            </div>
+            <div className="emu-trust-row">
+              {["🔬 Research-Validated Since 2021", "📚 Built on 30+ Years of Learning Science", "🤖 AI-Powered Adaptive System", "🎓 Cambridge O-Level / IGCSE Aligned"].map(b => (
+                <span key={b} className="emu-trust-badge">{b}</span>
+              ))}
+            </div>
+          </SectionWrapper>
+
+          {/* FREE RESOURCES */}
+          <SectionWrapper id="free-resources" bg="#fff">
+            <div className="emu-section-eyebrow">Try Before You Invest</div>
+            <div className="emu-section-title">Free Resource Zone — Experience the Quality First</div>
+            <p className="emu-section-sub">One free sample from every resource type we offer. No account required. For those who want to judge quality before spending — and for those who need it most.</p>
+            <div className="emu-res-grid">
+              {freeResources.map((r) => (
+                <div key={r.title} className="emu-res-card" style={{ borderTopColor: r.color }}>
+                  <div className="emu-res-card-icon">{r.icon}</div>
+                  <h3>{r.title}</h3>
+                  <p>{r.desc}</p>
+                  <a className="emu-res-card-link" href="#">{r.link}</a>
+                </div>
+              ))}
+            </div>
+            <div style={{ textAlign: "center" }}>
+              <button className="emu-btn-primary" style={{ background: "var(--primary)", color: "#fff" }}>
+                VISIT FREE RESOURCE ZONE — 15 RESOURCE TYPES, ALL FREE
+              </button>
+            </div>
+          </SectionWrapper>
+
+          {/* BOTTOM CTA */}
+          <div className="emu-bottom-cta">
+            <h2>The First Step Costs Nothing. Take the Free Diagnostic.</h2>
+            <p>30 minutes. No account. No credit card. A personalised gap analysis, recommended starting point, and clear study sequence — at no cost.</p>
+            <div className="emu-cta-group">
+              <button className="emu-btn-primary" style={{ fontSize: 16, padding: "16px 32px" }}>GET FREE AI DIAGNOSTIC</button>
+              <button className="emu-btn-secondary" style={{ fontSize: 16, padding: "15px 30px" }}>BROWSE ALL PROGRAMMES</button>
+            </div>
+            <p style={{ marginTop: 16, fontSize: 13, color: "rgba(255,255,255,.45)" }}>Questions? Chat with us on WhatsApp →</p>
+          </div>
+
+          {/* FOOTER */}
+          <footer className="emu-footer">
+            <div className="emu-footer-grid">
+              <div className="emu-footer-col">
+                <div className="emu-footer-logo">Edu<span>Me</span>Up</div>
+                <p>The World's Most Comprehensive Cambridge Education Ecosystem</p>
+                <p>Research-Validated · Diagnostic-First · 24/7 AI Support</p>
+                <p style={{ marginTop: 16, color: "rgba(255,255,255,.35)", fontSize: 11 }}>Chief Adviser: Muhammad Benyameen<br />M.Phil Educational Planning &amp; Management</p>
               </div>
-            </CardContent>
-          </Card>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            {[
-              ["Mastery Progress", "Topic-by-topic mastery % updated after every activity"],
-              ["Weak Topic Alerts", "Identifies struggling areas before they become exam problems"],
-              ["Study Consistency", "Daily and weekly activity tracking - know if your child is engaging"],
-              ["Exam Readiness Score", "Predicted readiness level updated throughout the year"]
-            ].map(([title, desc], i) => (
-              <Card
-                key={i}
-                className="border border-blue-100 rounded-2xl bg-white shadow-md hover:shadow-xl transition hover:-translate-y-1"
-              >
-                <CardContent className="p-7">
-                  <h4 className="text-2xl font-semibold text-slate-900 mb-3 leading-tight">
-                    {title}
-                  </h4>
-                  <p className="text-[14px] text-black leading-relaxed">
-                    {desc}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-8 shadow-sm">
-            <h4 className="text-2xl font-semibold text-slate-900 mb-5">
-              What Parents Love Most:
-            </h4>
-            <ul className="space-y-3 text-[14px] text-slate-700">
-              <li>✓ No more "I don't know how the test went" - results instantly visible</li>
-              <li>✓ Know which topics need attention before the exam</li>
-              <li>✓ Track daily study consistency</li>
-              <li>✓ Compare current mastery vs target for O-Level</li>
-              <li>✓ Data-backed insights for every conversation with teachers</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 9: FREE RESOURCES LIBRARY */}
-      <section className="py-16 md:py-24 bg-slate-50">
-        <div className="container-custom">
-          <div className="text-center max-w-4xl mx-auto mb-12">
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
-              Starter Pack
-            </p>
-            <div className="flex justify-center w-full  ">
-              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
-                Free Resources to Get Started
-              </h2>
+              <div className="emu-footer-col">
+                <h4>Programmes</h4>
+                {["Lower Secondary (Gr 6–8)", "Bridge Courses", "O-Level Subjects", "English Pathway", "ATP Courses", "Pre-O-Level Certification", "View All Programmes →"].map(l => <a key={l} href="#">{l}</a>)}
+              </div>
+              <div className="emu-footer-col">
+                <h4>Resources</h4>
+                {["Free AI Diagnostic", "Free Resource Zone", "Blog", "Research & RnD", "Parent Guides", "School Partnership", "Pricing"].map(l => <a key={l} href="#">{l}</a>)}
+              </div>
+              <div className="emu-footer-col">
+                <h4>Contact</h4>
+                {["edumeup.com", "info@edumeup.com", "WhatsApp Support", "For Schools", "For Teachers"].map(l => <a key={l} href="#">{l}</a>)}
+                <p style={{ marginTop: 16, fontSize: 11, color: "rgba(255,255,255,.3)" }}>Platform: Moodle 5.2 + React/Node.js</p>
+              </div>
             </div>
-            <p className="text-base text-black">
-              No login required - download and use immediately
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              ["O-Level Survival Guide for Pakistani Parents", "20-page PDF covering Cambridge curriculum, gap analysis, tutor cost comparison, and what to ask your school.", "DOWNLOAD FREE"],
-              ["Free AI Diagnostic Assessment", "90-minute AI-powered test that maps your child's exact knowledge gaps and generates a personalized learning report.", "START FREE"],
-              ["O-Level Subject Checklist", "Topic-by-topic readiness checklist for every O-Level subject. Know exactly where your child stands before preparation begins.", "DOWNLOAD FREE"]
-            ].map((res, i) => (
-              <Card
-                key={i}
-                className="border border-blue-100 rounded-2xl bg-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all overflow-hidden flex flex-col"
-              >
-                <CardContent className="p-7 flex flex-col h-full justify-between">
-                  <div>
-                    <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-[#2366c9]">
-                      {i === 0 ? <Download className="h-6 w-6" /> : i === 1 ? <PlayCircle className="h-6 w-6" /> : <Calendar className="h-6 w-6" />}
-                    </div>
-                    <h3 className="text-2xl font-semibold text-slate-900 mb-3 leading-tight">
-                      {res[0]}
-                    </h3>
-                    <p className="text-[14px] text-black leading-relaxed">
-                      {res[1]}
-                    </p>
-                  </div>
-
-                  <Button className="w-full mt-6 bg-[#2366c9] hover:bg-blue-700 text-white font-semibold flex items-center justify-center text-[14px] py-3">
-                    {res[2]} <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 10: ABOUT EDUMEUP / OUR STORY */}
-      <section className="py-16 md:py-24 bg-white relative overflow-hidden">
-        <div className="absolute -top-20 left-1/2 h-52 w-52 -translate-x-1/2 rounded-full bg-blue-100/50 blur-3xl" aria-hidden="true"></div>
-
-        <div className="container-custom">
-          <div className="text-center max-w-4xl mx-auto mb-12">
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
-              Founder Story
-            </p>
-            <div className="flex justify-center w-full  ">
-              <h2 className="text-4xl md:text-6xl text-black font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
-                Why We Built EduMeUp
-              </h2>
+            <div className="emu-footer-divider">
+              <span className="emu-footer-copy">© 2026 EduMeUp.com — All rights reserved.</span>
+              <span className="emu-footer-copy">Privacy Policy · Terms of Service · Sitemap</span>
             </div>
-            <p className="text-base text-black">
-              Born from 30+ years inside classrooms, not in a tech lab
-            </p>
-          </div>
+          </footer>
 
-          <div className="grid lg:grid-cols-2 gap-8">
-            <Card className="border-[#2366c9]   border-2   border-blue-100 rounded-2xl bg-gradient-to-br from-blue-50 via-white to-white shadow-lg hover:shadow-xl transition">
-              <CardContent className="p-8 text-left">
-                <h3 className="text-2xl font-semibold text-slate-900 mb-5 leading-tight">
-                  The Problem We Saw Every Day
-                </h3>
-                <p className="text-[14px] text-slate-700 mb-4 leading-relaxed">
-                  Students attended tuition daily and parents spent heavily, yet exams still exposed gaps, weak retention, and panic.
-                </p>
-                <p className="text-[14px] text-slate-700 mb-4 font-medium">
-                  The real problem was not content scarcity. It was the absence of a learning system:
-                </p>
-
-                <ul className="space-y-3 text-[14px] text-slate-700">
-                  <li>- No precise diagnostic of missing skills</li>
-                  <li>- No foundation repair before advancement</li>
-                  <li>- No spacing strategy against forgetting</li>
-                  <li>- No transparent parent visibility</li>
-                  <li>- No pathway to student independence</li>
-                </ul>
-              </CardContent>
-            </Card>
-
-            <Card className="border-[#2366c9]   border-2   border-blue-100 rounded-2xl bg-gradient-to-b from-blue-50/60 to-white shadow-sm hover:shadow-lg transition-all">
-              <CardContent className="p-8 text-left">
-                <h3 className="text-2xl font-semibold text-slate-900 mb-5 leading-tight">
-                  The Solution We Designed
-                </h3>
-                <p className="text-[14px] text-slate-700 mb-4 leading-relaxed">
-                  EduMeUp combines learning science, interactive technology, and 30+ years of school leadership into one structured mastery platform.
-                </p>
-                <ul className="space-y-3 text-[14px] text-slate-700 mb-6">
-                  <li>✓ M.Phil Educational Planning & Management</li>
-                  <li>✓ 30+ years as Principal & Deputy Director</li>
-                  <li>✓ Cambridge curriculum specialization</li>
-                  <li>✓ Research-backed 10X Learning Leap model</li>
-                  <li>✓ Moodle + H5P + AI learning ecosystem</li>
-                </ul>
-                <p className="text-[14px] italic text-slate-700 border-l-4 border-[#2366c9] pl-5 py-3 bg-blue-50 rounded-r-lg leading-relaxed">
-                  "Every student can master difficult subjects when they have a system that finds gaps, repairs them, and builds lasting memory."
-                </p>
-                <p className="text-xs text-black mt-4 font-medium">
-                  - M.B.Yameen, Chief Adviser, EduMeUp
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 11: TESTIMONIALS / SOCIAL PROOF */}
-      <section className="py-16 md:py-24 bg-slate-50">
-        <div className="container-custom">
-          <div className="text-center max-w-4xl mx-auto mb-12">
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
-              Social Proof
-            </p>
-            <div className="flex justify-center w-full  ">
-              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
-                What Students & Parents Say
-              </h2>
-            </div>
-            <p className="text-base text-black">
-              Real results from real families
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              ["A.K.", "Parent", "For the first time, I can actually see where my child is struggling - not just hear 'he'll be fine' from the tutor. The diagnostic alone was eye-opening."],
-              ["S.M.", "O-Level Student", "I used to rely on three tutors. After EduMeUp diagnosed my gaps and gave me targeted modules, I reduced to one - and my grades improved."],
-              ["F.H.", "School Principal", "We partnered with EduMeUp and immediately had something genuinely new to offer parents. The $678 value we provide through the school gives our families a real advantage."]
-            ].map((t, i) => (
-              <Card
-                key={i}
-                className="border border-slate-200 rounded-xl bg-white shadow-sm hover:shadow-xl transition-all hover:-translate-y-1 flex flex-col"
-              >
-                <CardContent className="p-7 text-left flex flex-col h-full">
-                  <div className="mb-4 flex gap-0.5">
-                    {Array(5).fill(null).map((_, i) => (
-                      <Star key={i} className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-                    ))}
-                  </div>
-                  <p className="text-[14px] text-slate-700 mb-6 leading-relaxed flex-grow">
-                    "{t[2]}"
-                  </p>
-                  <p className="font-semibold text-[#2366c9] text-base">{t[0]}</p>
-                  <p className="text-xs text-black">{t[1]}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 12: FREQUENTLY ASKED QUESTIONS */}
-      <section className="py-16 md:py-24 bg-white">
-        <div className="container-custom">
-          <div className="text-center max-w-4xl mx-auto mb-12">
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
-              FAQ
-            </p>
-            <div className="flex justify-center w-full  ">
-              <h2 className="text-4xl md:text-6xl text-slate-900 font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
-                Parents Ask. We Answer.
-              </h2>
-            </div>
-          </div>
-          <div className="max-w-5xl mx-auto space-y-4">
-            {[
-              ["Is EduMeUp replacing my child's school or tutor?", "No. EduMeUp is a structured supplemental learning system. It fills gaps that school and tutors leave behind, builds independent learning skills, and significantly reduces - but does not force the elimination of - tutor dependency. Many families use EduMeUp to reduce from 3 tutors to 1 while improving results."],
-              ["My child already has tutors. Why would they need EduMeUp?", "Tutors teach - but rarely diagnose, repair foundations, schedule spaced reviews, or simulate timed exams. EduMeUp does all four systematically. It works with tutors, not against them. Tutors can use EduMeUp's diagnostic reports to teach more efficiently."],
-              ["How is this different from YouTube or other online courses?", "YouTube provides content passively. EduMeUp is an active system: it first diagnoses what your child needs, then delivers interactive modules requiring active engagement, then schedules retrieval reviews, then assesses and corrects. Passive consumption = 5-20% retention. Active retrieval = 50-90% retention."],
-              ["My child struggles with English. Will the platform work?", "Yes. EduMeUp includes a built-in multilingual translator with audio support, specifically designed for Urdu-medium students transitioning to Cambridge English-medium curriculum. Language barriers are addressed from Day 1."],
-              ["Is this suitable for students outside Pakistan?", "Absolutely. The Cambridge O-Level and IGCSE curriculum is international. EduMeUp serves students globally wherever Cambridge exams are taken."],
-              ["What if my child doesn't complete the required attendance or tasks?", "For the Teacher-Led program, the 60% Performance Designed Outcome guarantee requires 80% attendance and 80% task completion. For Self-Learning, students work at their own pace. The system tracks all activity so parents can monitor engagement in real time."],
-              ["How do I know which program is right for my child?", "Take the Free AI Diagnostic first. It takes 90 minutes and generates a personalised report showing exactly which gaps exist and which program pathway best addresses them. No guesswork."]
-            ].map((qa, i) => (
-              <Card
-                key={i}
-                className="border border-slate-200 rounded-xl hover:border-blue-200 hover:shadow-md transition-all overflow-hidden"
-              >
-                <CardContent className="p-7 text-left">
-                  <button
-                    type="button"
-                    onClick={() => setOpenFaqIndex(prev => (prev === i ? null : i))}
-                    className="w-full text-left flex items-start justify-between gap-4 group"
-                  >
-                    <div className="flex items-start gap-4">
-                      <HelpCircle className="h-5 w-5 text-[#2366c9] shrink-0 mt-0.5" />
-                      <h4 className="text-xl font-medium text-slate-900 group-hover:text-[#2366c9] transition-colors leading-tight">
-                        {qa[0]}
-                      </h4>
-                    </div>
-                    <span className="text-[#2366c9] font-medium text-4xl leading-none mt-[-5px] shrink-0">
-                      {openFaqIndex === i ? "-" : "+"}
-                    </span>
-                  </button>
-                  {openFaqIndex === i && (
-                    <p className="text-[14px] text-slate-700 mt-5 leading-relaxed pl-9">
-                      {qa[1]}
-                    </p>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 13: FINAL CTA */}
-      <section className="py-20 md:py-32 bg-[#2366c9] from-[#2366c9] to-black text-white relative overflow-hidden">
-        <div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-[#2366c9] blur-3xl" aria-hidden="true"></div>
-        <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-[#2366c9] blur-3xl" aria-hidden="true"></div>
-
-        <div className="container-custom text-center relative z-10">
-          <div className="flex justify-center w-full mb-6">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white font-semibold leading-[1.1] mb-3 text-center tracking-tight px-4">
-              Your Child's O-Level Journey Starts with One Decision
-            </h2>
-          </div>
-          <p className="text-base text-blue-200 mb-4 max-w-3xl mx-auto">
-            The longer gaps remain unfixed, the harder - and more expensive - they become to repair.
-          </p>
-          <p className="text-[14px] md:text-xs font-semibold text-blue-300 mb-12 uppercase tracking-wider">
-            Next cohort opens soon - Limited seats available
-          </p>
-          <div className="flex flex-col md:flex-row md:flex-wrap justify-center gap-6 max-w-5xl mx-auto mb-16">
-            <InquiryDialog
-              defaultType="diagnostic"
-              title="Start Free Diagnostic"
-              trigger={
-                <Button
-                  size="lg"
-                  className="w-full md:w-auto min-w-[260px] bg-white text-[#2366c9] hover:bg-blue-50 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md transition-all flex items-center justify-center gap-2"
-                >
-                  START FREE DIAGNOSTIC
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              }
-            />
-
-            <Link href="/programs" className="w-full md:w-auto min-w-[320px]">
-              <Button
-                size="lg"
-                variant="outline"
-                className="w-full md:w-auto min-w-[260px] border border-white/30 text-white hover:bg-white/10 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md transition-all flex items-center justify-center gap-2"
-              >
-                EXPLORE ALL PROGRAMS
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-
-            <Button
-              size="lg"
-              variant="outline"
-              className="w-full md:w-auto min-w-[260px] border border-white/30 text-white hover:bg-white/10 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md transition-all flex items-center justify-center gap-2"
-            >
-              DOWNLOAD FREE GUIDE
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-16">
-            <Card className="border-[#2366c9]   border-2  border-2 bg-white/10 backdrop-blur-lg border-white/20 shadow-2xl">
-              <CardContent className="p-8">
-                <h3 className="text-2xl font-semibold text-white mb-4 leading-tight">
-                  Take the Free AI Diagnostic
-                </h3>
-                <p className="text-[14px] text-blue-100 mb-6 leading-relaxed">
-                  The first step costs nothing. The diagnostic finds exactly what is missing and tells you - and your child - precisely what to do next.
-                </p>
-                <InquiryDialog
-                  defaultType="diagnostic"
-                  title="Start Free Diagnostic"
-                  trigger={
-                    <Button
-                      size="lg"
-                      className="w-full bg-[#2366c9] hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md transition-all flex items-center justify-center gap-2"
-                    >
-                      START FREE DIAGNOSTIC NOW
-                      <ArrowRight className="h-4 w-4" />
-                    </Button>
-                  }
-                />
-              </CardContent>
-            </Card>
-
-            <Card className="border-[#2366c9]   border-2  border-2 bg-white/10 backdrop-blur-lg border-white/20 shadow-2xl">
-              <CardContent className="p-8">
-                <h3 className="text-2xl font-semibold text-white mb-4 leading-tight">
-                  Explore All Programs
-                </h3>
-                <p className="text-[14px] text-blue-100 mb-6 leading-relaxed">
-                  Browse all learning pathways - from Bridge Courses to Complete O-Level Mastery - and compare which best fits your child's current stage.
-                </p>
-                <Link href="/programs" className="w-full block">
-                  <Button
-                    size="lg"
-                    className="w-full bg-white text-slate-900 hover:bg-blue-50 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md transition-all flex items-center justify-center gap-2"
-                  >
-                    EXPLORE ALL PROGRAMS
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-          </div>
-
-          <p className="mt-12 text-xs text-blue-200 text-center">
-            EduMeUp.com | Cambridge O-Level & IGCSE Learning System | Global
-          </p>
-          <p className="mt-2 text-[11px] text-blue-300 text-center">
-            Powered by Moodle 5.2 + H5P + AI | Built on 30+ Years of Educational Research
-          </p>
-        </div>
-      </section>
-    </Layout>
+        </main>
+      </div>
+    </div>
   );
 }
-
