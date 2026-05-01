@@ -17,8 +17,8 @@ import {
   Award,
   Building2,
 } from "lucide-react";
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { useCart } from "@/context/CartContext";
 import { useAuthUser } from "@/hooks/use-auth";
 import {
@@ -34,9 +34,18 @@ import logoImage from "@/assets/WhatsApp_Image_2026-02-22_at_20.36.37_1771782478
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const [location] = useLocation();
   const { items } = useCart();
   const { data: user } = useAuthUser();
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll);
+
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const dashboardPath =
     user?.role === "admin"
@@ -150,8 +159,14 @@ export function Navbar() {
   const isActive = (path: string) => location === path;
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/95 backdrop-blur-sm supports-[backdrop-filter]:bg-white/80">
-      <div className="w-full px-3 lg:px-5 flex h-12 items-center">
+    <nav
+      className={`sticky top-0 z-50 w-full border-b border-white/10 backdrop-blur-md transition-colors duration-300 ${
+        scrolled
+          ? "bg-gradient-to-b from-[#2366c9] via-[#2f71d0] to-[#eef6ff] shadow-lg"
+          : "bg-gradient-to-b from-[#2366c9]/95 via-[#2f71d0]/88 to-[#eef6ff]/70"
+      }`}
+    >
+      <div className="w-full px-4 lg:px-6 flex h-16 items-center">
         <div className="hidden md:flex items-center flex-1 min-w-0">
           {/* Logo */}
           <Link href="/" className="flex items-center shrink-0">
@@ -173,8 +188,8 @@ export function Navbar() {
                       title={item.label}
                       className={`flex items-center gap-1 px-2 lg:px-2.5 py-1.5 text-[10px] xl:text-[11px] font-medium transition-colors rounded-lg whitespace-nowrap ${
                         isActive(item.href)
-                          ? "bg-blue-50 text-[#2366c9]"
-                          : "text-slate-700 hover:text-slate-900 hover:bg-slate-50"
+                            ? "bg-white/15 text-white font-semibold"
+                          : "text-white/90 hover:text-white hover:bg-white/10"
                       }`}
                     >
                       <item.icon className="hidden 2xl:block h-4 w-4 shrink-0" />
@@ -190,8 +205,8 @@ export function Navbar() {
                     className={`flex items-center rounded-lg whitespace-nowrap ${
                       isActive(item.mainHref) ||
                       item.children?.some((child: any) => !child.section && isActive(child.href))
-                        ? "bg-blue-50 text-[#2366c9]"
-                        : "text-slate-700 hover:text-slate-900 hover:bg-slate-50"
+                        ? "bg-white/15 text-white font-semibold"
+                        : "text-white/90 hover:text-white hover:bg-white/10"
                     }`}
                   >
                     <Link href={item.mainHref}>
@@ -322,7 +337,7 @@ export function Navbar() {
             <Link href={dashboardPath}>
               <button
                 type="button"
-                className="hidden sm:flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-[10px] font-bold text-[#2366c9] transition hover:border-blue-200 hover:bg-blue-50"
+                className="hidden sm:flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-white/10 text-[10px] font-bold text-white transition hover:border-white/35 hover:bg-white/15"
                 title="Open dashboard"
               >
                 {user.firstname?.[0] || user.fullname?.[0] || user.username[0]}
@@ -331,33 +346,32 @@ export function Navbar() {
           ) : (
             <>
               <Link href="/register">
-                <Button size="sm" className="hidden sm:flex h-7 px-2.5 text-[10px] font-semibold shadow-sm bg-[#2366c9] text-white hover:bg-blue-700">
+                <Button size="sm" className="hidden sm:flex h-7 px-2.5 text-[10px] font-semibold shadow-sm bg-white text-[#2366c9] hover:bg-blue-50">
                   Sign Up
                 </Button>
               </Link>
               <Link href="/login">
-                <Button variant="outline" size="sm" className="hidden sm:flex h-7 px-2.5 text-[10px] font-semibold border-slate-200 text-slate-700 hover:bg-slate-50">
+                <Button variant="outline" size="sm" className="hidden sm:flex h-7 px-2.5 text-[10px] font-semibold border-white/30 text-white hover:bg-white/10 hover:text-white">
                   Sign In
                 </Button>
               </Link>
             </>
           )}
-          <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
+          <Button variant="ghost" size="icon" className="md:hidden text-white hover:bg-white/10 hover:text-white" onClick={() => setIsOpen(!isOpen)}>
             {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </Button>
         </div>
       </div>
 
       {/* Mobile Nav */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="border-b bg-white md:hidden overflow-hidden"
-          >
-            <div className="space-y-1 p-4">
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          transition={{ duration: 0.2 }}
+          className="border-b border-white/10 bg-[#2366c9] md:hidden overflow-hidden"
+        >
+          <div className="space-y-1 p-4">
               {navItems.map((item) => {
                 if (item.type === "link") {
                   return (
@@ -365,8 +379,8 @@ export function Navbar() {
                       <div
                         className={`flex items-center gap-2 rounded-lg px-4 py-2.5 text-[12px] font-medium transition-colors ${
                           isActive(item.href)
-                            ? "bg-blue-50 text-[#2366c9]"
-                            : "text-slate-700 hover:bg-slate-50"
+                            ? "bg-white/15 text-white font-semibold"
+                            : "text-white/90 hover:text-white hover:bg-white/10"
                         }`}
                       >
                         <item.icon className="h-4 w-4" />
@@ -379,7 +393,7 @@ export function Navbar() {
                 return (
                   <div key={item.label} className="space-y-1">
                     <Link href={item.mainHref} onClick={() => setIsOpen(false)}>
-                      <div className="flex items-center justify-between rounded-lg px-4 py-2 text-[9px] font-semibold text-slate-500 uppercase tracking-wider hover:text-slate-700 hover:bg-slate-50 border border-transparent hover:border-slate-200">
+                      <div className="flex items-center justify-between rounded-lg px-4 py-2 text-[9px] font-semibold text-white/75 uppercase tracking-wider hover:text-white hover:bg-white/10 border border-transparent hover:border-white/10">
                         <span>{item.label}</span>
                         <ChevronRight className="h-3.5 w-3.5 opacity-70" />
                       </div>
@@ -396,8 +410,8 @@ export function Navbar() {
                                 <div
                                   className={`flex items-center gap-2 rounded-lg px-8 py-2 text-[10px] font-medium transition-colors ${
                                     isActive(subChild.href)
-                                      ? "bg-blue-50 text-[#2366c9]"
-                                      : "text-slate-700 hover:bg-slate-50"
+                                      ? "bg-white/15 text-white font-semibold"
+                                      : "text-white/90 hover:text-white hover:bg-white/10"
                                   }`}
                                 >
                                   <subChild.icon className="h-3.5 w-3.5" />
@@ -413,8 +427,8 @@ export function Navbar() {
                           <div
                             className={`flex items-center gap-2 rounded-lg px-8 py-2 text-[10px] font-medium transition-colors ${
                               isActive(child.href)
-                                ? "bg-blue-50 text-[#2366c9]"
-                                : "text-slate-700 hover:bg-slate-50"
+                                ? "bg-white/15 text-white font-semibold"
+                                : "text-white/90 hover:text-white hover:bg-white/10"
                             }`}
                           >
                             <child.icon className="h-3.5 w-3.5" />
@@ -426,39 +440,38 @@ export function Navbar() {
                   </div>
                 );
               })}
-              <div className="pt-4 mt-4 border-t">
+              <div className="pt-4 mt-4 border-t border-white/10">
                 {user ? (
                   <Link href={dashboardPath} onClick={() => setIsOpen(false)}>
-                    <div className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50">
+                    <div className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium text-white/90 hover:text-white hover:bg-white/10">
                       <Users className="h-4 w-4" />
                       Dashboard
                     </div>
                   </Link>
                 ) : (
                   <Link href="/login" onClick={() => setIsOpen(false)}>
-                    <div className="flex items-center gap-2 rounded-lg px-4 py-2.5 text-[12px] font-medium text-slate-700 hover:bg-slate-50">
+                    <div className="flex items-center gap-2 rounded-lg px-4 py-2.5 text-[12px] font-medium text-white/90 hover:text-white hover:bg-white/10">
                       Login
                     </div>
                   </Link>
                 )}
                 <Link href="/cart" onClick={() => setIsOpen(false)}>
-                  <div className="flex items-center gap-2 rounded-lg px-4 py-2.5 text-[12px] font-medium text-slate-700 hover:bg-slate-50">
+                  <div className="flex items-center gap-2 rounded-lg px-4 py-2.5 text-[12px] font-medium text-white/90 hover:text-white hover:bg-white/10">
                     <ShoppingCart className="h-4 w-4" />
                     Cart ({items.length})
                   </div>
                 </Link>
                 {!user && (
                   <Link href="/register" onClick={() => setIsOpen(false)}>
-                    <Button className="w-full h-8 text-[12px] font-semibold margin-top-2 bg-[#2366c9] text-white hover:bg-blue-700 mt-2">
+                    <Button className="w-full h-8 text-[12px] font-semibold margin-top-2 bg-white text-[#2366c9] hover:bg-blue-50 mt-2">
                       Sign Up
                     </Button>
                   </Link>
                 )}
               </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+        </motion.div>
+      )}
     </nav>
   );
 }

@@ -4,7 +4,11 @@ import {
   Brain,
   BarChart3,
   GraduationCap,
-  ArrowRight
+  ArrowRight,
+  CheckCircle2,
+  FileText,
+  ShieldCheck,
+  Sparkles,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,30 +18,109 @@ export default function About() {
   return (
     <Layout>
       {/* ================= HERO - THE MISSION ================= */}
-      <section className="py-16 md:py-24 relative overflow-hidden bg-gradient-to-b from-blue-50/80 to-white">
-        <div className="container-custom relative z-10 text-center max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-6"
-          >
-        
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold mb-8 font-display leading-tight text-slate-900">
-              Transforming Education Through <span className="text-[#2366c9]">Science and Personalization</span>
-            </h1>
-            <div className="max-w-2xl mx-auto">
-              <h3 className="text-xl font-semibold text-[#2366c9] mb-4">Our Mission:</h3>
-              <p className="text-xl text-slate-700 font-medium leading-relaxed">
-                End the global learning crisis by replacing passive instruction and rapid forgetting with research-validated active learning and systematic retention strategies.
-              </p>
-            </div>
-          </motion.div>
+      <section className="relative overflow-hidden bg-white py-8 md:py-12">
+        <div className="container-custom max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-[1.4fr_0.9fr] gap-6 items-stretch">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="relative overflow-hidden rounded-[2rem] md:rounded-[3rem] bg-gradient-to-br from-[#0b3c5d] via-[#2366c9] to-[#1f5bb4] p-8 md:p-12 text-white shadow-2xl"
+            >
+              <div className="absolute -top-20 -right-16 h-56 w-56 rounded-full bg-white/10 blur-3xl" aria-hidden="true" />
+              <div className="relative z-10 max-w-2xl space-y-6">
+                <p className="text-[11px] font-black uppercase tracking-[0.28em] text-blue-100">Our Mission &amp; Philosophy</p>
+                <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold leading-[1.05] tracking-tight text-white">
+                  Education Should Work the Way the Brain Works.
+                </h1>
+                <p className="text-lg md:text-xl text-blue-50/90 leading-relaxed max-w-2xl">
+                  We founded EduMeUp because the traditional education model, built on passive instruction and rapid forgetting, has been failing students for generations. The research has always pointed to a better way. We built it.
+                </p>
+                <div className="rounded-[1.5rem] border border-white/15 bg-white/10 p-5 md:p-6 backdrop-blur-sm">
+                  <p className="text-sm font-semibold uppercase tracking-[0.22em] text-blue-100 mb-3">Mission Statement</p>
+                  <p className="text-base md:text-lg text-white/90 leading-relaxed">
+                    Our mission is to end the global learning crisis caused by passive instruction and the brain's natural forgetting curve — replacing the traditional 5% retention model with 50%+ active mastery through the 10X Learning Leap Model™.
+                  </p>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-4 pt-2">
+                  <Button className="bg-white text-[#2366c9] hover:bg-blue-50 font-semibold px-6 py-3 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+                    Explore Our 10X Model <ArrowRight className="h-4 w-4" />
+                  </Button>
+                  <Button variant="outline" className="border border-white/35 text-white hover:bg-white/10 font-semibold px-6 py-3 rounded-xl text-[14px] flex items-center justify-center gap-2">
+                    See the Research <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="relative overflow-hidden rounded-[2rem] md:rounded-[3rem] border border-blue-200 bg-gradient-to-b from-blue-50 via-white to-white p-8 md:p-10 shadow-lg"
+            >
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(35,102,201,0.18),transparent_40%),radial-gradient(circle_at_bottom_left,rgba(79,134,224,0.16),transparent_35%)]" aria-hidden="true" />
+              <div className="relative z-10 flex h-full flex-col justify-between gap-8">
+                <div>
+                  <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-4">Editorial Graphic</p>
+                  <div className="rounded-[2rem] border border-blue-200 bg-white p-6 shadow-sm">
+                    <div className="flex items-center justify-center rounded-[1.5rem] bg-gradient-to-br from-[#2366c9] via-[#4f86e0] to-[#eef6ff] p-10 text-white">
+                      <div className="text-center space-y-4">
+                        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
+                          <Sparkles className="h-10 w-10 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-lg font-semibold text-white">Research-led learning</p>
+                          <p className="text-sm text-blue-50/80">Blue-led, minimal, human, and credible</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="rounded-2xl border border-blue-200 bg-white p-4 text-center shadow-sm">
+                    <p className="text-2xl font-semibold text-[#2366c9]">91%</p>
+                    <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 mt-1">Pass rate</p>
+                  </div>
+                  <div className="rounded-2xl border border-blue-200 bg-white p-4 text-center shadow-sm">
+                    <p className="text-2xl font-semibold text-[#2366c9]">85%+</p>
+                    <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 mt-1">Retention</p>
+                  </div>
+                  <div className="rounded-2xl border border-blue-200 bg-white p-4 text-center shadow-sm">
+                    <p className="text-2xl font-semibold text-[#2366c9]">271%</p>
+                    <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 mt-1">ROI</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
+      <div className="w-full lg:px-8 lg:grid lg:grid-cols-[260px_1fr] gap-8 lg:gap-12 items-start pt-8 md:pt-12">
+        <aside className="sticky top-24 hidden lg:block rounded-[2rem] border border-blue-200 bg-white p-5 shadow-sm h-fit">
+          <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-4">On This Page</p>
+          <div className="space-y-2">
+            {[
+              ["#learning-problem", "Learning Crisis"],
+              ["#methodology", "10X Model"],
+              ["#pillars", "Foundational Pillars"],
+              ["#research", "Results & Validation"],
+              ["#ecosystem", "Stakeholder Ecosystem"],
+              ["#story", "Our Story"],
+              ["#fit", "Fit & Honesty"],
+            ].map(([href, label]) => (
+              <a key={href} href={href} className="block rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-blue-50 hover:text-[#2366c9]">
+                {label}
+              </a>
+            ))}
+          </div>
+        </aside>
+
+        <main className="min-w-0 space-y-0">
+
       {/* ================= THE LEARNING PROBLEM ================= */}
-      <section className="py-16 md:py-24 bg-white">
-        <div className="container-custom max-w-6xl">
+      <section id="learning-problem" className="py-16 md:py-24 bg-slate-50/70 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
+        <div className="w-full max-w-6xl mx-auto lg:px-0">
           <div className="text-center mb-16">
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-6">
               Why Traditional Education Struggles
@@ -132,8 +215,8 @@ export default function About() {
       </section>
 
       {/* ================= THE 10X LEARNING LEAP MODEL™ ================= */}
-      <section className="py-16 md:py-24 bg-blue-50">
-        <div className="container-custom max-w-6xl">
+      <section id="methodology" className="py-16 md:py-24 bg-blue-50 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
+        <div className="w-full max-w-6xl mx-auto lg:px-0">
           <div className="text-center mb-10 md:mb-20">
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-4">
               The 10X Learning Leap Model™
@@ -184,8 +267,8 @@ export default function About() {
       </section>
 
       {/* ================= THREE PILLARS ================= */}
-      <section className="py-16 md:py-24 bg-white">
-        <div className="container-custom max-w-6xl">
+      <section id="pillars" className="py-16 md:py-24 bg-white -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
+        <div className="w-full max-w-6xl mx-auto lg:px-0">
           <div className="text-center mb-10 md:mb-20">
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-4">
               Three foundational pillars
@@ -233,8 +316,8 @@ export default function About() {
       </section>
 
       {/* ================= RESULTS & VALIDATION ================= */}
-      <section className="py-16 md:py-24 bg-blue-50">
-        <div className="container-custom max-w-6xl">
+      <section id="research" className="py-16 md:py-24 bg-blue-50 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
+        <div className="w-full max-w-6xl mx-auto lg:px-0">
           <div className="text-center mb-10 md:mb-20">
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-4">
               University-validated results
@@ -328,8 +411,8 @@ export default function About() {
       </section>
 
       {/* ================= COMPLETE ECOSYSTEM ================= */}
-      <section className="py-16 md:py-24 bg-white">
-        <div className="container-custom max-w-6xl">
+      <section id="ecosystem" className="py-16 md:py-24 bg-white -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
+        <div className="w-full max-w-6xl mx-auto lg:px-0">
           <div className="text-center mb-20">
             <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-4">
               Supporting every stakeholder
@@ -380,8 +463,8 @@ export default function About() {
       </section>
 
       {/* ================= RESEARCH FOUNDATION ================= */}
-<section className="py-16 md:py-24 bg-[#2366c9] text-white">
-  <div className="container-custom max-w-6xl">
+<section className="py-16 md:py-24 bg-[#2366c9] text-white -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
+  <div className="w-full max-w-6xl mx-auto lg:px-0">
     <div className="text-center mb-10 md:mb-20">
       <h2 className="text-4xl md:text-5xl font-semibold text-white mb-4 ">
         Built on 40+ Years of Science
@@ -435,8 +518,8 @@ export default function About() {
 </section>
 
       {/* ================= OUR STORY ================= */}
-      <section className="py-16 md:py-24 bg-white overflow-hidden">
-        <div className="container-custom max-w-4xl">
+      <section id="story" className="py-16 md:py-24 bg-white -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
+        <div className="w-full max-w-4xl mx-auto lg:px-0">
           <div className="space-y-12">
             <div className="text-center mb-10 md:mb-16">
               <h2 className="text-4xl md:text-5xl font-semibold font-black text-slate-900 mb-4  ">
@@ -473,8 +556,8 @@ export default function About() {
       </section>
 
       {/* ================= WHO THIS IS FOR ================= */}
-      <section className="py-16 md:py-24 bg-blue-50">
-        <div className="container-custom max-w-6xl">
+      <section id="fit" className="py-16 md:py-24 bg-blue-50 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
+        <div className="w-full max-w-6xl mx-auto lg:px-0">
           <div className="text-center mb-10 md:mb-20">
         <h2 className="text-4xl md:text-5xl font-semibold font-black text-slate-900 mb-4  ">
                     Is EduMeUp Right For You?
@@ -549,8 +632,8 @@ export default function About() {
       </section>
 
       {/* ================= LIMITATIONS & HONESTY ================= */}
-      <section className="py-16 md:py-24 bg-white">
-        <div className="container-custom max-w-4xl">
+      <section id="honesty" className="py-16 md:py-24 bg-white -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
+        <div className="w-full max-w-4xl mx-auto lg:px-0">
           <div className="bg-[#2366c9] p-6 sm:p-10 md:p-16 rounded-[2rem] sm:rounded-[3rem] md:rounded-[4rem] text-white">
           <h2 className="text-4xl md:text-5xl font-semibold text-white   mb-4  ">
              Transparency Builds Trust</h2>
@@ -585,11 +668,14 @@ export default function About() {
         </div>
       </section>
 
+      </main>
+      </div>
+
       {/* ================= FINAL CTA ================= */}
-      <section className="py-20 md:py-32 bg-[#2366c9] text-white relative overflow-hidden">
+      <section className="py-20 md:py-32 bg-[#2366c9] text-white relative overflow-hidden -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
         <div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
         <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
-        <div className="container-custom text-center relative z-10">
+        <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <div className="flex justify-center w-full mb-6">
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl text-white font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
               Ready to transform learning?

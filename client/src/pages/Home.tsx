@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import { Navbar } from "@/components/Navbar";
 
 // ── CSS injected once ──────────────────────────────────────────────────────────
 const styles = `
@@ -33,17 +34,6 @@ const styles = `
   /* MOCK BANNER */
   .emu-mock-banner { background:linear-gradient(90deg,var(--primary) 0%,var(--primary-darker) 100%); color:#fff; text-align:center; padding:12px; font-size:13px; font-weight:600; letter-spacing:.3px; }
   .emu-mock-banner span { background:rgba(255,255,255,.15); border-radius:4px; padding:2px 8px; margin-left:8px; font-size:11px; }
-
-  /* NAVBAR */
-  .emu-navbar { position:fixed; top:0; left:0; right:0; height:var(--nav-h); background:rgba(35,102,201,.15); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); display:flex; align-items:center; justify-content:space-between; padding:0 32px; z-index:1000; transition:background .3s,box-shadow .3s; border-bottom:1px solid rgba(255,255,255,.1); }
-  .emu-navbar.scrolled { background:var(--primary); box-shadow:0 2px 20px rgba(0,0,0,.2); }
-  .emu-nav-logo { font-family:'Sora',sans-serif; font-weight:800; font-size:22px; color:#fff; letter-spacing:-.5px; }
-  .emu-nav-logo span { color:#facc15; }
-  .emu-nav-links { display:flex; gap:28px; align-items:center; }
-  .emu-nav-links a { font-size:14px; font-weight:500; color:rgba(255,255,255,.85); text-decoration:none; transition:color .2s; }
-  .emu-nav-links a:hover { color:#fff; }
-  .emu-nav-cta { background:white; color:var(--primary); font-family:'DM Sans',sans-serif; font-weight:700; font-size:14px; padding:10px 20px; border-radius:6px; border:none; cursor:pointer; }
-  .emu-nav-cta:hover { background:#f0f6ff; }
 
   /* PAGE WRAPPER */
   .emu-page-wrapper { display:flex; padding-top:calc(var(--nav-h) + 36px); }
@@ -357,7 +347,7 @@ const freeResources = [
 ];
 
 // ── COMPONENTS ─────────────────────────────────────────────────────────────────
-function SectionWrapper({ id, bg = "#fff", children }) {
+function SectionWrapper({ id, bg = "#fff", children }: { id: string; bg?: string; children: React.ReactNode }) {
   return (
     <section id={id} className="emu-section" style={{ background: bg }}>
       {children}
@@ -367,20 +357,15 @@ function SectionWrapper({ id, bg = "#fff", children }) {
 
 // ── MAIN COMPONENT ─────────────────────────────────────────────────────────────
 export default function EduMeUpHomepage() {
-  const [scrolled, setScrolled] = useState(false);
   const [activeStrip, setActiveStrip] = useState("👨‍🎓 Student");
 
-  useEffect(() =>{
+  useEffect(() => {
     const styleEl = document.createElement("style");
     styleEl.textContent = styles;
     document.head.appendChild(styleEl);
-    return () => document.head.removeChild(styleEl);
-  }, []);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      document.head.removeChild(styleEl);
+    };
   }, []);
 
   const stripOptions = ["👨‍🎓 Student", "👨‍👩‍👧 Parent", "🏫 Teacher", "🏛 School"];
@@ -393,20 +378,7 @@ export default function EduMeUpHomepage() {
         <span>For Chief Advisor Review — Not for Public Use</span>
       </div>
 
-      {/* NAVBAR */}
-      <nav className={`emu-navbar${scrolled ? " scrolled" : ""}`}>
-        <div className="emu-nav-logo">Edu<span>Me</span>Up</div>
-        <div className="emu-nav-links">
-          <a href="#programmes">Courses ▾</a>
-          <a href="#lower-secondary">Lower Secondary</a>
-          <a href="#bridge">Bridge Courses</a>
-          <a href="#certification">Certification</a>
-          <a href="#schools">For Schools</a>
-          <a href="#free-resources">Free Resources</a>
-          <a href="#research-strip">Research &amp; RnD</a>
-        </div>
-        <button className="emu-nav-cta">Free Diagnostic</button>
-      </nav>
+      <Navbar />
 
       {/* PAGE WRAPPER */}
       <div className="emu-page-wrapper">
