@@ -34,6 +34,7 @@ import {
   Eye,
   Navigation
 } from "lucide-react";
+import { ui } from "@/theme";
 
 const sidebarLinks = [
   { label: "Is Cambridge Right for My Child?", href: "#cambridge-right" },
@@ -51,7 +52,7 @@ const FAQItem = ({ question, answer }: { question: string; answer: string }) => 
     <div className="border-b border-blue-100 py-4">
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="flex w-full justify-between items-center text-left font-semibold text-lg text-slate-900 hover:text-[#2366c9] transition-colors"
+        className="flex w-full justify-between items-center text-left font-semibold text-lg text-slate-900 hover:text-blue-600 transition-colors"
       >
         <span>{question}</span>
         {isOpen ? <ChevronUp className="w-5 h-5 text-slate-500" /> : <ChevronDown className="w-5 h-5 text-slate-500" />}
@@ -69,11 +70,11 @@ export default function ForParents() {
         <aside className="hidden xl:flex flex-col w-[320px] h-[calc(100vh-64px)] sticky top-[64px] bg-white border-r border-blue-50 z-40 overflow-y-auto shrink-0">
           <div className="p-8 flex flex-col h-full">
             <div className="flex items-center gap-3 mb-10">
-              <div className="w-10 h-10 rounded-xl bg-[#2366c9] flex items-center justify-center shadow-lg shadow-blue-200">
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-lg shadow-blue-200`} style={{ backgroundColor: "#2366c9" }}>
                 <Navigation className="w-5 h-5 text-white" />
               </div>
               <div>
-                <p className="text-[10px] font-black text-[#2366c9] uppercase tracking-[0.2em]">Navigation</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em]" style={{ color: "#2366c9" }}>Navigation</p>
                 <p className="text-[#0f172a] font-bold text-sm">Parent Guide</p>
               </div>
             </div>
@@ -87,9 +88,9 @@ export default function ForParents() {
                     e.preventDefault();
                     document.getElementById(link.href.replace('#', ''))?.scrollIntoView({ behavior: 'smooth' });
                   }}
-                  className="group flex items-center gap-4 p-4 rounded-2xl transition-all hover:bg-blue-50 text-slate-600 hover:text-[#2366c9]"
+                  className="group flex items-center gap-4 p-4 rounded-2xl transition-all hover:bg-blue-50 text-slate-600 hover:text-blue-600"
                 >
-                  <div className="w-1.5 h-1.5 rounded-full bg-slate-300 group-hover:bg-[#2366c9] group-hover:scale-150 transition-all"></div>
+                  <div className="w-1.5 h-1.5 rounded-full bg-slate-300 group-hover:scale-150 transition-all" style={{ backgroundColor: "#2366c9" }}></div>
                   <span className="text-[14px] font-bold leading-tight">{link.label}</span>
                 </a>
               ))}
@@ -105,7 +106,7 @@ export default function ForParents() {
                 defaultType="diagnostic" 
                 title="Free Diagnostic" 
                 trigger={
-                  <Button className="w-full h-14 bg-[#2366c9] hover:bg-blue-600 text-white text-[13px] font-black uppercase tracking-widest rounded-2xl shadow-xl shadow-blue-200 transition-all hover:-translate-y-1 active:scale-95">
+                  <Button className={`w-full h-14 text-white text-[13px] font-black uppercase tracking-widest rounded-2xl shadow-xl transition-all hover:-translate-y-1 active:scale-95`} style={{ backgroundColor: "#2366c9", boxShadow: "0 25px 50px rgba(35, 102, 201, 0.3)" }}>
                     Free Diagnostic
                   </Button>
                 } 
@@ -142,7 +143,7 @@ export default function ForParents() {
                     defaultType="diagnostic" 
                     title="Free Diagnostic" 
                     trigger={
-                      <Button className="w-full sm:w-auto px-10 py-8 bg-[#2366c9] border border-[#2366c9] hover:bg-blue-700 text-white rounded-2xl font-bold shadow-2xl shadow-blue-900/40 text-[16px] transition-all hover:-translate-y-1">
+                      <Button className={`w-full sm:w-auto px-10 py-8 text-white rounded-2xl font-bold shadow-2xl text-[16px] transition-all hover:-translate-y-1`} style={{ backgroundColor: "#2366c9", border: "1px solid #2366c9", boxShadow: "0 25px 50px rgba(35, 102, 201, 0.4)" }}>
                         Book Free Diagnostic for My Child
                       </Button>
                     } 

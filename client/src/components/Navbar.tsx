@@ -166,33 +166,30 @@ export function Navbar() {
           : "bg-gradient-to-b from-[#2366c9]/95 via-[#2f71d0]/88 to-[#eef6ff]/70"
       }`}
     >
-      <div className="w-full px-4 lg:px-6 flex h-16 items-center">
-        <div className="hidden md:flex items-center flex-1 min-w-0">
-          {/* Logo */}
-          <Link href="/" className="flex items-center shrink-0">
-            <img
-              src={logoImage}
-              alt="EduMeUp Logo"
-              className="h-6 sm:h-7 lg:h-8 w-auto object-contain"
-            />
-          </Link>
+      <div className="w-full px-6 lg:px-8 flex h-20 items-center justify-center relative">
+        {/* Logo - Left */}
+        <Link href="/" className="flex items-center shrink-0 absolute left-6 lg:left-8">
+          <img
+            src={logoImage}
+            alt="EduMeUp Logo"
+            className="h-10 w-auto object-contain"
+          />
+        </Link>
 
-          {/* Desktop Nav */}
-          <div className="flex items-center justify-center flex-1 min-w-0 ml-2 lg:ml-3">
-            <div className="flex items-center gap-0">
-            {navItems.map((item) => {
+        {/* Desktop Nav - Centered */}
+        <div className="hidden md:flex items-center justify-center gap-12">
+            {navItems.slice(0, 6).map((item) => {
               if (item.type === "link") {
                 return (
                   <Link key={item.href} href={item.href}>
                     <div
                       title={item.label}
-                      className={`flex items-center gap-1 px-2 lg:px-2.5 py-1.5 text-[10px] xl:text-[11px] font-medium transition-colors rounded-lg whitespace-nowrap ${
+                      className={`flex items-center gap-2 px-0 py-2 text-sm font-medium transition-colors whitespace-nowrap ${
                         isActive(item.href)
-                            ? "bg-white/15 text-white font-semibold"
-                          : "text-white/90 hover:text-white hover:bg-white/10"
+                            ? "text-white font-semibold"
+                          : "text-white/80 hover:text-white"
                       }`}
                     >
-                      <item.icon className="hidden 2xl:block h-4 w-4 shrink-0" />
                       <span>{item.label}</span>
                     </div>
                   </Link>
@@ -202,46 +199,45 @@ export function Navbar() {
               return (
                 <DropdownMenu key={item.label}>
                   <div
-                    className={`flex items-center rounded-lg whitespace-nowrap ${
+                    className={`flex items-center whitespace-nowrap ${
                       isActive(item.mainHref) ||
                       item.children?.some((child: any) => !child.section && isActive(child.href))
-                        ? "bg-white/15 text-white font-semibold"
-                        : "text-white/90 hover:text-white hover:bg-white/10"
+                        ? "text-white font-semibold"
+                        : "text-white/80 hover:text-white"
                     }`}
                   >
                     <Link href={item.mainHref}>
-                      <div className="flex items-center gap-1 px-2 lg:px-2.5 py-1.5 text-[10px] xl:text-[11px] font-medium">
-                        <item.icon className="hidden 2xl:block h-4 w-4 shrink-0" />
+                      <div className="flex items-center gap-2 px-0 py-2 text-sm font-medium">
                         <span>{item.label}</span>
                       </div>
                     </Link>
                     <DropdownMenuTrigger asChild>
-                      <button type="button" className="pr-2 py-2">
+                      <button type="button" className="px-1">
                         <ChevronDown className="h-4 w-4 opacity-60" />
                       </button>
                     </DropdownMenuTrigger>
                   </div>
                   <DropdownMenuContent
-                    align="end"
-                    className={item.isMegaDropdown ? "w-[600px] p-2" : "w-56"}
+                    align="start"
+                    className={item.isMegaDropdown ? "w-[600px] p-4" : "w-64"}
                   >
                     {item.isMegaDropdown ? (
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-2 gap-6">
                         <div>
                           {item.children
                             .filter((groupSection: any) => groupSection.label === "Cambridge / IGCSE")
                             .map((groupSection: any, idx: number) => (
                               <div key={groupSection.label}>
-                                {idx > 0 && <DropdownMenuSeparator className="my-2" />}
-                                <DropdownMenuLabel className="px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-slate-500">
+                                {idx > 0 && <DropdownMenuSeparator className="my-3" />}
+                                <DropdownMenuLabel className="px-3 py-2 text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
                                   {groupSection.label}
                                 </DropdownMenuLabel>
-                                <div className="space-y-1">
+                                <div className="space-y-2">
                                   {groupSection.children.map((child: any) => (
                                     <DropdownMenuItem key={child.href} asChild>
-                                      <Link href={child.href} className="flex items-center gap-2 w-full cursor-pointer rounded px-2 py-1 text-[10px]">
-                                        <child.icon className="h-3 w-3 shrink-0 text-slate-400" />
-                                        <span className="text-slate-700 text-[10px]">{child.label}</span>
+                                      <Link href={child.href} className="flex items-center gap-3 w-full cursor-pointer rounded px-3 py-2 text-sm">
+                                        <child.icon className="h-4 w-4 shrink-0 text-slate-400" />
+                                        <span className="text-slate-700">{child.label}</span>
                                       </Link>
                                     </DropdownMenuItem>
                                   ))}
@@ -250,20 +246,20 @@ export function Navbar() {
                             ))}
                         </div>
 
-                        <div className="border-l border-slate-200 pl-3">
+                        <div className="border-l border-slate-200 pl-6">
                           {item.children
                             .filter((groupSection: any) => groupSection.label === "Pakistan Curriculum")
                             .map((groupSection: any) => (
                               <div key={groupSection.label}>
-                                <DropdownMenuLabel className="px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-slate-500">
+                                <DropdownMenuLabel className="px-3 py-2 text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
                                   {groupSection.label}
                                 </DropdownMenuLabel>
-                                <div className="space-y-1">
+                                <div className="space-y-2">
                                   {groupSection.children.map((child: any) => (
                                     <DropdownMenuItem key={child.href} asChild>
-                                      <Link href={child.href} className="flex items-center gap-2 w-full cursor-pointer rounded px-2 py-1 text-[10px]">
-                                        <child.icon className="h-3 w-3 shrink-0 text-slate-400" />
-                                        <span className="text-slate-700 text-[10px]">{child.label}</span>
+                                      <Link href={child.href} className="flex items-center gap-3 w-full cursor-pointer rounded px-3 py-2 text-sm">
+                                        <child.icon className="h-4 w-4 shrink-0 text-slate-400" />
+                                        <span className="text-slate-700">{child.label}</span>
                                       </Link>
                                     </DropdownMenuItem>
                                   ))}
@@ -278,26 +274,28 @@ export function Navbar() {
                           if (child.section) {
                             return (
                               <div key={child.label}>
-                                {childIdx > 0 && <DropdownMenuSeparator className="my-1" />}
-                                <DropdownMenuLabel className="text-xs font-bold uppercase tracking-wide text-slate-500 px-2 py-1.5">
+                                {childIdx > 0 && <DropdownMenuSeparator className="my-2" />}
+                                <DropdownMenuLabel className="text-xs font-bold uppercase tracking-wide text-slate-500 px-3 py-2 mb-2">
                                   {child.label}
                                 </DropdownMenuLabel>
-                                {child.children.map((subChild: any) => (
-                                  <DropdownMenuItem key={subChild.href} asChild>
-                                    <Link href={subChild.href} className="flex items-center gap-2 w-full cursor-pointer">
-                                      <subChild.icon className="h-3.5 w-3.5" />
-                                      <span className="text-xs">{subChild.label}</span>
-                                    </Link>
-                                  </DropdownMenuItem>
-                                ))}
+                                <div className="space-y-1">
+                                  {child.children.map((subChild: any) => (
+                                    <DropdownMenuItem key={subChild.href} asChild>
+                                      <Link href={subChild.href} className="flex items-center gap-3 w-full cursor-pointer px-3 py-2 text-sm rounded">
+                                        <subChild.icon className="h-4 w-4" />
+                                        <span>{subChild.label}</span>
+                                      </Link>
+                                    </DropdownMenuItem>
+                                  ))}
+                                </div>
                               </div>
                             );
                           }
                           return (
                             <DropdownMenuItem key={child.href} asChild>
-                              <Link href={child.href} className="flex items-center gap-2 w-full cursor-pointer">
+                              <Link href={child.href} className="flex items-center gap-3 w-full cursor-pointer px-3 py-2 text-sm rounded">
                                 <child.icon className="h-4 w-4" />
-                                <span className="text-xs">{child.label}</span>
+                                <span>{child.label}</span>
                               </Link>
                             </DropdownMenuItem>
                           );
@@ -308,26 +306,24 @@ export function Navbar() {
                 </DropdownMenu>
               );
             })}
-            </div>
           </div>
-        </div>
 
         {/* Mobile logo */}
         <Link href="/" className="md:hidden flex items-center shrink-0">
           <img
             src={logoImage}
             alt="EduMeUp Logo"
-            className="h-6 w-auto object-contain"
+            className="h-8 w-auto object-contain"
           />
         </Link>
 
-        {/* CTA & Mobile Toggle */}
-        <div className="flex items-center gap-2 ml-auto shrink-0">
+        {/* CTA Buttons - Right */}
+        <div className="flex items-center gap-6 absolute right-6 lg:right-8">
           <Link href="/cart">
-            <Button variant="ghost" size="icon" className="relative">
-              <ShoppingCart className="h-4 w-4" />
+            <Button variant="ghost" size="icon" className="relative text-white hover:bg-white/10">
+              <ShoppingCart className="h-5 w-5" />
               {items.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-[9px] font-semibold rounded-full w-4.5 h-4.5 flex items-center justify-center">
+                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-[9px] font-semibold rounded-full w-5 h-5 flex items-center justify-center">
                   {items.length}
                 </span>
               )}
@@ -337,7 +333,7 @@ export function Navbar() {
             <Link href={dashboardPath}>
               <button
                 type="button"
-                className="hidden sm:flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-white/10 text-[10px] font-bold text-white transition hover:border-white/35 hover:bg-white/15"
+                className="hidden sm:flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/10 text-[11px] font-bold text-white transition hover:border-white/35 hover:bg-white/15"
                 title="Open dashboard"
               >
                 {user.firstname?.[0] || user.fullname?.[0] || user.username[0]}
@@ -345,14 +341,14 @@ export function Navbar() {
             </Link>
           ) : (
             <>
-              <Link href="/register">
-                <Button size="sm" className="hidden sm:flex h-7 px-2.5 text-[10px] font-semibold shadow-sm bg-white text-[#2366c9] hover:bg-blue-50">
+              <Link href="/register" className="hidden sm:flex">
+                <Button size="sm" className="h-10 px-6 text-sm font-semibold shadow-md bg-white text-[#2366c9] hover:bg-blue-50">
                   Sign Up
                 </Button>
               </Link>
-              <Link href="/login">
-                <Button variant="outline" size="sm" className="hidden sm:flex h-7 px-2.5 text-[10px] font-semibold border-white/30 text-white hover:bg-white/10 hover:text-white">
-                  Sign In
+              <Link href="/login" className="hidden sm:flex">
+                <Button variant="outline" size="sm" className="h-10 px-6 text-sm font-semibold border-white/30 text-white hover:bg-white/10 hover:text-white bg-transparent">
+                  Log In
                 </Button>
               </Link>
             </>

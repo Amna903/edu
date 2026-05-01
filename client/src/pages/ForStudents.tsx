@@ -19,6 +19,7 @@ import {
 import { motion } from "framer-motion";
 import { InquiryDialog } from "@/components/InquiryDialog";
 import { Link } from "wouter";
+import { ui } from "@/theme";
 
 export default function ForStudents() {
   const notWorkingVsEdu = [
@@ -347,7 +348,7 @@ export default function ForStudents() {
             ))}
           </div>
 
-          <div className="mt-16 bg-[#2366c9] rounded-[2.5rem] p-8 md:p-12 text-white overflow-x-auto">
+          <div className={ui.sections.brand + " rounded-[2.5rem] p-8 md:p-12 overflow-x-auto mt-16"}>
             <h3 className="text-2xl font-semibold text-white mb-6">What happens when students follow the system</h3>
             <table className="w-full min-w-[680px]">
               <thead>
@@ -377,7 +378,7 @@ export default function ForStudents() {
         </div>
       </section>
 
-      <section className="py-20 bg-blue-50">
+      <section className={`${ui.sections.softBlue} py-20`}>
         <div className="container-custom max-w-6xl">
           <div className="text-center mb-14">
             <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-4">Beyond Content — We Teach How to Learn</h2>

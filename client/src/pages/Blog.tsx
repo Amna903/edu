@@ -5,6 +5,7 @@ import { Search, ArrowRight, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
 import { Link } from "wouter";
+import { ui } from "@/theme";
 
 export default function Blog() {
   const categories = [
@@ -243,11 +244,11 @@ export default function Blog() {
                   setActiveCategory(category);
                   setVisibleCount(6);
                 }}
-                className={`px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap border transition-all ${
+                className={
                   activeCategory === category
-                    ? "bg-[#2366c9] text-white border-[#2366c9]"
-                    : "bg-white text-slate-900 border-[#1e1b4b] hover:bg-[#EFF6FF]"
-                }`}
+                    ? `px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap border transition-all ${ui.buttons.brand} text-white`
+                    : "px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap border transition-all bg-white text-slate-900 border-[#1e1b4b] hover:bg-[#EFF6FF]"
+                }
               >
                 {category}
               </button>
@@ -263,18 +264,18 @@ export default function Blog() {
               <div className="grid lg:grid-cols-[55%_45%] rounded-xl overflow-hidden bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] border border-slate-200">
                 <div className="relative min-h-[260px] lg:min-h-[380px]">
                   <img src={featured.image} alt={featured.title} className="w-full h-full object-cover" />
-                  <span className="absolute top-4 left-4 bg-[#2366c9] text-white px-3 py-1 rounded-full text-[14px] font-medium uppercase tracking-wider">
+                  <span className="absolute top-4 left-4 px-3 py-1 rounded-full text-[14px] font-medium uppercase tracking-wider" style={{ backgroundColor: "#2366c9", color: "white" }}>
                     Featured
                   </span>
                 </div>
-                <div className="p-7 lg:p-8 border-l-4 border-[#2366c9] flex flex-col justify-center">
+                <div className="p-7 lg:p-8 border-l-4 border-[#2366c9] flex flex-col justify-center" style={{ backgroundColor: "#eef6ff" }}>
                   <Badge className="w-fit mb-3 bg-[#EFF6FF] text-slate-900 border border-slate-200">{featured.category}</Badge>
                   <h2 className="text-2xl md:text-3xl font-semibold text-slate-900 leading-tight mb-3 line-clamp-2">{featured.title}</h2>
                   <p className="text-[14px] text-black font-medium leading-relaxed mb-4 line-clamp-3">{featured.excerpt}</p>
                   <p className="text-xs text-black font-medium mb-5">
                     {featured.author} Â· {featured.date} Â· {featured.readTime} read
                   </p>
-                  <Button className="w-fit bg-[#2366c9] hover:bg-blue-500 text-white font-medium rounded-lg">
+                  <Button className={`${ui.buttons.brand} font-medium rounded-lg`}>
                     Read Article <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </div>
@@ -311,7 +312,7 @@ export default function Blog() {
             ))}
           </div>
 
-          <div className="mt-10 rounded-xl bg-[#2366c9] p-8 md:p-10 text-white">
+          <div className={ui.sections.brand + " mt-10 rounded-xl p-8 md:p-10"}>
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
               <div>
                 <p className="text-xs font-medium uppercase tracking-widest text-blue-300 mb-2">{inlineCta.eyebrow}</p>
@@ -320,7 +321,7 @@ export default function Blog() {
               </div>
               <div className="flex flex-col items-start md:items-end gap-3 min-w-[220px]">
                 <Link href="/for-parents">
-                  <Button className="bg-[#2366c9] hover:bg-blue-500 text-white font-medium" data-cta="diagnostic">
+                  <Button className={`${ui.buttons.brand} font-medium`} data-cta="diagnostic">
                     Take Free Diagnostic â†’
                   </Button>
                 </Link>
@@ -336,7 +337,7 @@ export default function Blog() {
               <Button
                 variant="outline"
                 onClick={() => setVisibleCount((prev) => prev + 3)}
-                className="border-2 border-[#2366c9] text-[#2366c9] hover:bg-[#2366c9] hover:text-white font-medium"
+                className={`border-2 ${ui.buttons.brandOutline} font-medium`}
               >
                 Load More Articles
               </Button>
@@ -349,13 +350,13 @@ export default function Blog() {
 
       <section className="py-12 bg-white">
         <div className="container-custom max-w-6xl">
-          <div className="bg-blue-50 border-l-4 border-[#2366c9] rounded-xl p-6 md:p-8 grid md:grid-cols-3 gap-6">
+          <div className={ui.sections.softBlue + " border-l-4 border-[#2366c9] rounded-xl p-6 md:p-8 grid md:grid-cols-3 gap-6"}>
             <div className="space-y-2">
               <p className="text-xs font-medium uppercase tracking-widest text-[#2366c9]">Not sure where to start?</p>
               <h3 className="text-xl font-semibold text-slate-900">Find Your Starting Point</h3>
               <p className="text-[14px] text-slate-700">Sample lessons, essay frameworks, and diagnostic pathways in one place.</p>
               <Link href="/for-parents">
-                <Button className="bg-[#2366c9] hover:bg-blue-500 text-white font-medium">Take Diagnostic</Button>
+                <Button className={`${ui.buttons.brand} font-medium`}>Take Diagnostic</Button>
               </Link>
             </div>
             <div className="space-y-2">

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Layout } from "@/components/Layout";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { ui } from "@/theme";
 import {
   ArrowRight,
   Brain,
@@ -102,7 +103,7 @@ export default function HowItWorks() {
   return (
     <Layout>
       {/* HERO */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-blue-50/80 to-white py-16 md:py-24">
+      <section className={ui.sections.hero + " py-16 md:py-24"}>
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -118,7 +119,7 @@ export default function HowItWorks() {
               Built for retention, not content delivery.
             </p>
             <Link href="/programs/ai-diagnostic">
-              <Button className="bg-[#2366c9] hover:bg-blue-700 text-white font-semibold text-[14px] py-3 px-6">
+              <Button className={`font-semibold text-[14px] py-3 px-6 ${ui.buttons.brand}`}>
                 Start Your Free Diagnostic <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
@@ -130,7 +131,7 @@ export default function HowItWorks() {
       <section className="py-14 md:py-20 bg-white">
         <div className="container-custom">
           <div className="mx-auto max-w-4xl">
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
+            <p className={ui.pills.brand + " mb-5"}>
               The Difference
             </p>
             <h2 className="text-4xl md:text-6xl font-semibold text-slate-900 tracking-tight mb-6">
@@ -152,11 +153,11 @@ export default function HowItWorks() {
       </section>
 
       {/* COMPARISON TABLE */}
-      <section className="py-14 md:py-20 bg-blue-50/50">
+      <section className={ui.sections.softBlue + " py-14 md:py-20"}>
         <div className="container-custom">
           <div className="mx-auto max-w-5xl">
             <div className="text-center mb-10">
-              <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
+              <p className={ui.pills.brand + " mb-5"}>
                 THE SCIENCE BEHIND THE SYSTEM
               </p>
               <h2 className="text-4xl md:text-6xl font-semibold text-slate-900 tracking-tight">
@@ -164,7 +165,7 @@ export default function HowItWorks() {
               </h2>
             </div>
             {/* Header */}
-            <div className="grid grid-cols-2 bg-[#2366c9] text-white text-xs uppercase tracking-wider font-semibold rounded-t-xl overflow-hidden">
+            <div className={`grid grid-cols-2 ${ui.tables.header} rounded-t-xl overflow-hidden`}>
               <div className="p-4">Typical EdTech Loop → 5–10% retention</div>
               <div className="p-4 border-l border-blue-400/30">EduMeUp Mastery Cycle → 50–75%+ retention</div>
             </div>
@@ -172,7 +173,7 @@ export default function HowItWorks() {
             {comparisonRows.map((row, i) => (
               <div
                 key={i}
-                className={`grid grid-cols-2 border-b border-blue-50 ${i % 2 === 0 ? "bg-white" : "bg-slate-50"} hover:bg-blue-50/40 transition-colors`}
+                className={`grid grid-cols-2 ${i % 2 === 0 ? ui.tables.row : ui.tables.rowAlt} hover:bg-[#eef6ff]/60 transition-colors`}
               >
                 <div className="p-4 text-[14px] text-black line-through decoration-red-300 decoration-2">{row.typical}</div>
                 <div className="p-4 border-l border-slate-200 text-[14px] text-black font-semibold">{row.edumeup}</div>
@@ -187,7 +188,7 @@ export default function HowItWorks() {
         <div className="container-custom">
           <div className="mx-auto max-w-5xl">
             <div className="text-center mb-12">
-              <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
+              <p className={ui.pills.brand + " mb-5"}>
                 THE 8-STEP MASTERY CYCLE
               </p>
               <h2 className="text-4xl md:text-6xl font-semibold text-slate-900 tracking-tight">
@@ -202,7 +203,7 @@ export default function HowItWorks() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: idx * 0.05 }}
-                  className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-[#2366c9] transition-all duration-300 group"
+                  className={`${ui.cards.standard} p-8 hover:shadow-xl hover:-translate-y-2 hover:border-[#2366c9] transition-all duration-300 group`}
                 >
                   <div className="flex items-center gap-3 mb-4">
                     <div className="h-10 w-10 flex items-center justify-center rounded-full bg-[#2366c9] text-white text-xs font-bold shrink-0">
@@ -220,7 +221,7 @@ export default function HowItWorks() {
       </section>
 
       {/* THE CYCLE AT A GLANCE */}
-      <section className="py-12 bg-blue-50">
+      <section className={ui.sections.softBlue + " py-12"}>
         <div className="container-custom">
           <div className="mx-auto max-w-4xl text-center">
             <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-4 tracking-tight">The Cycle at a Glance</h2>
@@ -233,7 +234,7 @@ export default function HowItWorks() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 md:py-32 bg-[#2366c9] text-white relative overflow-hidden">
+      <section className={ui.sections.brand + " py-20 md:py-32"}>
         <div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
         <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
         <div className="container-custom text-center relative z-10">
@@ -247,12 +248,12 @@ export default function HowItWorks() {
           </p>
           <div className="flex flex-col md:flex-row justify-center gap-6 max-w-5xl mx-auto">
             <Link href="/programs/ai-diagnostic">
-              <Button size="lg" className="w-full md:w-auto min-w-[260px] bg-white text-[#2366c9] hover:bg-blue-50 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+              <Button size="lg" className={`w-full md:w-auto min-w-[260px] font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2 ${ui.buttons.brandLight}`}>
                 Start Your Free Diagnostic <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
             <Link href="/for-parents">
-              <Button size="lg" variant="outline" className="w-full md:w-auto min-w-[260px] border border-white/30 text-white hover:bg-white/10 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+              <Button size="lg" variant="outline" className={`w-full md:w-auto min-w-[260px] font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2 ${ui.buttons.brandOutline}`}>
                 Parent Dashboard Overview <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>

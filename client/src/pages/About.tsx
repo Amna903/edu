@@ -13,6 +13,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { InquiryDialog } from "@/components/InquiryDialog";
+import { ui } from "@/theme";
 
 export default function About() {
   return (
@@ -24,7 +25,7 @@ export default function About() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="relative overflow-hidden rounded-[2rem] md:rounded-[3rem] bg-gradient-to-br from-[#0b3c5d] via-[#2366c9] to-[#1f5bb4] p-8 md:p-12 text-white shadow-2xl"
+              className={ui.sections.brand + " rounded-[2rem] md:rounded-[3rem] p-8 md:p-12 shadow-2xl"}
             >
               <div className="absolute -top-20 -right-16 h-56 w-56 rounded-full bg-white/10 blur-3xl" aria-hidden="true" />
               <div className="relative z-10 max-w-2xl space-y-6">
@@ -42,7 +43,7 @@ export default function About() {
                   </p>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-4 pt-2">
-                  <Button className="bg-white text-[#2366c9] hover:bg-blue-50 font-semibold px-6 py-3 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+                  <Button className={`${ui.buttons.brandLight} font-semibold px-6 py-3 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2`}>
                     Explore Our 10X Model <ArrowRight className="h-4 w-4" />
                   </Button>
                   <Button variant="outline" className="border border-white/35 text-white hover:bg-white/10 font-semibold px-6 py-3 rounded-xl text-[14px] flex items-center justify-center gap-2">
@@ -56,13 +57,13 @@ export default function About() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="relative overflow-hidden rounded-[2rem] md:rounded-[3rem] border border-blue-200 bg-gradient-to-b from-blue-50 via-white to-white p-8 md:p-10 shadow-lg"
+              className={ui.cards.standard + " rounded-[2rem] md:rounded-[3rem] p-8 md:p-10 shadow-lg"}
             >
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(35,102,201,0.18),transparent_40%),radial-gradient(circle_at_bottom_left,rgba(79,134,224,0.16),transparent_35%)]" aria-hidden="true" />
               <div className="relative z-10 flex h-full flex-col justify-between gap-8">
                 <div>
                   <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-4">Editorial Graphic</p>
-                  <div className="rounded-[2rem] border border-blue-200 bg-white p-6 shadow-sm">
+                    <div className={ui.cards.standard + " rounded-[2rem] p-6 shadow-sm"}>
                     <div className="flex items-center justify-center rounded-[1.5rem] bg-gradient-to-br from-[#2366c9] via-[#4f86e0] to-[#eef6ff] p-10 text-white">
                       <div className="text-center space-y-4">
                         <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
@@ -77,15 +78,15 @@ export default function About() {
                   </div>
                 </div>
                 <div className="grid grid-cols-3 gap-3">
-                  <div className="rounded-2xl border border-blue-200 bg-white p-4 text-center shadow-sm">
+                  <div className={ui.cards.standard + " rounded-2xl p-4 text-center shadow-sm"}>
                     <p className="text-2xl font-semibold text-[#2366c9]">91%</p>
                     <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 mt-1">Pass rate</p>
                   </div>
-                  <div className="rounded-2xl border border-blue-200 bg-white p-4 text-center shadow-sm">
+                  <div className={ui.cards.standard + " rounded-2xl p-4 text-center shadow-sm"}>
                     <p className="text-2xl font-semibold text-[#2366c9]">85%+</p>
                     <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 mt-1">Retention</p>
                   </div>
-                  <div className="rounded-2xl border border-blue-200 bg-white p-4 text-center shadow-sm">
+                  <div className={ui.cards.standard + " rounded-2xl p-4 text-center shadow-sm"}>
                     <p className="text-2xl font-semibold text-[#2366c9]">271%</p>
                     <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 mt-1">ROI</p>
                   </div>
@@ -97,7 +98,7 @@ export default function About() {
       </section>
 
       <div className="w-full lg:px-8 lg:grid lg:grid-cols-[260px_1fr] gap-8 lg:gap-12 items-start pt-8 md:pt-12">
-        <aside className="sticky top-24 hidden lg:block rounded-[2rem] border border-blue-200 bg-white p-5 shadow-sm h-fit">
+        <aside className={ui.cards.standard + " sticky top-24 hidden lg:block rounded-[2rem] p-5 shadow-sm h-fit"}>
           <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-4">On This Page</p>
           <div className="space-y-2">
             {[
@@ -119,7 +120,7 @@ export default function About() {
         <main className="min-w-0 space-y-0">
 
       {/* ================= THE LEARNING PROBLEM ================= */}
-      <section id="learning-problem" className="py-16 md:py-24 bg-slate-50/70 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
+      <section id="learning-problem" className="py-16 md:py-24 bg-slate-50 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
         <div className="w-full max-w-6xl mx-auto lg:px-0">
           <div className="text-center mb-16">
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-6">
@@ -135,7 +136,7 @@ export default function About() {
                 <p className="text-slate-900/70 leading-relaxed mb-6">
                   Your brain is naturally wired to forget information rapidly without systematic review.
                 </p>
-                <div className="bg-blue-50 p-8 rounded-[2rem] border-2 border-blue-100">
+                <div className={ui.sections.softBlue + " p-8 rounded-[2rem] border-2 border-blue-100"}>
                   <div className="space-y-4">
                     <div className="flex justify-between items-center text-[14px] font-semibold">
                       <span className="text-red-500">Without Systematic Review</span>
@@ -177,7 +178,7 @@ export default function About() {
                   ].map((item, i) => (
                     <div key={i} className="flex items-center gap-4">
                       <div className="w-32 text-xs font-semibold text-slate-900/60">{item.label}</div>
-                      <div className="flex-1 h-3 bg-blue-50 rounded-full overflow-hidden">
+                      <div className="flex-1 h-3 rounded-full overflow-hidden" style={{ backgroundColor: "#f0f7ff" }}>
                         <div 
                           className={`h-full rounded-full ${item.type === 'active' ? 'bg-[#2366c9]' : 'bg-red-400 opacity-50'}`}
                           style={{ width: item.value }}
@@ -192,7 +193,7 @@ export default function About() {
             </div>
           </div>
 
-          <div className="mt-20 p-12 bg-[#2366c9] rounded-[3rem] text-white">
+          <div className={ui.sections.brand + " mt-20 p-12 rounded-[3rem]"}>
             <div className="grid md:grid-cols-3 gap-8 text-center">
               <div>
                 <h4 className="text-3xl font-semibold text-blue-400 mb-2">91%</h4>
@@ -215,7 +216,7 @@ export default function About() {
       </section>
 
       {/* ================= THE 10X LEARNING LEAP MODEL™ ================= */}
-      <section id="methodology" className="py-16 md:py-24 bg-blue-50 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
+      <section id="methodology" className={ui.sections.softBlue + " py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0"}>
         <div className="w-full max-w-6xl mx-auto lg:px-0">
           <div className="text-center mb-10 md:mb-20">
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-4">
@@ -299,7 +300,7 @@ export default function About() {
             ].map((pillar, i) => (
               <div
                 key={i}
-                className="bg-blue-50 p-6 sm:p-10 md:p-12 rounded-[2rem] md:rounded-[3.5rem] shadow hover:shadow-2xl transition-all text-center border-4 border-white"
+                className={ui.sections.softBlue + " p-6 sm:p-10 md:p-12 rounded-[2rem] md:rounded-[3.5rem] shadow hover:shadow-2xl transition-all text-center border-4 border-white"}
               >
                 <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-lg">
                   <pillar.icon className="h-10 w-10 text-[#2366c9]" />
@@ -316,7 +317,7 @@ export default function About() {
       </section>
 
       {/* ================= RESULTS & VALIDATION ================= */}
-      <section id="research" className="py-16 md:py-24 bg-blue-50 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
+      <section id="research" className={ui.sections.softBlue + " py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0"}>
         <div className="w-full max-w-6xl mx-auto lg:px-0">
           <div className="text-center mb-10 md:mb-20">
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-4">
@@ -333,7 +334,7 @@ export default function About() {
                   <span className="text-2xl font-semibold text-[#2366c9]">91% vs 35%</span>
                 </div>
                 <div className="h-4 bg-white rounded-full overflow-hidden border-2 border-white">
-                  <div className="h-full bg-[#2366c9] rounded-full" style={{ width: "91%" }}></div>
+                  <div className="h-full rounded-full" style={{ width: "91%", backgroundColor: "#2366c9" }}></div>
                 </div>
                 <p className="text-[14px] font-medium text-slate-900/40">↑ 160% improvement over traditional</p>
               </div>
@@ -344,7 +345,7 @@ export default function About() {
                   <span className="text-2xl font-semibold text-[#2366c9]">47% vs 18%</span>
                 </div>
                 <div className="h-4 bg-white rounded-full overflow-hidden border-2 border-white">
-                  <div className="h-full bg-[#2366c9] rounded-full" style={{ width: "47%" }}></div>
+                  <div className="h-full rounded-full" style={{ width: "47%", backgroundColor: "#2366c9" }}></div>
                 </div>
                 <p className="text-[14px] font-medium text-slate-900/40">↑ 161% improvement over traditional</p>
               </div>
@@ -355,13 +356,13 @@ export default function About() {
                   <span className="text-2xl font-semibold text-[#2366c9]">75% vs 10%</span>
                 </div>
                 <div className="h-4 bg-white rounded-full overflow-hidden border-2 border-white">
-                  <div className="h-full bg-[#2366c9] rounded-full" style={{ width: "75%" }}></div>
+                  <div className="h-full rounded-full" style={{ width: "75%", backgroundColor: "#2366c9" }}></div>
                 </div>
                 <p className="text-[14px] font-medium text-slate-900/40">↑ 7.5× better retention after 6 months</p>
               </div>
             </div>
 
-         <div className="bg-[#2366c9] p-12 rounded-[3.5rem] text-white shadow-2xl border-4 border-white/10 relative overflow-hidden">
+         <div className={ui.sections.brand + " p-12 rounded-[3.5rem] shadow-2xl border-4 border-white/10 relative overflow-hidden"}>
   {/* Subltle academic watermark/icon in background */}
   <div className="absolute top-0 right-0 p-8 opacity-10">
     <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
@@ -443,7 +444,7 @@ export default function About() {
                 result: "Guesswork → Excellence"
               }
             ].map((box, i) => (
-              <div key={i} className="bg-blue-50 p-6 rounded-xl border border-white hover:border-blue-100 transition-all">
+              <div key={i} className={ui.sections.softBlue + " p-6 rounded-xl border border-white hover:border-blue-100 transition-all"}>
                 <h3 className="text-xl font-semibold text-slate-900 mb-6">{box.title}</h3>
                 <ul className="space-y-4 mb-8">
                   {box.items.map((item, j) => (
@@ -463,7 +464,7 @@ export default function About() {
       </section>
 
       {/* ================= RESEARCH FOUNDATION ================= */}
-<section className="py-16 md:py-24 bg-[#2366c9] text-white -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
+<section className={ui.sections.brand + " py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0"}>
   <div className="w-full max-w-6xl mx-auto lg:px-0">
     <div className="text-center mb-10 md:mb-20">
       <h2 className="text-4xl md:text-5xl font-semibold text-white mb-4 ">
@@ -532,7 +533,7 @@ export default function About() {
               <p>
                 As an educator in Pakistan for 15+ years, our founder witnessed a heartbreaking pattern: bright students struggling in O-Level not from lack of ability, but from a broken system of passive instruction and rapid forgetting.
               </p>
-              <div className="bg-blue-50 p-6 sm:p-10 md:p-12 rounded-[2rem] sm:rounded-[3rem] border-l-4 sm:border-l-8 border-[#2366c9] my-8 md:my-12">
+              <div className={ui.sections.softBlue + " p-6 sm:p-10 md:p-12 rounded-[2rem] sm:rounded-[3rem] border-l-4 sm:border-l-8 border-[#2366c9] my-8 md:my-12"}>
                 <p className="text-base sm:text-lg md:text-2xl text-slate-900 uppercase tracking-tight mb-4 italic">"The question was simple: If cognitive science has proven what works for decades, why aren't these methods standard?"</p>
                 <p className="text-[14px] font-semibold uppercase text-[#2366c9]">— Muhammad Benyameen, Founder</p>
               </div>
@@ -542,11 +543,11 @@ export default function About() {
             </div>
 
             <div className="grid md:grid-cols-2 gap-8 pt-12">
-              <div className="bg-blue-50 p-10 rounded-[2.5rem]">
+              <div className={ui.sections.softBlue + " p-10 rounded-[2.5rem]"}>
                 <h4 className="text-3xl  text-slate-900 mb-2">2,000+</h4>
                 <p className="text-xs font-black uppercase text-blue-600 tracking-widest">Students Globally</p>
               </div>
-              <div className="bg-blue-50 p-10 rounded-[2.5rem]">
+              <div className={ui.sections.softBlue + " p-10 rounded-[2.5rem]"}>
                 <h4 className="text-3xl  text-slate-900 mb-2">25+</h4>
                 <p className="text-xs font-black uppercase text-blue-600 tracking-widest">Countries Reached</p>
               </div>
@@ -556,7 +557,7 @@ export default function About() {
       </section>
 
       {/* ================= WHO THIS IS FOR ================= */}
-      <section id="fit" className="py-16 md:py-24 bg-blue-50 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
+      <section id="fit" className={ui.sections.softBlue + " py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0"}>
         <div className="w-full max-w-6xl mx-auto lg:px-0">
           <div className="text-center mb-10 md:mb-20">
         <h2 className="text-4xl md:text-5xl font-semibold font-black text-slate-900 mb-4  ">
@@ -634,8 +635,7 @@ export default function About() {
       {/* ================= LIMITATIONS & HONESTY ================= */}
       <section id="honesty" className="py-16 md:py-24 bg-white -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
         <div className="w-full max-w-4xl mx-auto lg:px-0">
-          <div className="bg-[#2366c9] p-6 sm:p-10 md:p-16 rounded-[2rem] sm:rounded-[3rem] md:rounded-[4rem] text-white">
-          <h2 className="text-4xl md:text-5xl font-semibold text-white   mb-4  ">
+          <div className={ui.sections.brand + " p-6 sm:p-10 md:p-16 rounded-[2rem] sm:rounded-[3rem] md:rounded-[4rem]"}>          <h2 className="text-4xl md:text-5xl font-semibold text-white   mb-4  ">
              Transparency Builds Trust</h2>
             <div className="grid md:grid-cols-2 gap-12">
               <div className="space-y-6">
@@ -672,7 +672,7 @@ export default function About() {
       </div>
 
       {/* ================= FINAL CTA ================= */}
-      <section className="py-20 md:py-32 bg-[#2366c9] text-white relative overflow-hidden -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
+      <section className={ui.sections.brand + " py-20 md:py-32 relative overflow-hidden -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0"}>
         <div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
         <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
         <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
@@ -689,7 +689,7 @@ export default function About() {
               defaultType="diagnostic"
               title="Free Diagnostic Assessment"
               trigger={
-                <Button size="lg" className="w-full md:w-auto min-w-[260px] bg-white text-[#2366c9] hover:bg-blue-50 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+                <Button size="lg" className={`w-full md:w-auto min-w-[260px] font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2 ${ui.buttons.brandLight}`}>
                   Start Free Diagnostic <ArrowRight className="h-4 w-4" />
                 </Button>
               }

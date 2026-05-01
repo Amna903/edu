@@ -7,6 +7,7 @@ import {
   examPapersFeatures,
   examPapersReferences,
 } from "@/components/resources/exam-papers-content";
+import { ui } from "@/theme";
 
 export default function ExamPapers() {
   useEffect(() => {
@@ -32,7 +33,7 @@ export default function ExamPapers() {
 
   return (
     <Layout>
-      <section className="relative overflow-hidden bg-gradient-to-b from-blue-50/80 to-white py-16 md:py-24">
+      <section className={ui.sections.hero + " py-16 md:py-24"}>
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 18 }}
@@ -71,7 +72,7 @@ export default function ExamPapers() {
 
             <div className="mt-10">
               <Link href="/resources/exam-papers">
-                <span className="inline-flex items-center gap-2 rounded-lg bg-[#2366c9] px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700">
+                <span className={`inline-flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold ${ui.buttons.brand}`}> 
                   Explore Now
                   <ArrowRight className="h-4 w-4" />
                 </span>
@@ -83,7 +84,7 @@ export default function ExamPapers() {
 
       <section className="py-14 md:py-20">
         <div className="container-custom">
-          <div className="mx-auto max-w-5xl rounded-2xl border border-blue-100 bg-white p-6 shadow-sm md:p-8">
+          <div className={`${ui.cards.standard} mx-auto max-w-5xl p-6 md:p-8`}>
             <h2 className="text-3xl font-semibold text-slate-900 md:text-4xl">What This Resource Provides</h2>
             <p className="mt-4 text-sm leading-relaxed text-slate-700 md:text-base">
               Cambridge O-Level exams test students differently by paper type.
@@ -103,7 +104,7 @@ export default function ExamPapers() {
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
-            <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
+            <div className={`${ui.cards.standard} p-6`}>
               <h3 className="text-xl font-semibold text-slate-900">Format A - Paper 1: Multiple Choice (Online, Time-Bound)</h3>
               <p className="mt-3 text-sm leading-relaxed text-slate-700">
                 Paper 1 MCQ exams run directly on the platform with Cambridge-matched
@@ -117,7 +118,7 @@ export default function ExamPapers() {
               </p>
             </div>
 
-            <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
+            <div className={`${ui.cards.standard} p-6`}>
               <h3 className="text-xl font-semibold text-slate-900">Format B - Paper 2: Essay/Structured Response (Download + Simulation)</h3>
               <p className="mt-3 text-sm leading-relaxed text-slate-700">
                 Paper 2 practice is completed by hand using downloadable PDFs. Students
@@ -145,8 +146,8 @@ export default function ExamPapers() {
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {examPapersFeatures.map((feature) => (
-              <div key={feature.title} className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
-                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100 text-[#2366c9]">
+              <div key={feature.title} className={ui.cards.standard + " p-6"}>
+                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-[#eef6ff] text-[#2366c9]">
                   <feature.icon className="h-5 w-5" />
                 </div>
                 <h3 className="text-xl font-semibold text-slate-900">{feature.title}</h3>
@@ -173,9 +174,9 @@ export default function ExamPapers() {
         </div>
       </section>
 
-      <section className="border-y border-blue-100 bg-blue-50/40 py-14 md:py-20">
+      <section className={ui.sections.softBlue + " border-y border-blue-100 py-14 md:py-20"}>
         <div className="container-custom">
-          <div className="mx-auto max-w-5xl rounded-2xl border border-blue-100 bg-white p-6 shadow-sm md:p-8">
+          <div className={`${ui.cards.standard} mx-auto max-w-5xl p-6 md:p-8`}>
             <h2 className="text-2xl font-semibold text-slate-900">Research References</h2>
             <div className="mt-4 space-y-3">
               {examPapersReferences.map((reference) => (
@@ -190,7 +191,7 @@ export default function ExamPapers() {
 
       <section className="py-14 md:py-20">
         <div className="container-custom">
-          <div className="mx-auto max-w-5xl rounded-2xl border border-blue-100 bg-white p-6 shadow-sm md:p-8">
+          <div className={`${ui.cards.standard} mx-auto max-w-5xl p-6 md:p-8`}>
             <h2 className="text-3xl font-semibold text-slate-900 md:text-4xl">Pricing</h2>
             <p className="mt-3 text-sm text-slate-700">Confirm pricing from the owner.</p>
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -201,7 +202,7 @@ export default function ExamPapers() {
                 </span>
               </Link>
               <Link href="/resources/exam-papers">
-                <span className="flex items-center justify-between rounded-xl bg-[#2366c9] px-5 py-4 text-sm font-semibold text-white hover:bg-blue-700">
+                <span className={`flex items-center justify-between rounded-xl px-5 py-4 text-sm font-semibold ${ui.buttons.brand}`}>
                   View Sample Paper
                   <ArrowRight className="h-4 w-4" />
                 </span>

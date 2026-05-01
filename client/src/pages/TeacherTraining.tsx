@@ -4,6 +4,7 @@ import { ArrowRight, CheckCircle2, GraduationCap, BookOpen, Target, Brain, Light
 import { motion } from "framer-motion";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
+import { ui } from "@/theme";
 
 const workshopDetails = [
   { label: "Workshop Name", value: "Cambridge Teacher Mastery Workshop (CTMW)" },
@@ -102,7 +103,7 @@ export default function TeacherTraining() {
   return (
     <Layout>
       {/* HERO */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-blue-50/80 to-white py-16 md:py-24">
+      <section className={ui.sections.hero + " py-16 md:py-24"}>
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -118,7 +119,7 @@ export default function TeacherTraining() {
               One day. 7 CPD hours. Certificate of Cambridge Teaching Excellence.
             </p>
             <Link href="/contact">
-              <span className="inline-flex items-center gap-2 rounded-full bg-[#2366c9] px-7 py-3.5 text-[14px] font-semibold text-white hover:bg-blue-700">
+              <span className={`inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[14px] font-semibold ${ui.buttons.brand}`}>
                 Book a Workshop for Your School
                 <ArrowRight className="h-4 w-4" />
               </span>
@@ -131,7 +132,7 @@ export default function TeacherTraining() {
       <section className="py-14 md:py-20 bg-white">
         <div className="container-custom">
           <div className="mx-auto max-w-4xl">
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
+            <p className={ui.pills.brand + " mb-5"}>
               The Problem
             </p>
             <h2 className="text-4xl md:text-6xl font-semibold text-slate-900 tracking-tight mb-5">
@@ -145,11 +146,11 @@ export default function TeacherTraining() {
       </section>
 
       {/* WORKSHOP AT A GLANCE — grid table */}
-      <section className="py-14 md:py-20 bg-blue-50/50">
+      <section className={ui.sections.softBlue + " py-14 md:py-20"}>
         <div className="container-custom">
           <div className="mx-auto max-w-4xl">
             <div className="text-center mb-10">
-              <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
+              <p className={ui.pills.brand + " mb-5"}>
                 Workshop Details
               </p>
               <h2 className="text-4xl md:text-6xl font-semibold text-slate-900 tracking-tight">
@@ -157,7 +158,7 @@ export default function TeacherTraining() {
               </h2>
             </div>
             {/* Header */}
-            <div className="grid grid-cols-[200px_1fr] bg-[#2366c9] text-white text-xs uppercase tracking-wider font-semibold rounded-t-xl overflow-hidden">
+            <div className={`grid grid-cols-[200px_1fr] ${ui.tables.header} rounded-t-xl overflow-hidden`}>
               <div className="p-4">Detail</div>
               <div className="p-4 border-l border-blue-400/30">Information</div>
             </div>
@@ -165,7 +166,7 @@ export default function TeacherTraining() {
             {workshopDetails.map((row, i) => (
               <div
                 key={i}
-                className={`grid grid-cols-[200px_1fr] border-b border-blue-50 ${i % 2 === 0 ? "bg-white" : "bg-slate-50"} hover:bg-blue-50/40 transition-colors`}
+                className={`grid grid-cols-[200px_1fr] ${i % 2 === 0 ? ui.tables.row : ui.tables.rowAlt} hover:bg-[#eef6ff]/60 transition-colors`}
               >
                 <div className="p-4 text-xs font-semibold uppercase tracking-wide text-[#2366c9]">{row.label}</div>
                 <div className="p-4 border-l border-slate-200 text-[14px] text-black">{row.value}</div>
@@ -195,7 +196,7 @@ export default function TeacherTraining() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: mod.number * 0.05 }}
-                  className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-[#2366c9] transition-all duration-300 group"
+                  className={`${ui.cards.standard} p-8 hover:shadow-xl hover:-translate-y-2 hover:border-[#2366c9] transition-all duration-300 group`}
                 >
                   <div className="flex items-center gap-3 mb-4">
                     <div className="h-10 w-10 flex items-center justify-center rounded-full bg-[#2366c9] text-white text-xs font-bold shrink-0">
@@ -213,11 +214,11 @@ export default function TeacherTraining() {
       </section>
 
       {/* WHAT TEACHERS LEAVE WITH */}
-      <section className="py-14 md:py-20 bg-blue-50/50">
+      <section className={ui.sections.softBlue + " py-14 md:py-20"}>
         <div className="container-custom">
           <div className="mx-auto max-w-5xl">
             <div className="text-center mb-12">
-              <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
+              <p className={ui.pills.brand + " mb-5"}>
                 Outcomes
               </p>
               <h2 className="text-4xl md:text-6xl font-semibold text-slate-900 tracking-tight">
@@ -225,7 +226,7 @@ export default function TeacherTraining() {
               </h2>
             </div>
             <div className="grid gap-6 md:grid-cols-2">
-              <div className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-[#2366c9] transition-all duration-300">
+              <div className={`${ui.cards.standard} p-8 hover:shadow-xl hover:-translate-y-2 hover:border-[#2366c9] transition-all duration-300`}>
                 <h3 className="text-2xl font-semibold text-[#2366c9] mb-4">Practical tools — ready tomorrow:</h3>
                 <ul className="space-y-3">
                   {practicalTools.map((item) => (
@@ -236,7 +237,7 @@ export default function TeacherTraining() {
                   ))}
                 </ul>
               </div>
-              <div className="bg-white p-8 rounded-xl border border-[#2366c9] border-2 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+              <div className="rounded-xl border-2 border-[#2366c9] bg-white p-8 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
                 <div className="flex items-center gap-2 mb-4">
                   <GraduationCap className="h-6 w-6 text-[#2366c9]" />
                   <h3 className="text-2xl font-semibold text-[#2366c9]">The CCTE Certificate confirms:</h3>
@@ -258,8 +259,8 @@ export default function TeacherTraining() {
       {/* EVIDENCE */}
       <section className="py-14 md:py-20 bg-white">
         <div className="container-custom">
-          <div className="mx-auto max-w-4xl bg-blue-50/50 border border-blue-200 rounded-xl p-8 md:p-10">
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
+          <div className={`${ui.cards.soft} mx-auto max-w-4xl p-8 md:p-10`}>
+            <p className={ui.pills.brand + " mb-5"}>
               Research Engine
             </p>
             <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 tracking-tight mb-5">
@@ -273,10 +274,10 @@ export default function TeacherTraining() {
       </section>
 
       {/* BOOK SECTION */}
-      <section className="py-14 md:py-20 bg-blue-50/50">
+      <section className={ui.sections.softBlue + " py-14 md:py-20"}>
         <div className="container-custom">
           <div className="mx-auto max-w-4xl">
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
+            <p className={ui.pills.brand + " mb-5"}>
               Enrol
             </p>
             <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 tracking-tight mb-5">
@@ -294,7 +295,7 @@ export default function TeacherTraining() {
       </section>
 
       {/* CTA STRIP */}
-      <section className="py-20 md:py-32 bg-[#2366c9] text-white relative overflow-hidden">
+      <section className={ui.sections.brand + " py-20 md:py-32"}>
         <div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
         <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
         <div className="container-custom text-center relative z-10">
@@ -308,12 +309,12 @@ export default function TeacherTraining() {
           </p>
           <div className="flex flex-col md:flex-row justify-center gap-6 max-w-5xl mx-auto">
             <Link href="/contact">
-              <Button size="lg" className="w-full md:w-auto min-w-[260px] bg-white text-[#2366c9] hover:bg-blue-50 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+              <Button size="lg" className={`w-full md:w-auto min-w-[260px] font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2 ${ui.buttons.brandLight}`}>
                 Book for Your School <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
             <Link href="/contact">
-              <Button size="lg" variant="outline" className="w-full md:w-auto min-w-[260px] border border-white/30 text-white hover:bg-white/10 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+              <Button size="lg" variant="outline" className={`w-full md:w-auto min-w-[260px] font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2 ${ui.buttons.brandOutline}`}>
                 Register as an Individual Teacher <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>

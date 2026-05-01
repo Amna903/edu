@@ -17,6 +17,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { Layout } from "@/components/Layout";
+import { ui } from "@/theme";
 
 export default function Contact() {
   const [location] = useLocation();
@@ -52,7 +53,7 @@ export default function Contact() {
   return (
     <Layout>
       {/* HERO SECTION */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-blue-50/80 to-white py-16 md:py-24">
+      <section className={ui.sections.hero + " relative overflow-hidden py-16 md:py-24"}>
         <div className="container-custom relative z-10 max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -81,7 +82,7 @@ export default function Contact() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
               onClick={() => setActiveRoute("school_consultation")}
-              className="group cursor-pointer rounded-2xl bg-gradient-to-br from-[#0b3c5d] to-[#2366c9] p-8 md:p-10 text-white shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]"
+              className={ui.sections.brand + " group cursor-pointer rounded-2xl p-8 md:p-10 shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]"}
             >
               <div className="flex items-start justify-between gap-6">
                 <div className="flex-1">
@@ -126,7 +127,7 @@ export default function Contact() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
                 onClick={() => setActiveRoute("c360_session")}
-                className="group cursor-pointer rounded-xl bg-white border-2 border-blue-200 p-6 hover:border-[#2366c9] hover:shadow-lg transition-all"
+                className={ui.cards.standard + " group cursor-pointer rounded-xl p-6 hover:border-[#2366c9] hover:shadow-lg transition-all border-2"}
               >
                 <div className="flex items-start gap-4 mb-4">
                   <div className="p-3 bg-blue-100 rounded-lg">
@@ -160,7 +161,7 @@ export default function Contact() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
                 onClick={() => setActiveRoute("general")}
-                className="group cursor-pointer rounded-xl bg-white border-2 border-blue-200 p-6 hover:border-[#2366c9] hover:shadow-lg transition-all"
+                className={ui.cards.standard + " group cursor-pointer rounded-xl p-6 hover:border-[#2366c9] hover:shadow-lg transition-all border-2"}
               >
                 <div className="flex items-start gap-4 mb-4">
                   <div className="p-3 bg-blue-100 rounded-lg">
@@ -194,7 +195,7 @@ export default function Contact() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
                 onClick={() => setActiveRoute("support")}
-                className="group cursor-pointer rounded-xl bg-white border-2 border-blue-200 p-6 hover:border-[#2366c9] hover:shadow-lg transition-all"
+                className={ui.cards.standard + " group cursor-pointer rounded-xl p-6 hover:border-[#2366c9] hover:shadow-lg transition-all border-2"}
               >
                 <div className="flex items-start gap-4 mb-4">
                   <div className="p-3 bg-blue-100 rounded-lg">
@@ -230,7 +231,7 @@ export default function Contact() {
                 onClick={() =>
                   window.location.href = "/pricing#scholarship"
                 }
-                className="group cursor-pointer rounded-xl bg-white border-2 border-blue-200 p-6 hover:border-[#2366c9] hover:shadow-lg transition-all"
+                className={ui.cards.standard + " group cursor-pointer rounded-xl p-6 hover:border-[#2366c9] hover:shadow-lg transition-all border-2"}
               >
                 <div className="flex items-start gap-4 mb-4">
                   <div className="p-3 bg-blue-100 rounded-lg">
@@ -270,9 +271,9 @@ export default function Contact() {
               Response Time Commitments
             </h2>
             <div className="overflow-x-auto">
-              <table className="w-full rounded-xl overflow-hidden shadow-sm border border-blue-200">
+              <table className="w-full rounded-xl overflow-hidden shadow-sm border border-slate-200">
                 <thead>
-                  <tr className="bg-[#2366c9] text-white">
+                  <tr className={ui.tables.header}>
                     <th className="px-6 py-4 text-left text-sm font-semibold text-white">
                       Enquiry Type
                     </th>
