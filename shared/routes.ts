@@ -1,6 +1,6 @@
 
 import { z } from 'zod';
-import { insertInquirySchema, insertResourceSchema, inquiries, resources, programs, lmsCourseSchema, authUserSchema, loginInputSchema, registerInputSchema, checkoutRequestSchema, orderHistorySchema, passwordChangeInputSchema, profileUpdateInputSchema, studentDashboardSchema, parentDashboardSchema, schoolDashboardSchema, adminDashboardSchema, parentLinkChildInputSchema, paymentInitRequestSchema, paymentInitResponseSchema, paymentVerifyRequestSchema, paymentVerifyResponseSchema, registerResponseSchema, studentCertificateSchema, schoolSeatPurchaseInputSchema, dashboardNotificationListSchema, markNotificationReadInputSchema, markNotificationReadResponseSchema } from './schema.js';
+import { insertInquirySchema, insertResourceSchema, inquiries, resources, programs, lmsCourseSchema, authUserSchema, loginInputSchema, registerInputSchema, checkoutRequestSchema, orderHistorySchema, passwordChangeInputSchema, profileUpdateInputSchema, studentDashboardSchema, parentDashboardSchema, schoolDashboardSchema, adminDashboardSchema, adminUsersListSchema, adminActivityLogsListSchema, adminSuspendUserInputSchema, adminAssignRoleInputSchema, adminResetPasswordInputSchema, adminActionResponseSchema, adminCoursesListSchema, adminUpdateCoursePricingInputSchema, adminUpdateCourseVisibilityInputSchema, adminUpdateCourseCategoryInputSchema, adminSyncCoursesInputSchema, adminSyncCoursesResponseSchema, parentLinkChildInputSchema, paymentInitRequestSchema, paymentInitResponseSchema, paymentVerifyRequestSchema, paymentVerifyResponseSchema, registerResponseSchema, studentCertificateSchema, schoolSeatPurchaseInputSchema, dashboardNotificationListSchema, markNotificationReadInputSchema, markNotificationReadResponseSchema, revenueReportSchema, enrollmentReportSchema, progressAnalyticsSchema, usageMetricsSchema, analyticsQueryInputSchema, analyticsReportSchema, bulkLicensePurchaseInputSchema, bulkLicensePurchaseResponseSchema, schoolStudentUploadSchema, bulkSeatAssignmentInputSchema, bulkSeatAssignmentResponseSchema, licenseUsageMetricsSchema, schoolUsageReportSchema } from './schema.js';
 
 export const errorSchemas = {
   validation: z.object({
@@ -192,6 +192,10 @@ export const api = {
         200: z.object({ success: z.literal(true) }),
       },
     },
+    parentReport: {
+      method: 'GET' as const,
+      path: '/api/dashboard/parent/report.csv' as const,
+    },
     school: {
       method: 'GET' as const,
       path: '/api/dashboard/school' as const,
@@ -205,6 +209,56 @@ export const api = {
       input: schoolSeatPurchaseInputSchema,
       responses: {
         201: z.object({ success: z.literal(true), orderId: z.number() }),
+      },
+    },
+    schoolBulkLicenses: {
+      method: 'POST' as const,
+      path: '/api/dashboard/school/bulk-licenses' as const,
+      input: bulkLicensePurchaseInputSchema,
+      responses: {
+        201: bulkLicensePurchaseResponseSchema,
+        400: errorSchemas.validation,
+      },
+    },
+    schoolUploadStudents: {
+      method: 'POST' as const,
+      path: '/api/dashboard/school/upload-students' as const,
+      input: z.object({ file: z.instanceof(File) }),
+      responses: {
+        201: schoolStudentUploadSchema,
+        400: errorSchemas.validation,
+      },
+    },
+    schoolUploadStatus: {
+      method: 'GET' as const,
+      path: '/api/dashboard/school/upload-status/:uploadId' as const,
+      responses: {
+        200: schoolStudentUploadSchema,
+        404: errorSchemas.notFound,
+      },
+    },
+    schoolAssignSeats: {
+      method: 'POST' as const,
+      path: '/api/dashboard/school/assign-seats' as const,
+      input: bulkSeatAssignmentInputSchema,
+      responses: {
+        200: bulkSeatAssignmentResponseSchema,
+        400: errorSchemas.validation,
+      },
+    },
+    schoolUsageReport: {
+      method: 'GET' as const,
+      path: '/api/dashboard/school/usage-report' as const,
+      responses: {
+        200: schoolUsageReportSchema,
+      },
+    },
+    schoolLicenseMetrics: {
+      method: 'GET' as const,
+      path: '/api/dashboard/school/license/:licenseId/metrics' as const,
+      responses: {
+        200: licenseUsageMetricsSchema,
+        404: errorSchemas.notFound,
       },
     },
     admin: {
@@ -254,6 +308,142 @@ export const api = {
       path: '/api/webhook/safepay' as const,
       responses: {
         200: z.object({ status: z.string() }),
+      },
+    },
+  },
+  admin: {
+    users: {
+      method: 'GET' as const,
+      path: '/api/admin/users' as const,
+      responses: {
+        200: adminUsersListSchema,
+        403: errorSchemas.validation,
+      },
+    },
+    suspendUser: {
+      method: 'POST' as const,
+      path: '/api/admin/users/:id/suspend' as const,
+      input: adminSuspendUserInputSchema,
+      responses: {
+        200: adminActionResponseSchema,
+        403: errorSchemas.validation,
+      },
+    },
+    assignRole: {
+      method: 'POST' as const,
+      path: '/api/admin/users/:id/role' as const,
+      input: adminAssignRoleInputSchema,
+      responses: {
+        200: adminActionResponseSchema,
+        403: errorSchemas.validation,
+      },
+    },
+    resetPassword: {
+      method: 'POST' as const,
+      path: '/api/admin/users/:id/reset-password' as const,
+      input: adminResetPasswordInputSchema,
+      responses: {
+        200: adminActionResponseSchema,
+        403: errorSchemas.validation,
+      },
+    },
+    activityLogs: {
+      method: 'GET' as const,
+      path: '/api/admin/activity-logs' as const,
+      responses: {
+        200: adminActivityLogsListSchema,
+        403: errorSchemas.validation,
+      },
+    },
+    courses: {
+      method: 'GET' as const,
+      path: '/api/admin/courses' as const,
+      responses: {
+        200: adminCoursesListSchema,
+        403: errorSchemas.validation,
+      },
+    },
+    updateCoursePricing: {
+      method: 'POST' as const,
+      path: '/api/admin/courses/:id/pricing' as const,
+      input: adminUpdateCoursePricingInputSchema,
+      responses: {
+        200: adminActionResponseSchema,
+        403: errorSchemas.validation,
+      },
+    },
+    updateCourseVisibility: {
+      method: 'POST' as const,
+      path: '/api/admin/courses/:id/visibility' as const,
+      input: adminUpdateCourseVisibilityInputSchema,
+      responses: {
+        200: adminActionResponseSchema,
+        403: errorSchemas.validation,
+      },
+    },
+    updateCourseCategory: {
+      method: 'POST' as const,
+      path: '/api/admin/courses/:id/category' as const,
+      input: adminUpdateCourseCategoryInputSchema,
+      responses: {
+        200: adminActionResponseSchema,
+        403: errorSchemas.validation,
+      },
+    },
+    syncCourses: {
+      method: 'POST' as const,
+      path: '/api/admin/courses/sync' as const,
+      input: adminSyncCoursesInputSchema,
+      responses: {
+        200: adminSyncCoursesResponseSchema,
+        403: errorSchemas.validation,
+      },
+    },
+    analytics: {
+      revenue: {
+        method: 'GET' as const,
+        path: '/api/admin/analytics/revenue' as const,
+        input: analyticsQueryInputSchema.optional(),
+        responses: {
+          200: revenueReportSchema,
+          403: errorSchemas.validation,
+        },
+      },
+      enrollments: {
+        method: 'GET' as const,
+        path: '/api/admin/analytics/enrollments' as const,
+        input: analyticsQueryInputSchema.optional(),
+        responses: {
+          200: enrollmentReportSchema,
+          403: errorSchemas.validation,
+        },
+      },
+      progress: {
+        method: 'GET' as const,
+        path: '/api/admin/analytics/progress' as const,
+        input: analyticsQueryInputSchema.optional(),
+        responses: {
+          200: progressAnalyticsSchema,
+          403: errorSchemas.validation,
+        },
+      },
+      usage: {
+        method: 'GET' as const,
+        path: '/api/admin/analytics/usage' as const,
+        input: analyticsQueryInputSchema.optional(),
+        responses: {
+          200: usageMetricsSchema,
+          403: errorSchemas.validation,
+        },
+      },
+      all: {
+        method: 'GET' as const,
+        path: '/api/admin/analytics' as const,
+        input: analyticsQueryInputSchema.optional(),
+        responses: {
+          200: analyticsReportSchema,
+          403: errorSchemas.validation,
+        },
       },
     },
   },

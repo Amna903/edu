@@ -4,17 +4,17 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGri
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import AddChildForm from './AddChildForm';
+import { useParentDashboard, useDashboardNotifications, useMarkNotificationRead } from '@/hooks/use-dashboard';
 
 type Course = {
-    id: string;
+    id: number;
     courseName: string;
     progress: number;
     grade: string;
     percentage: number;
-    lastUpdated: string
 };
 type Child = {
-    id: string;
+    id: number;
     moodleUserId: number;
     name: string;
     email: string;
@@ -25,25 +25,10 @@ type Child = {
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 
 export default function ParentDashboardPage() {
-    const [children, setChildren] = useState<Child[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchChildrenData = async () => {
-            try {
-                const res = await fetch('/api/parent/children-progress');
-                const data = await res.json();
-                if (data.success) {
-                    setChildren(data.children);
-                }
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchChildrenData();
-    }, []);
+    const { data: dashboardData, isLoading } = useParentDashboard();
+    const children = dashboardData?.children || [];
+    const { data: notifications } = useDashboardNotifications(true);
+    const markNotificationRead = useMarkNotificationRead();
 
     const downloadPDFReport = (child: Child) => {
         const doc = new jsPDF();
@@ -120,7 +105,7 @@ export default function ParentDashboardPage() {
         doc.save(`${child.name.replace(/\s+/g, '_')}_Result_Card.pdf`);
     };
 
-    if (loading) return (
+    if (isLoading) return (
         <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
@@ -146,6 +131,33 @@ export default function ParentDashboardPage() {
                 </div>
                 <div className="absolute -top-24 -right-24 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 hidden md:block"></div>
             </div>
+
+            {/* Notifications */}
+            {notifications?.notifications && notifications.notifications.length > 0 && (
+                <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
+                    <h2 className="text-2xl font-bold text-gray-800 mb-4">Recent Alerts</h2>
+                    <div className="space-y-3">
+                        {notifications.notifications.slice(0, 5).map((notification) => (
+                            <div key={notification.id} className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                                <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                                <div className="flex-1">
+                                    <p className="text-sm font-medium text-gray-900">{notification.title}</p>
+                                    <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
+                                    <p className="text-xs text-gray-400 mt-2">{new Date(notification.createdAt).toLocaleDateString()}</p>
+                                </div>
+                                {!notification.isRead && (
+                                    <button
+                                        onClick={() => markNotificationRead.mutate(notification.id)}
+                                        className="text-xs text-blue-600 hover:text-blue-800 underline"
+                                    >
+                                        Mark as read
+                                    </button>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             {children.length === 0 ? (
                 <div className="bg-white p-12 rounded-3xl border border-gray-100 text-center shadow-sm">

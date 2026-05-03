@@ -84,6 +84,285 @@ export function useAdminDashboard(enabled = true) {
   });
 }
 
+export function useAdminUsers(page = 1, limit = 20, search = "") {
+  return useQuery({
+    queryKey: [api.admin.users.path, page, limit, search],
+    queryFn: async () => {
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: String(limit),
+        ...(search && { search }),
+      });
+      const res = await fetch(`${api.admin.users.path}?${params}`, {
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Failed to load users");
+      return api.admin.users.responses[200].parse(await res.json());
+    },
+  });
+}
+
+export function useSuspendUser() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: { userId: string; suspend: boolean }) => {
+      const url = api.admin.suspendUser.path.replace(":id", input.userId);
+      const res = await fetch(url, {
+        method: api.admin.suspendUser.method,
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(input),
+      });
+
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.message || "Failed to update user");
+      return api.admin.suspendUser.responses[200].parse(body);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [api.admin.users.path] });
+    },
+  });
+}
+
+export function useAssignRole() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: { userId: string; role: string }) => {
+      const url = api.admin.assignRole.path.replace(":id", input.userId);
+      const res = await fetch(url, {
+        method: api.admin.assignRole.method,
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(input),
+      });
+
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.message || "Failed to assign role");
+      return api.admin.assignRole.responses[200].parse(body);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [api.admin.users.path] });
+    },
+  });
+}
+
+export function useResetPassword() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: { userId: string }) => {
+      const url = api.admin.resetPassword.path.replace(":id", input.userId);
+      const res = await fetch(url, {
+        method: api.admin.resetPassword.method,
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(input),
+      });
+
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.message || "Failed to reset password");
+      return api.admin.resetPassword.responses[200].parse(body);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [api.admin.users.path] });
+    },
+  });
+}
+
+export function useActivityLogs(page = 1, limit = 20) {
+  return useQuery({
+    queryKey: [api.admin.activityLogs.path, page, limit],
+    queryFn: async () => {
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: String(limit),
+      });
+      const res = await fetch(`${api.admin.activityLogs.path}?${params}`, {
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Failed to load activity logs");
+      return api.admin.activityLogs.responses[200].parse(await res.json());
+    },
+  });
+}
+
+export function useAdminCourses(page = 1, limit = 20, search = "") {
+  return useQuery({
+    queryKey: [api.admin.courses.path, page, limit, search],
+    queryFn: async () => {
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: String(limit),
+        ...(search && { search }),
+      });
+      const res = await fetch(`${api.admin.courses.path}?${params}`, {
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Failed to load courses");
+      return api.admin.courses.responses[200].parse(await res.json());
+    },
+  });
+}
+
+export function useUpdateCoursePricing() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: { courseId: string; price: number }) => {
+      const url = api.admin.updateCoursePricing.path.replace(":id", input.courseId);
+      const res = await fetch(url, {
+        method: api.admin.updateCoursePricing.method,
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(input),
+      });
+
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.message || "Failed to update pricing");
+      return api.admin.updateCoursePricing.responses[200].parse(body);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [api.admin.courses.path] });
+    },
+  });
+}
+
+export function useUpdateCourseVisibility() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: { courseId: string; isVisible: boolean }) => {
+      const url = api.admin.updateCourseVisibility.path.replace(":id", input.courseId);
+      const res = await fetch(url, {
+        method: api.admin.updateCourseVisibility.method,
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(input),
+      });
+
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.message || "Failed to update visibility");
+      return api.admin.updateCourseVisibility.responses[200].parse(body);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [api.admin.courses.path] });
+    },
+  });
+}
+
+export function useUpdateCourseCategory() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: { courseId: string; categoryId: number | null; categoryName: string | null }) => {
+      const url = api.admin.updateCourseCategory.path.replace(":id", input.courseId);
+      const res = await fetch(url, {
+        method: api.admin.updateCourseCategory.method,
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(input),
+      });
+
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.message || "Failed to update category");
+      return api.admin.updateCourseCategory.responses[200].parse(body);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [api.admin.courses.path] });
+    },
+  });
+}
+
+export function useSyncCourses() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (target: "COURSE_CATALOG" | "USER_DIRECTORY" | "ENROLLMENTS") => {
+      const res = await fetch(api.admin.syncCourses.path, {
+        method: api.admin.syncCourses.method,
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ target }),
+      });
+
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.message || "Failed to sync courses");
+      return api.admin.syncCourses.responses[200].parse(body);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [api.admin.courses.path] });
+    },
+  });
+}
+
+// Analytics Hooks
+export function useRevenueAnalytics(period: "daily" | "weekly" | "monthly" | "yearly" = "monthly") {
+  return useQuery({
+    queryKey: [api.admin.analytics.revenue.path, period],
+    queryFn: async () => {
+      const res = await fetch(`${api.admin.analytics.revenue.path}?period=${period}`, {
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Failed to load revenue analytics");
+      return api.admin.analytics.revenue.responses[200].parse(await res.json());
+    },
+  });
+}
+
+export function useEnrollmentAnalytics(period: "daily" | "weekly" | "monthly" | "yearly" = "monthly") {
+  return useQuery({
+    queryKey: [api.admin.analytics.enrollments.path, period],
+    queryFn: async () => {
+      const res = await fetch(`${api.admin.analytics.enrollments.path}?period=${period}`, {
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Failed to load enrollment analytics");
+      return api.admin.analytics.enrollments.responses[200].parse(await res.json());
+    },
+  });
+}
+
+export function useProgressAnalytics(period: "daily" | "weekly" | "monthly" | "yearly" = "monthly") {
+  return useQuery({
+    queryKey: [api.admin.analytics.progress.path, period],
+    queryFn: async () => {
+      const res = await fetch(`${api.admin.analytics.progress.path}?period=${period}`, {
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Failed to load progress analytics");
+      return api.admin.analytics.progress.responses[200].parse(await res.json());
+    },
+  });
+}
+
+export function useUsageMetrics(period: "daily" | "weekly" | "monthly" | "yearly" = "monthly") {
+  return useQuery({
+    queryKey: [api.admin.analytics.usage.path, period],
+    queryFn: async () => {
+      const res = await fetch(`${api.admin.analytics.usage.path}?period=${period}`, {
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Failed to load usage metrics");
+      return api.admin.analytics.usage.responses[200].parse(await res.json());
+    },
+  });
+}
+
+export function useAllAnalytics(period: "daily" | "weekly" | "monthly" | "yearly" = "monthly") {
+  return useQuery({
+    queryKey: [api.admin.analytics.all.path, period],
+    queryFn: async () => {
+      const res = await fetch(`${api.admin.analytics.all.path}?period=${period}`, {
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Failed to load analytics");
+      return api.admin.analytics.all.responses[200].parse(await res.json());
+    },
+  });
+}
+
 export function useSupportTickets(enabled = true) {
   return useQuery({
     queryKey: [api.inquiries.list.path],

@@ -291,6 +291,107 @@ export const adminDashboardSchema = z.object({
   })),
 });
 
+export const adminUserListItemSchema = z.object({
+  id: z.string(),
+  moodleUserId: z.number(),
+  username: z.string(),
+  email: z.string().nullable(),
+  firstName: z.string().nullable(),
+  lastName: z.string().nullable(),
+  role: appRoleSchema,
+  isSuspended: z.boolean(),
+  lastLoginAt: z.string().nullable(),
+  createdAt: z.string(),
+});
+
+export const adminUsersListSchema = z.object({
+  users: z.array(adminUserListItemSchema),
+  total: z.number(),
+  page: z.number(),
+  limit: z.number(),
+});
+
+export const adminActivityLogSchema = z.object({
+  id: z.string(),
+  action: z.enum(["USER_SUSPENDED", "USER_UNSUSPENDED", "PASSWORD_RESET", "ROLE_ASSIGNED", "COURSES_SYNCED"]),
+  adminUsername: z.string(),
+  targetUsername: z.string().nullable(),
+  details: z.record(z.any()).nullable(),
+  createdAt: z.string(),
+});
+
+export const adminActivityLogsListSchema = z.object({
+  logs: z.array(adminActivityLogSchema),
+  total: z.number(),
+  page: z.number(),
+  limit: z.number(),
+});
+
+export const adminSuspendUserInputSchema = z.object({
+  userId: z.string(),
+  suspend: z.boolean(),
+});
+
+export const adminAssignRoleInputSchema = z.object({
+  userId: z.string(),
+  role: appRoleSchema,
+});
+
+export const adminResetPasswordInputSchema = z.object({
+  userId: z.string(),
+});
+
+export const adminActionResponseSchema = z.object({
+  success: z.literal(true),
+  message: z.string(),
+});
+
+export const adminCourseListItemSchema = z.object({
+  id: z.string(),
+  moodleCourseId: z.number(),
+  shortname: z.string(),
+  fullname: z.string(),
+  summary: z.string().nullable(),
+  categoryName: z.string().nullable(),
+  isVisible: z.boolean(),
+  price: z.number(),
+  lastSyncedAt: z.string().nullable(),
+  createdAt: z.string(),
+});
+
+export const adminCoursesListSchema = z.object({
+  courses: z.array(adminCourseListItemSchema),
+  total: z.number(),
+  page: z.number(),
+  limit: z.number(),
+});
+
+export const adminUpdateCoursePricingInputSchema = z.object({
+  courseId: z.string(),
+  price: z.number().min(0),
+});
+
+export const adminUpdateCourseVisibilityInputSchema = z.object({
+  courseId: z.string(),
+  isVisible: z.boolean(),
+});
+
+export const adminUpdateCourseCategoryInputSchema = z.object({
+  courseId: z.string(),
+  categoryId: z.number().nullable(),
+  categoryName: z.string().nullable(),
+});
+
+export const adminSyncCoursesInputSchema = z.object({
+  target: z.enum(["COURSE_CATALOG", "USER_DIRECTORY", "ENROLLMENTS"]),
+});
+
+export const adminSyncCoursesResponseSchema = z.object({
+  success: z.literal(true),
+  message: z.string(),
+  coursesAffected: z.number(),
+});
+
 export const paymentInitRequestSchema = z.object({
   items: z.array(checkoutItemSchema).min(1, "At least one item is required"),
   totalAmount: z.number().min(0),
@@ -316,6 +417,102 @@ export const schoolSeatPurchaseInputSchema = z.object({
   seats: z.number().int().min(1),
 });
 
+// School License Management Schemas
+export const bulkLicensePurchaseInputSchema = z.object({
+  courseId: z.number().int().positive(),
+  quantity: z.number().int().min(1),
+});
+
+export const licenseDetailSchema = z.object({
+  id: z.string(),
+  courseId: z.number(),
+  courseName: z.string(),
+  totalSeats: z.number(),
+  usedSeats: z.number(),
+  availableSeats: z.number(),
+  expiresAt: z.string().datetime().nullable(),
+  purchaseDate: z.string().datetime(),
+});
+
+export const bulkLicensePurchaseResponseSchema = z.object({
+  success: z.literal(true),
+  licenses: z.array(licenseDetailSchema),
+  totalAmount: z.number(),
+  orderId: z.string(),
+});
+
+export const schoolStudentUploadSchema = z.object({
+  id: z.string(),
+  filename: z.string(),
+  uploadedAt: z.string().datetime(),
+  totalStudents: z.number(),
+  processedStudents: z.number(),
+  failedStudents: z.number(),
+  status: z.enum(["pending", "processing", "completed", "failed"]),
+  errors: z.array(z.object({
+    row: z.number(),
+    email: z.string().optional(),
+    error: z.string(),
+  })).optional(),
+});
+
+export const csvStudentInputSchema = z.object({
+  // Will be validated server-side from CSV file content
+  // Each row should have: email, firstName, lastName, moodleUserId (optional)
+});
+
+export const seatAssignmentSchema = z.object({
+  id: z.string(),
+  licenseId: z.string(),
+  studentMoodleId: z.number(),
+  studentEmail: z.string().email(),
+  studentName: z.string(),
+  assignedAt: z.string().datetime(),
+});
+
+export const bulkSeatAssignmentInputSchema = z.object({
+  licenseId: z.string(),
+  studentIds: z.array(z.number().int().positive()),
+});
+
+export const bulkSeatAssignmentResponseSchema = z.object({
+  success: z.literal(true),
+  assigned: z.array(seatAssignmentSchema),
+  failed: z.array(z.object({
+    studentId: z.number(),
+    error: z.string(),
+  })),
+});
+
+export const licenseUsageMetricsSchema = z.object({
+  licenseId: z.string(),
+  courseId: z.number(),
+  courseName: z.string(),
+  totalSeats: z.number(),
+  assignedSeats: z.number(),
+  activeUsers: z.number(),
+  lastAccessDates: z.array(z.object({
+    studentId: z.number(),
+    lastAccessAt: z.string().datetime().nullable(),
+    enrollmentProgress: z.number(),
+  })),
+});
+
+export const schoolUsageReportSchema = z.object({
+  reportGeneratedAt: z.string().datetime(),
+  totalLicenses: z.number(),
+  totalSeats: z.number(),
+  usedSeats: z.number(),
+  availableSeats: z.number(),
+  utilizationRate: z.number(), // percentage
+  licenses: z.array(licenseUsageMetricsSchema),
+  studentActivity: z.object({
+    activeStudents: z.number(),
+    inactiveStudents: z.number(),
+    totalEnrolled: z.number(),
+  }),
+});
+
 export const dashboardNotificationSchema = z.object({
   id: z.number(),
   title: z.string(),
@@ -336,6 +533,128 @@ export const markNotificationReadInputSchema = z.object({
 
 export const markNotificationReadResponseSchema = z.object({
   success: z.literal(true),
+});
+
+// === ANALYTICS & REPORTING ===
+export const revenueStatItemSchema = z.object({
+  date: z.string(),
+  amount: z.number(),
+});
+
+export const revenueReportSchema = z.object({
+  totalRevenue: z.number(),
+  averageOrderValue: z.number(),
+  totalOrders: z.number(),
+  trend: z.array(revenueStatItemSchema),
+  topCourses: z.array(z.object({
+    id: z.string(),
+    name: z.string(),
+    revenue: z.number(),
+    orderCount: z.number(),
+  })),
+});
+
+export const enrollmentStatItemSchema = z.object({
+  date: z.string(),
+  count: z.number(),
+});
+
+export const enrollmentReportSchema = z.object({
+  totalEnrollments: z.number(),
+  activeEnrollments: z.number(),
+  completionRate: z.number(),
+  trend: z.array(enrollmentStatItemSchema),
+  topCourses: z.array(z.object({
+    id: z.string(),
+    name: z.string(),
+    enrollmentCount: z.number(),
+    completionCount: z.number(),
+  })),
+  enrollmentByRole: z.object({
+    students: z.number(),
+    parents: z.number(),
+    schools: z.number(),
+  }),
+});
+
+export const progressAnalyticsSchema = z.object({
+  averageCourseProgress: z.number(),
+  totalStudentsTracked: z.number(),
+  completedCourses: z.number(),
+  inProgressCourses: z.number(),
+  notStartedCourses: z.number(),
+  progressDistribution: z.array(z.object({
+    range: z.string(), // e.g., "0-25%", "25-50%"
+    count: z.number(),
+    percentage: z.number(),
+  })),
+  topPerformingCourses: z.array(z.object({
+    id: z.string(),
+    name: z.string(),
+    averageProgress: z.number(),
+    studentCount: z.number(),
+  })),
+  averageCompletionTime: z.number(), // in days
+  courseProgressByCategory: z.array(z.object({
+    category: z.string(),
+    averageProgress: z.number(),
+    courseCount: z.number(),
+  })),
+});
+
+export const usageMetricsSchema = z.object({
+  totalActiveUsers: z.number(),
+  totalRegisteredUsers: z.number(),
+  newUsersThisMonth: z.number(),
+  monthlyActiveUsers: z.number(),
+  dailyActiveUsers: z.number(),
+  lastLoginTrend: z.array(z.object({
+    date: z.string(),
+    activeUsers: z.number(),
+  })),
+  userActivityByRole: z.object({
+    students: z.object({
+      active: z.number(),
+      total: z.number(),
+    }),
+    parents: z.object({
+      active: z.number(),
+      total: z.number(),
+    }),
+    schools: z.object({
+      active: z.number(),
+      total: z.number(),
+    }),
+    admins: z.object({
+      active: z.number(),
+      total: z.number(),
+    }),
+  }),
+  courseAccessMetrics: z.array(z.object({
+    id: z.string(),
+    name: z.string(),
+    accessCount: z.number(),
+    uniqueUsers: z.number(),
+  })),
+  adminActionMetrics: z.array(z.object({
+    action: z.string(),
+    count: z.number(),
+    lastOccurred: z.string(),
+  })),
+});
+
+export const analyticsQueryInputSchema = z.object({
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
+  courseId: z.string().optional(),
+  period: z.enum(["daily", "weekly", "monthly", "yearly"]).optional().default("monthly"),
+});
+
+export const analyticsReportSchema = z.object({
+  revenue: revenueReportSchema,
+  enrollments: enrollmentReportSchema,
+  progress: progressAnalyticsSchema,
+  usage: usageMetricsSchema,
 });
 
 // === TYPES ===
@@ -363,13 +682,43 @@ export type StudentCertificate = z.infer<typeof studentCertificateSchema>;
 export type ParentDashboard = z.infer<typeof parentDashboardSchema>;
 export type SchoolDashboard = z.infer<typeof schoolDashboardSchema>;
 export type AdminDashboard = z.infer<typeof adminDashboardSchema>;
+export type AdminUserListItem = z.infer<typeof adminUserListItemSchema>;
+export type AdminUsersList = z.infer<typeof adminUsersListSchema>;
+export type AdminActivityLog = z.infer<typeof adminActivityLogSchema>;
+export type AdminActivityLogsList = z.infer<typeof adminActivityLogsListSchema>;
+export type AdminSuspendUserInput = z.infer<typeof adminSuspendUserInputSchema>;
+export type AdminAssignRoleInput = z.infer<typeof adminAssignRoleInputSchema>;
+export type AdminResetPasswordInput = z.infer<typeof adminResetPasswordInputSchema>;
+export type AdminActionResponse = z.infer<typeof adminActionResponseSchema>;
+export type AdminCourseListItem = z.infer<typeof adminCourseListItemSchema>;
+export type AdminCoursesList = z.infer<typeof adminCoursesListSchema>;
+export type AdminUpdateCoursePricingInput = z.infer<typeof adminUpdateCoursePricingInputSchema>;
+export type AdminUpdateCourseVisibilityInput = z.infer<typeof adminUpdateCourseVisibilityInputSchema>;
+export type AdminUpdateCourseCategoryInput = z.infer<typeof adminUpdateCourseCategoryInputSchema>;
+export type AdminSyncCoursesInput = z.infer<typeof adminSyncCoursesInputSchema>;
+export type AdminSyncCoursesResponse = z.infer<typeof adminSyncCoursesResponseSchema>;
 export type PaymentInitRequest = z.infer<typeof paymentInitRequestSchema>;
 export type PaymentInitResponse = z.infer<typeof paymentInitResponseSchema>;
 export type PaymentVerifyRequest = z.infer<typeof paymentVerifyRequestSchema>;
 export type SchoolSeatPurchaseInput = z.infer<typeof schoolSeatPurchaseInputSchema>;
+export type BulkLicensePurchaseInput = z.infer<typeof bulkLicensePurchaseInputSchema>;
+export type LicenseDetail = z.infer<typeof licenseDetailSchema>;
+export type BulkLicensePurchaseResponse = z.infer<typeof bulkLicensePurchaseResponseSchema>;
+export type SchoolStudentUpload = z.infer<typeof schoolStudentUploadSchema>;
+export type SeatAssignment = z.infer<typeof seatAssignmentSchema>;
+export type BulkSeatAssignmentInput = z.infer<typeof bulkSeatAssignmentInputSchema>;
+export type BulkSeatAssignmentResponse = z.infer<typeof bulkSeatAssignmentResponseSchema>;
+export type LicenseUsageMetrics = z.infer<typeof licenseUsageMetricsSchema>;
+export type SchoolUsageReport = z.infer<typeof schoolUsageReportSchema>;
 export type DashboardNotification = z.infer<typeof dashboardNotificationSchema>;
 export type DashboardNotificationList = z.infer<typeof dashboardNotificationListSchema>;
 export type MarkNotificationReadInput = z.infer<typeof markNotificationReadInputSchema>;
+export type RevenueReport = z.infer<typeof revenueReportSchema>;
+export type EnrollmentReport = z.infer<typeof enrollmentReportSchema>;
+export type ProgressAnalytics = z.infer<typeof progressAnalyticsSchema>;
+export type UsageMetrics = z.infer<typeof usageMetricsSchema>;
+export type AnalyticsQueryInput = z.infer<typeof analyticsQueryInputSchema>;
+export type AnalyticsReport = z.infer<typeof analyticsReportSchema>;
 
 export type Order = typeof orders.$inferSelect;
 export type InsertOrder = typeof orders.$inferInsert;

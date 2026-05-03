@@ -11,6 +11,7 @@ import { enrolUserInCourse } from "./moodle-commerce.js";
 import { getStudentActivityTimelineForDashboard, getStudentCertificatesForDashboard, getStudentGradesForDashboard, getUserCoursesForDashboard } from "./moodle-dashboard.js";
 import { buildOrigin, createSafepayCheckout } from "./payments.js";
 import { env } from "./config.js";
+import { prisma } from "./prisma.js";
 import { getStoredUserByMoodleUserId, linkParentToChild, syncUserFromMoodleSession } from "./user-store.js";
 
 export async function registerRoutes(
@@ -44,6 +45,11 @@ export async function registerRoutes(
       }
     }
     return "";
+  };
+
+  const loadLinkedChildren = async (parentId: number) => {
+    const { getLinkedChildren: resolveLinkedChildren } = await import("./user-store.js");
+    return resolveLinkedChildren(parentId);
   };
 
   const finalizePaidOrder = async (orderRef: string, tracker?: string) => {
@@ -112,20 +118,135 @@ export async function registerRoutes(
     });
 
     if (input.email) {
-      const tickets = await storage.getInquiriesByEmail(input.email);
-      tickets.slice(0, 5).forEach((ticket) => {
-        notifications.push({
-          id: notificationIdFromKey(`support-${input.userId}-${ticket.id}`),
-          title: `Support ticket ${ticket.status === "new" ? "received" : ticket.status}`,
-          message: ticket.subjectInterest || "Your support request has an update.",
-          createdAt: ticket.createdAt ? new Date(ticket.createdAt).toISOString() : new Date().toISOString(),
-          type: "support",
-          actionUrl: "/dashboard/support",
-        });
-      });
+      // TODO: Support ticket notifications - currently disabled due to separate DB systems
+      // const tickets = await storage.getInquiriesByEmail(input.email);
+      // tickets.slice(0, 5).forEach((ticket) => {
+      //   notifications.push({
+      //     id: notificationIdFromKey(`support-${input.userId}-${ticket.id}`),
+      //     title: `Support ticket ${ticket.status === "new" ? "received" : ticket.status}`,
+      //     message: ticket.subjectInterest || "Your support request has an update.",
+      //     createdAt: ticket.createdAt ? new Date(ticket.createdAt).toISOString() : new Date().toISOString(),
+      //     type: "support",
+      //     actionUrl: "/dashboard/support",
+      //   });
+      // });
     }
 
     return notifications.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  };
+
+  const escapeCsvValue = (value: string | number | boolean | null | undefined) => {
+    const text = value === null || value === undefined ? "" : String(value);
+    return `"${text.replace(/"/g, '""')}"`;
+  };
+
+  const buildParentReportCsv = async (input: { parentId: number; email: string | null }) => {
+    const childIds = await loadLinkedChildren(input.parentId);
+    const parentNotifications = await buildDashboardNotifications({ userId: input.parentId, email: input.email });
+
+    const rows: Array<Array<string | number | boolean | null | undefined>> = [
+      ["Section", "Child Name", "Child Email", "Child Moodle ID", "Course Name", "Progress %", "Grade", "Raw Percentage", "Generated At"],
+    ];
+
+    if (childIds.length === 0) {
+      rows.push(["summary", "No linked children", "", "", "", "", "", "", new Date().toISOString()]);
+      rows.push(["alerts", "Unread or recent alerts", String(parentNotifications.length), "", "", "", "", "", new Date().toISOString()]);
+      return rows.map((row) => row.map(escapeCsvValue).join(",")).join("\n");
+    }
+
+    for (const childId of childIds) {
+      const storedUser = await getStoredUserByMoodleUserId(childId);
+      const childName = [storedUser?.firstName, storedUser?.lastName].filter(Boolean).join(" ") || storedUser?.username || `Child ${childId}`;
+      const childEmail = storedUser?.email || "Linked from Moodle";
+
+      try {
+        const grades = await getStudentGradesForDashboard(childId);
+        if (grades.length === 0) {
+          rows.push(["child", childName, childEmail, childId, "No courses found", "0", "N/A", "0", new Date().toISOString()]);
+          continue;
+        }
+
+        for (const grade of grades) {
+          rows.push([
+            "child-course",
+            childName,
+            childEmail,
+            childId,
+            grade.courseName,
+            Math.round(grade.progress),
+            grade.grade,
+            Math.round(grade.percentage),
+            new Date().toISOString(),
+          ]);
+        }
+      } catch (error) {
+        console.error(`Failed to build report rows for child ${childId}:`, error);
+        rows.push(["child-error", childName, childEmail, childId, "Unable to load Moodle data", "", "", "", new Date().toISOString()]);
+      }
+    }
+
+    rows.push(["alerts", "Alerts count", String(parentNotifications.length), "", "", "", "", "", new Date().toISOString()]);
+
+    return rows.map((row) => row.map(escapeCsvValue).join(",")).join("\n");
+  };
+
+  const calculateTrendData = (
+    items: any[],
+    period: string,
+    getValue: (item: any) => number
+  ): Array<{ date: string; amount: number }> => {
+    const trends: Record<string, number> = {};
+    const now = new Date();
+
+    for (const item of items) {
+      const itemDate = item.createdAt ? new Date(item.createdAt) : now;
+      let key: string;
+
+      if (period === "daily") {
+        key = itemDate.toISOString().split("T")[0];
+      } else if (period === "weekly") {
+        const weekStart = new Date(itemDate);
+        weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+        key = weekStart.toISOString().split("T")[0];
+      } else if (period === "yearly") {
+        key = itemDate.getFullYear().toString();
+      } else {
+        // monthly (default)
+        key = `${itemDate.getFullYear()}-${String(itemDate.getMonth() + 1).padStart(2, "0")}`;
+      }
+
+      trends[key] = (trends[key] || 0) + getValue(item);
+    }
+
+    return Object.entries(trends)
+      .map(([date, amount]) => ({ date, amount }))
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+      .slice(-12); // Last 12 periods
+  };
+
+  const calculateLoginTrend = (users: any[]): Array<{ date: string; activeUsers: number }> => {
+    const trends: Record<string, Set<string>> = {};
+    const now = new Date();
+
+    for (let i = 0; i < 30; i++) {
+      const date = new Date(now);
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split("T")[0];
+      trends[dateStr] = new Set();
+    }
+
+    for (const user of users) {
+      if (user.lastLoginAt) {
+        const loginDate = new Date(user.lastLoginAt).toISOString().split("T")[0];
+        if (trends[loginDate]) {
+          trends[loginDate].add(user.id);
+        }
+      }
+    }
+
+    return Object.entries(trends)
+      .map(([date, userSet]) => ({ date, activeUsers: userSet.size }))
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   };
 
   // === INQUIRIES ===
@@ -316,25 +437,26 @@ export async function registerRoutes(
 
       const message = err instanceof Error ? err.message : "Profile update failed";
       if (req.session.user) {
+        const currentUser = req.session.user as any;
         const fallbackProfile = await syncUserFromMoodleSession({
-          moodleUserId: req.session.user.id,
-          username: req.session.user.username,
-          role: req.session.user.role,
-          email: req.session.user.email || req.body?.email || null,
-          firstName: req.body?.firstname || req.session.user.firstname || null,
-          lastName: req.body?.lastname || req.session.user.lastname || null,
-          profileImage: req.session.user.profileImageUrl || null,
+          moodleUserId: currentUser.id,
+          username: currentUser.username,
+          role: currentUser.role,
+          email: currentUser.email || req.body?.email || null,
+          firstName: req.body?.firstname || currentUser.firstname || null,
+          lastName: req.body?.lastname || currentUser.lastname || null,
+          profileImage: currentUser.profileImageUrl || null,
         });
 
         const user = {
-          ...req.session.user,
-          firstname: fallbackProfile.firstName || req.session.user.firstname,
-          lastname: fallbackProfile.lastName || req.session.user.lastname,
-          email: fallbackProfile.email || req.session.user.email,
-          city: req.body?.city || req.session.user.city || null,
-          country: req.body?.country || req.session.user.country || null,
-          phone: req.body?.phone || req.session.user.phone || null,
-          description: req.body?.description || req.session.user.description || null,
+          ...currentUser,
+          firstname: fallbackProfile.firstName || currentUser.firstname,
+          lastname: fallbackProfile.lastName || currentUser.lastname,
+          email: fallbackProfile.email || currentUser.email,
+          city: req.body?.city || currentUser.city || null,
+          country: req.body?.country || currentUser.country || null,
+          phone: req.body?.phone || currentUser.phone || null,
+          description: req.body?.description || currentUser.description || null,
         };
         req.session.user = user;
         return res.json(user);
@@ -377,8 +499,14 @@ export async function registerRoutes(
 
   app.post(api.inquiries.create.path, async (req, res) => {
     try {
+      if (!req.session.user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
       const input = insertInquirySchema.parse(req.body);
-      const inquiry = await storage.createInquiry(input);
+      // Ensure the email matches the authenticated user's email
+      const inquiryData = { ...input, email: req.session.user.email || input.email };
+      const inquiry = await storage.createInquiry(inquiryData);
       res.status(201).json(inquiry);
     } catch (err) {
       if (err instanceof z.ZodError) {
@@ -402,7 +530,7 @@ export async function registerRoutes(
         return res.json(allInquiries);
       }
 
-      const email = req.session.user.email;
+      const email = req.session.user.email?.toLowerCase();
       if (!email) {
         return res.json([]);
       }
@@ -418,9 +546,6 @@ export async function registerRoutes(
     try {
       if (!req.session.user) {
         return res.status(401).json({ message: "Not authenticated" });
-      }
-      if (req.session.user.role !== "admin") {
-        return res.status(403).json({ message: "Only admin can reply to support tickets" });
       }
 
       const ticketId = Number(req.params.id);
@@ -438,13 +563,25 @@ export async function registerRoutes(
         return res.status(404).json({ message: "Ticket not found" });
       }
 
-      const authorName = req.session.user.fullname || req.session.user.username || "Support";
+      const userEmail = req.session.user.email?.toLowerCase() || "";
+      const ticketEmail = ticket.email?.toLowerCase() || "";
+      const isAdmin = req.session.user.role === "admin";
+      const isOwner = userEmail && ticketEmail && userEmail === ticketEmail;
+
+      if (!isAdmin && !isOwner) {
+        return res.status(403).json({ message: "You are not allowed to reply to this ticket" });
+      }
+
+      const authorName = req.session.user.fullname || req.session.user.username || (isAdmin ? "Support" : "Customer");
       const previousMessage = ticket.message ?? "";
-      const mergedMessage = `${previousMessage}\n\n--- Support Reply (${authorName}) ---\n${replyMessage}`.trim();
+      const replyPrefix = isAdmin ? "Support Reply" : "Customer Reply";
+      const mergedMessage = previousMessage
+        ? `${previousMessage}\n\n--- ${replyPrefix} (${authorName}) ---\n${replyMessage}`.trim()
+        : `${replyMessage}`;
 
       const updated = await storage.updateInquiry(ticketId, {
         message: mergedMessage,
-        status: "contacted",
+        status: isAdmin ? "contacted" : "new",
       });
 
       return res.json(updated);
@@ -796,7 +933,7 @@ export async function registerRoutes(
       return res.status(403).json({ message: "Parent access required" });
     }
 
-    const childIds = await getLinkedChildren(req.session.user.id);
+    const childIds = await loadLinkedChildren(req.session.user.id);
     const children = await Promise.all(
       childIds.map(async (childId) => {
         try {
@@ -830,6 +967,25 @@ export async function registerRoutes(
     );
 
     res.json({ children });
+  });
+
+  app.get(api.dashboard.parentReport.path, async (req, res) => {
+    if (!req.session.user || req.session.user.role !== "parent") {
+      return res.status(403).json({ message: "Parent access required" });
+    }
+
+    try {
+      const csv = await buildParentReportCsv({
+        parentId: req.session.user.id,
+        email: req.session.user.email,
+      });
+
+      res.setHeader("Content-Type", "text/csv; charset=utf-8");
+      res.setHeader("Content-Disposition", `attachment; filename="parent-dashboard-report-${req.session.user.id}.csv"`);
+      res.send(`\ufeff${csv}`);
+    } catch (error) {
+      res.status(500).json({ message: error instanceof Error ? error.message : "Failed to generate report" });
+    }
   });
 
   app.get(api.dashboard.school.path, async (req, res) => {
@@ -931,6 +1087,983 @@ export async function registerRoutes(
         progress: course.progress || 0,
       })),
     });
+  });
+
+  // Admin User Management Endpoints
+  app.get(api.admin.users.path, async (req, res) => {
+    if (!req.session.user || req.session.user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    try {
+      const page = Math.max(1, parseInt(req.query.page as string) || 1);
+      const limit = Math.max(1, Math.min(100, parseInt(req.query.limit as string) || 20));
+      const search = (req.query.search as string) || "";
+      const offset = (page - 1) * limit;
+
+      // Get all users from Prisma with pagination and search
+      const users = await prisma.user.findMany({
+        where: search
+          ? {
+              OR: [
+                { username: { contains: search, mode: "insensitive" } },
+                { email: { contains: search, mode: "insensitive" } },
+                { firstName: { contains: search, mode: "insensitive" } },
+                { lastName: { contains: search, mode: "insensitive" } },
+              ],
+            }
+          : {},
+        orderBy: { createdAt: "desc" },
+        skip: offset,
+        take: limit,
+      });
+
+      const total = await prisma.user.count({
+        where: search
+          ? {
+              OR: [
+                { username: { contains: search, mode: "insensitive" } },
+                { email: { contains: search, mode: "insensitive" } },
+                { firstName: { contains: search, mode: "insensitive" } },
+                { lastName: { contains: search, mode: "insensitive" } },
+              ],
+            }
+          : {},
+      });
+
+      res.json({
+        users: users.map((user: any) => ({
+          id: user.id,
+          moodleUserId: user.moodleUserId,
+          username: user.username,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role,
+          isSuspended: user.isSuspended,
+          lastLoginAt: user.lastLoginAt?.toISOString() || null,
+          createdAt: user.createdAt.toISOString(),
+        })),
+        total,
+        page,
+        limit,
+      });
+    } catch (err) {
+      res.status(500).json({
+        message: err instanceof Error ? err.message : "Failed to fetch users",
+      });
+    }
+  });
+
+  app.post(api.admin.suspendUser.path, async (req, res) => {
+    if (!req.session.user || req.session.user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    try {
+      const { userId, suspend } = api.admin.suspendUser.input.parse(req.body);
+
+      const user = await prisma.user.findUnique({ where: { id: userId } });
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Update user suspension status
+      await prisma.user.update({
+        where: { id: userId },
+        data: { isSuspended: suspend },
+      });
+
+      // Log admin activity
+      await (prisma as any).adminActivityLog.create({
+        data: {
+          adminUserId: req.session.user.id,
+          targetUserId: userId,
+          action: suspend ? "USER_SUSPENDED" : "USER_UNSUSPENDED",
+          details: { reason: req.body.reason || "No reason provided" },
+        },
+      });
+
+      res.json({
+        success: true,
+        message: suspend ? "User suspended successfully" : "User unsuspended successfully",
+      });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({
+          message: err.errors[0].message,
+          field: err.errors[0].path.join("."),
+        });
+      }
+      res.status(500).json({
+        message: err instanceof Error ? err.message : "Failed to suspend user",
+      });
+    }
+  });
+
+  app.post(api.admin.assignRole.path, async (req, res) => {
+    if (!req.session.user || req.session.user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    try {
+      const { userId, role } = api.admin.assignRole.input.parse(req.body);
+
+      const user = await prisma.user.findUnique({ where: { id: userId } });
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Update user role
+      await prisma.user.update({
+        where: { id: userId },
+        data: { role },
+      });
+
+      // Log admin activity
+      await (prisma as any).adminActivityLog.create({
+        data: {
+          adminUserId: req.session.user.id,
+          targetUserId: userId,
+          action: "ROLE_ASSIGNED",
+          details: { previousRole: user.role, newRole: role },
+        },
+      });
+
+      res.json({
+        success: true,
+        message: `User role updated to ${role} successfully`,
+      });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({
+          message: err.errors[0].message,
+          field: err.errors[0].path.join("."),
+        });
+      }
+      res.status(500).json({
+        message: err instanceof Error ? err.message : "Failed to assign role",
+      });
+    }
+  });
+
+  app.post(api.admin.resetPassword.path, async (req, res) => {
+    if (!req.session.user || req.session.user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    try {
+      const { userId } = api.admin.resetPassword.input.parse(req.body);
+
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+      });
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Generate temporary password
+      const tempPassword = Math.random().toString(36).slice(-12);
+
+      try {
+        // Reset password in Moodle using admin token
+        const moodleToken = process.env.MOODLE_ADMIN_TOKEN || "";
+        if (moodleToken) {
+          // Call Moodle API to reset password
+          const response = await fetch(
+            `${env.moodle.baseUrl}/webservice/rest/server.php`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/x-www-form-urlencoded" },
+              body: new URLSearchParams({
+                wstoken: moodleToken,
+                wsfunction: "core_user_update_users",
+                moodlewsrestformat: "json",
+                "users[0][id]": String(user.moodleUserId),
+                "users[0][password]": tempPassword,
+              }).toString(),
+            }
+          );
+
+          if (!response.ok) {
+            console.error("Moodle password reset failed");
+          }
+        }
+      } catch (moodleErr) {
+        console.error("Error resetting password in Moodle:", moodleErr);
+      }
+
+      // Update password reset tracking
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          lastPasswordResetAt: new Date(),
+        },
+      });
+
+      // Log admin activity
+      try {
+        await (prisma as any).adminActivityLog.create({
+          data: {
+            adminUserId: req.session.user.id,
+            targetUserId: userId,
+            action: "PASSWORD_RESET",
+            details: { tempPassword: `***${tempPassword.slice(-4)}` },
+          },
+        });
+      } catch (logErr) {
+        console.error("Failed to log admin activity:", logErr);
+      }
+
+      res.json({
+        success: true,
+        message: `Password reset successfully. Temporary password: ${tempPassword}`,
+      });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({
+          message: err.errors[0].message,
+          field: err.errors[0].path.join("."),
+        });
+      }
+      res.status(500).json({
+        message: err instanceof Error ? err.message : "Failed to reset password",
+      });
+    }
+  });
+
+  app.get(api.admin.activityLogs.path, async (req, res) => {
+    if (!req.session.user || req.session.user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    try {
+      const page = Math.max(1, parseInt(req.query.page as string) || 1);
+      const limit = Math.max(1, Math.min(100, parseInt(req.query.limit as string) || 20));
+      const offset = (page - 1) * limit;
+
+      const logs = await (prisma as any).adminActivityLog.findMany({
+        include: {
+          adminUser: true,
+          targetUser: true,
+        },
+        orderBy: { createdAt: "desc" },
+        skip: offset,
+        take: limit,
+      });
+
+      const total = await (prisma as any).adminActivityLog.count();
+
+      res.json({
+        logs: logs.map((log: any) => ({
+          id: log.id,
+          action: log.action,
+          adminUsername: log.adminUser.username,
+          targetUsername: log.targetUser?.username || null,
+          details: log.details,
+          createdAt: log.createdAt.toISOString(),
+        })),
+        total,
+        page,
+        limit,
+      });
+    } catch (err) {
+      res.status(500).json({
+        message: err instanceof Error ? err.message : "Failed to fetch activity logs",
+      });
+    }
+  });
+
+  // Admin Course Management Endpoints
+  app.get(api.admin.courses.path, async (req, res) => {
+    if (!req.session.user || req.session.user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    try {
+      const page = Math.max(1, parseInt(req.query.page as string) || 1);
+      const limit = Math.max(1, Math.min(100, parseInt(req.query.limit as string) || 20));
+      const search = (req.query.search as string) || "";
+      const offset = (page - 1) * limit;
+
+      const courses = await (prisma as any).courseCatalog.findMany({
+        where: search
+          ? {
+              OR: [
+                { fullname: { contains: search, mode: "insensitive" } },
+                { shortname: { contains: search, mode: "insensitive" } },
+                { categoryName: { contains: search, mode: "insensitive" } },
+              ],
+            }
+          : {},
+        orderBy: { createdAt: "desc" },
+        skip: offset,
+        take: limit,
+      });
+
+      const total = await (prisma as any).courseCatalog.count({
+        where: search
+          ? {
+              OR: [
+                { fullname: { contains: search, mode: "insensitive" } },
+                { shortname: { contains: search, mode: "insensitive" } },
+                { categoryName: { contains: search, mode: "insensitive" } },
+              ],
+            }
+          : {},
+      });
+
+      res.json({
+        courses: courses.map((course: any) => ({
+          id: course.id,
+          moodleCourseId: course.moodleCourseId,
+          shortname: course.shortname,
+          fullname: course.fullname,
+          summary: course.summary,
+          categoryName: course.categoryName,
+          isVisible: course.isVisible,
+          price: parseFloat(course.price.toString()),
+          lastSyncedAt: course.lastSyncedAt?.toISOString() || null,
+          createdAt: course.createdAt.toISOString(),
+        })),
+        total,
+        page,
+        limit,
+      });
+    } catch (err) {
+      res.status(500).json({
+        message: err instanceof Error ? err.message : "Failed to fetch courses",
+      });
+    }
+  });
+
+  app.post(api.admin.updateCoursePricing.path, async (req, res) => {
+    if (!req.session.user || req.session.user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    try {
+      const { courseId, price } = api.admin.updateCoursePricing.input.parse(req.body);
+
+      const course = await (prisma as any).courseCatalog.findUnique({ where: { id: courseId } });
+      if (!course) {
+        return res.status(404).json({ message: "Course not found" });
+      }
+
+      await (prisma as any).courseCatalog.update({
+        where: { id: courseId },
+        data: { price },
+      });
+
+      // Log admin activity
+      try {
+        await (prisma as any).adminActivityLog.create({
+          data: {
+            adminUserId: req.session.user.id,
+            action: "COURSE_PRICING_UPDATED",
+            details: { courseId, previousPrice: parseFloat(course.price.toString()), newPrice: price },
+          },
+        });
+      } catch (logErr) {
+        console.error("Failed to log admin activity:", logErr);
+      }
+
+      res.json({
+        success: true,
+        message: `Course pricing updated to $${price.toFixed(2)}`,
+      });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({
+          message: err.errors[0].message,
+          field: err.errors[0].path.join("."),
+        });
+      }
+      res.status(500).json({
+        message: err instanceof Error ? err.message : "Failed to update course pricing",
+      });
+    }
+  });
+
+  app.post(api.admin.updateCourseVisibility.path, async (req, res) => {
+    if (!req.session.user || req.session.user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    try {
+      const { courseId, isVisible } = api.admin.updateCourseVisibility.input.parse(req.body);
+
+      const course = await (prisma as any).courseCatalog.findUnique({ where: { id: courseId } });
+      if (!course) {
+        return res.status(404).json({ message: "Course not found" });
+      }
+
+      await (prisma as any).courseCatalog.update({
+        where: { id: courseId },
+        data: { isVisible },
+      });
+
+      // Log admin activity
+      try {
+        await (prisma as any).adminActivityLog.create({
+          data: {
+            adminUserId: req.session.user.id,
+            action: "COURSE_VISIBILITY_UPDATED",
+            details: { courseId, isVisible },
+          },
+        });
+      } catch (logErr) {
+        console.error("Failed to log admin activity:", logErr);
+      }
+
+      res.json({
+        success: true,
+        message: `Course ${isVisible ? "published" : "hidden"} successfully`,
+      });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({
+          message: err.errors[0].message,
+          field: err.errors[0].path.join("."),
+        });
+      }
+      res.status(500).json({
+        message: err instanceof Error ? err.message : "Failed to update course visibility",
+      });
+    }
+  });
+
+  app.post(api.admin.updateCourseCategory.path, async (req, res) => {
+    if (!req.session.user || req.session.user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    try {
+      const { courseId, categoryId, categoryName } = api.admin.updateCourseCategory.input.parse(req.body);
+
+      const course = await (prisma as any).courseCatalog.findUnique({ where: { id: courseId } });
+      if (!course) {
+        return res.status(404).json({ message: "Course not found" });
+      }
+
+      await (prisma as any).courseCatalog.update({
+        where: { id: courseId },
+        data: { categoryId, categoryName },
+      });
+
+      // Log admin activity
+      try {
+        await (prisma as any).adminActivityLog.create({
+          data: {
+            adminUserId: req.session.user.id,
+            action: "COURSE_CATEGORY_UPDATED",
+            details: { courseId, categoryId, categoryName },
+          },
+        });
+      } catch (logErr) {
+        console.error("Failed to log admin activity:", logErr);
+      }
+
+      res.json({
+        success: true,
+        message: `Course category updated to ${categoryName || "uncategorized"}`,
+      });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({
+          message: err.errors[0].message,
+          field: err.errors[0].path.join("."),
+        });
+      }
+      res.status(500).json({
+        message: err instanceof Error ? err.message : "Failed to update course category",
+      });
+    }
+  });
+
+  app.post(api.admin.syncCourses.path, async (req, res) => {
+    if (!req.session.user || req.session.user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    try {
+      const { target } = api.admin.syncCourses.input.parse(req.body);
+
+      // Sync courses from Moodle based on target
+      const courses = await getLmsCourses();
+      let coursesAffected = 0;
+
+      if (target === "COURSE_CATALOG") {
+        // Update or create courses in database
+        for (const course of courses) {
+          await (prisma as any).courseCatalog.upsert({
+            where: { moodleCourseId: course.id },
+            create: {
+              moodleCourseId: course.id,
+              shortname: course.slug,
+              fullname: course.title,
+              summary: course.fullDescription,
+              categoryName: course.category,
+              isVisible: course.visible,
+              price: 0,
+              lastSyncedAt: new Date(),
+            },
+            update: {
+              fullname: course.title,
+              summary: course.fullDescription,
+              categoryName: course.category,
+              lastSyncedAt: new Date(),
+            },
+          });
+          coursesAffected++;
+        }
+      }
+
+      // Log admin activity
+      try {
+        await (prisma as any).adminActivityLog.create({
+          data: {
+            adminUserId: req.session.user.id,
+            action: "COURSES_SYNCED",
+            details: { target, coursesAffected },
+          },
+        });
+      } catch (logErr) {
+        console.error("Failed to log admin activity:", logErr);
+      }
+
+      res.json({
+        success: true,
+        message: `Synced ${coursesAffected} courses from Moodle`,
+        coursesAffected,
+      });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({
+          message: err.errors[0].message,
+          field: err.errors[0].path.join("."),
+        });
+      }
+      res.status(500).json({
+        message: err instanceof Error ? err.message : "Failed to sync courses",
+      });
+    }
+  });
+
+  // === ADMIN ANALYTICS & REPORTING ===
+  app.get(api.admin.analytics.revenue.path, async (req, res) => {
+    if (!req.session.user || req.session.user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    try {
+      const period = (req.query.period as string) || "monthly";
+      
+      // Get all orders - use storage interface for complete data
+      const allOrders: any[] = [];
+      const allUsers = await prisma.user.findMany();
+      
+      for (const user of allUsers) {
+        const userOrders = await storage.getOrdersByUserId(user.id);
+        allOrders.push(...userOrders);
+      }
+
+      const totalRevenue = allOrders.reduce((sum: number, order: any): number => sum + parseFloat(order.totalAmount.toString()), 0 as number);
+      const totalOrders = allOrders.length;
+      const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+
+      // Calculate trend data
+      const trend = calculateTrendData(allOrders, period, (order: any) => parseFloat(order.totalAmount.toString()));
+
+      // Get top courses by revenue
+      const courseRevenue: Record<string, any> = {};
+      
+      for (const order of allOrders) {
+        const items = await storage.getOrderItemsByOrderId(order.id as unknown as number);
+        for (const item of items) {
+          const key = (item as any).programId?.toString() || "unknown";
+          if (!courseRevenue[key]) {
+            courseRevenue[key] = {
+              courseId: key,
+              revenue: 0,
+              orderCount: 0,
+              name: `Course ${key}`,
+            };
+          }
+          courseRevenue[key].revenue += parseFloat((item as any).price?.toString() || "0");
+          courseRevenue[key].orderCount += 1;
+        }
+      }
+
+      const topCourses = Object.values(courseRevenue)
+        .sort((a: any, b: any): number => b.revenue - a.revenue)
+        .slice(0, 10)
+        .map((c: any) => ({
+          id: c.courseId,
+          name: c.name,
+          revenue: c.revenue,
+          orderCount: c.orderCount,
+        }));
+
+      res.json({
+        totalRevenue,
+        averageOrderValue,
+        totalOrders,
+        trend,
+        topCourses,
+      });
+    } catch (err) {
+      res.status(500).json({
+        message: err instanceof Error ? err.message : "Failed to fetch revenue analytics",
+      });
+    }
+  });
+
+  app.get(api.admin.analytics.enrollments.path, async (req, res) => {
+    if (!req.session.user || req.session.user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    try {
+      const period = (req.query.period as string) || "monthly";
+
+      const enrollments = await (prisma as any).userCourseEnrollment.findMany({
+        include: { user: true, courseCatalog: true },
+      });
+
+      const totalEnrollments = enrollments.length;
+      const activeEnrollments = enrollments.filter((e: any) => e.isActive).length;
+      const completedEnrollments = enrollments.filter((e: any) => (e.progress || 0) === 100).length;
+      const completionRate = totalEnrollments > 0 ? (completedEnrollments / totalEnrollments) * 100 : 0;
+
+      // Calculate trend
+      const trend = calculateTrendData(
+        enrollments,
+        period,
+        (enrollment: any): number => 1
+      );
+
+      // Get top courses by enrollment
+      const courseEnrollments: Record<string, { courseId: string; enrollmentCount: number; completionCount: number; name: string }> = {};
+
+      for (const enrollment of enrollments) {
+        const key = enrollment.courseCatalogId;
+        if (!courseEnrollments[key]) {
+          courseEnrollments[key] = {
+            courseId: key,
+            enrollmentCount: 0,
+            completionCount: 0,
+            name: enrollment.courseCatalog?.fullname || "Unknown Course",
+          };
+        }
+        courseEnrollments[key].enrollmentCount += 1;
+        if ((enrollment.progress || 0) === 100) {
+          courseEnrollments[key].completionCount += 1;
+        }
+      }
+
+      const topCourses = Object.values(courseEnrollments)
+        .sort((a, b) => b.enrollmentCount - a.enrollmentCount)
+        .slice(0, 10)
+        .map((c) => ({
+          id: c.courseId,
+          name: c.name,
+          enrollmentCount: c.enrollmentCount,
+          completionCount: c.completionCount,
+        }));
+
+      // Enrollments by role
+      const enrollmentByRole = {
+        students: enrollments.filter((e: any) => e.user?.role === "student").length,
+        parents: enrollments.filter((e: any) => e.user?.role === "parent").length,
+        schools: enrollments.filter((e: any) => e.user?.role === "school").length,
+      };
+
+      res.json({
+        totalEnrollments,
+        activeEnrollments,
+        completionRate: Math.round(completionRate),
+        trend,
+        topCourses,
+        enrollmentByRole,
+      });
+    } catch (err) {
+      res.status(500).json({
+        message: err instanceof Error ? err.message : "Failed to fetch enrollment analytics",
+      });
+    }
+  });
+
+  app.get(api.admin.analytics.progress.path, async (req, res) => {
+    if (!req.session.user || req.session.user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    try {
+      const enrollments = await (prisma as any).userCourseEnrollment.findMany({
+        include: { courseCatalog: true },
+      });
+
+      const totalStudentsTracked = new Set(enrollments.map((e: any) => e.userId)).size;
+      const completedCourses = enrollments.filter((e: any) => (e.progress || 0) === 100).length;
+      const inProgressCourses = enrollments.filter((e: any) => (e.progress || 0) > 0 && (e.progress || 0) < 100).length;
+      const notStartedCourses = enrollments.filter((e: any) => (e.progress || 0) === 0).length;
+
+      const totalProgress = enrollments.reduce((sum: number, e: any): number => sum + (e.progress || 0), 0 as number);
+      const averageCourseProgress = enrollments.length > 0 ? Math.round(totalProgress / enrollments.length) : 0;
+
+      // Progress distribution
+      const progressDistribution = [
+        { range: "0-25%", count: enrollments.filter((e: any) => (e.progress || 0) <= 25).length },
+        { range: "25-50%", count: enrollments.filter((e: any) => (e.progress || 0) > 25 && (e.progress || 0) <= 50).length },
+        { range: "50-75%", count: enrollments.filter((e: any) => (e.progress || 0) > 50 && (e.progress || 0) <= 75).length },
+        { range: "75-100%", count: enrollments.filter((e: any) => (e.progress || 0) > 75).length },
+      ];
+
+      const progressDistributionWithPercentage = progressDistribution.map((p) => ({
+        ...p,
+        percentage: enrollments.length > 0 ? Math.round((p.count / enrollments.length) * 100) : 0,
+      }));
+
+      // Top performing courses
+      const courseProgress: Record<string, { courseId: string; averageProgress: number; studentCount: number; name: string }> = {};
+
+      for (const enrollment of enrollments) {
+        const key = enrollment.courseCatalogId;
+        if (!courseProgress[key]) {
+          courseProgress[key] = {
+            courseId: key,
+            averageProgress: 0,
+            studentCount: 0,
+            name: enrollment.courseCatalog?.fullname || "Unknown Course",
+          };
+        }
+        courseProgress[key].averageProgress += enrollment.progress || 0;
+        courseProgress[key].studentCount += 1;
+      }
+
+      // Calculate averages
+      Object.values(courseProgress).forEach((c) => {
+        c.averageProgress = Math.round(c.averageProgress / c.studentCount);
+      });
+
+      const topPerformingCourses = Object.values(courseProgress)
+        .sort((a: any, b: any): number => b.averageProgress - a.averageProgress)
+        .slice(0, 10)
+        .map((c: any) => ({
+          id: c.courseId,
+          name: c.name,
+          averageProgress: c.averageProgress,
+          studentCount: c.studentCount,
+        }));
+
+      // Average completion time (estimated from enrollments)
+      const enrolledDates = enrollments
+        .filter((e: any) => e.enrolledAt)
+        .map((e: any) => ({
+          date: new Date(e.enrolledAt),
+          progress: e.progress || 0,
+        }));
+
+      const averageCompletionTime = enrolledDates.length > 0
+        ? Math.round(
+            enrolledDates.reduce((sum: number, e: any): number => sum + (e.progress === 100 ? Math.floor((Date.now() - e.date.getTime()) / (1000 * 60 * 60 * 24)) : 0), 0 as number) /
+              enrolledDates.filter((e: any): boolean => e.progress === 100).length
+          )
+        : 0;
+
+      // Course progress by category
+      const categoryProgress: Record<string, { category: string; averageProgress: number; courseCount: number }> = {};
+
+      for (const enrollment of enrollments) {
+        const category = enrollment.courseCatalog?.categoryName || "Uncategorized";
+        if (!categoryProgress[category]) {
+          categoryProgress[category] = {
+            category,
+            averageProgress: 0,
+            courseCount: 0,
+          };
+        }
+        categoryProgress[category].averageProgress += enrollment.progress || 0;
+        categoryProgress[category].courseCount += 1;
+      }
+
+      Object.values(categoryProgress).forEach((c) => {
+        c.averageProgress = Math.round(c.averageProgress / c.courseCount);
+      });
+
+      res.json({
+        averageCourseProgress,
+        totalStudentsTracked,
+        completedCourses,
+        inProgressCourses,
+        notStartedCourses,
+        progressDistribution: progressDistributionWithPercentage,
+        topPerformingCourses,
+        averageCompletionTime,
+        courseProgressByCategory: Object.values(categoryProgress),
+      });
+    } catch (err) {
+      res.status(500).json({
+        message: err instanceof Error ? err.message : "Failed to fetch progress analytics",
+      });
+    }
+  });
+
+  app.get(api.admin.analytics.usage.path, async (req, res) => {
+    if (!req.session.user || req.session.user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    try {
+      const users = await prisma.user.findMany();
+
+      const totalRegisteredUsers = users.length;
+      const activeUsers = users.filter((u: any): boolean => u.lastLoginAt && new Date(u.lastLoginAt).getTime() > Date.now() - 30 * 24 * 60 * 60 * 1000);
+      const totalActiveUsers = activeUsers.length;
+      const dailyActiveUsers = users.filter((u) => u.lastLoginAt && new Date(u.lastLoginAt).getTime() > Date.now() - 24 * 60 * 60 * 1000).length;
+      const monthlyActiveUsers = activeUsers.length;
+      const thisMonthStart = new Date();
+      thisMonthStart.setDate(1);
+      thisMonthStart.setHours(0, 0, 0, 0);
+      const newUsersThisMonth = users.filter((u) => u.createdAt > thisMonthStart).length;
+
+      // Last login trend (last 30 days)
+      const lastLoginTrend = calculateLoginTrend(users);
+
+      // User activity by role
+      const userActivityByRole = {
+        students: {
+          active: users.filter((u) => u.role === "student" && u.lastLoginAt && new Date(u.lastLoginAt).getTime() > Date.now() - 30 * 24 * 60 * 60 * 1000).length,
+          total: users.filter((u) => u.role === "student").length,
+        },
+        parents: {
+          active: users.filter((u) => u.role === "parent" && u.lastLoginAt && new Date(u.lastLoginAt).getTime() > Date.now() - 30 * 24 * 60 * 60 * 1000).length,
+          total: users.filter((u) => u.role === "parent").length,
+        },
+        schools: {
+          active: users.filter((u) => u.role === "school" && u.lastLoginAt && new Date(u.lastLoginAt).getTime() > Date.now() - 30 * 24 * 60 * 60 * 1000).length,
+          total: users.filter((u) => u.role === "school").length,
+        },
+        admins: {
+          active: users.filter((u) => u.role === "admin" && u.lastLoginAt && new Date(u.lastLoginAt).getTime() > Date.now() - 30 * 24 * 60 * 60 * 1000).length,
+          total: users.filter((u) => u.role === "admin").length,
+        },
+      };
+
+      // Course access metrics
+      const enrollments = await (prisma as any).userCourseEnrollment.findMany({
+        include: { courseCatalog: true },
+      });
+
+      const courseAccessMetrics: Record<string, { courseId: string; name: string; accessCount: number; uniqueUsers: Set<string> }> = {};
+
+      for (const enrollment of enrollments) {
+        const key = enrollment.courseCatalogId;
+        if (!courseAccessMetrics[key]) {
+          courseAccessMetrics[key] = {
+            courseId: key,
+            name: enrollment.courseCatalog?.fullname || "Unknown Course",
+            accessCount: 0,
+            uniqueUsers: new Set(),
+          };
+        }
+        courseAccessMetrics[key].accessCount += 1;
+        courseAccessMetrics[key].uniqueUsers.add(enrollment.userId);
+      }
+
+      const courseAccessList = Object.values(courseAccessMetrics)
+        .sort((a: any, b: any): number => b.accessCount - a.accessCount)
+        .slice(0, 10)
+        .map((c: any) => ({
+          id: c.courseId,
+          name: c.name,
+          accessCount: c.accessCount,
+          uniqueUsers: c.uniqueUsers.size,
+        }));
+
+      // Admin action metrics
+      const adminActions = await (prisma as any).adminActivityLog.findMany({
+        orderBy: { createdAt: "desc" },
+      });
+
+      const adminActionMetrics: Record<string, { action: string; count: number; lastOccurred: string }> = {};
+
+      for (const action of adminActions) {
+        if (!adminActionMetrics[action.action]) {
+          adminActionMetrics[action.action] = {
+            action: action.action,
+            count: 0,
+            lastOccurred: "",
+          };
+        }
+        adminActionMetrics[action.action].count += 1;
+        if (!adminActionMetrics[action.action].lastOccurred || new Date(action.createdAt) > new Date(adminActionMetrics[action.action].lastOccurred)) {
+          adminActionMetrics[action.action].lastOccurred = action.createdAt.toISOString();
+        }
+      }
+
+      res.json({
+        totalActiveUsers,
+        totalRegisteredUsers,
+        newUsersThisMonth,
+        monthlyActiveUsers,
+        dailyActiveUsers,
+        lastLoginTrend,
+        userActivityByRole,
+        courseAccessMetrics: courseAccessList,
+        adminActionMetrics: Object.values(adminActionMetrics),
+      });
+    } catch (err) {
+      res.status(500).json({
+        message: err instanceof Error ? err.message : "Failed to fetch usage metrics",
+      });
+    }
+  });
+
+  app.get(api.admin.analytics.all.path, async (req, res) => {
+    if (!req.session.user || req.session.user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    try {
+      // Call all analytics endpoints and combine results
+      const [revenueRes, enrollmentsRes, progressRes, usageRes] = await Promise.all([
+        fetch(`http://localhost:${process.env.PORT || 3001}${api.admin.analytics.revenue.path}`, {
+          headers: { Cookie: `sessionId=${(req.session as any).id}` },
+        }),
+        fetch(`http://localhost:${process.env.PORT || 3001}${api.admin.analytics.enrollments.path}`, {
+          headers: { Cookie: `sessionId=${(req.session as any).id}` },
+        }),
+        fetch(`http://localhost:${process.env.PORT || 3001}${api.admin.analytics.progress.path}`, {
+          headers: { Cookie: `sessionId=${(req.session as any).id}` },
+        }),
+        fetch(`http://localhost:${process.env.PORT || 3001}${api.admin.analytics.usage.path}`, {
+          headers: { Cookie: `sessionId=${(req.session as any).id}` },
+        }),
+      ]);
+
+      const revenue = await revenueRes.json();
+      const enrollments = await enrollmentsRes.json();
+      const progress = await progressRes.json();
+      const usage = await usageRes.json();
+
+      res.json({
+        revenue,
+        enrollments,
+        progress,
+        usage,
+      });
+    } catch (err) {
+      // Fallback: return empty analytics if internal fetch fails
+      res.json({
+        revenue: { totalRevenue: 0, averageOrderValue: 0, totalOrders: 0, trend: [], topCourses: [] },
+        enrollments: { totalEnrollments: 0, activeEnrollments: 0, completionRate: 0, trend: [], topCourses: [], enrollmentByRole: {} },
+        progress: { averageCourseProgress: 0, totalStudentsTracked: 0, completedCourses: 0, inProgressCourses: 0, notStartedCourses: 0, progressDistribution: [], topPerformingCourses: [], averageCompletionTime: 0, courseProgressByCategory: [] },
+        usage: { totalActiveUsers: 0, totalRegisteredUsers: 0, newUsersThisMonth: 0, monthlyActiveUsers: 0, dailyActiveUsers: 0, lastLoginTrend: [], userActivityByRole: {}, courseAccessMetrics: [], adminActionMetrics: [] },
+      });
+    }
   });
 
   app.get("/api/enrollments/:userId", async (req, res) => {

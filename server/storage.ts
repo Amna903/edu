@@ -1,7 +1,7 @@
 import { programs, type Program, type InsertProgram, resources, type Resource, type InsertResource, inquiries, type Inquiry, type InsertInquiry, orders, type Order, type InsertOrder, orderItems, type OrderItem, type InsertOrderItem, enrollments, type Enrollment, type InsertEnrollment } from "../shared/schema.js";
 import type { CheckoutItem } from "../shared/schema.js";
 import { db } from "./db.js";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 
 export interface IStorage {
   getPrograms(): Promise<Program[]>;
@@ -114,11 +114,7 @@ async createInquiry(insertInquiry: InsertInquiry): Promise<Inquiry> {
       .insert(inquiries)
       .values({
         ...insertInquiry,
-        status: "new",
-        phone: insertInquiry.phone ?? null,
-        role: insertInquiry.role ?? null,
-        gradeLevel: insertInquiry.gradeLevel ?? null,
-        subjectInterest: insertInquiry.subjectInterest ?? null,
+        email: insertInquiry.email.toLowerCase(),
         learningMode: insertInquiry.learningMode ?? null,
         message: insertInquiry.message ?? null,
       })
@@ -131,7 +127,7 @@ async createInquiry(insertInquiry: InsertInquiry): Promise<Inquiry> {
     return db
       .select()
       .from(inquiries)
-      .where(eq(inquiries.email, email))
+      .where(sql`lower(${inquiries.email}) = ${email}`)
       .orderBy(desc(inquiries.createdAt));
   }
 

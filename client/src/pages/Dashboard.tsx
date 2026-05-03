@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { BarChart3, Bell, BookOpen, Check, CreditCard, ExternalLink, GraduationCap, LayoutDashboard, LifeBuoy, LogOut, RefreshCw, Shield, UserCircle2, Users } from "lucide-react";
+import { BarChart3, Bell, BookOpen, Check, CreditCard, Download, ExternalLink, GraduationCap, LayoutDashboard, LifeBuoy, LogOut, RefreshCw, Shield, UserCircle2, Users } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,7 @@ import SchoolAnalyticsClient from "@/components/dashboard/SchoolAnalyticsClient"
 import { useAuthUser, useLogout } from "@/hooks/use-auth";
 import { useOrders } from "@/hooks/use-orders";
 import { useChangePassword, useUpdateProfile } from "@/hooks/use-profile";
-import { useAdminDashboard, useDashboardNotifications, useLinkChild, useMarkNotificationRead, useParentDashboard, useSchoolDashboard, useStudentCertificates, useStudentDashboard, useSupportTickets } from "@/hooks/use-dashboard";
+import { useAdminDashboard, useAdminUsers, useSuspendUser, useAssignRole, useResetPassword, useActivityLogs, useAdminCourses, useUpdateCoursePricing, useUpdateCourseVisibility, useUpdateCourseCategory, useSyncCourses, useDashboardNotifications, useLinkChild, useMarkNotificationRead, useParentDashboard, useSchoolDashboard, useStudentCertificates, useStudentDashboard, useSupportTickets } from "@/hooks/use-dashboard";
 
 function getDashboardPath(role?: string | null) {
   if (role === "admin") return "/dashboard/admin";
@@ -120,8 +120,22 @@ export default function Dashboard() {
   });
   const [supportState, setSupportState] = useState({ error: "", success: "", pending: false });
   const [adminReplyState, setAdminReplyState] = useState({ message: "", error: "", success: "", pending: false });
+  const [ticketReplyState, setTicketReplyState] = useState({ message: "", error: "", success: "", pending: false });
   const [childIdInput, setChildIdInput] = useState("");
   const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
+  const [linkChildState, setLinkChildState] = useState<{ pending: boolean; success: string; error: string }>({ pending: false, success: "", error: "" });
+  const [reportDownloadState, setReportDownloadState] = useState<{ pending: boolean; error: string }>({ pending: false, error: "" });
+  const [adminPanel, setAdminPanel] = useState({ tab: "users", userPage: 1, logPage: 1, coursePage: 1, searchQuery: "", courseSearch: "", selectedUserId: null as string | null });
+  const adminUsers = useAdminUsers(adminPanel.userPage, 20, adminPanel.searchQuery);
+  const activityLogs = useActivityLogs(adminPanel.logPage, 20);
+  const adminCourses = useAdminCourses(adminPanel.coursePage, 20, adminPanel.courseSearch);
+  const suspendUser = useSuspendUser();
+  const assignRole = useAssignRole();
+  const resetPassword = useResetPassword();
+  const updateCoursePricing = useUpdateCoursePricing();
+  const updateCourseVisibility = useUpdateCourseVisibility();
+  const updateCourseCategory = useUpdateCourseCategory();
+  const syncCourses = useSyncCourses();
 
   useEffect(() => {
     if (selectedTicketId !== null) {
@@ -132,6 +146,11 @@ export default function Dashboard() {
       setSelectedTicketId(supportTickets.data[0].id);
     }
   }, [selectedTicketId, supportTickets.data]);
+
+  useEffect(() => {
+    if (!selectedTicketId) return;
+    setTicketReplyState({ message: "", error: "", success: "", pending: false });
+  }, [selectedTicketId]);
 
   useEffect(() => {
     if (!user) return;
@@ -187,6 +206,9 @@ export default function Dashboard() {
   const onAdminAnalytics = location === "/dashboard/admin/analytics";
   const unreadUpdates = supportTickets.data?.filter((ticket) => ticket.status === "new").length ?? 0;
   const selectedTicket = supportTickets.data?.find((ticket) => ticket.id === selectedTicketId) ?? null;
+  const parentChildren = parentDashboard.data?.children ?? [];
+  const parentAlerts = notifications.data?.notifications ?? [];
+  const unreadParentAlerts = parentAlerts.filter((notification) => !notification.isRead);
 
   async function readJsonSafely(response: Response): Promise<Record<string, unknown>> {
     const raw = await response.text();
@@ -195,6 +217,38 @@ export default function Dashboard() {
       return JSON.parse(raw) as Record<string, unknown>;
     } catch {
       return { message: raw };
+    }
+  }
+
+  async function downloadParentReport() {
+    setReportDownloadState({ pending: true, error: "" });
+
+    try {
+      const response = await fetch("/api/dashboard/parent/report.csv", {
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        const body = await readJsonSafely(response);
+        throw new Error(typeof body.message === "string" ? body.message : "Failed to download report");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `parent-dashboard-report-${user?.id || "export"}.csv`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.URL.revokeObjectURL(url);
+
+      setReportDownloadState({ pending: false, error: "" });
+    } catch (error) {
+      setReportDownloadState({
+        pending: false,
+        error: error instanceof Error ? error.message : "Failed to download report",
+      });
     }
   }
 
@@ -401,43 +455,209 @@ export default function Dashboard() {
 
               {onMainDashboard && user.role === "parent" && (
                 <div className="space-y-6">
+                  <Card className="border-0 bg-[radial-gradient(circle_at_top,_rgba(35,102,201,0.16),_transparent_40%),linear-gradient(135deg,#ffffff,#f7fbff)] shadow-xl">
+                    <CardContent className="grid gap-4 p-6 md:grid-cols-[1.2fr_0.8fr] md:items-center">
+                      <div>
+                        <p className="text-sm font-semibold uppercase tracking-[0.22em] text-blue-600">Parent Tools</p>
+                        <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900">Manage your children's progress from one place</h2>
+                        <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600">
+                          View profiles, track progress and grades, watch alerts, and export a report whenever you need one.
+                        </p>
+                      </div>
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        <Button type="button" variant="outline" className="justify-start rounded-2xl border-slate-200 bg-white" onClick={() => document.getElementById("parent-children")?.scrollIntoView({ behavior: "smooth", block: "start" })}>
+                          <Users className="mr-2 h-4 w-4" /> View Children Profiles
+                        </Button>
+                        <Button type="button" variant="outline" className="justify-start rounded-2xl border-slate-200 bg-white" onClick={() => document.getElementById("parent-progress")?.scrollIntoView({ behavior: "smooth", block: "start" })}>
+                          <BarChart3 className="mr-2 h-4 w-4" /> Monitor Progress
+                        </Button>
+                        <Button type="button" variant="outline" className="justify-start rounded-2xl border-slate-200 bg-white" onClick={() => document.getElementById("parent-grades")?.scrollIntoView({ behavior: "smooth", block: "start" })}>
+                          <Check className="mr-2 h-4 w-4" /> View Grades
+                        </Button>
+                        <Button type="button" variant="outline" className="justify-start rounded-2xl border-slate-200 bg-white" onClick={() => document.getElementById("parent-alerts")?.scrollIntoView({ behavior: "smooth", block: "start" })}>
+                          <Bell className="mr-2 h-4 w-4" /> Receive Alerts
+                        </Button>
+                        <Button
+                          type="button"
+                          className="justify-start rounded-2xl bg-[#2366c9] text-white hover:bg-blue-700 sm:col-span-2"
+                          onClick={downloadParentReport}
+                          disabled={reportDownloadState.pending}
+                        >
+                          <Download className="mr-2 h-4 w-4" />
+                          {reportDownloadState.pending ? "Preparing Report..." : "Download Reports"}
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {reportDownloadState.error && (
+                    <p className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{reportDownloadState.error}</p>
+                  )}
+                  {linkChildState.success && (
+                    <p className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">{linkChildState.success}</p>
+                  )}
+                  {linkChildState.error && (
+                    <p className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{linkChildState.error}</p>
+                  )}
+
+                  <div className="grid gap-4 md:grid-cols-4">
+                    <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Children Linked</p><p className="mt-2 text-3xl font-black text-slate-900">{parentChildren.length}</p></CardContent></Card>
+                    <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Total Courses</p><p className="mt-2 text-3xl font-black text-slate-900">{parentChildren.reduce((sum, child) => sum + child.courses.length, 0)}</p></CardContent></Card>
+                    <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Unread Alerts</p><p className="mt-2 text-3xl font-black text-slate-900">{unreadParentAlerts.length}</p></CardContent></Card>
+                    <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Avg. Progress</p><p className="mt-2 text-3xl font-black text-slate-900">{parentChildren.length > 0 ? Math.round(parentChildren.flatMap((child) => child.courses).reduce((sum, course) => sum + course.progress, 0) / Math.max(parentChildren.flatMap((child) => child.courses).length, 1)) : 0}%</p></CardContent></Card>
+                  </div>
+
+                  <Card id="parent-alerts" className="scroll-mt-28">
+                    <CardHeader><CardTitle>Alerts & Notifications</CardTitle></CardHeader>
+                    <CardContent className="space-y-3">
+                      {parentAlerts.length > 0 ? (
+                        parentAlerts.slice(0, 5).map((notification) => (
+                          <div key={notification.id} className={`rounded-3xl border p-4 ${notification.isRead ? "border-slate-200 bg-white" : "border-blue-200 bg-blue-50/50"}`}>
+                            <div className="flex items-start justify-between gap-4">
+                              <div>
+                                <p className="font-semibold text-slate-900">{notification.title}</p>
+                                <p className="mt-1 text-xs text-slate-500">{new Date(notification.createdAt).toLocaleString()}</p>
+                                <p className="mt-3 text-sm text-slate-700">{notification.message}</p>
+                              </div>
+                              {!notification.isRead ? (
+                                <Button type="button" variant="outline" size="sm" onClick={() => markNotificationRead.mutate(notification.id)}>
+                                  Mark as read
+                                </Button>
+                              ) : (
+                                <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">Read</span>
+                              )}
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-slate-600">No alerts yet.</p>
+                      )}
+                    </CardContent>
+                  </Card>
+
                   <Card>
                     <CardHeader><CardTitle>Link Your Child</CardTitle></CardHeader>
-                    <CardContent>
+                    <CardContent className="space-y-4">
                       <form
                         className="flex flex-col gap-3 md:flex-row"
                         onSubmit={async (event) => {
                           event.preventDefault();
-                          await linkChild.mutateAsync(Number(childIdInput));
-                          setChildIdInput("");
+                          const childId = Number(childIdInput);
+                          if (!Number.isFinite(childId) || childId <= 0) {
+                            setLinkChildState({ pending: false, success: "", error: "Please enter a valid student Moodle ID." });
+                            return;
+                          }
+
+                          setLinkChildState({ pending: true, success: "", error: "" });
+                          try {
+                            await linkChild.mutateAsync(childId);
+                            setChildIdInput("");
+                            setLinkChildState({ pending: false, success: "Child linked successfully.", error: "" });
+                          } catch (error) {
+                            setLinkChildState({
+                              pending: false,
+                              success: "",
+                              error: error instanceof Error ? error.message : "Failed to link child",
+                            });
+                          }
                         }}
                       >
                         <Input value={childIdInput} onChange={(event) => setChildIdInput(event.target.value)} placeholder="Child Moodle User ID" />
-                        <Button type="submit"><Users className="mr-2 h-4 w-4" />Link Child</Button>
+                        <Button type="submit" disabled={linkChildState.pending}>
+                          <Users className="mr-2 h-4 w-4" />
+                          {linkChildState.pending ? "Linking..." : "Link Child"}
+                        </Button>
                       </form>
-                    </CardContent>
-                  </Card>
-                  <div className="grid gap-4">
-                    {parentDashboard.data?.children.map((child) => (
-                      <Card key={child.id}>
-                        <CardHeader><CardTitle>{child.name}</CardTitle></CardHeader>
-                        <CardContent className="space-y-3">
-                          <p className="text-sm text-slate-500">{child.email}</p>
-                          {child.courses.map((course) => (
-                            <div key={course.id} className="rounded-2xl border border-slate-200 p-4">
-                              <p className="font-semibold text-slate-900">{course.courseName}</p>
-                              <p className="mt-1 text-sm text-slate-500">Progress {Math.round(course.progress)}% • Grade {course.grade}</p>
-                            </div>
-                          ))}
-                        </CardContent>
-                      </Card>
-                    ))}
-                    {parentDashboard.data?.children.length === 0 && <p className="text-slate-600">No linked children yet.</p>}
-                  </div>
-                </div>
-              )}
+                      <p className="text-xs text-slate-500">After linking, the child will appear below with their enrolled courses and marks.</p>
 
-              {onMainDashboard && user.role === "school" && schoolDashboard.data && (
+                  <div className="space-y-6">
+                    {parentChildren.map((child) => {
+                      const avgProgress = child.courses.length > 0
+                        ? Math.round(child.courses.reduce((sum, course) => sum + course.progress, 0) / child.courses.length)
+                        : 0;
+
+                      const gradedCourses = child.courses.filter((course) => course.grade !== "N/A" && course.grade !== "-");
+                      const averageMarks = child.courses.length > 0
+                        ? Math.round(child.courses.reduce((sum, course) => sum + course.percentage, 0) / child.courses.length)
+                        : 0;
+
+                      return (
+                        <Card key={child.id} id={`parent-child-${child.id}`} className="scroll-mt-28 border-slate-200 shadow-sm">
+                          <CardHeader className="border-b border-slate-100">
+                            <CardTitle>{child.name}</CardTitle>
+                            <p className="text-sm text-slate-500">{child.email}</p>
+                          </CardHeader>
+                          <CardContent className="space-y-5 p-6">
+                            <div className="grid gap-4 md:grid-cols-3">
+                              <div className="rounded-3xl bg-slate-50 p-4">
+                                <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Enrolled Courses</p>
+                                <p className="mt-2 text-2xl font-black text-slate-900">{child.courses.length}</p>
+                              </div>
+                              <div className="rounded-3xl bg-slate-50 p-4">
+                                <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Average Marks</p>
+                                <p className="mt-2 text-2xl font-black text-slate-900">{averageMarks}%</p>
+                              </div>
+                              <div className="rounded-3xl bg-slate-50 p-4">
+                                <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Graded Courses</p>
+                                <p className="mt-2 text-2xl font-black text-slate-900">{gradedCourses.length}</p>
+                              </div>
+                            </div>
+
+                            <div id="parent-children" className="space-y-3 scroll-mt-28">
+                              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">View Children Profiles</p>
+                              <p className="text-sm text-slate-600">This child is enrolled in the courses below.</p>
+                            </div>
+
+                            <div id="parent-progress" className="space-y-3 scroll-mt-28">
+                              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">Monitor Progress</p>
+                              <div className="space-y-3">
+                                {child.courses.map((course) => (
+                                  <div key={`${child.id}-${course.id}-progress`} className="rounded-2xl border border-slate-200 p-4">
+                                    <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                                      <div>
+                                        <p className="font-semibold text-slate-900">{course.courseName}</p>
+                                        <p className="text-xs text-slate-500">Enrolled course</p>
+                                      </div>
+                                      <p className="text-sm font-bold text-[#2366c9]">Progress {Math.round(course.progress)}%</p>
+                                    </div>
+                                    <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
+                                      <div className="h-full rounded-full bg-gradient-to-r from-[#2366c9] to-indigo-500" style={{ width: `${course.progress}%` }} />
+                                    </div>
+                                  </div>
+                                ))}
+                                {child.courses.length === 0 && <p className="text-sm text-slate-500">No course progress yet.</p>}
+                              </div>
+                            </div>
+
+                            <div id="parent-grades" className="space-y-3 scroll-mt-28">
+                              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">View Grades / Marks</p>
+                              <div className="space-y-3">
+                                {child.courses.map((course) => (
+                                  <div key={`${child.id}-${course.id}-grade`} className="rounded-2xl border border-slate-200 p-4">
+                                    <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                                      <p className="font-semibold text-slate-900">{course.courseName}</p>
+                                      <p className="text-sm font-bold text-slate-700">
+                                        {course.grade !== "N/A" && course.grade !== "-" ? `Marks: ${Math.round(course.percentage)}% (Grade ${course.grade})` : `Marks: ${Math.round(course.percentage)}% (Pending grade)`}
+                                      </p>
+                                    </div>
+                                    <p className="mt-1 text-sm text-slate-500">Raw percentage: {Math.round(course.percentage)}%</p>
+                                  </div>
+                                ))}
+                                {child.courses.length === 0 && <p className="text-sm text-slate-500">No grades available yet.</p>}
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                    {parentChildren.length === 0 && <p className="text-slate-600">No linked children yet.</p>}
+                  </div>
+                </CardContent>
+              </Card>
+              </div>
+            )}
+
+            {onMainDashboard && user.role === "school" && schoolDashboard.data && (
                 <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
                   <div className="space-y-6">
                     <div className="grid gap-4 md:grid-cols-3">
@@ -486,6 +706,318 @@ export default function Dashboard() {
                     <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Revenue</p><p className="mt-2 text-3xl font-black text-slate-900">${(adminDashboard.data.stats.totalRevenue / 100).toFixed(2)}</p></CardContent></Card>
                     <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Courses</p><p className="mt-2 text-3xl font-black text-slate-900">{adminDashboard.data.stats.activeCourses}</p></CardContent></Card>
                   </div>
+
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between">
+                      <CardTitle>Admin Management</CardTitle>
+                      <div className="flex gap-2">
+                        <button onClick={() => setAdminPanel({ ...adminPanel, tab: "users" })} className={`px-4 py-2 rounded-lg font-semibold text-sm ${adminPanel.tab === "users" ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-900"}`}>Users</button>
+                        <button onClick={() => setAdminPanel({ ...adminPanel, tab: "courses" })} className={`px-4 py-2 rounded-lg font-semibold text-sm ${adminPanel.tab === "courses" ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-900"}`}>Courses</button>
+                        <button onClick={() => setAdminPanel({ ...adminPanel, tab: "logs" })} className={`px-4 py-2 rounded-lg font-semibold text-sm ${adminPanel.tab === "logs" ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-900"}`}>Activity Logs</button>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      {adminPanel.tab === "users" && (
+                        <div className="space-y-4">
+                          <div className="flex gap-2">
+                            <Input placeholder="Search users by name or email..." value={adminPanel.searchQuery} onChange={(e) => setAdminPanel({ ...adminPanel, searchQuery: e.target.value, userPage: 1 })} />
+                            <Button onClick={() => adminUsers.refetch()}>Search</Button>
+                          </div>
+
+                          {adminUsers.isLoading ? (
+                            <p className="text-slate-500">Loading users...</p>
+                          ) : adminUsers.error ? (
+                            <p className="text-red-500">Error loading users</p>
+                          ) : (
+                            <>
+                              <div className="overflow-x-auto border border-slate-200 rounded-lg">
+                                <table className="w-full text-sm">
+                                  <thead className="bg-slate-50 border-b border-slate-200">
+                                    <tr>
+                                      <th className="px-4 py-3 text-left font-semibold">Username</th>
+                                      <th className="px-4 py-3 text-left font-semibold">Email</th>
+                                      <th className="px-4 py-3 text-left font-semibold">Role</th>
+                                      <th className="px-4 py-3 text-left font-semibold">Status</th>
+                                      <th className="px-4 py-3 text-left font-semibold">Actions</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {adminUsers.data?.users.map((u) => (
+                                      <tr key={u.id} className="border-b border-slate-200 hover:bg-slate-50">
+                                        <td className="px-4 py-3 font-semibold">{u.username}</td>
+                                        <td className="px-4 py-3 text-slate-600">{u.email || "N/A"}</td>
+                                        <td className="px-4 py-3">
+                                          <select
+                                            value={u.role}
+                                            onChange={(e) => assignRole.mutate({ userId: u.id, role: e.target.value })}
+                                            disabled={assignRole.isPending}
+                                            className="px-2 py-1 border border-slate-300 rounded text-sm"
+                                          >
+                                            <option value="student">Student</option>
+                                            <option value="parent">Parent</option>
+                                            <option value="school">School</option>
+                                            <option value="admin">Admin</option>
+                                          </select>
+                                        </td>
+                                        <td className="px-4 py-3">
+                                          <button
+                                            onClick={() => suspendUser.mutate({ userId: u.id, suspend: !u.isSuspended })}
+                                            disabled={suspendUser.isPending}
+                                            className={`px-3 py-1 rounded text-xs font-semibold ${
+                                              u.isSuspended ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"
+                                            }`}
+                                          >
+                                            {u.isSuspended ? "Suspended" : "Active"}
+                                          </button>
+                                        </td>
+                                        <td className="px-4 py-3 space-x-2">
+                                          <button
+                                            onClick={() => resetPassword.mutate({ userId: u.id })}
+                                            disabled={resetPassword.isPending}
+                                            className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-semibold hover:bg-blue-200"
+                                          >
+                                            Reset PW
+                                          </button>
+                                          <button
+                                            onClick={() => suspendUser.mutate({ userId: u.id, suspend: !u.isSuspended })}
+                                            disabled={suspendUser.isPending}
+                                            className="px-2 py-1 bg-orange-100 text-orange-700 rounded text-xs font-semibold hover:bg-orange-200"
+                                          >
+                                            {u.isSuspended ? "Unsuspend" : "Suspend"}
+                                          </button>
+                                        </td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+
+                              {adminUsers.data && (
+                                <div className="flex items-center justify-between">
+                                  <p className="text-sm text-slate-500">
+                                    Showing {((adminPanel.userPage - 1) * 20) + 1} to {Math.min(adminPanel.userPage * 20, adminUsers.data.total)} of {adminUsers.data.total}
+                                  </p>
+                                  <div className="flex gap-2">
+                                    <Button
+                                      disabled={adminPanel.userPage === 1}
+                                      onClick={() => setAdminPanel({ ...adminPanel, userPage: adminPanel.userPage - 1 })}
+                                    >
+                                      Previous
+                                    </Button>
+                                    <Button
+                                      disabled={adminPanel.userPage * 20 >= adminUsers.data.total}
+                                      onClick={() => setAdminPanel({ ...adminPanel, userPage: adminPanel.userPage + 1 })}
+                                    >
+                                      Next
+                                    </Button>
+                                  </div>
+                                </div>
+                              )}
+                            </>
+                          )}
+
+                          {(suspendUser.isSuccess || assignRole.isSuccess || resetPassword.isSuccess) && (
+                            <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-green-700 text-sm">
+                              {suspendUser.isSuccess && "User status updated successfully"}
+                              {assignRole.isSuccess && "Role assigned successfully"}
+                              {resetPassword.isSuccess && resetPassword.data?.message}
+                            </div>
+                          )}
+
+                          {(suspendUser.isError || assignRole.isError || resetPassword.isError) && (
+                            <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-red-700 text-sm">
+                              {suspendUser.error instanceof Error && suspendUser.error.message}
+                              {assignRole.error instanceof Error && assignRole.error.message}
+                              {resetPassword.error instanceof Error && resetPassword.error.message}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {adminPanel.tab === "logs" && (
+                        <div className="space-y-4">
+                          {activityLogs.isLoading ? (
+                            <p className="text-slate-500">Loading activity logs...</p>
+                          ) : activityLogs.error ? (
+                            <p className="text-red-500">Error loading logs</p>
+                          ) : (
+                            <>
+                              <div className="overflow-x-auto border border-slate-200 rounded-lg">
+                                <table className="w-full text-sm">
+                                  <thead className="bg-slate-50 border-b border-slate-200">
+                                    <tr>
+                                      <th className="px-4 py-3 text-left font-semibold">Admin</th>
+                                      <th className="px-4 py-3 text-left font-semibold">Action</th>
+                                      <th className="px-4 py-3 text-left font-semibold">Target User</th>
+                                      <th className="px-4 py-3 text-left font-semibold">Details</th>
+                                      <th className="px-4 py-3 text-left font-semibold">Time</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {activityLogs.data?.logs.map((log) => (
+                                      <tr key={log.id} className="border-b border-slate-200 hover:bg-slate-50">
+                                        <td className="px-4 py-3 font-semibold">{log.adminUsername}</td>
+                                        <td className="px-4 py-3">
+                                          <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-semibold">
+                                            {log.action.replace(/_/g, " ")}
+                                          </span>
+                                        </td>
+                                        <td className="px-4 py-3 text-slate-600">{log.targetUsername || "System"}</td>
+                                        <td className="px-4 py-3 text-xs text-slate-500">{log.details ? JSON.stringify(log.details).substring(0, 40) : "N/A"}...</td>
+                                        <td className="px-4 py-3 text-slate-600 text-xs">{new Date(log.createdAt).toLocaleString()}</td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+
+                              {activityLogs.data && (
+                                <div className="flex items-center justify-between">
+                                  <p className="text-sm text-slate-500">
+                                    Showing {((adminPanel.logPage - 1) * 20) + 1} to {Math.min(adminPanel.logPage * 20, activityLogs.data.total)} of {activityLogs.data.total}
+                                  </p>
+                                  <div className="flex gap-2">
+                                    <Button
+                                      disabled={adminPanel.logPage === 1}
+                                      onClick={() => setAdminPanel({ ...adminPanel, logPage: adminPanel.logPage - 1 })}
+                                    >
+                                      Previous
+                                    </Button>
+                                    <Button
+                                      disabled={adminPanel.logPage * 20 >= activityLogs.data.total}
+                                      onClick={() => setAdminPanel({ ...adminPanel, logPage: adminPanel.logPage + 1 })}
+                                    >
+                                      Next
+                                    </Button>
+                                  </div>
+                                </div>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      )}
+
+                      {adminPanel.tab === "courses" && (
+                        <div className="space-y-4">
+                          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                            <div className="flex gap-2 flex-1">
+                              <Input placeholder="Search courses by name or category..." value={adminPanel.courseSearch} onChange={(e) => setAdminPanel({ ...adminPanel, courseSearch: e.target.value, coursePage: 1 })} />
+                              <Button onClick={() => adminCourses.refetch()}>Search</Button>
+                            </div>
+                            <Button onClick={() => syncCourses.mutate("COURSE_CATALOG")} disabled={syncCourses.isPending} className="bg-green-600 hover:bg-green-700">
+                              {syncCourses.isPending ? "Syncing..." : "Sync from Moodle"}
+                            </Button>
+                          </div>
+
+                          {adminCourses.isLoading ? (
+                            <p className="text-slate-500">Loading courses...</p>
+                          ) : adminCourses.error ? (
+                            <p className="text-red-500">Error loading courses</p>
+                          ) : (
+                            <>
+                              <div className="overflow-x-auto border border-slate-200 rounded-lg">
+                                <table className="w-full text-sm">
+                                  <thead className="bg-slate-50 border-b border-slate-200">
+                                    <tr>
+                                      <th className="px-4 py-3 text-left font-semibold">Course Name</th>
+                                      <th className="px-4 py-3 text-left font-semibold">Category</th>
+                                      <th className="px-4 py-3 text-left font-semibold">Price</th>
+                                      <th className="px-4 py-3 text-left font-semibold">Status</th>
+                                      <th className="px-4 py-3 text-left font-semibold">Actions</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {adminCourses.data?.courses.map((course) => (
+                                      <tr key={course.id} className="border-b border-slate-200 hover:bg-slate-50">
+                                        <td className="px-4 py-3">
+                                          <div>
+                                            <p className="font-semibold text-slate-900">{course.fullname}</p>
+                                            <p className="text-xs text-slate-500">{course.shortname}</p>
+                                          </div>
+                                        </td>
+                                        <td className="px-4 py-3 text-slate-600">{course.categoryName || "Uncategorized"}</td>
+                                        <td className="px-4 py-3">
+                                          <input
+                                            type="number"
+                                            step="0.01"
+                                            value={course.price}
+                                            onChange={(e) => {
+                                              const newPrice = parseFloat(e.target.value) || 0;
+                                              updateCoursePricing.mutate({ courseId: course.id, price: newPrice });
+                                            }}
+                                            className="w-24 px-2 py-1 border border-slate-300 rounded text-sm"
+                                          />
+                                        </td>
+                                        <td className="px-4 py-3">
+                                          <button
+                                            onClick={() => updateCourseVisibility.mutate({ courseId: course.id, isVisible: !course.isVisible })}
+                                            disabled={updateCourseVisibility.isPending}
+                                            className={`px-3 py-1 rounded text-xs font-semibold ${
+                                              course.isVisible ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-700"
+                                            }`}
+                                          >
+                                            {course.isVisible ? "Published" : "Hidden"}
+                                          </button>
+                                        </td>
+                                        <td className="px-4 py-3">
+                                          <button
+                                            onClick={() => updateCourseVisibility.mutate({ courseId: course.id, isVisible: !course.isVisible })}
+                                            disabled={updateCourseVisibility.isPending}
+                                            className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-semibold hover:bg-blue-200"
+                                          >
+                                            {course.isVisible ? "Hide" : "Show"}
+                                          </button>
+                                        </td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+
+                              {adminCourses.data && (
+                                <div className="flex items-center justify-between">
+                                  <p className="text-sm text-slate-500">
+                                    Showing {((adminPanel.coursePage - 1) * 20) + 1} to {Math.min(adminPanel.coursePage * 20, adminCourses.data.total)} of {adminCourses.data.total}
+                                  </p>
+                                  <div className="flex gap-2">
+                                    <Button
+                                      disabled={adminPanel.coursePage === 1}
+                                      onClick={() => setAdminPanel({ ...adminPanel, coursePage: adminPanel.coursePage - 1 })}
+                                    >
+                                      Previous
+                                    </Button>
+                                    <Button
+                                      disabled={adminPanel.coursePage * 20 >= adminCourses.data.total}
+                                      onClick={() => setAdminPanel({ ...adminPanel, coursePage: adminPanel.coursePage + 1 })}
+                                    >
+                                      Next
+                                    </Button>
+                                  </div>
+                                </div>
+                              )}
+                            </>
+                          )}
+
+                          {(updateCoursePricing.isSuccess || updateCourseVisibility.isSuccess || syncCourses.isSuccess) && (
+                            <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-green-700 text-sm">
+                              {updateCoursePricing.isSuccess && "Course pricing updated"}
+                              {updateCourseVisibility.isSuccess && "Course visibility updated"}
+                              {syncCourses.isSuccess && syncCourses.data?.message}
+                            </div>
+                          )}
+
+                          {(updateCoursePricing.isError || updateCourseVisibility.isError || syncCourses.isError) && (
+                            <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-red-700 text-sm">
+                              {updateCoursePricing.error instanceof Error && updateCoursePricing.error.message}
+                              {updateCourseVisibility.error instanceof Error && updateCourseVisibility.error.message}
+                              {syncCourses.error instanceof Error && syncCourses.error.message}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+
                   <Card>
                     <CardHeader><CardTitle>Course Activity</CardTitle></CardHeader>
                     <CardContent className="grid gap-4">
@@ -1022,6 +1554,65 @@ export default function Dashboard() {
                                   <p><span className="font-semibold text-slate-900">Priority:</span> {selectedTicket.learningMode || "Medium"}</p>
                                   <p><span className="font-semibold text-slate-900">Created:</span> {selectedTicket.createdAt ? new Date(selectedTicket.createdAt).toLocaleString() : ""}</p>
                                   <p className="whitespace-pre-line pt-2 text-slate-700">{selectedTicket.message}</p>
+                                </div>
+
+                                <div className="space-y-4 border-t border-slate-200 pt-4">
+                                  <Label htmlFor="ticket-reply">Reply To Support</Label>
+                                  <Textarea
+                                    id="ticket-reply"
+                                    value={ticketReplyState.message}
+                                    onChange={(event) => setTicketReplyState((current) => ({ ...current, message: event.target.value, error: "", success: "" }))}
+                                    placeholder="Write your reply to support here"
+                                    className="min-h-28"
+                                  />
+                                  {ticketReplyState.error && <p className="text-sm text-red-600">{ticketReplyState.error}</p>}
+                                  {ticketReplyState.success && <p className="text-sm text-emerald-600">{ticketReplyState.success}</p>}
+                                  <Button
+                                    className="bg-[#2366c9] text-white hover:bg-blue-700"
+                                    onClick={async () => {
+                                      if (!selectedTicketId) return;
+                                      const replyText = ticketReplyState.message.trim();
+                                      if (!replyText) {
+                                        setTicketReplyState((current) => ({ ...current, error: "Reply message is required" }));
+                                        return;
+                                      }
+                                      setTicketReplyState((current) => ({ ...current, pending: true, error: "", success: "" }));
+                                      try {
+                                        const response = await fetch(`/api/inquiries/${selectedTicketId}/reply`, {
+                                          method: "POST",
+                                          headers: { "Content-Type": "application/json" },
+                                          body: JSON.stringify({ message: replyText }),
+                                        });
+                                        const body = await readJsonSafely(response);
+                                        if (!response.ok) {
+                                          const maybeMessage =
+                                            typeof body.message === "string" && body.message.trim()
+                                              ? body.message
+                                              : "Failed to send reply";
+                                          if (
+                                            typeof body.message === "string" &&
+                                            body.message.includes("<!DOCTYPE")
+                                          ) {
+                                            throw new Error(
+                                              "Reply API returned HTML instead of JSON. Make sure you are running the EDU app backend and opening the EDU dashboard.",
+                                            );
+                                          }
+                                          throw new Error(maybeMessage);
+                                        }
+                                        await supportTickets.refetch();
+                                        setTicketReplyState({ message: "", error: "", success: "Reply sent to support.", pending: false });
+                                      } catch (error) {
+                                        setTicketReplyState((current) => ({
+                                          ...current,
+                                          error: error instanceof Error ? error.message : "Failed to send reply",
+                                          pending: false,
+                                        }));
+                                      }
+                                    }}
+                                    disabled={ticketReplyState.pending}
+                                  >
+                                    {ticketReplyState.pending ? "Sending..." : "Send Reply"}
+                                  </Button>
                                 </div>
                               </div>
                             ) : (

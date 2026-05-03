@@ -30,6 +30,11 @@ enum CouponType {
   FIXED
 }
 
+enum SignupStatus {
+  pending_confirmation
+  confirmed
+}
+
 enum SupportTicketCategory {
   TECHNICAL
   BILLING
@@ -177,6 +182,22 @@ model ParentChild {
   @@unique([parentId, childId])
   @@index([parentId])
   @@index([childId])
+}
+
+model PendingSignup {
+  id          String       @id @default(cuid())
+  username    String       @unique
+  email       String
+  firstName   String?
+  lastName    String?
+  role        UserRole
+  status      SignupStatus @default(pending_confirmation)
+  moodleUserId Int?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  confirmedAt DateTime?
+
+  @@index([status])
 }
 
 model RegistrationRole {
@@ -530,6 +551,26 @@ model BackgroundJob {
   @@index([status, scheduledFor])
   @@index([jobType, status])
   @@index([priority, scheduledFor])
+  @@index([createdAt])
+}
+
+model Inquiry {
+  id             Int      @id @default(autoincrement())
+  type           String   // 'diagnostic', 'enrollment', 'school_charter', 'tutor_application', 'contact'
+  name           String
+  email          String
+  phone          String?
+  role           String?  // 'parent', 'student', 'school_admin', 'tutor'
+  gradeLevel     String?  // For students
+  subjectInterest String?
+  learningMode   String?  // 'online' | 'physical' for student enrollment
+  message        String?
+  status         String   @default("new") // 'new', 'contacted', 'resolved'
+  createdAt      DateTime @default(now())
+
+  @@index([email])
+  @@index([type])
+  @@index([status])
   @@index([createdAt])
 }
 
