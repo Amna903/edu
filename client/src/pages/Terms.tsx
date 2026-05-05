@@ -65,7 +65,7 @@ export default function Terms() {
             <p className="mt-3 text-sm text-slate-700 leading-relaxed">
               Subscription fees are listed on the Pricing page at the time of purchase. Prices may change with notice.
               Refunds are available within [INSERT REFUND PERIOD e.g. 14 days] if the programme has not been substantially accessed.
-              Contact info@edumeup.com for refund requests.
+              Contact support@edumeup.com for refund requests.
             </p>
           </div>
 
@@ -105,7 +105,7 @@ export default function Terms() {
 
           <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
             <h2 className="text-2xl font-semibold text-slate-900">9. Contact</h2>
-            <p className="mt-3 text-sm text-slate-700">Legal enquiries: info@edumeup.com | EduMeUp.com</p>
+            <p className="mt-3 text-sm text-slate-700">Legal enquiries: support@edumeup.com | EduMeUp.com</p>
           </div>
         </div>
       </section>

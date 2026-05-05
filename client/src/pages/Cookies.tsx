@@ -97,7 +97,7 @@ export default function Cookies() {
 
           <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
             <h2 className="text-2xl font-semibold text-slate-900">5. Contact</h2>
-            <p className="mt-3 text-sm text-slate-700">Cookie and privacy enquiries: info@edumeup.com | EduMeUp.com</p>
+            <p className="mt-3 text-sm text-slate-700">Cookie and privacy enquiries: support@edumeup.com | EduMeUp.com</p>
           </div>
 
           <p className="text-xs text-slate-500">Prepared for: Muhammad Benyameen, Chief Adviser - EduMeUp.com | 13 Missing Pages - Complete Copy | Locked Output</p>

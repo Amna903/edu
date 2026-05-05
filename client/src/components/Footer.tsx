@@ -1,113 +1,100 @@
 import { Link } from "wouter";
-import { GraduationCap, Mail, Phone, Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
+import { Facebook, Instagram, Linkedin, Mail, MessageCircle, Twitter, Youtube } from "lucide-react";
+import logoImage from "@/assets/edumeup-engine.png";
+
+const learnLinks = [
+  { label: "Must-Have Courses", href: "/programs" },
+  { label: "Pre-O-Level Programmes", href: "/programs/pre-o-level-victory" },
+  { label: "O-Level English", href: "/programs/english-mastery" },
+  { label: "O-Level Subjects", href: "/programs/complete-o-level" },
+  { label: "ATP Courses", href: "/programs/atp-courses" },
+  { label: "Bridge Courses", href: "/programs/bridge-courses" },
+  { label: "Teacher Training (T1-T6)", href: "/teacher-training" },
+  { label: "Diagnostic Services", href: "/programs/ai-diagnostic" },
+  { label: "All Courses ->", href: "/all-programs" },
+];
+
+const platformLinks = [
+  { label: "Personalised Tutoring", href: "/tutoring" },
+  { label: "Cambridge Consultancy", href: "/cambridge-consultancy" },
+  { label: "Impact Partnerships", href: "/impact-partnerships" },
+  { label: "Pricing", href: "/pricing" },
+  { label: "Free Resources", href: "/free-resources" },
+  { label: "Performance Reports", href: "/dashboard" },
+  { label: "Diagnostic Services", href: "/programs/ai-diagnostic" },
+  { label: "Scholarship Programme", href: "/pricing#scholarship" },
+];
+
+const forYouLinks = [
+  { label: "For Students", href: "/for-students" },
+  { label: "For Parents", href: "/for-parents" },
+  { label: "For Teachers", href: "/for-teachers" },
+  { label: "For Schools", href: "/for-schools" },
+  { label: "My Dashboard", href: "/dashboard" },
+  { label: "Impact Partnerships", href: "/impact-partnerships" },
+];
+
+const companyLinks = [
+  { label: "About EduMeUp", href: "/about" },
+  { label: "How EduMeUp Works", href: "/how-it-works" },
+  { label: "How EduMeUp Is Different", href: "/how-edumeup-is-different" },
+  { label: "Research & Development", href: "/research" },
+  { label: "Blog", href: "/blog" },
+];
+
+const socialLinks = [
+  { label: "LinkedIn", href: "https://www.linkedin.com/company/edumeup/", Icon: Linkedin },
+  { label: "Facebook", href: "#", Icon: Facebook },
+  { label: "Instagram", href: "#", Icon: Instagram },
+  { label: "X", href: "#", Icon: Twitter },
+  { label: "YouTube", href: "#", Icon: Youtube },
+];
 
 export function Footer() {
-  const quickLinks = [
-    { label: "Home", href: "/" },
-    { label: "About & How It Works", href: "/about" },
-    { label: "All Programmes", href: "/programs" },
-    { label: "Free Diagnostic", href: "/programs/ai-diagnostic" },
-    { label: "Free Resources", href: "/resources/freebies" },
-    { label: "Research & Development", href: "/research" },
-    { label: "Blog", href: "/blog" },
-    { label: "For Schools", href: "/for-schools" },
-    { label: "Teacher Training (CTMW)", href: "/teacher-training" },
-  ];
-
-  const cambridgeProgrammes = [
-    { label: "Pre-O-Level Victory Program", href: "/programs/pre-o-level-victory" },
-    { label: "Foundational O-Level Bridge Courses", href: "/programs/bridge-courses" },
-    { label: "Complete O-Level Subject Preparation", href: "/programs/complete-o-level" },
-    { label: "English Language Mastery Courses", href: "/programs/english-mastery" },
-    { label: "ATP Courses (Physics | Chemistry | Biology)", href: "/programs/atp-courses" },
-    { label: "Real-Time Exam Preparation", href: "/programs/exam-prep" },
-    { label: "Tutor Booking – 1-to-1 Personalised Education", href: "/programs/tutor-booking" },
-    { label: "Teacher Training (CTMW)", href: "/teacher-training" },
-  ];
-
-  const freeModules = [
-    { label: "Physics: Newton's Laws", href: "https://moodle.example.com/physics1" },
-    { label: "Physics: Electricity", href: "https://moodle.example.com/physics2" },
-    { label: "Physics: Light", href: "https://moodle.example.com/physics3" },
-    { label: "Chemistry: Atomic Structure", href: "https://moodle.example.com/chem1" },
-    { label: "Chemistry: Ionic Bonding", href: "https://moodle.example.com/chem2" },
-    { label: "Chemistry: Acids & Bases", href: "https://moodle.example.com/chem3" },
-    { label: "Biology: Cell Organization", href: "https://moodle.example.com/bio1" },
-    { label: "Biology: Photosynthesis", href: "https://moodle.example.com/bio2" },
-    { label: "Biology: Enzymes", href: "https://moodle.example.com/bio3" },
-    { label: "Math: Linear Equations", href: "https://moodle.example.com/math1" },
-    { label: "Math: Geometry", href: "https://moodle.example.com/math2" },
-    { label: "Math: Graphs", href: "https://moodle.example.com/math3" },
-    { label: "Economics: Market Equilibrium", href: "https://moodle.example.com/econ1" },
-    { label: "Economics: Market Failure", href: "https://moodle.example.com/econ2" },
-    { label: "Business: Marketing Mix (4Ps)", href: "https://moodle.example.com/biz1" },
-  ];
-
-  const resourceLinks = [
-    { label: "Conceptual Learning & Practice Workbooks", href: "/resources/workbooks" },
-    { label: "Topical Exam Practice Workbooks", href: "/resources/topical-workbooks" },
-    { label: "Exam Practice Papers with Enhanced Solutions", href: "/resources/exam-papers" },
-    { label: "Conceptual Learning & Practice Worksheets (Primary to O-Level)", href: "/resources/worksheets" },
-    { label: "All Resources (Courses | Workbooks | Worksheets)", href: "/resources/all" },
-    { label: "Free Resources (Freebies)", href: "/resources/freebies" },
-    { label: "Research & Development", href: "/research" },
-    { label: "Blog", href: "/blog" },
-  ];
-
-  const pakistanProgrammes = [
-    { label: "Pakistan Matric Programme (Grades 9–10)", href: "/programs/matric" },
-    { label: "Pakistan FSc / ICS Programme", href: "/programs/fsc-ics" },
-    { label: "Pakistan ECAT – Engineering Colleges Admission Test", href: "/programs/ecat" },
-  ];
-
   return (
-    <footer className="overflow-x-hidden bg-slate-900 text-slate-100">
-      <div className="container-custom py-10">
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-[0.9fr_0.95fr_1.2fr_1fr_0.85fr_0.95fr] xl:gap-3">
-          
-          {/* Brand Column */}
-          <div className="min-w-0 space-y-4">
-            <div className="flex items-center space-x-2">
-              <div className="h-8 w-8 rounded-lg bg-[#2366c9] flex items-center justify-center">
-                <GraduationCap className="h-5 w-5 text-white" />
-              </div>
-              <span className="font-display text-xl font-bold text-white">Edumeup</span>
-            </div>
-            <p className="text-xs leading-relaxed text-slate-300 [text-shadow:0_0_10px_rgba(226,232,240,0.2)]">
-              A complete science-powered learning ecosystem - built for ambitious learners and high-performance schools worldwide.
+    <footer className="w-full bg-[#1E3A5F] font-[Arial] text-white">
+      <div className="h-1 w-full bg-[#17A589]" />
+
+      <div className="mx-auto max-w-[1200px] px-6 pb-10 pt-10 md:px-8 md:pb-10 md:pt-10 lg:px-20 lg:pb-12 lg:pt-[60px]">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-12 lg:grid-cols-[1.3fr_1fr_1fr_1fr_1fr] lg:gap-10">
+          <div className="space-y-5">
+            <img
+              src={logoImage}
+              alt="EduMeUp"
+              className="h-9 w-auto object-contain brightness-0 invert"
+            />
+            <p className="max-w-[300px] text-[14px] leading-6 text-white/90">
+              From content delivery to learning mastery - for every learner, everywhere.
             </p>
-            <div className="flex space-x-3">
-              {[
-                { Icon: Facebook, href: "#", label: "Facebook" },
-                { Icon: Twitter, href: "#", label: "Twitter / X" },
-                { Icon: Linkedin, href: "https://www.linkedin.com/company/edumeup/", label: "LinkedIn" },
-                { Icon: Instagram, href: "#", label: "Instagram" },
-              ].map(({ Icon, href, label }) => (
+            <div className="flex items-center gap-3">
+              {socialLinks.map(({ label, href, Icon }) => (
                 <a
                   key={label}
                   href={href}
-                  title={label}
-                  aria-label={label}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-slate-300 hover:text-white transition-colors [text-shadow:0_0_8px_rgba(226,232,240,0.18)]"
+                  aria-label={label}
+                  className="text-white transition-colors hover:text-[#17A589]"
                 >
-                  <Icon className="h-4 w-4" />
+                  <Icon className="h-5 w-5" />
                 </a>
               ))}
             </div>
-            <p className="text-xs text-slate-400 [text-shadow:0_0_8px_rgba(226,232,240,0.14)]">
-              Built on 27+ years of Cambridge classroom experience and cognitive science.
-            </p>
           </div>
 
-          {/* Quick Links */}
-          <div className="min-w-0">
-            <h3 className="mb-4 font-display text-sm font-semibold text-slate-50 [text-shadow:0_0_14px_rgba(226,232,240,0.28)]">Quick Links</h3>
-            <ul className="space-y-2">
-              {quickLinks.map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href} className="break-words text-xs leading-snug text-slate-200 hover:text-white transition-colors [text-shadow:0_0_10px_rgba(226,232,240,0.22)]">
+          <FooterColumn title="LEARN" links={learnLinks} />
+          <FooterColumn title="PLATFORM" links={platformLinks} />
+
+          <div>
+            <FooterColumn title="FOR YOU" links={forYouLinks} />
+            <div className="my-4 h-px w-full bg-white/20" />
+            <ul className="space-y-2.5">
+              {companyLinks.map((link) => (
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    className="text-[14px] leading-5 text-white/90 transition-colors hover:text-[#17A589]"
+                  >
                     {link.label}
                   </Link>
                 </li>
@@ -115,140 +102,90 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Cambridge / IGCSE Programmes */}
-          <div className="min-w-0">
-            <h3 className="mb-4 font-display text-sm font-semibold text-slate-50 [text-shadow:0_0_14px_rgba(226,232,240,0.28)]">Cambridge / IGCSE Programmes</h3>
-            <ul className="space-y-2">
-              {cambridgeProgrammes.map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href} className="break-words text-xs leading-snug text-slate-200 hover:text-white transition-colors [text-shadow:0_0_10px_rgba(226,232,240,0.22)]">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <div>
+            <h3 className="mb-4 text-[12px] font-bold uppercase tracking-[2px] text-[#17A589]">
+              CONTACT US
+            </h3>
 
-          {/* Resources & Workbooks */}
-          <div className="min-w-0">
-            <h3 className="mb-4 font-display text-sm font-semibold text-slate-50 [text-shadow:0_0_14px_rgba(226,232,240,0.28)]">Resources & Workbooks</h3>
-            <ul className="space-y-2">
-              {resourceLinks.map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href} className="break-words text-xs leading-snug text-slate-200 hover:text-white transition-colors [text-shadow:0_0_10px_rgba(226,232,240,0.22)]">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+            <a
+              href="#"
+              className="mb-4 flex w-full items-center justify-center gap-2 rounded-md bg-[#17A589] px-3 py-3 text-[13px] font-semibold text-white transition hover:bg-[#149174]"
+            >
+              <MessageCircle className="h-4 w-4" />
+              Chat With Us on WhatsApp
+            </a>
 
-          {/* Pakistan Curriculum */}
-          <div className="hidden min-w-0 xl:block">
-            <h3 className="mb-5 font-display text-base font-semibold text-slate-50">Pakistan Curriculum</h3>
-            <ul className="space-y-3">
-              {pakistanProgrammes.map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href} className="break-words text-sm leading-snug text-slate-200 hover:text-white transition-colors">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+            <a
+              href="mailto:support@edumeup.com"
+              className="mb-3 inline-flex items-center gap-2 text-[14px] text-white transition-colors hover:text-[#17A589]"
+            >
+              <Mail className="h-4 w-4" />
+              support@edumeup.com
+            </a>
 
-          {/* Free Interactive Modules */}
-          <div className="min-w-0 flex flex-col">
-            <h3 className="mb-4 font-display text-sm font-semibold text-slate-50">Free Modules (15)</h3>
-            <div className="grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-2 lg:grid-cols-1">
-              <ul className="space-y-2">
-                {freeModules.slice(0, 8).map((link) => (
-                  <li key={link.href}>
-                    <a href={link.href} target="_blank" rel="noreferrer" className="break-words text-xs leading-snug text-slate-200 hover:text-white transition-colors">
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-              <ul className="space-y-2">
-                {freeModules.slice(8).map((link) => (
-                  <li key={link.href}>
-                    <a href={link.href} target="_blank" rel="noreferrer" className="break-words text-xs leading-snug text-slate-200 hover:text-white transition-colors">
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
+            <div className="mb-3">
+              <Link
+                href="/contact"
+                className="text-[14px] text-white transition-colors hover:text-[#17A589]"
+              >
+                Contact Us
+              </Link>
             </div>
-          </div>
 
-          {/* Pakistan Programmes mobile accordion */}
-          <details className="md:col-span-2 rounded-lg border border-slate-800 bg-slate-900/40 p-3 xl:hidden">
-            <summary className="cursor-pointer list-none font-display text-sm font-semibold text-slate-50 [text-shadow:0_0_14px_rgba(226,232,240,0.28)]">
-              Pakistan Programmes
-            </summary>
-            <ul className="mt-3 space-y-2">
-              {pakistanProgrammes.map((link) => (
-                <li key={`mobile-${link.href}`}>
-                  <Link href={link.href} className="break-words text-xs leading-snug text-slate-200 hover:text-white transition-colors [text-shadow:0_0_10px_rgba(226,232,240,0.22)]">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </details>
-
-          {/* Contact */}
-          <div className="min-w-0">
-            <h3 className="mb-4 font-display text-sm font-semibold text-slate-50 [text-shadow:0_0_14px_rgba(226,232,240,0.28)]">Contact Us</h3>
-            <ul className="space-y-2 text-xs text-slate-200 [text-shadow:0_0_10px_rgba(226,232,240,0.2)]">
-              <li className="flex items-center gap-3">
-                <Phone className="h-4 w-4 shrink-0 text-[#2366c9]" />
-                <span>+92 300 1234567</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Mail className="h-4 w-4 shrink-0 text-[#2366c9]" />
-                <span>info@edumeup.com</span>
-              </li>
-              <li className="text-slate-300">We respond within 24 hours</li>
-              <li>
-                <Link href="/contact" className="break-words hover:text-white transition-colors underline-offset-2 hover:underline">
-                  Contact Us
-                </Link>
-              </li>
-              <li>
-                <Link href="/for-schools/partnership" className="break-words hover:text-white transition-colors underline-offset-2 hover:underline">
-                  Book School Consultation
-                </Link>
-              </li>
-              <li>
-                <Link href="/teacher-training" className="break-words hover:text-white transition-colors underline-offset-2 hover:underline">
-                  Book Teacher Training
-                </Link>
-              </li>
-            </ul>
+            <p className="text-[12px] italic leading-5 text-[#C7D1DC]">
+              We typically respond within 24 hours on working days.
+            </p>
           </div>
         </div>
       </div>
 
-      <div className="border-t border-slate-800 bg-slate-950/80">
-        <div className="container-custom flex flex-col gap-2 py-4 text-[11px] text-slate-400 [text-shadow:0_0_8px_rgba(226,232,240,0.16)] md:flex-row md:items-center md:justify-between md:text-xs">
-          <p>&copy; {new Date().getFullYear()} EduMeUp.com | All Rights Reserved</p>
-          <p className="flex flex-wrap items-center gap-x-3 gap-y-1">
-            <Link href="/privacy" className="text-slate-300 hover:text-white underline-offset-2 hover:underline">
-              Privacy Policy
-            </Link>
-            <span>|</span>
-            <Link href="/terms" className="text-slate-300 hover:text-white underline-offset-2 hover:underline">
-              Terms of Use
-            </Link>
-            <span>|</span>
-            <Link href="/cookies" className="text-slate-300 hover:text-white underline-offset-2 hover:underline">
-              Cookie Policy
-            </Link>
-          </p>
+      <div className="bg-[#162D4A]">
+        <div className="mx-auto flex max-w-[1200px] flex-col items-start gap-3 px-6 py-4 text-[12px] text-white/90 md:px-8 lg:flex-row lg:items-center lg:justify-between lg:px-20">
+          <p className="whitespace-nowrap">&copy; 2026 EduMeUp.com - All rights reserved</p>
+
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <a href="#" className="transition-colors hover:text-[#17A589]">Privacy Policy</a>
+            <span className="text-white/55">|</span>
+            <a href="#" className="transition-colors hover:text-[#17A589]">Terms of Use</a>
+            <span className="text-white/55">|</span>
+            <a href="#" className="transition-colors hover:text-[#17A589]">Cookie Policy</a>
+            <span className="text-white/55">|</span>
+            <a href="#" className="transition-colors hover:text-[#17A589]">Teacher T&amp;C</a>
+            <span className="text-white/55">|</span>
+            <a href="#" className="transition-colors hover:text-[#17A589]">Parent T&amp;C</a>
+          </div>
+
+          <p className="whitespace-nowrap">EduMeUp.com</p>
         </div>
       </div>
     </footer>
+  );
+}
+
+function FooterColumn({
+  title,
+  links,
+}: {
+  title: string;
+  links: { label: string; href: string }[];
+}) {
+  return (
+    <div>
+      <h3 className="mb-4 text-[12px] font-bold uppercase tracking-[2px] text-[#17A589]">
+        {title}
+      </h3>
+      <ul className="space-y-2.5">
+        {links.map((link) => (
+          <li key={link.label}>
+            <Link
+              href={link.href}
+              className="text-[14px] leading-5 text-white/90 transition-colors hover:text-[#17A589]"
+            >
+              {link.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }

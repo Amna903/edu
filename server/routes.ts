@@ -250,6 +250,30 @@ export async function registerRoutes(
   };
 
   // === INQUIRIES ===
+  app.get("/api/auth/verify-partner-code", async (req, res) => {
+    const rawCode = typeof req.query.code === "string" ? req.query.code.trim().toUpperCase() : "";
+    if (!rawCode) {
+      return res.status(400).json({ message: "Partner code is required" });
+    }
+
+    // TODO: replace with edume_school_partners table lookup.
+    const partnerCodes: Record<string, { schoolName: string }> = {
+      SCH123: { schoolName: "EduMeUp Partner School" },
+      CAMB2026: { schoolName: "Cambridge Excellence School" },
+      OLVL001: { schoolName: "Global O-Level Academy" },
+    };
+
+    const match = partnerCodes[rawCode];
+    if (!match) {
+      return res.json({ valid: false });
+    }
+
+    return res.json({
+      valid: true,
+      schoolName: match.schoolName,
+    });
+  });
+
   app.post(api.auth.login.path, async (req, res) => {
     try {
       const input = loginInputSchema.parse(req.body);

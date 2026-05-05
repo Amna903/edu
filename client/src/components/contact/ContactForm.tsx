@@ -131,7 +131,7 @@ export function ContactForm() {
     <div className="rounded-3xl border border-blue-100 bg-white p-6 shadow-sm sm:p-8">
       <h3 className="text-2xl font-semibold text-[#1e1b4b]">Send a Message</h3>
       <p className="mt-2 text-sm text-slate-600">
-        Messages are handled by our support team and routed to info@edumeup.com.
+        Messages are handled by our support team and routed to support@edumeup.com.
       </p>
 
       {isSubmitted && (

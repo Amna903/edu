@@ -62,7 +62,7 @@ export const contactDetailItems: ContactDetailItem[] = [
   },
   {
     label: "Email",
-    value: "info@edumeup.com",
+    value: "support@edumeup.com",
     icon: Mail,
   },
   {

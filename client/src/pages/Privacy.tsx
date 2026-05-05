@@ -80,7 +80,7 @@ export default function Privacy() {
             <p className="mt-3 text-sm text-slate-700 leading-relaxed">
               Account data is retained while accounts remain active and for [INSERT PERIOD e.g. 2 years] after closure.
               Learning progress data is retained during active programme subscription periods.
-              Users may request deletion at any time via info@edumeup.com.
+              Users may request deletion at any time via support@edumeup.com.
             </p>
           </div>
 
@@ -88,7 +88,7 @@ export default function Privacy() {
             <h2 className="text-2xl font-semibold text-slate-900">6. Your Rights</h2>
             <p className="mt-3 text-sm text-slate-700 leading-relaxed">
               Subject to applicable law, users may access, correct, delete, object to certain processing, and request portability
-              of their personal data. To exercise rights, contact info@edumeup.com.
+              of their personal data. To exercise rights, contact support@edumeup.com.
             </p>
           </div>
 
@@ -110,7 +110,7 @@ export default function Privacy() {
 
           <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
             <h2 className="text-2xl font-semibold text-slate-900">9. Contact</h2>
-            <p className="mt-3 text-sm text-slate-700">Privacy enquiries: info@edumeup.com | EduMeUp.com</p>
+            <p className="mt-3 text-sm text-slate-700">Privacy enquiries: support@edumeup.com | EduMeUp.com</p>
           </div>
         </div>
       </section>

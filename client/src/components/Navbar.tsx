@@ -1,51 +1,92 @@
 import { Link, useLocation } from "wouter";
-import { Button } from "@/components/ui/button";
-import {
-  Menu,
-  X,
-  House,
-  BookOpen,
-  GraduationCap,
-  School,
-  Users,
-  FileText,
-  ShoppingCart,
-  Beaker,
-  ChevronDown,
-  ChevronRight,
-  Mail,
-  Award,
-  Building2,
-} from "lucide-react";
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { useCart } from "@/context/CartContext";
-import { useAuthUser } from "@/hooks/use-auth";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-  DropdownMenuLabel,
-} from "@/components/ui/dropdown-menu";
-
+import { ChevronDown } from "lucide-react";
+import { useAuthUser, useLogout } from "@/hooks/use-auth";
 import logoImage from "@/assets/WhatsApp_Image_2026-02-22_at_20.36.37_1771782478374.jpeg";
 
+type MegaColumn = {
+  heading?: string;
+  items: {
+    label: string;
+    href: string;
+    eyebrow?: string;
+  }[];
+};
+
+type SimpleDropdownItem =
+  | {
+      type?: "item";
+      label: string;
+      description: string;
+      href: string;
+    }
+  | {
+      type: "separator";
+    };
+
+const learnColumns: MegaColumn[] = [
+  {
+    heading: "Diagnostics & Assessment",
+    items: [
+      { label: "Diagnostic Services", href: "/programs/ai-diagnostic", eyebrow: "Assessment" },
+      { label: "O-Level Bridge Diagnostic", href: "/programs/ai-diagnostic" },
+      { label: "English Level Check", href: "/programs/english-mastery" },
+      { label: "O-Level Subject Diagnostic", href: "/programs/complete-o-level" },
+      { label: "ATP Diagnostic", href: "/programs/atp-courses" },
+      { label: "Teacher Subject Knowledge Diagnostic", href: "/teacher-courses#t1" },
+      { label: "School Class-Level Diagnostic", href: "/diagnostics#school-class" },
+    ],
+  },
+  {
+    heading: "Student Programmes",
+    items: [
+      { label: "Lower Secondary", href: "/programs", eyebrow: "Gr 6-8" },
+      { label: "Pre-O-Level", href: "/programs/pre-o-level-victory" },
+      { label: "Must-Have Courses", href: "/programs" },
+      { label: "O-Level English", href: "/programs/english-mastery", eyebrow: "10 courses" },
+      { label: "O-Level Subjects", href: "/programs/complete-o-level", eyebrow: "10 subjects" },
+      { label: "ATP Courses", href: "/programs/atp-courses" },
+      { label: "Bridge Courses", href: "/programs/bridge-courses" },
+    ],
+  },
+  {
+    heading: "Exam, Resources & Teacher",
+    items: [
+      { label: "Exam Prep", href: "/programs/exam-prep" },
+      { label: "Mock Exams", href: "/programs/exam-prep" },
+      { label: "Exam Preparation Workbooks", href: "/exam-prep-workbooks", eyebrow: "paid" },
+      { label: "Teacher Courses", href: "/teacher-courses", eyebrow: "T1-T6" },
+      { label: "Teacher Certification", href: "/teacher-training" },
+      { label: "Free Resources", href: "/free-resources", eyebrow: "samples only" },
+    ],
+  },
+];
+
+const forYouItems: SimpleDropdownItem[] = [
+  { label: "For Students", description: "Courses, diagnostics, and study support", href: "/for-students" },
+  { label: "For Parents", description: "Progress visibility and guided learning plans", href: "/for-parents" },
+  { label: "For Teachers", description: "Training, certification, and classroom tools", href: "/for-teachers" },
+  { label: "For Schools", description: "Whole-school programmes and implementation", href: "/for-schools" },
+  { type: "separator" },
+  { label: "Impact Partnerships", description: "Access, scholarships, and ecosystem work", href: "/impact-partnerships" },
+  { label: "Contact Us / Get a Demo", description: "Talk to the EduMeUp team", href: "/contact" },
+];
+
+const consultancyItems: SimpleDropdownItem[] = [
+  { label: "Cambridge Consultancy", description: "Strategy and implementation support", href: "/cambridge-consultancy" },
+  { type: "separator" },
+  { label: "About EduMeUp", description: "Mission, team, and learning philosophy", href: "/about" },
+  { label: "How EduMeUp Works", description: "Our model from diagnosis to mastery", href: "/how-it-works" },
+  { label: "How EduMeUp Is Different", description: "What sets the platform apart", href: "/how-edumeup-is-different" },
+  { label: "Research & Development", description: "Learning science and product research", href: "/research" },
+  { label: "Blog", description: "Insights for students, parents, and schools", href: "/blog" },
+  { type: "separator" },
+  { label: "Contact Us", description: "Start a conversation with our team", href: "/contact" },
+];
+
 export function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [location] = useLocation();
-  const { items } = useCart();
   const { data: user } = useAuthUser();
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll);
-
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  const logout = useLogout();
 
   const dashboardPath =
     user?.role === "admin"
@@ -56,418 +97,226 @@ export function Navbar() {
           ? "/dashboard/school"
           : "/dashboard/student";
 
-  // v2.0 Correct Menu Structure (exact order from spec)
-  const navItems: any[] = [
-    { type: "link", href: "/", label: "Home", icon: House },
-    {
-      type: "dropdown",
-      mainHref: "/about",
-      label: "About & Process",
-      icon: Users,
-      children: [
-        { href: "/why-edumeup", label: "Why EduMeUp", icon: Beaker },
-        { href: "/why-edumeup/how-it-works", label: "How It Works", icon: BookOpen },
-        { href: "/why-edumeup/8-step-model", label: "The 8-Step Mastery Cycle", icon: Award },
-      ],
-    },
-    {
-      type: "dropdown",
-      mainHref: "/programs",
-      label: "Mastery Path",
-      icon: BookOpen,
-      isMegaDropdown: true,
-      children: [
-        {
-          label: "Cambridge / IGCSE",
-          section: true,
-          children: [
-            { href: "/programs/ai-diagnostic", label: "AI Diagnostic Assessment", icon: Beaker },
-            { href: "/programs/pre-o-level-victory", label: "Pre-O-Level Victory Program", icon: BookOpen },
-            { href: "/programs/bridge-courses", label: "Foundational O-Level Bridge Courses", icon: BookOpen },
-            { href: "/programs/complete-o-level", label: "Complete O-Level Subject Preparation", icon: BookOpen },
-            { href: "/programs/english-mastery", label: "English Language Mastery Courses", icon: BookOpen },
-            { href: "/programs/atp-courses", label: "ATP Courses (Physics | Chemistry | Biology)", icon: Beaker },
-            { href: "/programs/exam-prep", label: "Real-Time Exam Preparation", icon: BookOpen },
-            { href: "/programs/tutor-booking", label: "Tutor Booking — 1-to-1 Personalised Education", icon: Users },
-          ],
-        },
-        {
-          label: "Pakistan Curriculum",
-          section: true,
-          children: [
-            { href: "/programs/matric", label: "Pakistan Matric Programme (Grades 9–10)", icon: BookOpen },
-            { href: "/programs/fsc-ics", label: "Pakistan FSc / ICS Programme", icon: BookOpen },
-            { href: "/programs/ecat", label: "Pakistan ECAT — Engineering Colleges Admission Test", icon: Beaker },
-          ],
-        },
-      ],
-    },
-    {
-      type: "dropdown",
-      mainHref: "/portals",
-      label: "My Dashboard",
-      icon: Users,
-      children: [
-        { href: "/for-students", label: "Student Portal", icon: GraduationCap },
-        { href: "/for-parents", label: "Parent Portal", icon: Users },
-        { href: "/for-teachers", label: "Teacher Portal", icon: GraduationCap },
-        { href: "/for-schools", label: "School Portal", icon: School },
-      ],
-    },
-    {
-      type: "dropdown",
-      mainHref: "/resources",
-      label: "Resources & Research",
-      icon: Beaker,
-      children: [
-        {
-          label: "Knowledge Content",
-          section: true,
-          children: [
-            { href: "/resources/freebies", label: "Free Resources (Freebies)", icon: FileText },
-            { href: "/research", label: "Research & Development", icon: Beaker },
-            { href: "/blog", label: "Blog", icon: FileText },
-          ],
-        },
-        {
-          label: "Learning Materials",
-          section: true,
-          children: [
-            { href: "/resources/workbooks", label: "Conceptual Learning & Practice Workbooks", icon: BookOpen },
-            { href: "/resources/topical-workbooks", label: "Topical Exam Practice Workbooks", icon: BookOpen },
-            { href: "/resources/exam-papers", label: "Exam Practice Papers with Enhanced Solutions", icon: FileText },
-            { href: "/resources/worksheets", label: "Conceptual Learning & Practice Worksheets (Primary to O-Level)", icon: BookOpen },
-            { href: "/resources/all", label: "All Resources (Courses | Workbooks | Worksheets)", icon: BookOpen },
-          ],
-        },
-      ],
-    },
-    { type: "link", href: "/teacher-training", label: "Teacher Training", icon: GraduationCap },
-    {
-      type: "dropdown",
-      mainHref: "/for-schools",
-      label: "For Schools",
-      icon: Building2,
-      children: [
-        { href: "/for-schools/partnership", label: "School Partnership Programme", icon: Building2 },
-      ],
-    },
-    { type: "link", href: "/pricing", label: "Pricing", icon: ShoppingCart },
-    { type: "link", href: "/contact", label: "Contact Us", icon: Mail },
-  ];
+  const dashboardHref = user ? dashboardPath : "/login";
+  const firstName =
+    user?.firstname ||
+    user?.fullname?.split(" ")[0] ||
+    user?.username ||
+    "Account";
 
-  const isActive = (path: string) => location === path;
+  const isActive = (path: string) => {
+    if (path === "/") return location === "/";
+    return location === path || location.startsWith(`${path}/`);
+  };
+
+  const navLinkClass = (path?: string, activeOverride?: boolean) => {
+    const active = activeOverride ?? Boolean(path && isActive(path));
+
+    return `relative flex h-12 items-center whitespace-nowrap px-0 pt-0.5 font-[Arial] text-[12px] font-semibold uppercase tracking-normal transition-colors after:absolute after:bottom-[8px] after:left-0 after:h-[2px] after:bg-[#17A589] after:transition-all xl:h-14 xl:text-[13px] ${
+      active
+        ? "text-white after:w-full"
+        : "text-white/85 after:w-0 hover:text-white hover:after:w-full"
+    }`;
+  };
 
   return (
-    <nav
-      className={`sticky top-0 z-50 w-full border-b border-white/10 backdrop-blur-md transition-colors duration-300 ${
-        scrolled
-          ? "bg-gradient-to-b from-[#2366c9] via-[#2f71d0] to-[#eef6ff] shadow-lg"
-          : "bg-gradient-to-b from-[#2366c9]/95 via-[#2f71d0]/88 to-[#eef6ff]/70"
-      }`}
-    >
-      <div className="w-full px-6 lg:px-8 flex h-20 items-center justify-center relative">
-        {/* Logo - Left */}
-        <Link href="/" className="flex items-center shrink-0 absolute left-6 lg:left-8">
+    <nav className="sticky top-0 z-[1000] w-full border-b border-white/10 bg-gradient-to-r from-[#162B48] via-[#1E3A5F] to-[#163052] shadow-[0_2px_16px_rgba(0,0,0,0.25)]">
+      <div className="relative flex h-14 w-full items-center gap-4 px-4 md:px-5 xl:h-16 xl:px-7 2xl:px-10">
+        <Link href="/" className="flex shrink-0 items-center lg:w-[160px] 2xl:w-[200px]">
           <img
             src={logoImage}
             alt="EduMeUp Logo"
-            className="h-10 w-auto object-contain"
+            className="h-8 w-auto object-contain xl:h-9"
           />
         </Link>
 
-        {/* Desktop Nav - Centered */}
-        <div className="hidden md:flex items-center justify-center gap-12">
-            {navItems.slice(0, 6).map((item) => {
-              if (item.type === "link") {
-                return (
-                  <Link key={item.href} href={item.href}>
-                    <div
-                      title={item.label}
-                      className={`flex items-center gap-2 px-0 py-2 text-sm font-medium transition-colors whitespace-nowrap ${
-                        isActive(item.href)
-                            ? "text-white font-semibold"
-                          : "text-white/80 hover:text-white"
-                      }`}
-                    >
-                      <span>{item.label}</span>
-                    </div>
-                  </Link>
-                );
-              }
+        <div className="flex min-w-0 flex-1 items-center justify-center gap-5 xl:gap-7 2xl:gap-8">
+          <Link href="/" className={navLinkClass("/")}>
+            Home
+          </Link>
 
-              return (
-                <DropdownMenu key={item.label}>
+          <div className="group static">
+            <button
+              type="button"
+              className={navLinkClass(
+                undefined,
+                [
+                  "/programs",
+                  "/all-programs",
+                  "/free-resources",
+                  "/teacher-courses",
+                  "/teacher-training",
+                  "/exam-prep-workbooks",
+                ].some(isActive),
+              )}
+            >
+              <span>Learn</span>
+              <ChevronDown className="ml-1 h-4 w-4" />
+            </button>
+            <div className="invisible absolute left-0 top-full w-screen translate-y-1 border-t border-[#17A589]/30 bg-[#F8FAFC] opacity-0 shadow-[0_24px_50px_rgba(15,23,42,0.22)] transition-all duration-150 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+              <div className="h-1 w-full bg-gradient-to-r from-[#17A589] via-[#2E75B6] to-[#17A589]" />
+              <div className="mx-auto grid max-w-7xl grid-cols-3 gap-4 px-6 py-5 xl:px-8 xl:py-6">
+                {learnColumns.map((column) => (
                   <div
-                    className={`flex items-center whitespace-nowrap ${
-                      isActive(item.mainHref) ||
-                      item.children?.some((child: any) => !child.section && isActive(child.href))
-                        ? "text-white font-semibold"
-                        : "text-white/80 hover:text-white"
-                    }`}
+                    key={column.heading}
+                    className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm xl:p-5"
                   >
-                    <Link href={item.mainHref}>
-                      <div className="flex items-center gap-2 px-0 py-2 text-sm font-medium">
-                        <span>{item.label}</span>
-                      </div>
-                    </Link>
-                    <DropdownMenuTrigger asChild>
-                      <button type="button" className="px-1">
-                        <ChevronDown className="h-4 w-4 opacity-60" />
-                      </button>
-                    </DropdownMenuTrigger>
+                    <p className="mb-3 border-b border-slate-100 pb-2 font-[Arial] text-[11px] font-bold uppercase tracking-[0.1em] text-[#1E3A5F]">
+                      {column.heading}
+                    </p>
+                    <div className="space-y-0.5">
+                      {column.items.map((item) => (
+                        <Link
+                          key={`${item.label}-${item.href}`}
+                          href={item.href}
+                          className="block rounded-md border-l-2 border-transparent px-2.5 py-1.5 transition hover:border-[#17A589] hover:bg-[#EAF7F4]"
+                        >
+                          <span className="block font-[Arial] text-[12px] font-bold uppercase leading-4 text-slate-800">
+                            {item.label}
+                          </span>
+                          {item.eyebrow && (
+                            <span className="block font-[Arial] text-[11px] italic text-slate-500">
+                              {item.eyebrow}
+                            </span>
+                          )}
+                        </Link>
+                      ))}
+                    </div>
                   </div>
-                  <DropdownMenuContent
-                    align="start"
-                    className={item.isMegaDropdown ? "w-[600px] p-4" : "w-64"}
-                  >
-                    {item.isMegaDropdown ? (
-                      <div className="grid grid-cols-2 gap-6">
-                        <div>
-                          {item.children
-                            .filter((groupSection: any) => groupSection.label === "Cambridge / IGCSE")
-                            .map((groupSection: any, idx: number) => (
-                              <div key={groupSection.label}>
-                                {idx > 0 && <DropdownMenuSeparator className="my-3" />}
-                                <DropdownMenuLabel className="px-3 py-2 text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
-                                  {groupSection.label}
-                                </DropdownMenuLabel>
-                                <div className="space-y-2">
-                                  {groupSection.children.map((child: any) => (
-                                    <DropdownMenuItem key={child.href} asChild>
-                                      <Link href={child.href} className="flex items-center gap-3 w-full cursor-pointer rounded px-3 py-2 text-sm">
-                                        <child.icon className="h-4 w-4 shrink-0 text-slate-400" />
-                                        <span className="text-slate-700">{child.label}</span>
-                                      </Link>
-                                    </DropdownMenuItem>
-                                  ))}
-                                </div>
-                              </div>
-                            ))}
-                        </div>
-
-                        <div className="border-l border-slate-200 pl-6">
-                          {item.children
-                            .filter((groupSection: any) => groupSection.label === "Pakistan Curriculum")
-                            .map((groupSection: any) => (
-                              <div key={groupSection.label}>
-                                <DropdownMenuLabel className="px-3 py-2 text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
-                                  {groupSection.label}
-                                </DropdownMenuLabel>
-                                <div className="space-y-2">
-                                  {groupSection.children.map((child: any) => (
-                                    <DropdownMenuItem key={child.href} asChild>
-                                      <Link href={child.href} className="flex items-center gap-3 w-full cursor-pointer rounded px-3 py-2 text-sm">
-                                        <child.icon className="h-4 w-4 shrink-0 text-slate-400" />
-                                        <span className="text-slate-700">{child.label}</span>
-                                      </Link>
-                                    </DropdownMenuItem>
-                                  ))}
-                                </div>
-                              </div>
-                            ))}
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        {item.children.map((child: any, childIdx: number) => {
-                          if (child.section) {
-                            return (
-                              <div key={child.label}>
-                                {childIdx > 0 && <DropdownMenuSeparator className="my-2" />}
-                                <DropdownMenuLabel className="text-xs font-bold uppercase tracking-wide text-slate-500 px-3 py-2 mb-2">
-                                  {child.label}
-                                </DropdownMenuLabel>
-                                <div className="space-y-1">
-                                  {child.children.map((subChild: any) => (
-                                    <DropdownMenuItem key={subChild.href} asChild>
-                                      <Link href={subChild.href} className="flex items-center gap-3 w-full cursor-pointer px-3 py-2 text-sm rounded">
-                                        <subChild.icon className="h-4 w-4" />
-                                        <span>{subChild.label}</span>
-                                      </Link>
-                                    </DropdownMenuItem>
-                                  ))}
-                                </div>
-                              </div>
-                            );
-                          }
-                          return (
-                            <DropdownMenuItem key={child.href} asChild>
-                              <Link href={child.href} className="flex items-center gap-3 w-full cursor-pointer px-3 py-2 text-sm rounded">
-                                <child.icon className="h-4 w-4" />
-                                <span>{child.label}</span>
-                              </Link>
-                            </DropdownMenuItem>
-                          );
-                        })}
-                      </>
-                    )}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              );
-            })}
+                ))}
+              </div>
+              <Link
+                href="/all-programs"
+                className="block border-t border-slate-200 bg-white px-8 py-3 text-center font-[Arial] text-[13px] font-bold uppercase tracking-[0.06em] text-[#1E3A5F] transition hover:bg-[#17A589] hover:text-white"
+              >
+                All Courses - View the complete EduMeUp programme catalogue &gt;
+              </Link>
+            </div>
           </div>
 
-        {/* Mobile logo */}
-        <Link href="/" className="md:hidden flex items-center shrink-0">
-          <img
-            src={logoImage}
-            alt="EduMeUp Logo"
-            className="h-8 w-auto object-contain"
-          />
-        </Link>
-
-        {/* CTA Buttons - Right */}
-        <div className="flex items-center gap-6 absolute right-6 lg:right-8">
-          <Link href="/cart">
-            <Button variant="ghost" size="icon" className="relative text-white hover:bg-white/10">
-              <ShoppingCart className="h-5 w-5" />
-              {items.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-[9px] font-semibold rounded-full w-5 h-5 flex items-center justify-center">
-                  {items.length}
-                </span>
-              )}
-            </Button>
+          <Link href="/tutoring" className={navLinkClass("/tutoring")}>
+            Tutoring
           </Link>
+
+          <SimpleDropdown
+            label="For You"
+            active={["/for-students", "/for-parents", "/for-teachers", "/for-schools"].some(isActive)}
+            items={forYouItems}
+            widthClass="w-[280px]"
+            navLinkClass={navLinkClass}
+          />
+
+          <SimpleDropdown
+            label="Cambridge Consultancy"
+            active={["/cambridge-consultancy", "/about", "/how-it-works", "/research", "/blog"].some(isActive)}
+            items={consultancyItems}
+            widthClass="w-[300px]"
+            navLinkClass={navLinkClass}
+          />
+
+          <Link href="/pricing" className={navLinkClass("/pricing")}>
+            Pricing
+          </Link>
+        </div>
+
+        <div className="shrink-0 items-center justify-end gap-2 lg:flex lg:w-[330px] 2xl:w-[390px] 2xl:gap-3 hidden">
+          <Link
+            href="/free-resources"
+            className="whitespace-nowrap rounded-md border border-[#17A589] px-4 py-2.5 font-[Arial] text-[12px] font-semibold leading-none text-[#17A589] transition hover:bg-[#17A589] hover:text-white xl:px-5 xl:py-3 xl:text-[13px]"
+          >
+            Free Resources
+          </Link>
+
+          <Link
+            href={dashboardHref}
+            className="whitespace-nowrap rounded-md bg-[#2E75B6] px-4 py-2.5 font-[Arial] text-[12px] font-semibold leading-none text-white transition hover:bg-[#163052] xl:px-5 xl:py-3 xl:text-[13px]"
+          >
+            My Dashboard
+          </Link>
+
           {user ? (
-            <Link href={dashboardPath}>
+            <div className="group relative">
               <button
                 type="button"
-                className="hidden sm:flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/10 text-[11px] font-bold text-white transition hover:border-white/35 hover:bg-white/15"
-                title="Open dashboard"
+                className="flex items-center whitespace-nowrap rounded-md bg-[#17A589] px-4 py-2.5 font-[Arial] text-[12px] font-semibold leading-none text-white transition hover:bg-[#1DC8A7] xl:px-5 xl:py-3 xl:text-[13px]"
               >
-                {user.firstname?.[0] || user.fullname?.[0] || user.username[0]}
+                {firstName}
+                <ChevronDown className="ml-1 h-4 w-4" />
               </button>
-            </Link>
+              <div className="invisible absolute right-0 top-full w-40 translate-y-1 overflow-hidden rounded-b-lg border border-slate-200 bg-white py-2 opacity-0 shadow-[0_18px_36px_rgba(15,23,42,0.18)] transition-all duration-150 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+                <div className="mb-1 h-1 bg-gradient-to-r from-[#17A589] to-[#2E75B6]" />
+                <Link href={dashboardPath} className="mx-2 block rounded-md px-3 py-2 font-[Arial] text-[12px] font-semibold text-slate-700 transition hover:bg-[#EAF7F4] hover:text-[#1E3A5F]">
+                  Dashboard
+                </Link>
+                <Link href="/dashboard/profile" className="mx-2 block rounded-md px-3 py-2 font-[Arial] text-[12px] font-semibold text-slate-700 transition hover:bg-[#EAF7F4] hover:text-[#1E3A5F]">
+                  Profile
+                </Link>
+                <div className="my-1 h-px bg-slate-200" />
+                <button
+                  type="button"
+                  onClick={() => logout.mutate()}
+                  className="mx-2 block w-[calc(100%-16px)] rounded-md px-3 py-2 text-left font-[Arial] text-[12px] font-semibold text-slate-700 transition hover:bg-[#EAF7F4] hover:text-[#1E3A5F]"
+                >
+                  Log out
+                </button>
+              </div>
+            </div>
           ) : (
-            <>
-              <Link href="/register" className="hidden sm:flex">
-                <Button size="sm" className="h-10 px-6 text-sm font-semibold shadow-md bg-white text-[#2366c9] hover:bg-blue-50">
-                  Sign Up
-                </Button>
-              </Link>
-              <Link href="/login" className="hidden sm:flex">
-                <Button variant="outline" size="sm" className="h-10 px-6 text-sm font-semibold border-white/30 text-white hover:bg-white/10 hover:text-white bg-transparent">
-                  Log In
-                </Button>
-              </Link>
-            </>
+            <Link
+              href="/login"
+              className="whitespace-nowrap rounded-md bg-[#17A589] px-4 py-2.5 font-[Arial] text-[12px] font-semibold leading-none text-white transition hover:bg-[#1DC8A7] xl:px-5 xl:py-3 xl:text-[13px]"
+            >
+              Login
+            </Link>
           )}
-          <Button variant="ghost" size="icon" className="md:hidden text-white hover:bg-white/10 hover:text-white" onClick={() => setIsOpen(!isOpen)}>
-            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </Button>
         </div>
       </div>
-
-      {/* Mobile Nav */}
-      {isOpen && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          transition={{ duration: 0.2 }}
-          className="border-b border-white/10 bg-[#2366c9] md:hidden overflow-hidden"
-        >
-          <div className="space-y-1 p-4">
-              {navItems.map((item) => {
-                if (item.type === "link") {
-                  return (
-                    <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)}>
-                      <div
-                        className={`flex items-center gap-2 rounded-lg px-4 py-2.5 text-[12px] font-medium transition-colors ${
-                          isActive(item.href)
-                            ? "bg-white/15 text-white font-semibold"
-                            : "text-white/90 hover:text-white hover:bg-white/10"
-                        }`}
-                      >
-                        <item.icon className="h-4 w-4" />
-                        {item.label}
-                      </div>
-                    </Link>
-                  );
-                }
-
-                return (
-                  <div key={item.label} className="space-y-1">
-                    <Link href={item.mainHref} onClick={() => setIsOpen(false)}>
-                      <div className="flex items-center justify-between rounded-lg px-4 py-2 text-[9px] font-semibold text-white/75 uppercase tracking-wider hover:text-white hover:bg-white/10 border border-transparent hover:border-white/10">
-                        <span>{item.label}</span>
-                        <ChevronRight className="h-3.5 w-3.5 opacity-70" />
-                      </div>
-                    </Link>
-                    {item.children.map((child: any) => {
-                      if (child.section) {
-                        return (
-                          <div key={child.label} className="space-y-1">
-                            <div className="px-4 py-1 text-[9px] font-bold text-slate-400 uppercase tracking-wider">
-                              {child.label}
-                            </div>
-                            {child.children.map((subChild: any) => (
-                              <Link key={subChild.href} href={subChild.href} onClick={() => setIsOpen(false)}>
-                                <div
-                                  className={`flex items-center gap-2 rounded-lg px-8 py-2 text-[10px] font-medium transition-colors ${
-                                    isActive(subChild.href)
-                                      ? "bg-white/15 text-white font-semibold"
-                                      : "text-white/90 hover:text-white hover:bg-white/10"
-                                  }`}
-                                >
-                                  <subChild.icon className="h-3.5 w-3.5" />
-                                  {subChild.label}
-                                </div>
-                              </Link>
-                            ))}
-                          </div>
-                        );
-                      }
-                      return (
-                        <Link key={child.href} href={child.href} onClick={() => setIsOpen(false)}>
-                          <div
-                            className={`flex items-center gap-2 rounded-lg px-8 py-2 text-[10px] font-medium transition-colors ${
-                              isActive(child.href)
-                                ? "bg-white/15 text-white font-semibold"
-                                : "text-white/90 hover:text-white hover:bg-white/10"
-                            }`}
-                          >
-                            <child.icon className="h-3.5 w-3.5" />
-                            {child.label}
-                          </div>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                );
-              })}
-              <div className="pt-4 mt-4 border-t border-white/10">
-                {user ? (
-                  <Link href={dashboardPath} onClick={() => setIsOpen(false)}>
-                    <div className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium text-white/90 hover:text-white hover:bg-white/10">
-                      <Users className="h-4 w-4" />
-                      Dashboard
-                    </div>
-                  </Link>
-                ) : (
-                  <Link href="/login" onClick={() => setIsOpen(false)}>
-                    <div className="flex items-center gap-2 rounded-lg px-4 py-2.5 text-[12px] font-medium text-white/90 hover:text-white hover:bg-white/10">
-                      Login
-                    </div>
-                  </Link>
-                )}
-                <Link href="/cart" onClick={() => setIsOpen(false)}>
-                  <div className="flex items-center gap-2 rounded-lg px-4 py-2.5 text-[12px] font-medium text-white/90 hover:text-white hover:bg-white/10">
-                    <ShoppingCart className="h-4 w-4" />
-                    Cart ({items.length})
-                  </div>
-                </Link>
-                {!user && (
-                  <Link href="/register" onClick={() => setIsOpen(false)}>
-                    <Button className="w-full h-8 text-[12px] font-semibold margin-top-2 bg-white text-[#2366c9] hover:bg-blue-50 mt-2">
-                      Sign Up
-                    </Button>
-                  </Link>
-                )}
-              </div>
-          </div>
-        </motion.div>
-      )}
     </nav>
+  );
+}
+
+function SimpleDropdown({
+  label,
+  active,
+  items,
+  widthClass,
+  navLinkClass,
+}: {
+  label: string;
+  active: boolean;
+  items: SimpleDropdownItem[];
+  widthClass: string;
+  navLinkClass: (path?: string, activeOverride?: boolean) => string;
+}) {
+  return (
+    <div className="group relative">
+      <button type="button" className={navLinkClass(undefined, active)}>
+        <span>{label}</span>
+        <ChevronDown className="ml-1 h-4 w-4" />
+      </button>
+      <div
+        className={`invisible absolute right-0 top-full ${widthClass} translate-y-1 overflow-hidden rounded-b-lg border border-slate-200 bg-white pb-2 opacity-0 shadow-[0_18px_36px_rgba(15,23,42,0.18)] transition-all duration-150 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100`}
+      >
+        <div className="h-1 bg-gradient-to-r from-[#17A589] to-[#2E75B6]" />
+        {items.map((item, index) =>
+          item.type === "separator" ? (
+            <div key={`separator-${index}`} className="my-2 h-px bg-slate-200" />
+          ) : (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="mx-2 mt-1 block rounded-md border-l-2 border-transparent px-3 py-2 transition hover:border-[#17A589] hover:bg-[#EAF7F4]"
+            >
+              <span className="block font-[Arial] text-[12px] font-bold leading-4 text-slate-800">
+                {item.label}
+              </span>
+              <span className="mt-0.5 block font-[Arial] text-[11px] italic leading-4 text-slate-500">
+                {item.description}
+              </span>
+            </Link>
+          ),
+        )}
+      </div>
+    </div>
   );
 }

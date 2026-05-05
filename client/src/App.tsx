@@ -49,6 +49,10 @@ import Cookies from "@/pages/Cookies";
 import AIDiagnostic from "@/pages/programs/AIDiagnostic";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
+import ForgotPassword from "@/pages/ForgotPassword";
+import ResetPassword from "@/pages/ResetPassword";
+import VerifyPending from "@/pages/VerifyPending";
+import VerifyExpired from "@/pages/VerifyExpired";
 import Dashboard from "@/pages/Dashboard";
 import PaymentSuccess from "@/pages/PaymentSuccess";
 
@@ -58,6 +62,10 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/pricing" component={Pricing} />
       <Route path="/research" component={Research} />
+      <Route path="/how-it-works" component={HowItWorks} />
+      <Route path="/how-edumeup-is-different" component={WhyEduMeUp} />
+      <Route path="/cambridge-consultancy" component={About} />
+      <Route path="/impact-partnerships" component={ForSchoolsPartnership} />
       <Route path="/portals" component={Portals} />
       <Route path="/for-parents" component={ForParents} />
       <Route path="/for-parents/main" component={ForParentsMain} />
@@ -69,7 +77,10 @@ function Router() {
       <Route path="/portals/schools" component={Schools} />
       <Route path="/blog" component={Blog} />
       <Route path="/programs" component={Programs} />
+      <Route path="/all-programs" component={Programs} />
       <Route path="/courses" component={Courses} />
+      <Route path="/tutoring" component={TutorBooking} />
+      <Route path="/diagnostics" component={AIDiagnostic} />
       <Route path="/programs/ai-diagnostic" component={AIDiagnostic} />
       <Route path="/programs/atp-courses" component={ATPCourses} />
       <Route path="/programs/tutor-booking" component={TutorBooking} />
@@ -90,8 +101,10 @@ function Router() {
       <Route path="/programs/:slug" component={ProgramDetails} />
       <Route path="/courses/:slug" component={ProgramDetails} />
       <Route path="/resources" component={Resources} />
+      <Route path="/free-resources" component={Resources} />
       <Route path="/resources/freebies" component={Resources} />
       <Route path="/resources/all" component={AllResources} />
+      <Route path="/exam-prep-workbooks" component={TopicalWorkbooks} />
       <Route path="/resources/workbooks" component={ConceptualWorkbooks} />
       <Route path="/resources/topical-workbooks" component={TopicalWorkbooks} />
       <Route path="/resources/exam-papers" component={ExamPapers} />
@@ -101,6 +114,7 @@ function Router() {
       <Route path="/for-schools" component={ForSchools} />
       <Route path="/for-schools/partnership" component={ForSchoolsPartnership} />
       <Route path="/teacher-training" component={TeacherTraining} />
+      <Route path="/teacher-courses" component={TeacherTraining} />
       <Route path="/why-edumeup" component={WhyEduMeUp} />
       <Route path="/why-edumeup/how-it-works" component={HowItWorks} />
       <Route path="/why-edumeup/8-step-model" component={EightStepModel} />
@@ -110,6 +124,10 @@ function Router() {
       <Route path="/cookies" component={Cookies} />
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
+      <Route path="/register/verify-pending" component={VerifyPending} />
+      <Route path="/register/verify-expired" component={VerifyExpired} />
+      <Route path="/forgot-password" component={ForgotPassword} />
+      <Route path="/reset-password" component={ResetPassword} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/dashboard/student" component={Dashboard} />
       <Route path="/dashboard/student/certificates" component={Dashboard} />
