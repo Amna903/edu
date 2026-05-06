@@ -1,626 +1,831 @@
 import { Layout } from "@/components/Layout";
+import { CtaCard } from "@/components/CtaCard";
+import { PageSidebar } from "@/components/PageSidebar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Link } from "wouter";
+import { InquiryDialog } from "@/components/InquiryDialog";
 import {
   ArrowRight,
   CheckCircle2,
-  Brain,
-  Target,
-  RefreshCw,
-  FlaskConical,
-  BookOpen,
-  ShieldCheck,
-  AlertTriangle,
-  BarChart3,
-  Library,
+  Lock,
+  Globe,
+  Award,
+  Zap,
+  Calendar,
+  FileText,
+  Search,
   MessageCircle,
+  BarChart3,
+  PlayCircle,
+  Navigation,
+  Brain,
+  Activity,
+  RefreshCw,
+  AlertTriangle,
+  ShieldCheck,
+  BookOpen,
+  Flame,
+  Check
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { InquiryDialog } from "@/components/InquiryDialog";
-import { Link } from "wouter";
-import { ui } from "@/theme";
+
+const sidebarLinks = [
+  { label: "The Student Problem", href: "#problem" },
+  { label: "Course Categories", href: "#courses" },
+  { label: "The 8-Step Journey", href: "#journey" },
+  { label: "The Mastery Cycle", href: "#mastery-cycle" },
+  { label: "Sample H5P Activities", href: "#h5p-samples" },
+  { label: "Your Dashboard", href: "#dashboard" },
+  { label: "AI Study Advisor", href: "#ai-advisor" },
+  { label: "Get Started", href: "#cta" },
+];
 
 export default function ForStudents() {
-  const notWorkingVsEdu = [
-    ["Reading and re-reading (passive)", "Interactive activities that require thinking"],
-    ["Memorizing solved examples", "Understanding principles that solve any question"],
-    ["Cramming before exams", "Spaced retrieval that builds durable memory"],
-    ["Depending on tutors", "Structured independence-building"],
-    ["Hoping you are ready", "Data showing exactly where you stand"],
+  const problems = [
+    {
+      title: "You don't know where your gaps are",
+      desc: "Without a diagnostic, you study by guessing — spending time on topics you already know while the topics you are actually weak in remain unaddressed. By examination day, the gaps are still there.",
+      fix: "Free 30-minute diagnostic pinpoints your exact gaps at AO level before you study a single topic."
+    },
+    {
+      title: "You forget what you study",
+      desc: "Reading your notes once produces approximately 5% retention after one week. You revise, you feel confident, and then the examination arrives and the information is gone. This is the forgetting curve — and it is entirely preventable.",
+      fix: "Spaced retrieval practice scheduled at Day 1/3/7/14/30/90 produces 75%+ retention after 90 days."
+    },
+    {
+      title: "You can recall facts but lose marks on application",
+      desc: "Cambridge rewards three things: recalling facts (AO1), applying them to unfamiliar situations (AO2), and evaluating and analysing (AO3). Most students are confident at AO1 and struggle when the question requires AO2 or AO3. These are not harder topics — they are different skills that require different practice.",
+      fix: "Every course is structured by AO level. Your AI diagnostic identifies which AO level your gaps are at — so your practice targets exactly the right skill."
+    },
+    {
+      title: "You study passively",
+      desc: "Watching a video or reading a textbook feels like studying but produces almost no durable learning. Your brain needs to actively retrieve information, apply it, and make mistakes for learning to stick. Passive content — however well produced — is not enough.",
+      fix: "Every course uses H5P interactive activities — drag-and-drop, fill-in-blank, adaptive questions. No passive video. Every activity requires you to actively think."
+    }
   ];
 
-  const struggles = [
+  const categories = [
     {
-      icon: Brain,
-      title: "I study for hours but still don't understand",
-      quote: "I read the textbook three times. I highlight everything. But in the exam my mind goes blank.",
-      why: "Passive methods like highlighting and copying create the feeling of learning without deep understanding. Your brain processes words, but does not build durable retrieval pathways.",
-      solution: [
-        "Interactive H5P activities require active responses before progress",
-        "Built-in active recall for memory retrieval, not recognition",
-        "Immediate feedback explains why an answer is wrong",
-      ],
-      result: "Understanding replaces memorization, and concepts start sticking permanently.",
-      cta: "Try a Sample H5P Activity in the Free Library ->",
+      id: "CAT 1",
+      title: "Must-Have Courses — Learn How to Learn and English Foundation",
+      who: "Every student from Grade 6 upward — regardless of subject level or Cambridge stage.",
+      courses: "Learn How to Learn (6 modules) — Cornell note-taking, spaced retrieval, exam strategy, academic independence. Vocabulary Mastery Gr5-7 (7 modules). Reading Comprehension RC68 (10 modules, Foundation and Challenge tracks, CEFR A2-B1+). ESL1 (CEFR A2). ESL2 (CEFR B1). English Bridge B1+ to B2. Classroom English Communication (student sections).",
+      linkText: "Start here",
+      link: "/must-have-courses",
+      color: "border-[#2366c9]"
     },
     {
-      icon: Target,
-      title: "I can't solve unseen questions",
-      quote: "If the question changes context, I panic even if I studied that chapter.",
-      why: "Cambridge O-Level rewards application (AO2/AO3), not memorization of one familiar pattern. Copying examples trains recognition, not transfer.",
-      solution: [
-        "Principle-first teaching focused on the why behind each method",
-        "45,000+ varied practice questions across different contexts",
-        "Problem-solving framework: identify question type -> select method -> execute confidently",
-      ],
-      result: "Unseen questions become recognizable challenges, not panic moments.",
-      cta: "See a Sample Problem-Solving Framework in the Free Library ->",
+      id: "CAT 2",
+      title: "Pre-O-Level Foundation Courses — Before You Begin O-Level",
+      who: "Students in Grade 7-8 or in the first months of O-Level Year 1 who want to build a strong foundation before full O-Level study begins.",
+      courses: "Pre-O-Level Chemistry (11 chapters — Atomic Structure through Organic Chemistry introduction, covers 30-40% of O-Level syllabus). Pre-O-Level Mathematics (13 topics — Numbers through Basic Trigonometry). Pre-O-Level Physics (15 topics — Physics and Units through Current Electricity). Pre-O-Level Biology. Certification examination included for all Pre-O-Level programmes.",
+      linkText: "Build your foundation",
+      link: "/programs/bridge-courses",
+      color: "border-blue-500"
     },
     {
-      icon: RefreshCw,
-      title: "I forget everything after a few days",
-      quote: "I studied Chapter 1 in September. By November, it feels completely gone.",
-      why: "Without systematic review, memory fades quickly and students end up relearning from scratch. Traditional instruction teaches once and moves on before retention stabilizes.",
-      solution: [
-        "Automated spaced retrieval sequence (Day 1 -> Day 3 -> Day 7 -> Week 2 -> Month 1 -> Month 3)",
-        "10-minute targeted reviews instead of full chapter restudy",
-        "Performance-based interval adjustment",
-      ],
-      result: "What you learn early is still available when exams arrive.",
-      cta: "Explore Sample Spaced Retrieval Activities in the Free Library ->",
+      id: "CAT 3",
+      title: "O-Level Bridge Courses — Close Specific Gaps Before O-Level",
+      who: "Students entering or already in O-Level who have identified specific foundational gaps through the diagnostic.",
+      courses: "O-Level Bridge: English, Chemistry, Physics, Mathematics, Economics. Topic-selectable — your diagnostic tells you which topics you need. 80% mastery gate before advancing to the full O-Level subject course. AI diagnostic identifies your entry point in each bridge course automatically.",
+      linkText: "Take the diagnostic first",
+      link: "/diagnostics",
+      color: "border-indigo-500"
     },
     {
-      icon: FlaskConical,
-      title: "ATP feels impossible",
-      quote: "School says: practice ATP past papers. But nobody taught me what to write for full marks.",
-      why: "ATP skills are rarely taught explicitly despite carrying significant exam weight. Students are expected to infer variable control, method validity, and conclusions without structured instruction.",
-      solution: [
-        "Structured ATP courses for Physics, Chemistry, and Biology with variable identification and control design",
-        "Past paper analysis (2010-2025) with mark-scheme interpretation and model conclusions",
-        "Practice activities simulating ATP reasoning",
-      ],
-      result: "ATP shifts from guesswork to a trainable scoring skill (students often move from partial marks to near-full marks like 35-38/40).",
-      cta: "Try a Free ATP Sample Lesson in the Free Library ->",
+      id: "CAT 4",
+      title: "O-Level Subject Courses — All 10 Cambridge Subjects",
+      who: "Students actively studying for Cambridge O-Level examinations — all levels.",
+      courses: "Mathematics (25 topics — 14 available now, more being added continuously). Physics (6 main topics, 27 sub-topics — almost all available). Chemistry (11 topics — almost all available). Biology (21 topics — almost all available). Economics (complete). Business Studies (complete). English Language (10 courses — Comprehension, Essay/Composition, Directed Writing). Urdu, Islamiyat, Pakistan Studies (complete per current syllabus). Chapter-by-chapter purchase available for all subjects.",
+      linkText: "Browse all subjects",
+      link: "/courses",
+      color: "border-sky-500"
     },
     {
-      icon: BookOpen,
-      title: "English Paper 1 and 2 feel subjective",
-      quote: "Teachers say my essay is not structured well, but no one explains what structure actually means.",
-      why: "Many students are told what is wrong, but not taught a reproducible structure. Without repeatable frameworks, improvement feels random.",
-      solution: [
-        "Paper 1: 7-step summary method (overview -> detail -> key points -> paraphrase -> count -> coverage -> polish)",
-        "Paper 2: explicit frameworks (Descriptive: Show-Don't-Tell + 5 Senses, Narrative: 5-Act structure, Argumentative: thesis + evidence + counterargument)",
-        "50+ passages and 100+ prompts with modeled applications",
-      ],
-      result: "English becomes structured and trainable, not mysterious.",
-      cta: "See a Sample Essay Framework in the Free Library ->",
+      id: "CAT 5",
+      title: "O-Level English Courses — Full 10-Course English Programme",
+      who: "Students preparing specifically for Cambridge O-Level English Language Paper 1 (Reading) and Paper 2 (Writing).",
+      courses: "5 Comprehension courses (one per Cambridge past paper set — Paper 1 Reading: two texts, structured and extended writing questions). 3 Essay and Composition courses (F1: Essay Types and Structure; F2: 10-Day Band 3 to Band 1 Bridge; F3: Complete Mastery Band 3 to Band 1). 2 Directed Writing courses (Part 1: non-letter types including Format A and B with 2024 papers; Part 2: 6 letter types, formal email, mock exam).",
+      linkText: "See all English courses",
+      link: "/programs/english-mastery",
+      color: "border-cyan-500"
     },
     {
-      icon: ShieldCheck,
-      title: "I am dependent on my tutor",
-      quote: "When my tutor explains, I get it. Alone, I get stuck in five minutes.",
-      why: "Students can understand with guidance but struggle to build independent problem-solving habits. Support often gives answers too early instead of building thinking stamina.",
-      solution: [
-        "4-level independence scaffold from guided to mastery",
-        "Hint-first support before full solutions",
-        "AI chatbot nudges thinking instead of spoon-feeding",
-      ],
-      result: "Confidence grows from capability, not dependency.",
-      cta: "Try a Sample Independent Practice Activity in the Free Library ->",
-    },
-    {
-      icon: BarChart3,
-      title: "I don't know if I am exam-ready",
-      quote: "I studied so much... but am I actually ready, or just hoping?",
-      why: "Generic feedback creates uncertainty near exam time. Students need topic-level evidence, not vague reassurance.",
-      solution: [
-        "Topic-by-topic mastery tracking (for example: Maths 78%, Chemistry 65%, English 88%)",
-        "Predicted performance insights tied to weak-topic priorities",
-        "Timed mock exams and color-coded readiness alerts (red <60, yellow 60-75, green 80+)",
-      ],
-      result: "You know exactly where you stand, backed by data.",
-      cta: "Take the Free Diagnostic ->",
-    },
+      id: "CAT 6",
+      title: "ATP Courses — Alternative to Practical (Sciences)",
+      who: "Students taking Cambridge Paper 4 (Alternative to Practical) in Physics, Chemistry, and Biology.",
+      courses: "ATP Physics (built from latest 5 years ATP past papers — teach the skill, worked examples, interactive practice, solved past papers). ATP Chemistry (same structure). ATP Biology (same structure). All ATP courses fully integrate Cambridge Paper 4 past papers. Suitable for schools without laboratory facilities and for students wanting maximum Paper 4 preparation.",
+      linkText: "See ATP courses",
+      link: "/programs/atp-courses",
+      color: "border-teal-500"
+    }
   ];
 
-  const skills = [
+  const steps = [
     {
-      title: "Active Recall",
-      why: "Retrieving from memory outperforms passive re-reading.",
-      how: "Every H5P sequence forces retrieval before progression.",
+      title: "Diagnose — Know Your Exact Gaps",
+      do: "Take the free 30-minute EduMeUp diagnostic for your chosen subject(s). Answer 20-35 adaptive questions — no time pressure, no trick questions.",
+      get: "Your overall percentage score per subject. Your top 3 weakness areas. Specific remedial actions. Direct links to modules that address your gaps.",
+      research: "Bloom (1984) — Personalised instruction based on diagnostic data produces effect size d=2.0.",
+      color: "bg-[#2366c9]"
     },
     {
-      title: "Spaced Practice",
-      why: "Expanding review intervals increase long-term retention.",
-      how: "Platform automates review timing so revision is systematic.",
+      title: "Plan — Receive Your Personalised Pathway",
+      do: "Your diagnostic results generate a personalised learning pathway automatically.",
+      get: "A personalised course sequence in priority order. A study timeline recommendation based on your examination date.",
+      research: "Zimmerman (2002) — Self-regulated learners who begin with a clear plan significantly outperform those without direction.",
+      color: "bg-slate-800"
     },
     {
-      title: "Metacognition",
-      why: "Students often overestimate understanding until tested.",
-      how: "Mastery gates and diagnostics replace false confidence with data.",
+      title: "Build Your Foundation — Study Skills and Language",
+      do: "Complete the foundational courses: Learn How to Learn and English Language pathway.",
+      get: "A permanent upgrade to how you study. Verified English language proficiency.",
+      research: "Zimmerman (2002) — Self-regulated learning is the single strongest predictor of long-term academic success.",
+      color: "bg-amber-500"
     },
     {
-      title: "Problem Decomposition",
-      why: "Complex questions feel easier when broken into steps.",
-      how: "Worked examples model knowns -> unknowns -> method -> solve -> check.",
+      title: "Repair — Close Your Foundation Gaps",
+      do: "Complete the targeted bridge or Pre-O-Level course modules for foundational gaps. 80% mastery gate before advancing.",
+      get: "A secure foundation for every O-Level topic. Each topic completed at 80%+ mastery.",
+      research: "Bloom (1968) — Fixing foundation gaps first is the highest-return-per-hour activity available.",
+      color: "bg-purple-600"
     },
     {
-      title: "Self-Regulated Learning",
-      why: "Progress accelerates when students set goals and monitor strategy.",
-      how: "Dashboard prompts, weak-topic alerts, and weekly planning support this cycle.",
+      title: "Master — Study Each O-Level Topic",
+      do: "Work through your recommended O-Level subject courses chapter by chapter. H5P interactive activities, not passive video.",
+      get: "Genuine understanding of every topic. AO2 and AO3 skills developed alongside the content.",
+      research: "Freeman et al. (2014) — Active learning improves Cambridge exam performance by 6%.",
+      color: "bg-[#2366c9]"
     },
     {
-      title: "Growth Mindset",
-      why: "Performance improves when mistakes are treated as feedback.",
-      how: "Language and feedback focus on \"not yet\" and targeted next actions.",
+      title: "Verify — Test What You Have Mastered",
+      do: "Adaptive practice session tests whether knowledge has genuinely been retained. Take a full mock examination.",
+      get: "Confirmed knowledge at each step. A full mock exam result showing marks per question and AO-level performance.",
+      research: "Bartlett (2009) — Testing yourself is 10 times more effective at revealing true retention than re-reading.",
+      color: "bg-slate-800"
     },
     {
-      title: "Time Management",
-      why: "Not all topics have equal score impact.",
-      how: "Priority guidance pushes effort toward high-weight, low-mastery topics first.",
+      title: "Retain — Spaced Retrieval Schedule",
+      do: "Spaced retrieval system automatically schedules short review sessions at Day 1, 3, 7, 14, 30, and 90.",
+      get: "85%+ long-term retention. A continuously updated picture of which topics are secure.",
+      research: "Cepeda et al. (2006) — Spaced repetition improves long-term retention by 200%.",
+      color: "bg-amber-500"
     },
+    {
+      title: "Grow Independent — Become a Cambridge Thinker",
+      do: "Answer unseen questions at AO3 level. Take the EduMeUp certification examination.",
+      get: "Genuine academic independence. The confidence that comes from genuine preparation.",
+      research: "Zimmerman (2002) — Self-regulated learners consistently outperform peers in lifelong learning.",
+      color: "bg-purple-600"
+    }
   ];
 
-  const pathways = [
-    {
-      title: "Pathway 1 — Struggling Student",
-      profile: "D/E/F grades, weak fundamentals, exams in 3-4 months",
-      route: [
-        "Week 1: Diagnostic identifies exact gaps by topic and sub-skill",
-        "Weeks 2-4: Foundation repair before heavy O-Level load",
-        "Weeks 5-10: High-yield topic mastery using frequent exam patterns",
-        "Weeks 11-14: Timed past papers with feedback loops",
-        "Final 2 weeks: Consolidation via spaced retrieval + mock confidence build",
-      ],
-      expected: "Expected trajectory: D/E -> C/B with consistent effort",
-    },
-    {
-      title: "Pathway 2 — Average Student",
-      profile: "C/B range, wants consistent A/A* performance",
-      route: [
-        "Gap analysis pinpoints score-leak topics, not vague subject weakness",
-        "~60% effort on weakest high-return topics first",
-        "Moderate topics moved to strong with advanced mixed practice",
-        "Strong topics maintained via short spaced retrieval loops",
-        "Exam technique optimization: timing and mark maximization",
-      ],
-      expected: "Expected trajectory: C/B -> A/A* within 4-6 months",
-    },
-    {
-      title: "Pathway 3 — Top Student",
-      profile: "Already at A, targeting A* and scholarship readiness",
-      route: [
-        "Precision audit of final 10-15% score leakage",
-        "Hardest past-paper sets (2015-2025) only",
-        "Error-elimination checklists and mark-maximization technique",
-        "ATP refinement targeting 38-40/40 range where possible",
-        "Deeper theory transfer for scholarship-level confidence",
-      ],
-      expected: "Expected trajectory: A -> A* in target subjects",
-    },
-    {
-      title: "Pathway 4 — Last-Minute Student",
-      profile: "Exams in 6-8 weeks, needs maximum impact quickly",
-      route: [
-        "Emergency triage: safe vs at-risk vs opportunity subjects",
-        "~80% effort on at-risk subjects first",
-        "Opportunity subjects receive targeted grade-jump blocks",
-        "Safe subjects kept on minimum maintenance schedule",
-        "Final week: no new content, only consolidation and exam execution",
-      ],
-      expected: "Expected trajectory: 1-2 grade jumps in at-risk subjects",
-    },
+  const masteryStages = [
+    { num: "1", title: "DIAGNOSE", desc: "Short adaptive pre-test identifies your entry point." },
+    { num: "2", title: "REPAIR", desc: "Prerequisite gaps are addressed with brief remedial activities." },
+    { num: "3", title: "MASTER", desc: "H5P interactive activities develop genuine understanding." },
+    { num: "4", title: "VERIFY", desc: "End-of-topic test confirms mastery. 80% gate." },
+    { num: "5", title: "RETAIN", desc: "Spaced retrieval sessions at Day 1/3/7/14/30/90." },
+    { num: "6", title: "GROW INDEPENDENT", desc: "Unseen application questions test ability in new contexts." }
   ];
 
-  const transformationTimeline = [
+  const aiSamples = [
     {
-      phase: "Month 1",
-      title: "Foundation and Mindset Shift",
-      feel: "Week 1-2 feels unfamiliar. Week 3-4: first \"this is actually clicking\" moments.",
-      measurable: "Typical progression: 0% -> 25-35% mastery",
+      q: "My diagnostic shows AO2 gaps in Chemistry. What does that mean and what should I do?",
+      a: "Your AO2 gap means you can recall concepts correctly but struggle to apply them to a calculation or an unfamiliar situation. I recommend starting with Pre-O-Level Chemistry Chapter 7."
     },
     {
-      phase: "Month 2",
-      title: "Momentum Building",
-      feel: "Active recall becomes natural. Dependence on external help starts dropping.",
-      measurable: "Typical progression: 35% -> 55-65% mastery; study time reduces while scores rise",
+      q: "I have 4 months before my O-Level Physics exam. Am I on track?",
+      a: "Based on your 58% overall mastery, 4 months is achievable if you complete 3 chapters per week. Priority order: Waves, then Electricity, then revision of Mechanics."
     },
     {
-      phase: "Month 3",
-      title: "Acceleration",
-      feel: "Confidence becomes earned, not borrowed. Students start aiming higher.",
-      measurable: "Typical progression: 65% -> 75-80% mastery; mock scores often reach 70-75%",
-    },
-    {
-      phase: "Months 4-6",
-      title: "Refinement and Excellence",
-      feel: "Exam-readiness feels stable because preparation is systematic.",
-      measurable: "Typical progression: 80-90%+ mastery with strong grade predictability",
-    },
+      q: "What is the difference between AO2 and AO3 in an Economics evaluation question?",
+      a: "AO2 asks you to apply economic theory to the context. AO3 asks you to evaluate — assess limitations, consider other factors, and reach a justified judgement."
+    }
   ];
+
+  const scrollToCourses = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    document.getElementById("courses")?.scrollIntoView({ behavior: "smooth" });
+  };
 
   return (
     <Layout>
-      <section className="py-16 md:py-24 relative overflow-hidden bg-gradient-to-b from-blue-50/80 to-white">
-        <div className="container-custom relative z-10 max-w-5xl mx-auto text-center">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-       
-            <h1 className="text-5xl md:text-6xl font-semibold leading-tight text-slate-900 mb-6">
-              Stop Studying Hard. <span className="text-[#2366c9]">Start Studying Smart.</span>
-            </h1>
-            <p className="text-lg md:text-xl text-slate-700 font-medium leading-relaxed max-w-4xl mx-auto mb-4">
-              You do not need more tuition, more notes, or more late nights. You need the right system, strategy, and feedback.
-            </p>
-            <p className="text-[14px] md:text-base text-slate-600 font-semibold mb-10">
-              Designed for O-Level and IGCSE students — Cambridge-aligned, research-backed, built for how your brain actually learns.
-            </p>
+      <div className="flex min-h-screen bg-white">
+        {/* FULL-HEIGHT STICKY SIDEBAR */}
+        <PageSidebar 
+          title="Student Guide"
+          quote="EduMeUp answers every question you have about Cambridge."
+          links={sidebarLinks}
+        />
 
-            <div className="bg-white border border-blue-100 shadow-sm rounded-2xl p-3 md:p-6 mb-10 overflow-x-auto">
-              <table className="w-full min-w-[760px] text-left">
-                <thead>
-                  <tr className="border-b border-blue-100">
-                    <th className="p-3 text-xs font-semibold uppercase tracking-wider text-red-600">What is not working</th>
-                    <th className="p-3 text-xs font-semibold uppercase tracking-wider text-green-600">What EduMeUp does instead</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {notWorkingVsEdu.map((row, i) => (
-                    <tr key={i} className="border-b border-blue-50 last:border-0">
-                      <td className="p-3 text-[14px] text-slate-600 font-semibold">{row[0]}</td>
-                      <td className="p-3 text-[14px] text-slate-900 font-semibold">{row[1]}</td>
-                    </tr>
+        <div className="flex-1 min-w-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <div className="flex flex-col">
+            
+            {/* SECTION 1 | HERO BANNER (Blue Theme) */}
+            <section className="relative overflow-hidden bg-white py-20 px-6 border-b border-slate-100">
+              <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-400/10 blur-[120px] rounded-full -mr-64 -mt-64"></div>
+              <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-indigo-500/10 blur-[120px] rounded-full -ml-32 -mb-32"></div>
+
+              <div className="max-w-7xl mx-auto relative z-10">
+                <div className="grid lg:grid-cols-2 gap-12 items-center">
+                  <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6 max-w-2xl">
+                    <span className="inline-block rounded-full bg-blue-50 border border-blue-100 px-3 py-1 text-sm font-bold tracking-wide text-[#2366c9] uppercase">
+                      Your Cambridge O-Level Journey — Powered by AI, Proven by Science
+                    </span>
+                    <h1 className="text-4xl md:text-5xl lg:text-7xl font-semibold leading-[1.1] tracking-tight text-slate-900">
+                      Start Mastering.
+                      <span className="block text-[#2366c9] mt-2 text-2xl md:text-3xl">The only Cambridge platform that knows exactly what you need — before you ask.</span>
+                    </h1>
+                    <p className="text-lg text-slate-600 font-medium leading-relaxed">
+                      Most students spend their Cambridge journey studying the wrong things. A free 30-minute diagnostic identifies your exact gaps. An AI-powered pathway tells you precisely what to study, in which order, and at which pace.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                      <Link href="/diagnostics">
+                        <Button className="w-full sm:w-auto h-14 px-8 bg-[#2366c9] hover:bg-blue-600 text-white text-lg font-bold rounded-xl shadow-[0_15px_30px_rgba(35,102,201,0.4)]">
+                          Take the Free Diagnostic
+                        </Button>
+                      </Link>
+                      <a href="#courses" onClick={scrollToCourses}>
+                        <Button variant="outline" className="w-full sm:w-auto h-14 px-8 border-slate-200 text-slate-700 hover:bg-slate-50 text-lg font-bold rounded-xl backdrop-blur-md">
+                          Browse Courses
+                        </Button>
+                      </a>
+                    </div>
+                    <p className="text-sm text-slate-500">Free · No login required to start · Results in 30 minutes</p>
+                    
+                    <div className="flex flex-wrap gap-3 pt-6">
+                      <div className="flex items-center gap-2 bg-white rounded-full px-4 py-2 text-[14px] font-semibold text-slate-700 border border-slate-200 shadow-sm">
+                        <Award className="h-4 w-4 text-[#2366c9]" /> 91% pass rate — Designed to Achieve
+                      </div>
+                      <div className="flex items-center gap-2 bg-white rounded-full px-4 py-2 text-[14px] font-semibold text-slate-700 border border-slate-200 shadow-sm">
+                        <BarChart3 className="h-4 w-4 text-[#2366c9]" /> 75%+ long-term retention
+                      </div>
+                      <div className="flex items-center gap-2 bg-white rounded-full px-4 py-2 text-[14px] font-semibold text-slate-700 border border-slate-200 shadow-sm">
+                        <Lock className="h-4 w-4 text-[#2366c9]" /> Private diagnostic results
+                      </div>
+                    </div>
+                  </motion.div>
+                  
+                  <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative z-10 lg:pl-10">
+                    <div className="bg-white rounded-[2.5rem] border border-white/20 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.5)] overflow-hidden scale-105 origin-center text-slate-800">
+                      <div className="bg-slate-900 px-6 py-4 flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-[#2366c9] flex items-center justify-center text-white font-bold text-xs">ZH</div>
+                          <div className="text-left">
+                            <p className="text-white font-bold text-[10px] leading-tight">Student: Zainab H.</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 text-[#2366c9]">
+                          <Activity className="w-3 h-3 animate-pulse" />
+                          <span className="text-[10px] font-black uppercase tracking-widest">Live Updates</span>
+                        </div>
+                      </div>
+                      <div className="p-6 space-y-6 bg-slate-50/50">
+                        <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
+                          <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Subject Progress</p>
+                          <div className="space-y-4">
+                            <div>
+                              <div className="flex justify-between text-sm mb-1 font-bold"><span>Chemistry</span><span className="text-[#2366c9]">72%</span></div>
+                              <div className="h-2 bg-slate-100 rounded-full"><div className="h-full bg-[#2366c9] rounded-full" style={{ width: '72%' }}></div></div>
+                            </div>
+                            <div>
+                              <div className="flex justify-between text-sm mb-1 font-bold"><span>Physics</span><span className="text-amber-500">58%</span></div>
+                              <div className="h-2 bg-slate-100 rounded-full"><div className="h-full bg-amber-500 rounded-full" style={{ width: '58%' }}></div></div>
+                            </div>
+                            <div>
+                              <div className="flex justify-between text-sm mb-1 font-bold"><span>Maths</span><span className="text-[#1A7A3A]">89%</span></div>
+                              <div className="h-2 bg-slate-100 rounded-full"><div className="h-full bg-[#1A7A3A] rounded-full" style={{ width: '89%' }}></div></div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="bg-amber-50/50 border border-amber-200 rounded-xl p-4 flex items-start gap-3 shadow-sm">
+                          <Calendar className="h-5 w-5 text-amber-500 mt-0.5" />
+                          <div>
+                            <p className="font-bold text-amber-600 text-sm">Spaced Retrieval Reminder</p>
+                            <p className="text-xs text-slate-600 mt-1 font-medium">Review: Mole Concept — due today (Day 7)</p>
+                          </div>
+                        </div>
+                        <div className="bg-blue-50/50 border border-blue-200 rounded-xl p-4 shadow-sm">
+                          <div className="flex items-center gap-2 mb-2">
+                            <MessageCircle className="h-4 w-4 text-[#2366c9]" />
+                            <p className="font-bold text-sm text-[#2366c9]">AI Study Advisor</p>
+                          </div>
+                          <p className="text-xs text-slate-700 leading-relaxed font-medium">
+                            "Based on your recent Physics mock, I recommend revising Kinematics. You lost 4 marks on AO2 application questions. Here is a targeted practice set."
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                </div>
+              </div>
+            </section>
+
+            {/* SECTION 2 | THE STUDENT PROBLEM */}
+            <section id="problem" className="py-20 bg-white scroll-mt-10 border-y border-slate-100">
+              <div className="max-w-6xl mx-auto px-6">
+                <div className="text-center mb-16 max-w-3xl mx-auto">
+                  <h2 className="text-3xl md:text-4xl font-semibold text-slate-900 mb-6">You Are Working Hard. But Are You Studying the Right Things?</h2>
+                  <p className="text-lg text-slate-600 font-medium leading-relaxed">
+                    Cambridge O-Level is not hard because it tests difficult content. It is hard because it tests whether you genuinely understand and can apply what you know. EduMeUp uses the approach that cognitive science research identifies as the most effective.
+                  </p>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-6">
+                  {problems.map((prob, i) => (
+                    <Card key={i} className="border-l-4 border-l-[#2366c9] border-y-slate-200 border-r-slate-200 shadow-sm rounded-r-2xl rounded-l-none bg-white">
+                      <CardContent className="p-8">
+                        <h3 className="text-xl font-bold text-slate-900 mb-3">{prob.title}</h3>
+                        <p className="text-slate-600 mb-6 font-medium leading-relaxed">{prob.desc}</p>
+                        <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
+                          <p className="text-[14px] font-medium text-slate-800">
+                            <span className="font-bold text-[#2366c9] mr-1">EduMeUp fix:</span> {prob.fix}
+                          </p>
+                        </div>
+                      </CardContent>
+                    </Card>
                   ))}
-                </tbody>
-              </table>
-            </div>
+                </div>
+                <div className="mt-12 text-center text-lg font-medium text-slate-700 max-w-3xl mx-auto italic">
+                  EduMeUp is not a content library. It is a learning system — designed so that everything you study actually stays with you until examination day and beyond.
+                </div>
+              </div>
+            </section>
 
-            <p className="text-slate-600 font-semibold mb-8">The earlier you start, the stronger your foundation.</p>
-            <div className="flex flex-wrap justify-center gap-2 mb-8">
-              {["45,000+ Practice Questions", "Past Papers 2010-2025", "80% Mastery Gates", "ATP Pathway to 38-40/40", "Global Access Scholarship available"].map((signal, i) => (
-                <span key={i} className="px-3 py-1 rounded-full border border-blue-200 bg-blue-50 text-[14px] md:text-xs font-semibold uppercase tracking-wide text-[#2366c9]">
-                  {signal}
-                </span>
-              ))}
-            </div>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Link href="/resources">
-                <Button className="bg-[#2366c9] hover:bg-blue-700 text-white font-semibold text-[14px] py-3 px-6">
-                  Explore Free Library <ArrowRight className="h-5 w-5 ml-2" />
-                </Button>
-              </Link>
-              <InquiryDialog
-                defaultType="diagnostic"
-                title="Take Free Diagnostic"
-                trigger={
-                  <Button variant="outline" className="border-2 border-[#2366c9] text-[#2366c9] font-semibold text-[14px] py-3 px-6">
-                    Take Free Diagnostic
-                  </Button>
-                }
-              />
-              <Link href="/why-edumeup/how-it-works">
-                <Button variant="outline" className="border-2 border-[#2366c9] text-[#2366c9] font-semibold text-[14px] py-3 px-6">
-                  See How The Platform Works
-                </Button>
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+            {/* SECTION 3 | YOUR COURSE CATEGORIES */}
+            <section id="courses" className="py-20 bg-white scroll-mt-10">
+              <div className="max-w-5xl mx-auto px-6">
+                <div className="text-center mb-16">
+                  <h2 className="text-3xl md:text-4xl font-semibold text-slate-900 mb-6">Everything You Need for Cambridge O-Level — From Foundation to Examination Day.</h2>
+                  <p className="text-lg text-slate-600 max-w-4xl mx-auto font-medium leading-relaxed">
+                    EduMeUp's courses are organised into six categories. Your free diagnostic tells you which categories apply to your current level. Browse below and start wherever feels right.
+                  </p>
+                </div>
 
-      <section className="py-20 bg-white">
-        <div className="container-custom max-w-6xl">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-4">We Understand Your Struggles</h2>
-            <p className="text-xl text-slate-900/60 font-semibold">Because each struggle below has a systematic solution</p>
-          </div>
-
-          <div className="space-y-8">
-            {struggles.map((item, index) => (
-              <Card key={index} className="border-2 border-blue-50 rounded-[2rem] shadow-sm">
-                <CardContent className="p-8 md:p-10">
-                  <div className="flex items-start gap-5 mb-5">
-                    <div className="h-12 w-12 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
-                      <item.icon className="h-6 w-6 text-[#2366c9]" />
+                <div className="space-y-6">
+                  {categories.map((cat, i) => (
+                    <div key={i} className={`border-l-4 ${cat.color} bg-white shadow-sm hover:shadow-md transition-all rounded-r-2xl border-y border-r border-slate-100 p-6 md:p-8 flex flex-col md:flex-row gap-6 items-start`}>
+                      <div className="md:w-1/4 shrink-0">
+                        <span className="inline-block px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-md bg-slate-100 text-slate-600 mb-3">{cat.id}</span>
+                        <h3 className="text-xl font-bold text-slate-900 leading-snug">{cat.title}</h3>
+                      </div>
+                      <div className="md:w-1/2">
+                        <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Who it is for:</p>
+                        <p className="text-[14px] text-slate-700 font-medium mb-4">{cat.who}</p>
+                        <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Courses available:</p>
+                        <p className="text-[14px] text-slate-700 font-medium">{cat.courses}</p>
+                      </div>
+                      <div className="md:w-1/4 w-full flex md:justify-end items-center md:items-start pt-4 md:pt-0">
+                        <Link href={cat.link}>
+                          <Button variant="outline" className="w-full text-[#2366c9] border-blue-200 hover:bg-blue-50 font-bold rounded-xl h-10">
+                            {cat.linkText} <ArrowRight className="h-4 w-4 ml-2" />
+                          </Button>
+                        </Link>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-[14px] font-semibold uppercase tracking-widest text-blue-600 mb-1">Struggle #{index + 1}</p>
-                      <h3 className="text-2xl font-semibold text-slate-900">{item.title}</h3>
-                    </div>
-                  </div>
+                  ))}
+                </div>
+              </div>
+            </section>
 
-                  <p className="text-slate-900/70 font-medium mb-3"><span className="font-semibold text-slate-900">Why this happens:</span> {item.why}</p>
-                  <p className="text-[14px] italic text-slate-900/60 font-semibold mb-3">"{item.quote}"</p>
-                  <div className="space-y-2 mb-4">
-                    {item.solution.map((point, i) => (
-                      <div key={i} className="flex items-start gap-3 text-[14px] text-slate-900/80 font-semibold">
-                        <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 shrink-0" />
-                        <span>{point}</span>
+            {/* SECTION 4 | THE 8-STEP JOURNEY */}
+            <section id="journey" className="py-20 bg-white border-t border-slate-100 scroll-mt-10">
+              <div className="max-w-6xl mx-auto px-6">
+                <div className="text-center mb-16">
+                  <h2 className="text-3xl md:text-4xl font-semibold text-slate-900 mb-6">Eight Research-Backed Steps. From Where You Are Now to Where You Need to Be.</h2>
+                  <p className="text-lg text-slate-600 max-w-4xl mx-auto font-medium leading-relaxed">
+                    Every student follows the same eight-step journey — but the content is personalised to your specific gaps, subjects, and examination timeline.
+                  </p>
+                </div>
+
+                {/* Visual Sequence Strip */}
+                <div className="hidden md:flex justify-between items-center mb-16 relative px-8">
+                  <div className="absolute top-1/2 left-8 right-8 h-1 bg-slate-200 -z-10 rounded-full"></div>
+                  {steps.map((_, i) => (
+                    <div key={i} className="flex flex-col items-center bg-slate-50 px-2">
+                      <div className="w-10 h-10 rounded-full bg-[#2366c9] text-white flex items-center justify-center font-bold mb-2 shadow-sm border-4 border-slate-50">
+                        {i + 1}
+                      </div>
+                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Step {i + 1}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-8">
+                  {steps.map((step, i) => (
+                    <Card key={i} className="overflow-hidden border-0 shadow-sm rounded-2xl bg-white hover:shadow-md transition-all">
+                      <div className={`${step.color} h-2 w-full`}></div>
+                      <CardContent className="p-8">
+                        <div className="flex items-center gap-4 mb-6">
+                          <div className={`w-12 h-12 rounded-xl ${step.color} text-white flex items-center justify-center font-bold text-xl shrink-0 shadow-sm`}>
+                            {i + 1}
+                          </div>
+                          <h3 className="text-xl font-bold text-slate-900">{step.title}</h3>
+                        </div>
+                        
+                        <div className="space-y-4 mb-6">
+                          <div>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">What you do</p>
+                            <p className="text-[14px] text-slate-700 font-medium">{step.do}</p>
+                          </div>
+                          <div>
+                            <p className="text-[10px] font-black text-[#2366c9] uppercase tracking-widest mb-1">What you get</p>
+                            <p className="text-[14px] text-slate-700 font-medium">{step.get}</p>
+                          </div>
+                        </div>
+                        
+                        <div className="pt-4 border-t border-slate-100 bg-slate-50/50 -mx-8 -mb-8 p-8">
+                          <p className="text-[11px] text-slate-500 font-medium italic">
+                            <span className="font-bold text-slate-700 not-italic">Research: </span>
+                            {step.research}
+                          </p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* SECTION 5 | THE 6-STAGE MASTERY CYCLE */}
+            <section id="mastery-cycle" className="py-20 bg-white scroll-mt-10">
+              <div className="max-w-5xl mx-auto px-6">
+                <div className="text-center mb-16">
+                  <h2 className="text-3xl md:text-4xl font-semibold text-slate-900 mb-6">Inside Every Course: The 6-Stage Mastery Cycle That Changes How You Learn.</h2>
+                  <p className="text-lg text-slate-600 max-w-4xl mx-auto mb-12 font-medium leading-relaxed">
+                    Every single course uses the same 6-stage learning cycle. It is the cognitive process that research identifies as producing genuine, durable learning.
+                  </p>
+                  
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-12">
+                    {masteryStages.map((stage, i) => (
+                      <div key={i} className="relative text-center p-5 border border-slate-200 rounded-2xl bg-white shadow-sm hover:border-[#2366c9] transition-colors">
+                        <div className="w-10 h-10 mx-auto bg-blue-50 text-[#2366c9] rounded-xl flex items-center justify-center font-black mb-4 z-10 relative">
+                          {stage.num}
+                        </div>
+                        <h4 className="font-bold text-[13px] text-slate-900 mb-2 leading-tight uppercase">{stage.title}</h4>
+                        <p className="text-[11px] text-slate-600 font-medium">{stage.desc}</p>
+                        {i < masteryStages.length - 1 && (
+                          <div className="hidden lg:block absolute top-10 -right-3 text-slate-300">
+                            <ArrowRight className="w-5 h-5" />
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
-                  <p className="text-[#2366c9] font-semibold mb-5">The result: {item.result}</p>
-                  <Button variant="outline" className="border-blue-200 text-slate-900 hover:bg-blue-50 font-semibold">
-                    {item.cta}
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
 
-          <div className={ui.sections.brand + " rounded-[2.5rem] p-8 md:p-12 overflow-x-auto mt-16"}>
-            <h3 className="text-2xl font-semibold text-white mb-6">What happens when students follow the system</h3>
-            <table className="w-full min-w-[680px]">
-              <thead>
-                <tr className="border-b border-white/10">
-                  <th className="text-left py-3 text-xs font-semibold uppercase tracking-wider text-white/90">Metric</th>
-                  <th className="text-left py-3 text-xs font-semibold uppercase tracking-wider text-white/90">Before</th>
-                  <th className="text-left py-3 text-xs font-semibold uppercase tracking-wider text-white/90">After 3 months</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  ["Average mock score", "50-60%", "70-78%"],
-                  ["Daily study hours", "8+ (inefficient)", "5-6 (focused)"],
-                  ["Readiness before exams", "Panic and relearning", "Clear readiness score"],
-                  ["Tutor dependency", "High", "Significantly reduced"],
-                ].map((row, i) => (
-                  <tr key={i} className="border-b border-white/5 last:border-0">
-                    <td className="py-3 text-[14px] font-semibold text-blue-100">{row[0]}</td>
-                    <td className="py-3 text-[14px] font-semibold text-blue-200/80">{row[1]}</td>
-                    <td className="py-3 text-[14px] font-semibold text-white">{row[2]}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <p className="mt-4 text-[14px] text-blue-200/70 font-semibold">Based on pilot programme data. Individual outcomes vary by starting point and consistency.</p>
-          </div>
-        </div>
-      </section>
-
-      <section className={`${ui.sections.softBlue} py-20`}>
-        <div className="container-custom max-w-6xl">
-          <div className="text-center mb-14">
-            <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-4">Beyond Content — We Teach How to Learn</h2>
-            <p className="text-xl text-slate-900/60 font-semibold">7 skills that improve exam outcomes and last for life</p>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {skills.map((skill, i) => (
-              <Card key={i} className="bg-white border-2 border-blue-100 rounded-2xl">
-                <CardContent className="p-6">
-                  <p className="text-[14px] font-semibold uppercase text-blue-600 tracking-widest mb-2">Skill {i + 1}</p>
-                  <h3 className="text-lg font-semibold text-slate-900 mb-2">{skill.title}</h3>
-                  <p className="text-xs text-slate-900/70 font-medium mb-2"><span className="text-slate-900 font-semibold">Why it matters:</span> {skill.why}</p>
-                  <p className="text-xs text-[#2366c9] font-medium"><span className="font-semibold">How EduMeUp builds it:</span> {skill.how}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          <div className="text-center mt-10">
-            <Link href="/resources">
-              <Button className="bg-[#2366c9] hover:bg-blue-500 rounded-xl font-semibold">
-                Explore Skill-Building Free Library Samples <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-20 bg-white">
-        <div className="container-custom max-w-6xl">
-          <div className="text-center mb-14">
-            <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-4">Your Personalized Learning Path</h2>
-            <p className="text-xl text-slate-900/60 font-semibold">Four pathways, one platform</p>
-          </div>
-          <div className="grid lg:grid-cols-2 gap-8">
-            {pathways.map((path, i) => (
-              <Card key={i} className="border-2 border-blue-50 rounded-[2rem]">
-                <CardHeader className="pb-2">
-                  <h3 className="text-xl font-semibold text-slate-900">{path.title}</h3>
-                  <p className="text-[14px] text-slate-900/60 font-semibold">{path.profile}</p>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2 mb-4">
-                    {path.route.map((step, stepIndex) => (
-                      <p key={stepIndex} className="text-[14px] text-slate-900/80 font-semibold">
-                        {stepIndex + 1}. {step}
-                      </p>
-                    ))}
+                  <div className="bg-blue-50/50 rounded-2xl p-8 text-left max-w-3xl mx-auto border border-blue-100">
+                    <p className="text-slate-700 leading-relaxed text-[14px] font-medium">
+                      <span className="font-bold text-slate-900">The 80% mastery gate is not a threshold to aim for — it is the minimum before you are allowed to advance.</span> Research shows that students who advance before reaching 80% on a prerequisite topic consistently struggle with every subsequent related topic. EduMeUp enforces this standard automatically.
+                    </p>
                   </div>
-                  <p className="text-[#2366c9] font-semibold text-[14px]">{path.expected}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          <div className="text-center mt-10">
-            <InquiryDialog
-              defaultType="diagnostic"
-              title="Diagnostic Test"
-              trigger={<Button className="bg-[#2366c9] hover:bg-[#2366c9] rounded-xl font-semibold">Diagnostic Test Recommends Your Best Pathway &rarr;</Button>}
-            />
-          </div>
-        </div>
-      </section>
-
-      <section className="py-20 bg-blue-50">
-        <div className="container-custom max-w-6xl">
-          <div className="text-center mb-14">
-            <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-4">Your Transformation Timeline</h2>
-            <p className="text-xl text-slate-900/60 font-semibold">What progress looks like month by month</p>
-          </div>
-          <div className="grid md:grid-cols-2 gap-6">
-            {transformationTimeline.map((month, i) => (
-              <Card key={i} className="bg-white border-2 border-blue-100 rounded-2xl">
-                <CardContent className="p-6">
-                  <p className="text-xs font-semibold uppercase tracking-widest text-blue-600 mb-1">{month.phase}</p>
-                  <h3 className="text-xl font-semibold text-slate-900 mb-2">{month.title}</h3>
-                  <p className="text-slate-900/70 font-medium text-[14px] mb-2"><span className="font-semibold text-slate-900">What you'll feel:</span> {month.feel}</p>
-                  <p className="text-[#2366c9] font-semibold text-[14px]">{month.measurable}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          <div className="mt-12 bg-white border-2 border-blue-100 rounded-[2rem] p-8">
-            <h3 className="text-2xl font-semibold text-slate-900 mb-4">Composite student journeys</h3>
-            <div className="space-y-4 text-[14px] text-slate-900/80 font-semibold">
-              <p><span className="text-[#2366c9] font-semibold">ATP improvement case:</span> A student starting near 22/40 in ATP Chemistry moved to 35-38/40 in mock conditions through structured ATP training and past-paper strategy.</p>
-              <p><span className="text-[#2366c9] font-semibold">English structure case:</span> A student struggling with essay structure reached A-grade performance after framework-driven writing practice and feedback cycles.</p>
-              <p><span className="text-[#2366c9] font-semibold">Emergency prep case:</span> A student with D grades across multiple subjects used risk-based triage and high-yield planning to pass all subjects within 14 weeks.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-20 bg-white">
-        <div className="container-custom max-w-6xl">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-4">Is EduMeUp Right for You?</h2>
-          </div>
-          <div className="grid md:grid-cols-2 gap-6">
-            <Card className="border-[#2366c9]  border-2 border-2 border-green-100 rounded-2xl bg-green-50/40">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold text-green-700 mb-4 flex items-center gap-2"><CheckCircle2 className="h-5 w-5" />EduMeUp works best if you</h3>
-                <ul className="space-y-2 text-[14px] font-semibold text-slate-900/80">
-                  <li>- Are willing to practice actively</li>
-                  <li>- Want conceptual understanding, not memorization only</li>
-                  <li>- Can follow a structured system consistently</li>
-                  <li>- Are ready for mastery gates and feedback</li>
-                  <li>- Want long-term independent learning</li>
-                </ul>
-              </CardContent>
-            </Card>
-            <Card className="border-[#2366c9]  border-2 border-2 border-red-100 rounded-2xl bg-red-50/40">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold text-red-700 mb-4 flex items-center gap-2"><AlertTriangle className="h-5 w-5" />Not ideal if you</h3>
-                <ul className="space-y-2 text-[14px] font-semibold text-slate-900/80">
-                  <li>- Want shortcuts without effort</li>
-                  <li>- Prefer direct answers without thinking</li>
-                  <li>- Do not want a structured process</li>
-                  <li>- Expect results without consistency</li>
-                </ul>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-20 bg-blue-50">
-        <div className="container-custom max-w-6xl">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-4">Three Ways to Start</h2>
-            <p className="text-xl text-slate-900/60 font-semibold">The earlier you start, the stronger your foundation</p>
-          </div>
-
-          <div className="grid lg:grid-cols-3 gap-6 mb-10">
-            <Card className="border-[#2366c9]  border-2 border-2 border-blue-200 rounded-[2rem] bg-white shadow-sm">
-              <CardContent className="p-7">
-                <p className="text-xs font-semibold uppercase tracking-widest text-blue-600 mb-2">Recommended</p>
-                <h3 className="text-2xl font-semibold text-slate-900 mb-3">Explore Free Library</h3>
-                <p className="text-[14px] text-slate-900/70 font-semibold mb-4">Permanent free access to sample lessons, ATP previews, essay frameworks, worked examples, and platform walkthroughs.</p>
-                <p className="text-[11px] text-slate-900/50 font-semibold mb-4">No time limit - Free account to save progress</p>
-                <Link href="/resources">
-                  <Button className="w-full bg-[#2366c9] hover:bg-blue-500 font-semibold">
-                    <Library className="h-4 w-4 mr-2" /> Explore Free Library Now
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-
-            <Card className="border-[#2366c9]  border-2 border-2 border-blue-100 rounded-[2rem] bg-white shadow-sm">
-              <CardContent className="p-7">
-                <p className="text-xs font-semibold uppercase tracking-widest text-blue-600 mb-2">Option 2</p>
-                <h3 className="text-2xl font-semibold text-slate-900 mb-3">Free Diagnostic Assessment</h3>
-                <p className="text-[14px] text-slate-900/70 font-semibold mb-4">30-40 minute test with topic-level gap analysis and personalized roadmap.</p>
-                <InquiryDialog
-                  defaultType="diagnostic"
-                  title="Take Free Diagnostic Assessment"
-                  trigger={<Button className="w-full bg-[#2366c9] hover:bg-[#2366c9] font-semibold">Take Free Diagnostic</Button>}
-                />
-              </CardContent>
-            </Card>
-
-            <Card className="border-[#2366c9]  border-2 border-2 border-blue-100 rounded-[2rem] bg-white shadow-sm">
-              <CardContent className="p-7">
-                <p className="text-xs font-semibold uppercase tracking-widest text-blue-600 mb-2">Option 3</p>
-                <h3 className="text-2xl font-semibold text-slate-900 mb-3">Speak With Our Team</h3>
-                <p className="text-[14px] text-slate-900/70 font-semibold mb-4">Discuss your subjects, timeline, and concerns with zero pressure.</p>
-                <p className="text-[14px] font-semibold text-slate-900 mb-4">Available 9 AM - 9 PM Pakistan Time</p>
-                <Button variant="outline" className="w-full border-blue-200 text-slate-900 hover:bg-blue-50 font-semibold">
-                  <MessageCircle className="h-4 w-4 mr-2" /> Contact Support Team
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="bg-[#2366c9] rounded-[2rem] p-8 text-white">
-            <p className="text-xs font-semibold uppercase tracking-widest text-blue-300 mb-2">March 2026 launch offer</p>
-            <h3 className="text-2xl font-semibold text-white mb-4">Enroll within 30 days and receive</h3>
-            <div className="grid md:grid-cols-2 gap-3 text-[14px] font-semibold text-white">
-              {["25% off all programmes", "Free diagnostic assessment included", "Free parent orientation session", "Permanent Free Library access"].map((item, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-blue-300 flex-shrink-0" />
-                  <span>{item}</span>
                 </div>
-              ))}
-            </div>
-            <p className="text-[11px] text-blue-200/80 mt-4">Pricing shown in USD. Local currency equivalents are available at checkout.</p>
-          </div>
+              </div>
+            </section>
 
-          <div className="mt-10 grid md:grid-cols-2 gap-6">
-            {[
-              ["How is Free Library different from full platform?", "The Free Library offers real sample and partial resources to experience the method. Full courses include complete sequences, mastery tracking, and personalized pathways."],
-              ["Is Free Library time-limited?", "No. Free Library access is permanent with no expiry countdown."],
-              ["I am failing right now. Is it too late?", "A 3-4 month window can still produce meaningful gains with consistent daily execution."],
-              ["Will this work on slow internet?", "The platform is optimized for low bandwidth and supports downloaded/offline learning workflows where available."],
-            ].map((faq, i) => (
-              <Card key={i} className="bg-white border border-blue-100 rounded-2xl">
-                <CardContent className="p-6">
-                  <h4 className="text-base font-semibold text-slate-900 mb-2">{faq[0]}</h4>
-                  <p className="text-[14px] text-slate-900/70 font-semibold">{faq[1]}</p>
-                </CardContent>
-              </Card>
-            ))}
+            {/* SECTION 6 | SAMPLE H5P INTERACTIONS */}
+            <section id="h5p-samples" className="py-24 bg-white border-t border-slate-100 overflow-hidden scroll-mt-10">
+              <div className="max-w-6xl mx-auto px-6">
+                <div className="text-center mb-16">
+                  <h2 className="text-3xl md:text-4xl font-semibold text-slate-900 mb-6">This Is What Studying on EduMeUp Actually Looks Like.</h2>
+                  <p className="text-lg text-slate-600 max-w-3xl mx-auto font-medium leading-relaxed">
+                    No passive video. No static PDFs. Every activity requires you to think, apply, and respond. The platform adjusts based on your answers. The AI gives you immediate, specific feedback.
+                  </p>
+                </div>
+
+                <div className="space-y-24">
+                  {/* Sample 1 */}
+                  <div className="grid lg:grid-cols-12 gap-10 items-center">
+                    <div className="lg:col-span-5 space-y-4">
+                      <span className="text-[#2366c9] font-black tracking-widest text-[10px] uppercase">Sample H5P Activity 1</span>
+                      <h3 className="text-2xl font-bold text-slate-900">Drag-and-Drop Diagram: Chemistry AO2</h3>
+                      <p className="text-slate-600 text-[14px] leading-relaxed font-medium mb-6">
+                        Students interact directly with equations to demonstrate understanding.
+                      </p>
+                      <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200 relative">
+                        <div className="absolute -left-3 top-6 w-6 h-6 bg-white rounded-full border border-slate-200 flex items-center justify-center text-[#2366c9]"><Brain className="w-3 h-3"/></div>
+                        <p className="text-[10px] font-black text-[#2366c9] uppercase tracking-widest mb-2 ml-4">AI Feedback Example:</p>
+                        <p className="text-[13px] text-slate-600 font-medium leading-relaxed italic ml-4">"Excellent AO2 application. You correctly used the stoichiometric ratio — not the masses — to determine the mole quantities. This is the most common error Cambridge examiners report..."</p>
+                      </div>
+                    </div>
+                    <div className="lg:col-span-7">
+                      <div className="bg-slate-800 rounded-[2rem] border border-slate-700 shadow-2xl overflow-hidden scale-100 lg:scale-105 origin-left">
+                        <div className="bg-slate-950 p-4 flex items-center gap-2 border-b border-slate-700">
+                          <div className="flex gap-1.5"><div className="w-3 h-3 rounded-full bg-red-500"></div><div className="w-3 h-3 rounded-full bg-yellow-500"></div><div className="w-3 h-3 rounded-full bg-green-500"></div></div>
+                          <div className="ml-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider">EduMeUp Learn Platform</div>
+                        </div>
+                        <div className="p-8 bg-white text-slate-800">
+                          <h4 className="font-bold text-lg mb-2">Mole Concept: Interpreting Molar Ratios</h4>
+                          <p className="text-[13px] mb-6 bg-slate-50 p-4 border border-slate-200 rounded-xl font-medium">The equation below shows the reaction between hydrogen and oxygen to produce water: <br/><span className="font-mono font-bold text-[#2366c9] text-base mt-2 block">2H₂ + O₂ &rarr; 2H₂O</span><br/>Drag the correct label to each position.</p>
+                          <div className="grid grid-cols-3 gap-4 mb-8">
+                            <div className="border-2 border-dashed border-slate-300 rounded-xl h-28 flex flex-col items-center justify-center p-3 bg-slate-50">
+                              <span className="text-[11px] font-bold text-slate-500 mb-3">moles of H₂</span>
+                              <div className="bg-[#2366c9] text-white px-4 py-1.5 rounded-lg text-sm font-bold shadow-md cursor-pointer">2 mol</div>
+                            </div>
+                            <div className="border-2 border-dashed border-slate-300 rounded-xl h-28 flex flex-col items-center justify-center p-3 bg-slate-50">
+                              <span className="text-[11px] font-bold text-slate-500 mb-3">moles of O₂</span>
+                              <div className="bg-[#2366c9] text-white px-4 py-1.5 rounded-lg text-sm font-bold shadow-md cursor-pointer">1 mol</div>
+                            </div>
+                            <div className="border-2 border-dashed border-slate-300 rounded-xl h-28 flex flex-col items-center justify-center p-3 bg-slate-50">
+                              <span className="text-[11px] font-bold text-slate-500 mb-3">moles of H₂O</span>
+                              <div className="bg-slate-200 text-slate-500 px-4 py-1.5 rounded-lg text-sm font-bold shadow-inner cursor-pointer border border-slate-300">Drop here</div>
+                            </div>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-[13px] font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-full">Progress: 2/3 Correct</span>
+                            <Button className="bg-[#2366c9] hover:bg-blue-600 text-white font-bold rounded-xl h-10">Check Answers</Button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Sample 2 */}
+                  <div className="grid lg:grid-cols-12 gap-10 items-center">
+                    <div className="lg:col-span-7 order-2 lg:order-1">
+                      <div className="bg-slate-800 rounded-[2rem] border border-slate-700 shadow-2xl overflow-hidden scale-100 lg:scale-105 origin-right">
+                        <div className="bg-slate-950 p-4 flex items-center gap-2 border-b border-slate-700">
+                          <div className="flex gap-1.5"><div className="w-3 h-3 rounded-full bg-red-500"></div><div className="w-3 h-3 rounded-full bg-yellow-500"></div><div className="w-3 h-3 rounded-full bg-green-500"></div></div>
+                        </div>
+                        <div className="p-8 bg-white text-slate-800">
+                          <h4 className="font-bold text-lg mb-4">Evaluate Writer's Language</h4>
+                          <div className="grid grid-cols-2 gap-4 mb-6">
+                            <div className="border border-slate-200 rounded-xl p-4 text-[12px] bg-slate-50 font-medium leading-relaxed">
+                              "...The <span className="bg-amber-200/50 px-1 rounded font-bold">racing pulse</span> of the engine matched his own as he <span className="bg-blue-200/50 px-1 rounded font-bold">swerved violently</span>. <span className="bg-emerald-200/50 px-1 rounded font-bold">Time stopped.</span> Then the <span className="bg-rose-200/50 px-1 rounded font-bold">shattering crash</span>..."
+                            </div>
+                            <div className="border border-slate-200 rounded-xl p-4 text-[12px] bg-blue-50/50 font-medium leading-relaxed">
+                              <span className="font-bold text-slate-500 block mb-1">Student Response:</span> "The writer creates urgency by using repetition and short sentences like 'Time stopped.' This makes the reader feel the urgency."
+                            </div>
+                          </div>
+                          <p className="text-[13px] font-bold text-slate-800 mb-3">Select the correct Band:</p>
+                          <div className="flex gap-2 mb-4">
+                            <Button variant="outline" className="text-[12px] h-9 font-bold border-slate-200 rounded-lg text-slate-600">Band 1</Button>
+                            <Button className="bg-[#2366c9] text-[12px] h-9 font-bold text-white rounded-lg">Band 2</Button>
+                            <Button variant="outline" className="text-[12px] h-9 font-bold border-slate-200 rounded-lg text-slate-600">Band 3</Button>
+                          </div>
+                          <div className="w-full border border-slate-300 rounded-xl p-3 text-[12px] text-slate-400 h-20 bg-slate-50 font-medium">Explain your decision here...</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="lg:col-span-5 space-y-4 order-1 lg:order-2">
+                      <span className="text-[#2366c9] font-black tracking-widest text-[10px] uppercase">Sample H5P Activity 2</span>
+                      <h3 className="text-2xl font-bold text-slate-900">Annotated Text Evaluation: English AO3</h3>
+                      <p className="text-slate-600 text-[14px] leading-relaxed font-medium mb-6">
+                        Students learn mark schemes by becoming the examiner and evaluating sample responses.
+                      </p>
+                      <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200 relative">
+                        <div className="absolute -left-3 top-6 w-6 h-6 bg-white rounded-full border border-slate-200 flex items-center justify-center text-[#2366c9]"><Brain className="w-3 h-3"/></div>
+                        <p className="text-[10px] font-black text-[#2366c9] uppercase tracking-widest mb-2 ml-4">AI Feedback Example:</p>
+                        <p className="text-[13px] text-slate-600 font-medium leading-relaxed italic ml-4">"Correct. This is a Band 2 response. The student identifies two techniques... However, the effect on the reader is stated but not fully developed."</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Sample 3 */}
+                  <div className="grid lg:grid-cols-12 gap-10 items-center">
+                    <div className="lg:col-span-5 space-y-4">
+                      <span className="text-[#2366c9] font-black tracking-widest text-[10px] uppercase">Sample H5P Activity 3</span>
+                      <h3 className="text-2xl font-bold text-slate-900">Adaptive Question Sequence: Maths</h3>
+                      <p className="text-slate-600 text-[14px] leading-relaxed font-medium mb-6">
+                        Questions adapt in difficulty based on the previous answer, providing scaffolded help or extension tasks instantly.
+                      </p>
+                      <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200 relative">
+                        <div className="absolute -left-3 top-6 w-6 h-6 bg-white rounded-full border border-slate-200 flex items-center justify-center text-[#2366c9]"><Brain className="w-3 h-3"/></div>
+                        <p className="text-[10px] font-black text-[#2366c9] uppercase tracking-widest mb-2 ml-4">AI Feedback Example:</p>
+                        <p className="text-[13px] text-slate-600 font-medium leading-relaxed italic ml-4">"Not quite. Let us look at where the working went wrong. The error is in isolating x. Here is the correct step... Now try a similar question with slightly different values."</p>
+                      </div>
+                    </div>
+                    <div className="lg:col-span-7">
+                      <div className="bg-slate-800 rounded-[2rem] border border-slate-700 shadow-2xl overflow-hidden scale-100 lg:scale-105 origin-left">
+                        <div className="bg-slate-950 p-4 flex items-center gap-2 border-b border-slate-700">
+                          <div className="flex gap-1.5"><div className="w-3 h-3 rounded-full bg-red-500"></div><div className="w-3 h-3 rounded-full bg-yellow-500"></div><div className="w-3 h-3 rounded-full bg-green-500"></div></div>
+                        </div>
+                        <div className="p-8 bg-white text-slate-800">
+                          <div className="flex justify-between items-center mb-6">
+                            <h4 className="font-bold text-lg">Simultaneous Equations</h4>
+                            <span className="text-[10px] font-bold bg-slate-100 text-slate-500 px-3 py-1 rounded-full uppercase tracking-wider">Q1 of 4</span>
+                          </div>
+                          <p className="text-[14px] mb-6 font-medium">Solve: <span className="font-mono font-bold bg-blue-50 text-[#2366c9] px-2 py-0.5 rounded ml-1">3x + 2y = 12</span> and <span className="font-mono font-bold bg-blue-50 text-[#2366c9] px-2 py-0.5 rounded ml-1">x - y = 1</span></p>
+                          <div className="flex gap-3 mb-6">
+                            <Button className="bg-[#2366c9] h-10 text-[13px] font-bold text-white rounded-xl">Substitution</Button>
+                            <Button variant="outline" className="h-10 text-[13px] font-bold border-slate-200 rounded-xl text-slate-600">Elimination</Button>
+                          </div>
+                          <div className="border border-slate-300 rounded-xl p-4 h-36 mb-6 bg-[url('https://www.transparenttextures.com/patterns/graphy.png')] bg-repeat relative">
+                            <p className="font-mono text-[14px] text-blue-900 font-bold mb-1">x = 1 + y</p>
+                            <p className="font-mono text-[14px] text-blue-900 font-bold mb-1">3(1 + y) + 2y = 12</p>
+                            <p className="font-mono text-[14px] text-blue-900 font-bold">3 + 3y + 2y = 12</p>
+                            <div className="absolute bottom-3 right-3 flex gap-2">
+                              <span className="bg-white border border-slate-300 px-3 py-1.5 rounded-lg text-[13px] font-mono font-bold shadow-sm">x = [ 2 ]</span>
+                              <span className="bg-white border border-slate-300 px-3 py-1.5 rounded-lg text-[13px] font-mono font-bold shadow-sm">y = [ 1 ]</span>
+                            </div>
+                          </div>
+                          <Button className="w-full bg-slate-900 hover:bg-slate-800 text-white h-12 font-bold rounded-xl text-[14px]">Submit Working</Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                </div>
+              </div>
+            </section>
+
+            {/* SECTION 7 | YOUR STUDENT DASHBOARD */}
+            <section id="dashboard" className="py-24 bg-white border-t border-slate-100 scroll-mt-10">
+              <div className="max-w-6xl mx-auto px-6">
+                <div className="text-center mb-16">
+                  <h2 className="text-3xl md:text-4xl font-semibold text-slate-900 mb-6">Your Command Centre — Everything You Need, In One Place.</h2>
+                  <p className="text-lg text-slate-600 max-w-3xl mx-auto font-medium leading-relaxed">
+                    When you log into EduMeUp, your dashboard shows you exactly what to do today, how much you have achieved this week, and where your attention is most needed.
+                  </p>
+                </div>
+
+                <div className="bg-white rounded-[2.5rem] shadow-xl border border-slate-200 overflow-hidden p-6 md:p-10">
+                   {/* Realistic mockup of the 9 widgets */}
+                   <div className="grid md:grid-cols-3 gap-6">
+                     
+                     {/* 1. Today's Study Plan */}
+                     <div className="border border-slate-200 rounded-2xl p-6 bg-slate-50 col-span-1 md:col-span-2 shadow-sm">
+                       <h4 className="font-bold text-slate-900 mb-4 flex items-center gap-2"><Zap className="w-4 h-4 text-[#2366c9]" /> Today's Study Plan</h4>
+                       <div className="space-y-3">
+                         <div className="flex items-center gap-3 bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
+                           <div className="w-2 h-2 rounded-full bg-rose-500"></div>
+                           <span className="text-[14px] font-bold text-slate-800">Diagnostic Retest: Math Pre-O-Level</span>
+                           <span className="text-[11px] font-bold text-slate-400 uppercase ml-auto tracking-widest">Due</span>
+                         </div>
+                         <div className="flex items-center gap-3 bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
+                           <div className="w-2 h-2 rounded-full bg-[#1A7A3A]"></div>
+                           <span className="text-[14px] font-bold text-slate-800">Chemistry: Mole Concept</span>
+                           <span className="text-[11px] font-bold text-slate-400 uppercase ml-auto tracking-widest">Chapter 4</span>
+                         </div>
+                       </div>
+                     </div>
+
+                     {/* 2. AI Study Advisor */}
+                     <div className="border border-slate-200 rounded-2xl p-6 bg-blue-50/50 flex flex-col row-span-2 shadow-sm">
+                       <h4 className="font-bold text-[#2366c9] mb-4 flex items-center gap-2"><MessageCircle className="w-4 h-4" /> AI Study Advisor</h4>
+                       <div className="flex-1 bg-white rounded-xl border border-slate-100 p-4 flex flex-col text-[13px] text-slate-700 shadow-sm font-medium">
+                         <div className="mb-4 bg-slate-50 p-4 rounded-xl rounded-tl-none border border-slate-100 leading-relaxed">Hi! What do you need help with today? Mark scheme guidance?</div>
+                         <div className="mt-auto relative">
+                           <input type="text" placeholder="Type a question..." className="w-full border border-slate-200 rounded-full px-4 py-3 text-[13px] bg-slate-50 font-medium" readOnly />
+                           <div className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-[#2366c9] rounded-full flex items-center justify-center text-white"><ArrowRight className="w-4 h-4" /></div>
+                         </div>
+                       </div>
+                     </div>
+
+                     {/* 3. Subject Mastery Overview */}
+                     <div className="border border-slate-200 rounded-2xl p-6 bg-white shadow-sm">
+                       <h4 className="font-bold text-slate-900 mb-4 text-[15px]">Subject Mastery Overview</h4>
+                       <div className="space-y-4 text-[14px]">
+                         <div className="flex justify-between items-center"><span className="flex items-center gap-2 font-bold text-slate-700"><div className="w-3 h-3 rounded-full bg-[#1A7A3A] shadow-[0_0_8px_rgba(26,122,58,0.4)]"></div>English</span> <span className="font-black text-slate-900">88%</span></div>
+                         <div className="flex justify-between items-center"><span className="flex items-center gap-2 font-bold text-slate-700"><div className="w-3 h-3 rounded-full bg-[#1A7A3A] shadow-[0_0_8px_rgba(26,122,58,0.4)]"></div>Maths</span> <span className="font-black text-slate-900">82%</span></div>
+                         <div className="flex justify-between items-center"><span className="flex items-center gap-2 font-bold text-slate-700"><div className="w-3 h-3 rounded-full bg-[#C8860A] shadow-[0_0_8px_rgba(200,134,10,0.4)]"></div>Physics</span> <span className="font-black text-slate-900">64%</span></div>
+                       </div>
+                     </div>
+
+                     {/* 4. Spaced Retrieval Schedule */}
+                     <div className="border border-slate-200 rounded-2xl p-6 bg-white shadow-sm">
+                       <h4 className="font-bold text-slate-900 mb-4 flex items-center gap-2 text-[15px]"><Calendar className="w-4 h-4 text-[#2366c9]" /> Spaced Retrieval</h4>
+                       <div className="flex flex-wrap gap-2">
+                         <span className="bg-rose-50 text-rose-700 text-[10px] px-2 py-1 rounded border border-rose-200 font-bold uppercase tracking-wide">Mole Concept (Today)</span>
+                         <span className="bg-slate-50 text-slate-600 text-[10px] px-2 py-1 rounded border border-slate-200 font-bold uppercase tracking-wide">Bonding (Day 3)</span>
+                         <span className="bg-slate-50 text-slate-600 text-[10px] px-2 py-1 rounded border border-slate-200 font-bold uppercase tracking-wide">Rates (Day 7)</span>
+                       </div>
+                     </div>
+
+                     {/* 5. Exam Readiness */}
+                     <div className="border border-slate-200 rounded-2xl p-6 bg-slate-900 text-white col-span-1 md:col-span-2 shadow-xl">
+                       <h4 className="font-bold text-white mb-2 text-[15px]">Exam Readiness Countdown</h4>
+                       <p className="text-[13px] text-blue-200 mb-6 font-medium">Based on mastery rate, you are on track for an A in Physics.</p>
+                       <div className="flex flex-col sm:flex-row gap-4">
+                         <div className="bg-white/10 px-6 py-4 rounded-xl text-center flex-shrink-0"><span className="block text-3xl font-black">124</span><span className="text-[10px] font-bold text-blue-300 uppercase tracking-widest mt-1 block">Days Left</span></div>
+                         <div className="bg-white/10 px-6 py-4 rounded-xl text-left flex-1 flex flex-col justify-center"><span className="text-[13px] font-medium text-white leading-relaxed">To reach A*, complete <span className="font-bold text-blue-300">4 chapters</span> before May 1st.</span></div>
+                       </div>
+                     </div>
+
+                     {/* 6. Current Course Progress */}
+                     <div className="border border-slate-200 rounded-2xl p-6 bg-white shadow-sm">
+                       <h4 className="font-bold text-slate-900 mb-4 text-[15px]">Current Progress</h4>
+                       <div>
+                         <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">O-Level Chemistry</p>
+                         <div className="flex justify-between text-[13px] font-bold mb-2 text-slate-800"><span>Chapter 4 of 11</span><span className="text-[#2366c9]">36%</span></div>
+                         <div className="h-2.5 bg-slate-100 rounded-full w-full overflow-hidden"><div className="h-full bg-[#2366c9] w-[36%]"></div></div>
+                       </div>
+                     </div>
+
+                     {/* 7. Diagnostic Results */}
+                     <div className="border border-slate-200 rounded-2xl p-6 bg-slate-50 shadow-sm col-span-1 md:col-span-2">
+                       <h4 className="font-bold text-slate-900 mb-4 text-[15px]">Diagnostic Pathway</h4>
+                       <div className="flex flex-col sm:flex-row gap-4 items-center">
+                         <div className="flex-1 w-full bg-white p-4 rounded-xl border border-slate-200">
+                           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Original Score</p>
+                           <p className="font-black text-2xl text-rose-500">45%</p>
+                         </div>
+                         <ArrowRight className="text-slate-300 hidden sm:block w-5 h-5" />
+                         <div className="flex-1 w-full bg-white p-4 rounded-xl border border-slate-200">
+                           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Current Progress</p>
+                           <p className="font-black text-2xl text-[#1A7A3A]">68%</p>
+                         </div>
+                         <Button variant="outline" className="h-12 w-full sm:w-auto px-6 text-[13px] font-bold border-slate-200 text-slate-700 rounded-xl hover:bg-slate-100">View Full Report</Button>
+                       </div>
+                     </div>
+
+                     {/* 8. Resources and Downloads */}
+                     <div className="border border-slate-200 rounded-2xl p-6 bg-white shadow-sm">
+                       <h4 className="font-bold text-slate-900 mb-4 flex items-center gap-2 text-[15px]"><FileText className="w-4 h-4 text-[#2366c9]" /> Resources</h4>
+                       <div className="space-y-3">
+                         <p className="text-[13px] text-[#2366c9] font-bold cursor-pointer hover:underline">Mind maps & infographics</p>
+                         <p className="text-[13px] text-[#2366c9] font-bold cursor-pointer hover:underline">Topical Workbooks</p>
+                         <p className="text-[13px] text-[#2366c9] font-bold cursor-pointer hover:underline">Exam Templates</p>
+                       </div>
+                     </div>
+
+                   </div>
+                   
+                   <div className="mt-10 text-center">
+                     <Button variant="outline" className="text-[#2366c9] border-blue-200 font-bold h-12 px-8 rounded-xl hover:bg-blue-50">View Full Progress Report Detail</Button>
+                   </div>
+                </div>
+              </div>
+            </section>
+
+            {/* SECTION 8 | AI STUDY ADVISOR */}
+            <section id="ai-advisor" className="py-24 bg-white border-y border-slate-100 scroll-mt-10">
+              <div className="max-w-6xl mx-auto px-6">
+                <div className="text-center mb-16">
+                  <h2 className="text-3xl md:text-4xl font-semibold text-slate-900 mb-6">Your AI Study Advisor. Available 24/7. Answers Like a Cambridge Expert.</h2>
+                </div>
+
+                <div className="grid md:grid-cols-3 gap-8">
+                  {aiSamples.map((sample, i) => (
+                    <Card key={i} className="border border-slate-200 shadow-sm bg-slate-50/50 rounded-2xl hover:shadow-md transition-shadow">
+                      <CardContent className="p-8 space-y-6">
+                        <div className="flex gap-4">
+                          <div className="w-10 h-10 rounded-full bg-slate-200 flex-shrink-0 flex items-center justify-center text-lg shadow-inner">👤</div>
+                          <div className="bg-white border border-slate-200 p-4 rounded-2xl rounded-tl-none text-[14px] font-medium text-slate-800 shadow-sm leading-relaxed">
+                            "{sample.q}"
+                          </div>
+                        </div>
+                        <div className="flex gap-4 flex-row-reverse">
+                          <div className="w-10 h-10 rounded-full bg-[#2366c9] flex-shrink-0 flex items-center justify-center text-white shadow-md"><Brain className="w-5 h-5" /></div>
+                          <div className="bg-[#1e3a8a] text-white p-4 rounded-2xl rounded-tr-none text-[14px] leading-relaxed shadow-sm font-medium">
+                            {sample.a}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* SECTION 9 | FINAL CTA */}
+            <section id="cta" className="py-24 bg-white border-t border-slate-100 relative overflow-hidden scroll-mt-10">
+              <div className="max-w-5xl mx-auto px-6 text-center relative z-10">
+                <h2 className="text-3xl md:text-5xl font-semibold mb-6 tracking-tight text-slate-900">The First Step Takes 30 Minutes. It Is Free. And It Changes Everything.</h2>
+                <p className="text-lg text-slate-600 mb-12 max-w-3xl mx-auto font-medium leading-relaxed">
+                  Every hour you spend studying without knowing your gaps may not take you forward. The diagnostic costs nothing, takes 30 minutes, and gives you a precise, personalised starting point.
+                </p>
+
+                <div className="flex flex-col md:flex-row justify-center gap-4 mb-16 items-stretch max-w-5xl mx-auto">
+                  <CtaCard
+                    icon={<Activity className="w-8 h-8" />}
+                    title="Take the Free Diagnostic First"
+                    subtitle="Know your exact gaps. Get your personalised pathway. Start studying with a plan."
+                    meta="Free · No login required · 30 minutes"
+                    buttonText="Start Free Diagnostic"
+                    buttonHref="/diagnostics"
+                  />
+                  <CtaCard
+                    icon={<BookOpen className="w-8 h-8" />}
+                    title="Browse All Courses"
+                    subtitle="See every course available. Browse by subject, level, or category."
+                    meta="All courses available now"
+                    buttonText="Browse Courses"
+                    buttonHref="#courses"
+                    onClick={scrollToCourses}
+                  />
+                </div>
+
+                <div className="flex flex-wrap justify-center gap-6 mb-12">
+                  <div className="flex items-center gap-2 text-[13px] font-bold text-slate-700 bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm"><Award className="w-4 h-4 text-[#2366c9]" /> 91% pass rate</div>
+                  <div className="flex items-center gap-2 text-[13px] font-bold text-slate-700 bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm"><BarChart3 className="w-4 h-4 text-[#2366c9]" /> 75%+ retention</div>
+                  <div className="flex items-center gap-2 text-[13px] font-bold text-slate-700 bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm"><Lock className="w-4 h-4 text-[#2366c9]" /> Private results</div>
+                  <div className="flex items-center gap-2 text-[13px] font-bold text-slate-700 bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm"><CheckCircle2 className="w-4 h-4 text-[#2366c9]" /> 80% mastery gate</div>
+                  <div className="flex items-center gap-2 text-[13px] font-bold text-slate-700 bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm"><Brain className="w-4 h-4 text-[#2366c9]" /> AI Study Advisor</div>
+                  <div className="flex items-center gap-2 text-[13px] font-bold text-slate-700 bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm"><Globe className="w-4 h-4 text-[#2366c9]" /> Global Access</div>
+                </div>
+
+                <div className="pt-8 border-t border-slate-200">
+                  <p className="text-slate-600 font-medium text-[15px]">
+                    Already have an account? <Link href="/login" className="text-[#2366c9] font-bold hover:text-blue-700 transition-colors">Log in to your dashboard</Link>
+                  </p>
+                </div>
+              </div>
+            </section>
           </div>
         </div>
-      </section>
-
-      <section className="py-20 md:py-32 bg-[#2366c9] text-white relative overflow-hidden">
-        <div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
-        <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
-        <div className="container-custom text-center relative z-10">
-          <div className="flex justify-center w-full mb-6">
-            <h2 className="text-4xl md:text-6xl text-white font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
-              The opportunity is yours.
-            </h2>
-          </div>
-          <p className="text-base text-blue-200 mb-12 max-w-3xl mx-auto">
-            Every activity, feedback loop, and progression gate is built around how learning actually works.
-          </p>
-          <div className="flex flex-col md:flex-row justify-center gap-6 max-w-5xl mx-auto">
-            <Link href="/resources">
-              <Button size="lg" className="w-full md:w-auto min-w-[260px] bg-white text-[#2366c9] hover:bg-blue-50 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
-                Explore Free Library <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-            <InquiryDialog
-              defaultType="diagnostic"
-              title="Take Free Diagnostic"
-              trigger={
-                <Button size="lg" variant="outline" className="w-full md:w-auto min-w-[260px] border border-white/30 text-white hover:bg-white/10 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
-                  Take Free Diagnostic <ArrowRight className="h-4 w-4" />
-                </Button>
-              }
-            />
-            <Link href="/why-edumeup/how-it-works">
-              <Button size="lg" variant="outline" className="w-full md:w-auto min-w-[260px] border border-white/30 text-white hover:bg-white/10 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
-                See Inside The Platform <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
+      </div>
     </Layout>
   );
 }
-

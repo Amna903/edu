@@ -1,4 +1,6 @@
 import { Layout } from "@/components/Layout";
+import { CtaCard } from "@/components/CtaCard";
+import { PageSidebar } from "@/components/PageSidebar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -67,58 +69,16 @@ export default function ForParents() {
     <Layout>
       <div className="flex min-h-screen bg-white">
         {/* FULL-HEIGHT STICKY SIDEBAR */}
-        <aside className="hidden xl:flex flex-col w-[320px] h-[calc(100vh-64px)] sticky top-[64px] bg-white border-r border-blue-50 z-40 overflow-y-auto shrink-0">
-          <div className="p-8 flex flex-col h-full">
-            <div className="flex items-center gap-3 mb-10">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-lg shadow-blue-200`} style={{ backgroundColor: "#2366c9" }}>
-                <Navigation className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.2em]" style={{ color: "#2366c9" }}>Navigation</p>
-                <p className="text-[#0f172a] font-bold text-sm">Parent Guide</p>
-              </div>
-            </div>
+        <PageSidebar 
+          title="Parent Guide"
+          quote="EduMeUp answers every question parents have about Cambridge."
+          links={sidebarLinks}
+        />
 
-            <nav className="space-y-2">
-              {sidebarLinks.map((link, i) => (
-                <a 
-                  key={i} 
-                  href={link.href}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    document.getElementById(link.href.replace('#', ''))?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  className="group flex items-center gap-4 p-4 rounded-2xl transition-all hover:bg-blue-50 text-slate-600 hover:text-blue-600"
-                >
-                  <div className="w-1.5 h-1.5 rounded-full bg-slate-300 group-hover:scale-150 transition-all" style={{ backgroundColor: "#2366c9" }}></div>
-                  <span className="text-[14px] font-bold leading-tight">{link.label}</span>
-                </a>
-              ))}
-            </nav>
-
-            <div className="mt-auto pt-8 border-t border-blue-50">
-              <div className="bg-blue-50/50 rounded-2xl p-6 border border-blue-100 mb-6">
-                <p className="text-slate-600 text-[13px] font-medium leading-relaxed italic">
-                  "EduMeUp answers every question parents have about Cambridge."
-                </p>
-              </div>
-              <InquiryDialog 
-                defaultType="diagnostic" 
-                title="Free Diagnostic" 
-                trigger={
-                  <Button className={`w-full h-14 text-white text-[13px] font-black uppercase tracking-widest rounded-2xl shadow-xl transition-all hover:-translate-y-1 active:scale-95`} style={{ backgroundColor: "#2366c9", boxShadow: "0 25px 50px rgba(35, 102, 201, 0.3)" }}>
-                    Free Diagnostic
-                  </Button>
-                } 
-              />
-            </div>
-          </div>
-        </aside>
-
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           <div className="flex flex-col">
           {/* SECTION 1 | HERO BANNER */}
-          <section className="bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#2366c9] pt-20 pb-24 px-6 relative overflow-hidden">
+          <section className="bg-white pt-20 pb-24 px-6 relative overflow-hidden border-b border-slate-100">
             {/* Decorative Glows */}
             <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-400/10 blur-[120px] rounded-full -mr-64 -mt-64"></div>
             <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-indigo-500/10 blur-[120px] rounded-full -ml-32 -mb-32"></div>
@@ -126,15 +86,15 @@ export default function ForParents() {
             <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
               
               <div className="space-y-8 max-w-2xl relative z-10">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-300 text-xs font-bold uppercase tracking-wider">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-[#2366c9] text-xs font-bold uppercase tracking-wider">
                   <Activity className="w-3 h-3" /> Real-Time Parent Monitoring
                 </div>
                 
-                <h1 className="text-4xl md:text-5xl lg:text-7xl font-semibold text-white leading-[1.1] tracking-tight">
-                  Now You Can See Exactly How They Are Doing — <span className="text-blue-300">In Real Time.</span>
+                <h1 className="text-4xl md:text-5xl lg:text-7xl font-semibold text-slate-900 leading-[1.1] tracking-tight">
+                  Now You Can See Exactly How They Are Doing — <span className="text-[#2366c9]">In Real Time.</span>
                 </h1>
                
-                <p className="text-blue-100/70 text-lg md:text-xl font-medium leading-relaxed">
+                <p className="text-slate-600 text-lg md:text-xl font-medium leading-relaxed">
                   The EduMeUp parent dashboard gives you a clear, plain-English view of your child's Cambridge preparation — which subjects they are strong in, where the gaps are, and whether they are on track for their examination date.
                 </p>
                 
@@ -149,23 +109,23 @@ export default function ForParents() {
                     } 
                   />
                   <a href="#parent-dashboard">
-                    <Button variant="outline" className="w-full sm:w-auto px-8 py-8 border-2 border-white/10 text-white hover:bg-white/5 rounded-2xl font-bold text-[16px] backdrop-blur-md">
+                    <Button variant="outline" className="w-full sm:w-auto px-8 py-8 border-2 border-slate-200 text-slate-700 hover:bg-slate-50 rounded-2xl font-bold text-[16px] backdrop-blur-md">
                       See Dashboard Features
                     </Button>
                   </a>
                 </div>
                 
                 <div className="flex flex-col gap-4 pt-6 items-start">
-                  <div className="flex items-center gap-3 text-[14px] font-semibold text-blue-100/80 bg-white/5 backdrop-blur-sm px-5 py-2.5 rounded-full border border-white/10 shadow-sm">
-                    <Lock className="w-4 h-4 text-blue-400"/> 
+                  <div className="flex items-center gap-3 text-[14px] font-semibold text-slate-700 bg-white px-5 py-2.5 rounded-full border border-slate-200 shadow-sm">
+                    <Lock className="w-4 h-4 text-[#2366c9]"/> 
                     <span>Your child's detailed results are private — you see progress summaries</span>
                   </div>
-                  <div className="flex items-center gap-3 text-[14px] font-semibold text-blue-100/80 bg-white/5 backdrop-blur-sm px-5 py-2.5 rounded-full border border-white/10 shadow-sm">
+                  <div className="flex items-center gap-3 text-[14px] font-semibold text-slate-700 bg-white px-5 py-2.5 rounded-full border border-slate-200 shadow-sm">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400"/> 
                     <span>Parent dashboard is always free — included with enrolment</span>
                   </div>
-                  <div className="flex items-center gap-3 text-[14px] font-semibold text-blue-100/80 bg-white/5 backdrop-blur-sm px-5 py-2.5 rounded-full border border-white/10 shadow-sm">
-                    <Globe className="w-4 h-4 text-blue-400"/> 
+                  <div className="flex items-center gap-3 text-[14px] font-semibold text-slate-700 bg-white px-5 py-2.5 rounded-full border border-slate-200 shadow-sm">
+                    <Globe className="w-4 h-4 text-[#2366c9]"/> 
                     <span>Available for parents worldwide — Cambridge students</span>
                   </div>
                 </div>
@@ -187,7 +147,7 @@ export default function ForParents() {
                       <p className="text-slate-400 text-[9px] font-bold uppercase tracking-wider">Student: Zainab H.</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 text-blue-400">
+                  <div className="flex items-center gap-2 text-[#2366c9]">
                     <Activity className="w-3 h-3 animate-pulse" />
                     <span className="text-[10px] font-black uppercase tracking-widest">Live Updates</span>
                   </div>
@@ -219,7 +179,7 @@ export default function ForParents() {
                       <span className="text-[9px] font-black text-blue-300 uppercase tracking-widest">Mathematics P1</span>
                       <span className="text-2xl font-black">87 <span className="text-[10px] font-bold opacity-40">DAYS</span></span>
                     </div>
-                    <p className="text-[10px] text-slate-300 font-medium leading-relaxed">Status: <span className="text-white font-bold">On track for Grade B</span>. <span className="text-blue-400">Improve to A</span> by completing 3 chapters.</p>
+                    <p className="text-[10px] text-slate-300 font-medium leading-relaxed">Status: <span className="text-white font-bold">On track for Grade B</span>. <span className="text-[#2366c9]">Improve to A</span> by completing 3 chapters.</p>
                   </div>
 
                   {/* Streak & Active Widget */}
@@ -253,7 +213,7 @@ export default function ForParents() {
         </section>
 
         {/* SECTION 2 | QUESTIONS MENU */}
-        <section className="py-12 bg-[#f8fafc] border-y border-blue-50">
+        <section className="py-12 bg-white border-y border-slate-100">
           <div className="max-w-7xl mx-auto px-6">
             <h2 className="text-3xl font-semibold text-slate-900 mb-8 text-center">Every Question You Have About Your Child's Cambridge Journey — Answered Here.</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
@@ -352,7 +312,7 @@ export default function ForParents() {
         </section>
 
         {/* SECTION 4 | HOW EDUMEUP HELPS */}
-        <section id="how-it-helps" className="py-20 bg-slate-50 scroll-mt-10 border-t border-blue-50">
+        <section id="how-it-helps" className="py-20 bg-white scroll-mt-10 border-t border-slate-100">
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-semibold text-slate-900 mb-4">Six Things EduMeUp Does That Most Cambridge Students Never Have Access To.</h2>
@@ -436,7 +396,7 @@ export default function ForParents() {
         </section>
 
         {/* SECTION 5 | PARENT DASHBOARD DETAILS */}
-        <section id="parent-dashboard" className="py-24 bg-slate-50/50 scroll-mt-10">
+        <section id="parent-dashboard" className="py-24 bg-white scroll-mt-10">
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-16 max-w-3xl mx-auto">
               <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-6 leading-tight">Your Parent Dashboard. <span className="text-[#2366c9]">Free. Real-Time. Plain English.</span></h2>
@@ -753,7 +713,7 @@ export default function ForParents() {
         </section>
 
         {/* SECTION 6 | DIAGNOSTIC GUIDE */}
-        <section id="diagnostic-guide" className="py-20 bg-slate-50 border-y border-blue-50 scroll-mt-10">
+        <section id="diagnostic-guide" className="py-20 bg-white border-y border-slate-100 scroll-mt-10">
           <div className="max-w-4xl mx-auto px-6">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-semibold text-slate-900 mb-4">Your Child Took the Diagnostic. Here Is What the Report Tells You.</h2>
@@ -935,86 +895,73 @@ export default function ForParents() {
         </section>
 
         {/* SECTION 9 | FINAL CTA */}
-        <section id="cta" className="bg-slate-900 pt-20 pb-16 px-6 border-t border-slate-800">
+        <section id="cta" className="bg-white pt-20 pb-16 px-6 border-t border-slate-100">
           <div className="max-w-5xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-semibold text-white mb-4">The Clearest First Step: Know Your Child's Gaps.</h2>
-            <p className="text-slate-300 text-[14px] font-medium mb-12 max-w-2xl mx-auto leading-relaxed">
+            <h2 className="text-3xl md:text-4xl font-semibold text-slate-900 mb-4">The Clearest First Step: Know Your Child's Gaps.</h2>
+            <p className="text-slate-600 text-[14px] font-medium mb-12 max-w-2xl mx-auto leading-relaxed">
               The free 30-minute diagnostic costs nothing, takes half an hour, and tells you precisely what your child needs to focus on. That is more useful than any amount of general Cambridge advice.
             </p>
             
-            <div className="flex flex-col sm:flex-row justify-center gap-6 mb-16 items-stretch">
-              {/* Primary CTA */}
-              <div className="bg-slate-800 p-8 rounded-2xl border border-slate-700 flex-1 max-w-sm text-left shadow-lg flex flex-col">
-                <h3 className="text-xl font-semibold text-white mb-2">Book the Free Diagnostic for My Child</h3>
-                <p className="text-slate-400 text-[14px] font-medium mb-6">Free · 30 minutes · No login needed to start</p>
-                <div className="mt-auto">
-                  <InquiryDialog 
-                    defaultType="diagnostic" 
-                    title="Free Diagnostic" 
-                    trigger={
-                      <Button className="w-full h-12 bg-[#2366c9] border border-[#2366c9] hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors text-[14px]">
-                        Start the Diagnostic
-                      </Button>
-                    } 
-                  />
-                </div>
-              </div>
-              
-              {/* Secondary CTA */}
-              <div className="bg-slate-800 p-8 rounded-2xl border border-slate-700 flex-1 max-w-sm text-left shadow-lg flex flex-col">
-                <h3 className="text-xl font-semibold text-white mb-2">See How EduMeUp Works for Students</h3>
-                <p className="text-slate-400 text-[14px] font-medium mb-6">The 8-step learning journey, course catalogue, and sample interactive lessons.</p>
-                <div className="mt-auto">
-                  <Link href="/for-students">
-                    <Button variant="outline" className="w-full h-12 bg-transparent border-2 border-[#2366c9] text-[#4fb0ff] hover:bg-[#2366c9] hover:text-white hover:border-[#2366c9] font-semibold rounded-xl transition-colors text-[14px]">
-                      For Students
-                    </Button>
-                  </Link>
-                </div>
-              </div>
+            <div className="flex flex-col md:flex-row justify-center gap-8 mb-16 items-stretch max-w-5xl mx-auto">
+              <CtaCard
+                icon={<Activity className="w-8 h-8" />}
+                title="Book the Free Diagnostic for My Child"
+                subtitle="The free 30-minute diagnostic tells you precisely what your child needs to focus on. That is more useful than any amount of general Cambridge advice."
+                meta="Free · 30 minutes · No login needed to start"
+                buttonText="Start the Diagnostic"
+                actionWrapper={(btn) => <InquiryDialog defaultType="diagnostic" title="Free Diagnostic" trigger={btn} />}
+              />
+              <CtaCard
+                icon={<BookOpen className="w-16 h-8" />}
+                title="See How EduMeUp Works for Students"
+                subtitle="The 8-step learning journey, course catalogue, and sample interactive lessons."
+                meta="Available for all subjects"
+                buttonText="For Students"
+                buttonHref="/for-students"
+              />
             </div>
 
             {/* Trust Signals Strip */}
-            <div className="pt-10 border-t border-slate-800 flex flex-col gap-6 max-w-2xl mx-auto text-left text-white text-[14px] font-medium mb-10">
-              <div className="flex items-start gap-4 bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+            <div className="pt-10 border-t border-slate-200 flex flex-col gap-6 max-w-2xl mx-auto text-left text-slate-700 text-[14px] font-medium mb-10">
+              <div className="flex items-start gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                 <Lock className="w-6 h-6 text-[#2366c9] shrink-0" />
-                <p className="text-white">
-                  <span className="text-white font-semibold block mb-1">Detailed results are private</span>
+                <p className="text-slate-700">
+                  <span className="text-slate-900 font-semibold block mb-1">Detailed results are private</span>
                   Your child's detailed results are private — you see progress summaries, not raw data
                 </p>
               </div>
-              <div className="flex items-start gap-4 bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+              <div className="flex items-start gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                 <BarChart3 className="w-6 h-6 text-emerald-500 shrink-0" />
-                <p className="text-white">
-                  <span className="text-white font-semibold block mb-1">Always free</span>
+                <p className="text-slate-700">
+                  <span className="text-slate-900 font-semibold block mb-1">Always free</span>
                   Parent dashboard is always free — included with any student course enrolment
                 </p>
               </div>
-              <div className="flex items-start gap-4 bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-                <Globe className="w-6 h-6 text-blue-400 shrink-0" />
-                <p className="text-white">
-                  <span className="text-white font-semibold block mb-1">Available worldwide</span>
+              <div className="flex items-start gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <Globe className="w-6 h-6 text-[#2366c9] shrink-0" />
+                <p className="text-slate-700">
+                  <span className="text-slate-900 font-semibold block mb-1">Available worldwide</span>
                   Available for parents worldwide — Cambridge students in any country
                 </p>
               </div>
-              <div className="flex items-start gap-4 bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+              <div className="flex items-start gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                 <CheckCircle2 className="w-6 h-6 text-[#4fb0ff] shrink-0" />
-                <p className="text-white">
-                  <span className="text-white font-semibold block mb-1">All prices in USD</span>
+                <p className="text-slate-700">
+                  <span className="text-slate-900 font-semibold block mb-1">All prices in USD</span>
                   Standardized Cambridge preparation for all regions. All prices in USD.
                 </p>
               </div>
-              <div className="flex items-start gap-4 bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+              <div className="flex items-start gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                 <GraduationCap className="w-6 h-6 text-emerald-400 shrink-0" />
-                <p className="text-white">
-                  <span className="text-white font-semibold block mb-1">Scholarship available</span>
+                <p className="text-slate-700">
+                  <span className="text-slate-900 font-semibold block mb-1">Scholarship available</span>
                   Financial aid available for qualifying developing countries. Apply in minutes.
                 </p>
               </div>
             </div>
 
-            <p className="text-[14px] text-slate-400 font-medium">
-              Already have a parent account? <Link href="/login" className="text-[#4fb0ff] hover:underline font-semibold">Log in to your dashboard</Link>
+            <p className="text-[14px] text-slate-600 font-medium">
+              Already have a parent account? <Link href="/login" className="text-[#2366c9] hover:underline font-semibold">Log in to your dashboard</Link>
             </p>
           </div>
         </section>
