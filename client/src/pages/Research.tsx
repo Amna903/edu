@@ -1,4 +1,5 @@
 import { Layout } from "@/components/Layout";
+import { PageSidebar } from "@/components/PageSidebar";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -325,7 +326,7 @@ const referenceSummary = [
 
 // ─── RESEARCH SECTION CARD ───────────────────────────────────────────────────
 
-function ResearchCard({ section }) {
+function ResearchCard({ section }: { section: any }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -365,7 +366,7 @@ function ResearchCard({ section }) {
           <div>
             <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#2366c9] mb-3">What the Research Found</p>
             <ul className="space-y-2">
-              {section.findings.map((f, i) => (
+              {section.findings.map((f: any, i: number) => (
                 <li key={i} className="flex items-start gap-2 text-[13px] text-slate-700 leading-relaxed">
                   <div className="w-1.5 h-1.5 rounded-full bg-[#2366c9] mt-1.5 flex-shrink-0" />
                   {f}
@@ -378,7 +379,7 @@ function ResearchCard({ section }) {
           <div>
             <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#2366c9] mb-3">How EduMeUp Applies This</p>
             <ul className="space-y-2">
-              {section.implementation.map((impl, i) => (
+              {section.implementation.map((impl: any, i: number) => (
                 <li key={i} className="flex items-start gap-2 text-[13px] text-slate-700 leading-relaxed">
                   <CheckCircle2 className="h-4 w-4 text-[#2366c9] mt-0.5 flex-shrink-0" />
                   {impl}
@@ -402,325 +403,316 @@ function ResearchCard({ section }) {
 
 // ─── MAIN PAGE ───────────────────────────────────────────────────────────────
 
+const researchSidebarLinks = [
+  { label: "Research Overview", href: "#overview" },
+  { label: "The Core Problem", href: "#core-problem" },
+  { label: "11 Evidence-Based Principles", href: "#research-principles" },
+  { label: "— The Forgetting Curve", href: "#2-the" },
+  { label: "— Active Learning", href: "#3-active" },
+  { label: "— Mastery Learning", href: "#4-mastery" },
+  { label: "— Retrieval Practice", href: "#5-retrieval" },
+  { label: "— Spaced Learning", href: "#6-spaced" },
+  { label: "— Worked Examples", href: "#7-worked" },
+  { label: "— Feedback", href: "#8-feedback" },
+  { label: "— Dual Coding", href: "#9-dual" },
+  { label: "— Transfer Learning", href: "#10-transfer" },
+  { label: "— Self-Regulated Learning", href: "#11-self-regulated" },
+  { label: "The 10X Model™", href: "#10x-model" },
+  { label: "R&D Process", href: "#rd-process" },
+  { label: "Quick Reference", href: "#summary" },
+  { label: "Get Started", href: "#cta" },
+];
+
 export default function Research() {
   return (
     <Layout>
-      {/* ═══════════════════════════════════════════════════════ HERO ══ */}
-      <section className="relative overflow-hidden bg-white py-8 md:py-12">
-        <div className="container-custom max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-[1.4fr_0.9fr] gap-6 items-stretch">
-            {/* Left */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className={ui.sections.brand + " rounded-[2rem] md:rounded-[3rem] p-8 md:p-12 shadow-2xl"}
-            >
-              <div className="absolute -top-20 -right-16 h-56 w-56 rounded-full bg-white/10 blur-3xl" />
-              <div className="relative z-10 max-w-2xl space-y-6">
-                <p className="text-[11px] font-black uppercase tracking-[0.28em] text-blue-100">Research &amp; R&amp;D</p>
-                <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold leading-[1.05] tracking-tight text-white">
-                  Why EduMeUp Works.{" "}
-                  <span className="text-blue-200">The Science Behind the System.</span>
-                </h1>
-                <p className="text-lg md:text-xl text-blue-50/90 leading-relaxed max-w-2xl">
-                  EduMeUp is not built on opinions, trends, or what has always been done. Every design
-                  decision is rooted in peer-reviewed research from cognitive science, educational psychology,
-                  and instructional design.
-                </p>
-                <div className="rounded-[1.5rem] border border-white/15 bg-white/10 p-5 md:p-6 backdrop-blur-sm">
-                  <p className="text-sm font-semibold uppercase tracking-[0.22em] text-blue-100 mb-3">Our Commitment</p>
-                  <p className="text-base md:text-lg text-white/90 leading-relaxed">
-                    If you are a parent making a decision, a teacher evaluating a platform, or a student choosing how to study — this is the evidence you deserve to see.
-                  </p>
-                </div>
-                <div className="flex flex-col sm:flex-row gap-4 pt-2">
-                  <a href="#research-principles">
-                    <Button className={`${ui.buttons.brandLight} font-semibold px-6 py-3 rounded-xl text-[14px] shadow-md flex items-center gap-2`}>
-                      Explore the Research <ArrowRight className="h-4 w-4" />
-                    </Button>
-                  </a>
-                  <a href="/downloads/learning-science-whitepaper-v1.pdf">
-                    <Button variant="outline" className="border border-white/35 text-white hover:bg-white/10 font-semibold px-6 py-3 rounded-xl text-[14px] flex items-center gap-2">
-                      <Download className="h-4 w-4" /> Download Whitepaper
-                    </Button>
-                  </a>
-                </div>
-              </div>
-            </motion.div>
+      <div className="flex min-h-screen bg-white">
+        <PageSidebar
+          title="Research Foundation"
+          quote="50 years of cognitive science. 15+ peer-reviewed studies. All implemented."
+          links={researchSidebarLinks}
+        />
 
-            {/* Right: stats */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className={ui.cards.standard + " rounded-[2rem] md:rounded-[3rem] p-8 md:p-10 shadow-lg"}
-            >
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(35,102,201,0.18),transparent_40%),radial-gradient(circle_at_bottom_left,rgba(79,134,224,0.16),transparent_35%)]" />
-              <div className="relative z-10 flex h-full flex-col justify-between gap-6">
-                <div>
-                  <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-4">By the Numbers</p>
-                  <div className="space-y-3">
-                    {trustStrip.map(([val, label]) => (
-                      <div key={val} className={ui.cards.standard + " rounded-2xl p-4 flex items-center gap-4 shadow-sm"}>
-                        <p className="text-2xl font-semibold text-[#2366c9] min-w-[70px]">{val}</p>
-                        <p className="text-[12px] font-medium text-slate-600">{label}</p>
+        <div className="flex-1 min-w-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <div className="flex flex-col">
+            {/* ═══════════════════════════════════════════════════════ HERO ══ */}
+            <section id="overview" className="relative overflow-hidden bg-white py-8 md:py-12">
+              <div className="container-custom max-w-7xl mx-auto">
+                <div className="grid lg:grid-cols-[1.4fr_0.9fr] gap-6 items-stretch">
+                  {/* Left */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={ui.sections.brand + " rounded-[2rem] md:rounded-[3rem] p-8 md:p-12 shadow-2xl"}
+                  >
+                    <div className="absolute -top-20 -right-16 h-56 w-56 rounded-full bg-white/10 blur-3xl" />
+                    <div className="relative z-10 max-w-2xl space-y-6">
+                      <p className="text-[11px] font-black uppercase tracking-[0.28em] text-blue-100">Research &amp; R&amp;D</p>
+                      <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold leading-[1.05] tracking-tight text-white">
+                        Why EduMeUp Works.{" "}
+                        <span className="text-blue-200">The Science Behind the System.</span>
+                      </h1>
+                      <p className="text-lg md:text-xl text-blue-50/90 leading-relaxed max-w-2xl">
+                        EduMeUp is not built on opinions, trends, or what has always been done. Every design
+                        decision is rooted in peer-reviewed research from cognitive science, educational psychology,
+                        and instructional design.
+                      </p>
+                      <div className="rounded-[1.5rem] border border-white/15 bg-white/10 p-5 md:p-6 backdrop-blur-sm">
+                        <p className="text-sm font-semibold uppercase tracking-[0.22em] text-blue-100 mb-3">Our Commitment</p>
+                        <p className="text-base md:text-lg text-white/90 leading-relaxed">
+                          If you are a parent making a decision, a teacher evaluating a platform, or a student choosing how to study — this is the evidence you deserve to see.
+                        </p>
                       </div>
-                    ))}
-                  </div>
+                      <div className="flex flex-col sm:flex-row gap-4 pt-2">
+                        <a href="#research-principles">
+                          <Button className={`${ui.buttons.brandLight} font-semibold px-6 py-3 rounded-xl text-[14px] shadow-md flex items-center gap-2`}>
+                            Explore the Research <ArrowRight className="h-4 w-4" />
+                          </Button>
+                        </a>
+                        <a href="/downloads/learning-science-whitepaper-v1.pdf">
+                          <Button variant="outline" className="border border-white/35 text-white hover:bg-white/10 font-semibold px-6 py-3 rounded-xl text-[14px] flex items-center gap-2">
+                            <Download className="h-4 w-4" /> Download Whitepaper
+                          </Button>
+                        </a>
+                      </div>
+                    </div>
+                  </motion.div>
+
+                  {/* Right: stats */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className={ui.cards.standard + " rounded-[2rem] md:rounded-[3rem] p-8 md:p-10 shadow-lg"}
+                  >
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(35,102,201,0.18),transparent_40%),radial-gradient(circle_at_bottom_left,rgba(79,134,224,0.16),transparent_35%)]" />
+                    <div className="relative z-10 flex h-full flex-col justify-between gap-6">
+                      <div>
+                        <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-4">By the Numbers</p>
+                        <div className="space-y-3">
+                          {trustStrip.map(([val, label]) => (
+                            <div key={val} className={ui.cards.standard + " rounded-2xl p-4 flex items-center gap-4 shadow-sm"}>
+                              <p className="text-2xl font-semibold text-[#2366c9] min-w-[70px]">{val}</p>
+                              <p className="text-[12px] font-medium text-slate-600">{label}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="border-t border-blue-100 pt-4">
+                        <p className="text-[12px] text-slate-500 font-medium">
+                          For the full academic treatment — 60+ citations, 22 study briefs, and complete APA references — download our Learning Science Whitepaper v1.0.
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
                 </div>
-                <div className="border-t border-blue-100 pt-4">
-                  <p className="text-[12px] text-slate-500 font-medium">
-                    For the full academic treatment — 60+ citations, 22 study briefs, and complete APA references — download our Learning Science Whitepaper v1.0.
-                  </p>
-                </div>
               </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+            </section>
 
-      {/* Sticky sidebar + main content */}
-      <div className="w-full lg:px-8 lg:grid lg:grid-cols-[260px_1fr] gap-8 lg:gap-12 items-start pt-8 md:pt-12">
-        {/* ── Sticky sidebar ── */}
-        <aside className={ui.cards.standard + " sticky top-24 hidden lg:block rounded-[2rem] p-5 shadow-sm h-fit"}>
-          <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-4">On This Page</p>
-          <div className="space-y-1">
-            {[
-              ["#core-problem", "The Core Problem"],
-              ["#research-principles", "Research Principles"],
-              ["#2-forgetting", "— Forgetting Curve"],
-              ["#3-active", "— Active Learning"],
-              ["#4-mastery", "— Mastery Learning"],
-              ["#5-retrieval", "— Retrieval Practice"],
-              ["#6-spaced", "— Spaced Learning"],
-              ["#7-cognitive", "— Cognitive Load"],
-              ["#8-feedback", "— Feedback"],
-              ["#9-dual", "— Dual Coding"],
-              ["#10-transfer", "— Transfer"],
-              ["#11-self", "— Self-Regulated"],
-              ["#10x-model", "10X Learning Leap Model™"],
-              ["#rd-process", "R&D Process"],
-              ["#summary", "Quick Reference"],
-              ["#cta", "Get Started"],
-            ].map(([href, label], i) => (
-              <a
-                key={i}
-                href={href}
-                className={`block rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-blue-50 hover:text-[#2366c9] ${
-                  label.startsWith("—") ? "pl-6 text-xs text-slate-500" : ""
-                }`}
-              >
-                {label}
-              </a>
-            ))}
-          </div>
-        </aside>
+            <main className="w-full min-w-0 space-y-0">
 
-        <main className="min-w-0 space-y-0">
+                {/* ══════════════════════════════ SECTION 1: CORE PROBLEM ══ */}
+                <section id="core-problem" className="py-16 md:py-24 bg-[#FFF8EC] -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
+                  <div className="w-full max-w-6xl mx-auto">
+                    <div className="mb-10">
+                      <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">The Problem We Set Out to Solve</p>
+                      <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-6">
+                        Why Most Students Forget Almost Everything — Even After Studying Hard
+                      </h2>
+                    </div>
 
-          {/* ══════════════════════════════ SECTION 1: CORE PROBLEM ══ */}
-          <section id="core-problem" className="py-16 md:py-24 bg-[#FFF8EC] -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
-            <div className="w-full max-w-6xl mx-auto">
-              <div className="mb-10">
-                <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">The Problem We Set Out to Solve</p>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-6">
-                  Why Most Students Forget Almost Everything — Even After Studying Hard
-                </h2>
-              </div>
+                    <div className="border-l-4 border-[#2366c9] bg-white p-6 rounded-r-[1.5rem] mb-10">
+                      <p className="text-base text-slate-700 leading-relaxed mb-4">
+                        More than a century of research in cognitive science has established three findings that most educational systems still ignore:
+                      </p>
+                      <ul className="space-y-3">
+                        {[
+                          "Forgetting is predictable — it follows a measurable curve that begins within minutes of learning",
+                          "Retention depends almost entirely on how learning is structured — not on how much time is spent",
+                          "Passive exposure to information produces minimal durable memory, regardless of how many hours it lasts",
+                        ].map((item, i) => (
+                          <li key={i} className="flex items-start gap-3 text-[14px] font-medium text-slate-700">
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#2366c9] mt-1.5 flex-shrink-0" />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
 
-              <div className="border-l-4 border-[#2366c9] bg-white p-6 rounded-r-[1.5rem] mb-10">
-                <p className="text-base text-slate-700 leading-relaxed mb-4">
-                  More than a century of research in cognitive science has established three findings that most educational systems still ignore:
-                </p>
-                <ul className="space-y-3">
-                  {[
-                    "Forgetting is predictable — it follows a measurable curve that begins within minutes of learning",
-                    "Retention depends almost entirely on how learning is structured — not on how much time is spent",
-                    "Passive exposure to information produces minimal durable memory, regardless of how many hours it lasts",
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start gap-3 text-[14px] font-medium text-slate-700">
-                      <div className="w-1.5 h-1.5 rounded-full bg-[#2366c9] mt-1.5 flex-shrink-0" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                    <div className="grid md:grid-cols-3 gap-6 mb-10">
+                      {[
+                        { stat: "5%", label: "Retention from lectures after 24 hours", color: "text-red-500" },
+                        { stat: "70%", label: "Of new content forgotten within 24 hours (Ebbinghaus)", color: "text-red-500" },
+                        { stat: "90%", label: "Lost within 30 days — without systematic reinforcement", color: "text-red-500" },
+                      ].map((item) => (
+                        <div key={item.stat} className="bg-white rounded-[1.5rem] p-8 shadow-sm text-center hover:-translate-y-1 transition-all">
+                          <p className={`text-4xl font-semibold ${item.color} mb-3`}>{item.stat}</p>
+                          <p className="text-[14px] text-slate-600 font-medium">{item.label}</p>
+                        </div>
+                      ))}
+                    </div>
 
-              <div className="grid md:grid-cols-3 gap-6 mb-10">
-                {[
-                  { stat: "5%", label: "Retention from lectures after 24 hours", color: "text-red-500" },
-                  { stat: "70%", label: "Of new content forgotten within 24 hours (Ebbinghaus)", color: "text-red-500" },
-                  { stat: "90%", label: "Lost within 30 days — without systematic reinforcement", color: "text-red-500" },
-                ].map((item) => (
-                  <div key={item.stat} className="bg-white rounded-[1.5rem] p-8 shadow-sm text-center hover:-translate-y-1 transition-all">
-                    <p className={`text-4xl font-semibold ${item.color} mb-3`}>{item.stat}</p>
-                    <p className="text-[14px] text-slate-600 font-medium">{item.label}</p>
+                    <div className={ui.sections.brand + " p-6 rounded-[1.5rem]"}>
+                      <p className="text-white font-semibold mb-1">The conclusion is clear</p>
+                      <p className="text-blue-100 text-[14px] leading-relaxed">
+                        The problem is not student effort. It is instructional design. Students who study for hours using ineffective methods will consistently underperform students who study for less time using methods that align with how memory actually works. This is the problem EduMeUp was built to solve.
+                      </p>
+                    </div>
                   </div>
-                ))}
-              </div>
+                </section>
 
-              <div className={ui.sections.brand + " p-6 rounded-[1.5rem]"}>
-                <p className="text-white font-semibold mb-1">The conclusion is clear</p>
-                <p className="text-blue-100 text-[14px] leading-relaxed">
-                  The problem is not student effort. It is instructional design. Students who study for hours using ineffective methods will consistently underperform students who study for less time using methods that align with how memory actually works. This is the problem EduMeUp was built to solve.
-                </p>
-              </div>
-            </div>
-          </section>
+                {/* ════════════════════════ SECTION 2–11: RESEARCH PRINCIPLES ══ */}
+                <section id="research-principles" className={ui.sections.softBlue + " py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0"}>
+                  <div className="w-full max-w-6xl mx-auto">
+                    <div className="text-center mb-10 md:mb-16">
+                      <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">The Evidence</p>
+                      <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-4">
+                        11 Evidence-Based Principles — Implemented, Not Just Cited.
+                      </h2>
+                      <p className="text-base text-slate-700 max-w-3xl mx-auto">
+                        Every step in EduMeUp traces directly to peer-reviewed cognitive science research. Each principle below includes the key finding, the effect size, and how it is implemented on the platform.
+                      </p>
+                    </div>
 
-          {/* ════════════════════════ SECTION 2–11: RESEARCH PRINCIPLES ══ */}
-          <section id="research-principles" className={ui.sections.softBlue + " py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0"}>
-            <div className="w-full max-w-6xl mx-auto">
-              <div className="text-center mb-10 md:mb-16">
-                <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">The Evidence</p>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-4">
-                  11 Evidence-Based Principles — Implemented, Not Just Cited.
-                </h2>
-                <p className="text-base text-slate-700 max-w-3xl mx-auto">
-                  Every step in EduMeUp traces directly to peer-reviewed cognitive science research. Each principle below includes the key finding, the effect size, and how it is implemented on the platform.
-                </p>
-              </div>
-
-              <div className="space-y-6" id="2-forgetting">
-                {researchSections.map((section, i) => (
-                  <div key={section.number} id={`${section.number}-${section.title.split(" ")[0].toLowerCase()}`}>
-                    <ResearchCard section={section} />
+                    <div className="space-y-6" id="2-forgetting">
+                      {researchSections.map((section, i) => (
+                        <div key={section.number} id={`${section.number}-${section.title.split(" ")[0].toLowerCase()}`}>
+                          <ResearchCard section={section} />
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                ))}
-              </div>
-            </div>
-          </section>
+                </section>
 
-          {/* ════════════════════════════ SECTION 12: 10X MODEL ══ */}
-          <section id="10x-model" className={ui.sections.brand + " py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0"}>
-            <div className="w-full max-w-6xl mx-auto">
-              <div className="text-center mb-10 md:mb-16">
-                <p className="text-[11px] font-black uppercase tracking-[0.28em] text-blue-300 mb-3">Our Pedagogical Framework</p>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-white mb-4">
-                  The 10X Learning Leap Model™
-                </h2>
-                <p className="text-xl text-blue-300 font-medium mb-4">
-                  Two phases. Eight research-validated steps. One systematic transformation.
-                </p>
-                <p className="text-base text-blue-100/80 max-w-3xl mx-auto">
-                  The eleven research principles documented above are integrated into a single instructional framework — the EduMeUp 10X Learning Leap Model — which structures how every course, every module, and every assessment on the platform is designed.
-                </p>
-              </div>
+                {/* ════════════════════════════ SECTION 12: 10X MODEL ══ */}
+                <section id="10x-model" className={ui.sections.brand + " py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0"}>
+                  <div className="w-full max-w-6xl mx-auto">
+                    <div className="text-center mb-10 md:mb-16">
+                      <p className="text-[11px] font-black uppercase tracking-[0.28em] text-blue-300 mb-3">Our Pedagogical Framework</p>
+                      <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-white mb-4">
+                        The 10X Learning Leap Model™
+                      </h2>
+                      <p className="text-xl text-blue-300 font-medium mb-4">
+                        Two phases. Eight research-validated steps. One systematic transformation.
+                      </p>
+                      <p className="text-base text-blue-100/80 max-w-3xl mx-auto">
+                        The eleven research principles documented above are integrated into a single instructional framework — the EduMeUp 10X Learning Leap Model — which structures how every course, every module, and every assessment on the platform is designed.
+                      </p>
+                    </div>
 
-              <div className="overflow-x-auto rounded-[1.5rem] shadow-sm mb-8">
-                <table className="w-full min-w-[600px]">
-                  <thead>
-                    <tr className="bg-white/20 text-white text-xs uppercase tracking-wider">
-                      <th className="p-4 text-left font-semibold">Phase</th>
-                      <th className="p-4 text-left font-semibold">Name</th>
-                      <th className="p-4 text-left font-semibold">What Happens</th>
-                      <th className="p-4 text-left font-semibold">Research Basis</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {modelPhases.map((row, i) => (
-                      <tr key={i} className={i % 2 === 0 ? "bg-white/10" : "bg-white/5"}>
-                        <td className="p-4 border-t border-white/10">
-                          <span className={`inline-block text-white text-xs font-bold px-3 py-1 rounded-lg ${row.color}`}>{row.phase}</span>
-                        </td>
-                        <td className="p-4 border-t border-white/10 text-white font-bold text-[14px]">{row.name}</td>
-                        <td className="p-4 border-t border-white/10 text-blue-100 text-[13px] leading-relaxed">{row.what}</td>
-                        <td className="p-4 border-t border-white/10 text-blue-300 text-[12px] italic leading-relaxed">{row.research}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    <div className="overflow-x-auto rounded-[1.5rem] shadow-sm mb-8">
+                      <table className="w-full min-w-[600px]">
+                        <thead>
+                          <tr className="bg-white/20 text-white text-xs uppercase tracking-wider">
+                            <th className="p-4 text-left font-semibold">Phase</th>
+                            <th className="p-4 text-left font-semibold">Name</th>
+                            <th className="p-4 text-left font-semibold">What Happens</th>
+                            <th className="p-4 text-left font-semibold">Research Basis</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {modelPhases.map((row, i) => (
+                            <tr key={i} className={i % 2 === 0 ? "bg-white/10" : "bg-white/5"}>
+                              <td className="p-4 border-t border-white/10">
+                                <span className={`inline-block text-white text-xs font-bold px-3 py-1 rounded-lg ${row.color}`}>{row.phase}</span>
+                              </td>
+                              <td className="p-4 border-t border-white/10 text-white font-bold text-[14px]">{row.name}</td>
+                              <td className="p-4 border-t border-white/10 text-blue-100 text-[13px] leading-relaxed">{row.what}</td>
+                              <td className="p-4 border-t border-white/10 text-blue-300 text-[12px] italic leading-relaxed">{row.research}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
 
-              <div className="text-center">
-                <a href="/how-it-works" className="inline-flex items-center gap-2 bg-white text-[#2366c9] font-semibold px-6 py-3 rounded-xl text-[14px] hover:bg-blue-50 transition-colors">
-                  Read the Full 8-Step Methodology <ArrowRight className="h-4 w-4" />
-                </a>
-              </div>
-            </div>
-          </section>
+                    <div className="text-center">
+                      <a href="/how-it-works" className="inline-flex items-center gap-2 bg-white text-[#2366c9] font-semibold px-6 py-3 rounded-xl text-[14px] hover:bg-blue-50 transition-colors">
+                        Read the Full 8-Step Methodology <ArrowRight className="h-4 w-4" />
+                      </a>
+                    </div>
+                  </div>
+                </section>
 
-          {/* ══════════════════════════════ SECTION 13: R&D PROCESS ══ */}
-          <section id="rd-process" className="py-16 md:py-24 bg-[#FAFAF8] -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
-            <div className="w-full max-w-6xl mx-auto">
-              <div className="text-center mb-10 md:mb-16">
-                <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">Continuous R&amp;D at EduMeUp</p>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-4">
-                  Research Does Not End at Publication — Neither Does Ours.
-                </h2>
-                <p className="text-base text-slate-700 max-w-3xl mx-auto">
-                  The eleven research principles on this page are the foundation — not the ceiling. EduMeUp treats its own platform as a live research environment. Every student interaction generates data. That data is used to refine the learning design continuously.
-                </p>
-              </div>
+                {/* ══════════════════════════════ SECTION 13: R&D PROCESS ══ */}
+                <section id="rd-process" className="py-16 md:py-24 bg-[#FAFAF8] -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
+                  <div className="w-full max-w-6xl mx-auto">
+                    <div className="text-center mb-10 md:mb-16">
+                      <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">Continuous R&amp;D at EduMeUp</p>
+                      <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-4">
+                        Research Does Not End at Publication — Neither Does Ours.
+                      </h2>
+                      <p className="text-base text-slate-700 max-w-3xl mx-auto">
+                        The eleven research principles on this page are the foundation — not the ceiling. EduMeUp treats its own platform as a live research environment. Every student interaction generates data. That data is used to refine the learning design continuously.
+                      </p>
+                    </div>
 
-              <div className="grid md:grid-cols-2 gap-8 mb-12">
-                {rdInitiatives.map((initiative, i) => (
-                  <Card key={i} className={ui.cards.standard + " rounded-[1.5rem] hover:shadow-xl hover:-translate-y-1 transition-all duration-300"}>
-                    <CardHeader>
-                      <CardTitle className="text-xl text-slate-900 flex items-center gap-2">
-                        <Beaker className="h-5 w-5 text-[#2366c9]" />
-                        {initiative.title}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-[14px] text-slate-700 leading-relaxed font-medium">{initiative.detail}</p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+                    <div className="grid md:grid-cols-2 gap-8 mb-12">
+                      {rdInitiatives.map((initiative, i) => (
+                        <Card key={i} className={ui.cards.standard + " rounded-[1.5rem] hover:shadow-xl hover:-translate-y-1 transition-all duration-300"}>
+                          <CardHeader>
+                            <CardTitle className="text-xl text-slate-900 flex items-center gap-2">
+                              <Beaker className="h-5 w-5 text-[#2366c9]" />
+                              {initiative.title}
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <p className="text-[14px] text-slate-700 leading-relaxed font-medium">{initiative.detail}</p>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
 
-              <div className={ui.sections.brand + " p-8 rounded-[2rem] text-center"}>
-                <p className="text-white font-semibold text-lg mb-2">Our Promise on Intellectual Honesty</p>
-                <p className="text-blue-100 text-[14px] leading-relaxed max-w-3xl mx-auto">
-                  We do not promise outcomes that our research does not support. We do not cite studies we have not read. And we do not publish percentages that were never in the original research. EduMeUp does not promise magic. It applies science — systematically.
-                </p>
-              </div>
-            </div>
-          </section>
+                    <div className={ui.sections.brand + " p-8 rounded-[2rem] text-center"}>
+                      <p className="text-white font-semibold text-lg mb-2">Our Promise on Intellectual Honesty</p>
+                      <p className="text-blue-100 text-[14px] leading-relaxed max-w-3xl mx-auto">
+                        We do not promise outcomes that our research does not support. We do not cite studies we have not read. And we do not publish percentages that were never in the original research. EduMeUp does not promise magic. It applies science — systematically.
+                      </p>
+                    </div>
+                  </div>
+                </section>
 
-          {/* ══════════════════════════ SECTION 14: QUICK REFERENCE ══ */}
-          <section id="summary" className={ui.sections.softBlue + " py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0"}>
-            <div className="w-full max-w-6xl mx-auto">
-              <div className="text-center mb-10 md:mb-16">
-                <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">Research Summary</p>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-slate-900 mb-4">
-                  Quick Reference — 11 Principles at a Glance
-                </h2>
-              </div>
+                {/* ══════════════════════════ SECTION 14: QUICK REFERENCE ══ */}
+                <section id="summary" className={ui.sections.softBlue + " py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0"}>
+                  <div className="w-full max-w-6xl mx-auto">
+                    <div className="text-center mb-10 md:mb-16">
+                      <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">Research Summary</p>
+                      <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-slate-900 mb-4">
+                        Quick Reference — 11 Principles at a Glance
+                      </h2>
+                    </div>
 
-              <div className="overflow-x-auto rounded-[1.5rem] shadow-sm">
-                <table className="w-full min-w-[500px]">
-                  <thead>
-                    <tr className="bg-[#2366c9] text-white text-xs uppercase tracking-wider">
-                      <th className="p-4 text-left font-semibold w-8">#</th>
-                      <th className="p-4 text-left font-semibold">Research Principle</th>
-                      <th className="p-4 text-left font-semibold">Key Statistic / Effect Size</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {referenceSummary.map((row, i) => (
-                      <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-blue-50/40"}>
-                        <td className="p-4 border-t border-blue-100 text-[#2366c9] font-bold text-[14px]">{row.num}</td>
-                        <td className="p-4 border-t border-blue-100 text-slate-900 font-medium text-[14px]">{row.principle}</td>
-                        <td className="p-4 border-t border-blue-100 text-slate-700 font-medium text-[14px]">{row.stat}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    <div className="overflow-x-auto rounded-[1.5rem] shadow-sm">
+                      <table className="w-full min-w-[500px]">
+                        <thead>
+                          <tr className="bg-[#2366c9] text-white text-xs uppercase tracking-wider">
+                            <th className="p-4 text-left font-semibold w-8">#</th>
+                            <th className="p-4 text-left font-semibold">Research Principle</th>
+                            <th className="p-4 text-left font-semibold">Key Statistic / Effect Size</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {referenceSummary.map((row, i) => (
+                            <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-blue-50/40"}>
+                              <td className="p-4 border-t border-blue-100 text-[#2366c9] font-bold text-[14px]">{row.num}</td>
+                              <td className="p-4 border-t border-blue-100 text-slate-900 font-medium text-[14px]">{row.principle}</td>
+                              <td className="p-4 border-t border-blue-100 text-slate-700 font-medium text-[14px]">{row.stat}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
 
-              <div className="text-center mt-8">
-                <a href="/downloads/learning-science-whitepaper-v1.pdf">
-                  <Button className="bg-[#2366c9] hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl text-[14px] flex items-center gap-2 mx-auto">
-                    <Download className="h-4 w-4" /> Download Full Reference List (60+ Citations)
-                  </Button>
-                </a>
-              </div>
-            </div>
-          </section>
+                    <div className="text-center mt-8">
+                      <a href="/downloads/learning-science-whitepaper-v1.pdf">
+                        <Button className="bg-[#2366c9] hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl text-[14px] flex items-center gap-2 mx-auto">
+                          <Download className="h-4 w-4" /> Download Full Reference List (60+ Citations)
+                        </Button>
+                      </a>
+                    </div>
+                  </div>
+                </section>
 
-        </main>
-      </div>
+              </main>
 
       {/* ═══════════════════════════════════════════ FINAL CTA SECTION ══ */}
       <section id="cta" className={ui.sections.brand + " py-20 md:py-32 relative overflow-hidden"}>
@@ -796,7 +788,8 @@ export default function Research() {
             ))}
           </div>
         </div>
-      </section>
-    </Layout>
+      </section>      </div>
+        </div>
+      </div>    </Layout>
   );
 }

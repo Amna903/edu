@@ -1,4 +1,5 @@
 import { Layout } from "@/components/Layout";
+import { PageSidebar } from "@/components/PageSidebar";
 import { motion } from "framer-motion";
 import {
   Brain,
@@ -22,113 +23,108 @@ import { ui } from "@/theme";
 export default function About() {
   return (
     <Layout>
-      {/* ================= HERO - THE MISSION ================= */}
-      <section className="relative overflow-hidden bg-white py-8 md:py-12">
-        <div className="container-custom max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-[1.4fr_0.9fr] gap-6 items-stretch">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className={ui.sections.brand + " rounded-[2rem] md:rounded-[3rem] p-8 md:p-12 shadow-2xl"}
-            >
-              <div className="absolute -top-20 -right-16 h-56 w-56 rounded-full bg-white/10 blur-3xl" aria-hidden="true" />
-              <div className="relative z-10 max-w-2xl space-y-6">
-                <p className="text-[11px] font-black uppercase tracking-[0.28em] text-blue-100">Our Mission &amp; Philosophy</p>
-                <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold leading-[1.05] tracking-tight text-white">
-                  Education Should Work the Way the Brain Works.
-                </h1>
-                <p className="text-lg md:text-xl text-blue-50/90 leading-relaxed max-w-2xl">
-                  We founded EduMeUp because the traditional education model — built on passive instruction and
-                  wishful thinking — has been failing students for generations. The research has always pointed to a
-                  better way. We built it.
-                </p>
-                <div className="rounded-[1.5rem] border border-white/15 bg-white/10 p-5 md:p-6 backdrop-blur-sm">
-                  <p className="text-sm font-semibold uppercase tracking-[0.22em] text-blue-100 mb-3">Mission Statement</p>
-                  <p className="text-base md:text-lg text-white/90 leading-relaxed">
-                    Our mission is to end the global learning crisis caused by passive instruction and the brain's natural
-                    forgetting curve — replacing the traditional 5% retention model with 50%+ active mastery through the 10X
-                    Learning Leap Model™.
-                  </p>
-                </div>
-                <div className="flex flex-col sm:flex-row gap-4 pt-2">
-                  <Button className={`${ui.buttons.brandLight} font-semibold px-6 py-3 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2`}>
-                    Explore Our 10X Model <ArrowRight className="h-4 w-4" />
-                  </Button>
-                  <Button variant="outline" className="border border-white/35 text-white hover:bg-white/10 font-semibold px-6 py-3 rounded-xl text-[14px] flex items-center justify-center gap-2">
-                    See the Research <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </motion.div>
+      <div className="flex min-h-screen bg-white">
+        <PageSidebar
+          title="About EduMeUp"
+          quote="Science, research, and genuine educational transformation."
+          links={[
+            { label: "Learning Crisis", href: "#learning-crisis" },
+            { label: "10X Model", href: "#methodology" },
+            { label: "Three Pillars", href: "#pillars" },
+            { label: "How We Compare", href: "#comparison" },
+            { label: "Complete Ecosystem", href: "#ecosystem" },
+            { label: "Research Foundation", href: "#research" },
+            { label: "Our Story", href: "#story" },
+            { label: "Is EduMeUp Right?", href: "#fit" },
+            { label: "Get Started", href: "#get-started" },
+          ]}
+        />
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className={ui.cards.standard + " rounded-[2rem] md:rounded-[3rem] p-8 md:p-10 shadow-lg"}
-            >
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(35,102,201,0.18),transparent_40%),radial-gradient(circle_at_bottom_left,rgba(79,134,224,0.16),transparent_35%)]" aria-hidden="true" />
-              <div className="relative z-10 flex h-full flex-col justify-between gap-8">
-                <div>
-                  <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-4">Editorial Graphic</p>
-                  <div className={ui.cards.standard + " rounded-[2rem] p-6 shadow-sm"}>
-                    <div className="flex items-center justify-center rounded-[1.5rem] bg-gradient-to-br from-[#2366c9] via-[#4f86e0] to-[#eef6ff] p-10 text-white">
-                      <div className="text-center space-y-4">
-                        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
-                          <Sparkles className="h-10 w-10 text-white" />
-                        </div>
-                        <div>
-                          <p className="text-lg font-semibold text-white">Research-led learning</p>
-                          <p className="text-sm text-blue-50/80">Blue-led, minimal, human, and credible</p>
+        <div className="flex-1 min-w-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          {/* ================= HERO - THE MISSION ================= */}
+          <section className="relative overflow-hidden bg-white py-8 md:py-12">
+            <div className="container-custom max-w-7xl mx-auto">
+              <div className="grid lg:grid-cols-[1.4fr_0.9fr] gap-6 items-stretch">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={ui.sections.brand + " rounded-[2rem] md:rounded-[3rem] p-8 md:p-12 shadow-2xl"}
+                >
+                  <div className="absolute -top-20 -right-16 h-56 w-56 rounded-full bg-white/10 blur-3xl" aria-hidden="true" />
+                  <div className="relative z-10 max-w-2xl space-y-6">
+                    <p className="text-[11px] font-black uppercase tracking-[0.28em] text-blue-100">Our Mission &amp; Philosophy</p>
+                    <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold leading-[1.05] tracking-tight text-white">
+                      Education Should Work the Way the Brain Works.
+                    </h1>
+                    <p className="text-lg md:text-xl text-blue-50/90 leading-relaxed max-w-2xl">
+                      We founded EduMeUp because the traditional education model — built on passive instruction and
+                      wishful thinking — has been failing students for generations. The research has always pointed to a
+                      better way. We built it.
+                    </p>
+                    <div className="rounded-[1.5rem] border border-white/15 bg-white/10 p-5 md:p-6 backdrop-blur-sm">
+                      <p className="text-sm font-semibold uppercase tracking-[0.22em] text-blue-100 mb-3">Mission Statement</p>
+                      <p className="text-base md:text-lg text-white/90 leading-relaxed">
+                        Our mission is to end the global learning crisis caused by passive instruction and the brain's natural
+                        forgetting curve — replacing the traditional 5% retention model with 50%+ active mastery through the 10X
+                        Learning Leap Model™.
+                      </p>
+                    </div>
+                    <div className="flex flex-col sm:flex-row gap-4 pt-2">
+                      <Button className={`${ui.buttons.brandLight} font-semibold px-6 py-3 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2`}>
+                        Explore Our 10X Model <ArrowRight className="h-4 w-4" />
+                      </Button>
+                      <Button variant="outline" className="border border-white/35 text-white hover:bg-white/10 font-semibold px-6 py-3 rounded-xl text-[14px] flex items-center justify-center gap-2">
+                        See the Research <ArrowRight className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                  className={ui.cards.standard + " rounded-[2rem] md:rounded-[3rem] p-8 md:p-10 shadow-lg"}
+                >
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(35,102,201,0.18),transparent_40%),radial-gradient(circle_at_bottom_left,rgba(79,134,224,0.16),transparent_35%)]" aria-hidden="true" />
+                  <div className="relative z-10 flex h-full flex-col justify-between gap-8">
+                    <div>
+                      <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-4">Editorial Graphic</p>
+                      <div className={ui.cards.standard + " rounded-[2rem] p-6 shadow-sm"}>
+                        <div className="flex items-center justify-center rounded-[1.5rem] bg-gradient-to-br from-[#2366c9] via-[#4f86e0] to-[#eef6ff] p-10 text-white">
+                          <div className="text-center space-y-4">
+                            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
+                              <Sparkles className="h-10 w-10 text-white" />
+                            </div>
+                            <div>
+                              <p className="text-lg font-semibold text-white">Research-led learning</p>
+                              <p className="text-sm text-blue-50/80">Blue-led, minimal, human, and credible</p>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className={ui.cards.standard + " rounded-2xl p-4 text-center shadow-sm"}>
+                        <p className="text-2xl font-semibold text-[#2366c9]">91%</p>
+                        <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 mt-1">Pass rate</p>
+                      </div>
+                      <div className={ui.cards.standard + " rounded-2xl p-4 text-center shadow-sm"}>
+                        <p className="text-2xl font-semibold text-[#2366c9]">85%+</p>
+                        <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 mt-1">Retention</p>
+                      </div>
+                      <div className={ui.cards.standard + " rounded-2xl p-4 text-center shadow-sm"}>
+                        <p className="text-2xl font-semibold text-[#2366c9]">271%</p>
+                        <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 mt-1">ROI</p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div className="grid grid-cols-3 gap-3">
-                  <div className={ui.cards.standard + " rounded-2xl p-4 text-center shadow-sm"}>
-                    <p className="text-2xl font-semibold text-[#2366c9]">91%</p>
-                    <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 mt-1">Pass rate</p>
-                  </div>
-                  <div className={ui.cards.standard + " rounded-2xl p-4 text-center shadow-sm"}>
-                    <p className="text-2xl font-semibold text-[#2366c9]">85%+</p>
-                    <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 mt-1">Retention</p>
-                  </div>
-                  <div className={ui.cards.standard + " rounded-2xl p-4 text-center shadow-sm"}>
-                    <p className="text-2xl font-semibold text-[#2366c9]">271%</p>
-                    <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 mt-1">ROI</p>
-                  </div>
-                </div>
+                </motion.div>
               </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+            </div>
+          </section>
 
-      <div className="w-full lg:px-8 lg:grid lg:grid-cols-[260px_1fr] gap-8 lg:gap-12 items-start pt-8 md:pt-12">
-        {/* ================= STICKY SIDEBAR ================= */}
-        <aside className={ui.cards.standard + " sticky top-24 hidden lg:block rounded-[2rem] p-5 shadow-sm h-fit"}>
-          <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-4">On This Page</p>
-          <div className="space-y-2">
-            {[
-              ["#our-mission", "Our Mission"],
-              ["#learning-crisis", "Learning Crisis"],
-              ["#methodology", "10X Model"],
-              ["#pillars", "Three Pillars"],
-              ["#comparison", "How We Compare"],
-              ["#ecosystem", "Ecosystem"],
-              ["#research", "Research Foundation"],
-              ["#story", "Our Story"],
-              ["#get-started", "Get Started"],
-            ].map(([href, label]) => (
-              <a key={href} href={href} className="block rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-blue-50 hover:text-[#2366c9]">
-                {label}
-              </a>
-            ))}
-          </div>
-        </aside>
-
-        <main className="min-w-0 space-y-0">
+          <main className="min-w-0 space-y-0">
 
           {/* ================= SECTION 2: THE GLOBAL LEARNING CRISIS ================= */}
           <section id="learning-crisis" className="py-16 md:py-24 bg-[#FFF8EC] -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
@@ -798,8 +794,7 @@ export default function About() {
             </div>
           </section>
 
-        </main>
-      </div>
+      </main>
 
       {/* ================= SECTION 9: FINAL CTA — THREE OPTIONS ================= */}
       <section id="get-started" className={ui.sections.brand + " py-20 md:py-32 relative overflow-hidden -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0"}>
@@ -880,6 +875,9 @@ export default function About() {
           </div>
         </div>
       </section>
+
+      </div>
+      </div>
     </Layout>
   );
 }
