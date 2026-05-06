@@ -1,4 +1,5 @@
 import { Layout } from "@/components/Layout";
+import { CtaCard } from "@/components/CtaCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -906,121 +907,90 @@ Subscriptions renew automatically unless cancelled. Cancel any time before the n
         </div>
 
         {/* SECTION 10 | FINAL CTA */}
-        <section id="final-cta" className="py-20 bg-[#0a192f] rounded-none relative overflow-hidden mt-16 mb-0">
-          {/* Subtle background decoration */}
-          <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-            <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-[#2366c9] blur-[120px]"></div>
-            <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[#4fb0ff] blur-[120px]"></div>
-          </div>
-
+        <section id="final-cta" className="py-20 bg-white rounded-none relative overflow-hidden mt-16 mb-0 border-t border-slate-200">
           <div className="container-custom relative z-10 px-6">
             <div className="max-w-4xl mx-auto text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-semibold text-white mb-6">
-                Not Sure Where to Start? <span className="text-[#4fb0ff]">The Diagnostic Is Free.</span>
+              <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-6">
+                Not Sure Where to Start? <span className="text-[#2366c9]">The Diagnostic Is Free.</span>
               </h2>
-              <p className="text-lg text-slate-300 font-medium leading-relaxed">
+              <p className="text-lg text-slate-600 font-medium leading-relaxed">
                 The free 30-minute diagnostic tells you exactly which subjects and chapters you need — so you buy only what is relevant and nothing you do not need.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-20">
-              {/* Primary Card - Blue */}
-              <div className="bg-[#2366c9] rounded-none p-10 flex flex-col items-center text-center shadow-2xl transform hover:scale-[1.02] transition-all duration-300">
-                <div className="bg-white/10 p-4 rounded-2xl mb-6">
-                  <Activity className="w-10 h-10 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-3">Take the Free Diagnostic First</h3>
-                <p className="text-blue-100 font-semibold text-[15px] mb-4">Know your gaps. Buy only what you need.</p>
-                <div className="flex items-center gap-2 text-[13px] font-bold text-blue-200 uppercase tracking-wider mb-8">
-                  <span>Free</span>
-                  <span className="w-1 h-1 rounded-full bg-blue-300"></span>
-                  <span>30 minutes</span>
-                  <span className="w-1 h-1 rounded-full bg-blue-300"></span>
-                  <span>No login needed</span>
-                </div>
-                <InquiryDialog
-                  defaultType="diagnostic"
-                  title="Free Diagnostic"
-                  trigger={
-                    <Button className="w-full h-16 bg-white text-[#2366c9] hover:bg-blue-50 font-bold rounded-2xl text-lg shadow-xl uppercase tracking-widest transition-all">
-                      Start Free Diagnostic
-                    </Button>
-                  }
-                />
-              </div>
-
-              {/* Secondary Card - Light Blue Outline */}
-              <div className="bg-transparent border-2 border-[#4fb0ff] rounded-none p-10 flex flex-col items-center text-center hover:bg-[#4fb0ff]/5 transition-all duration-300">
-                <div className="bg-[#4fb0ff]/10 p-4 rounded-2xl mb-6">
-                  <BookOpen className="w-10 h-10 text-[#4fb0ff]" />
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-3">Ready to Enrol? Browse Courses</h3>
-                <p className="text-slate-300 font-semibold text-[15px] mb-4">See all available subjects, chapters, and programmes.</p>
-                <div className="text-[13px] font-bold text-[#4fb0ff] uppercase tracking-wider mb-8">
-                  All courses available now
-                </div>
-                <Link href="/courses" className="w-full mt-auto">
-                  <Button variant="outline" className="w-full h-16 border-2 border-[#4fb0ff] bg-transparent text-[#4fb0ff] hover:bg-[#4fb0ff] hover:text-[#0a192f] font-bold rounded-2xl text-lg shadow-xl uppercase tracking-widest transition-all">
-                    Browse Courses
-                  </Button>
-                </Link>
-              </div>
+            <div className="flex flex-col md:flex-row justify-center gap-3 mb-16 items-stretch max-w-5xl mx-auto">
+              <CtaCard
+                icon={<Activity className="w-8 h-8" />}
+                title="Take the Free Diagnostic First"
+                subtitle="Know your gaps. Buy only what you need."
+                meta="Free · 30 minutes · No login needed"
+                buttonText="Start Free Diagnostic"
+                actionWrapper={(btn) => <InquiryDialog defaultType="diagnostic" title="Free Diagnostic" trigger={btn} />}
+              />
+              <CtaCard
+                icon={<BookOpen className="w-8 h-8" />}
+                title="Ready to Enrol? Browse Courses"
+                subtitle="See all available subjects, chapters, and programmes."
+                meta="All courses available now"
+                buttonText="Browse Courses"
+                buttonHref="/courses"
+              />
             </div>
 
             {/* Trust Signals Strip */}
-            <div className="pt-12 border-t border-white/10">
+            <div className="pt-12 border-t border-slate-200">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-y-10 gap-x-8">
                 <div className="flex items-start gap-4">
-                  <div className="bg-white/5 p-3 rounded-xl shrink-0">
-                    <Award className="w-6 h-6 text-[#4fb0ff]" />
+                  <div className="bg-slate-50 border border-slate-200 p-3 rounded-xl shrink-0">
+                    <Award className="w-6 h-6 text-[#2366c9]" />
                   </div>
                   <div>
-                    <p className="text-white font-semibold text-[15px]">80% Mastery Gate</p>
-                    <p className="text-slate-400 text-[13px] mt-1 leading-relaxed">Master every concept before advancing. Proven retention architecture.</p>
+                    <p className="text-slate-900 font-semibold text-[15px]">80% Mastery Gate</p>
+                    <p className="text-slate-600 text-[13px] mt-1 leading-relaxed">Master every concept before advancing. Proven retention architecture.</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="bg-white/5 p-3 rounded-xl shrink-0">
-                    <Globe className="w-6 h-6 text-blue-400" />
+                  <div className="bg-slate-50 border border-slate-200 p-3 rounded-xl shrink-0">
+                    <Globe className="w-6 h-6 text-[#2366c9]" />
                   </div>
                   <div>
-                    <p className="text-white font-semibold text-[15px]">Available Worldwide</p>
-                    <p className="text-slate-400 text-[13px] mt-1 leading-relaxed">Standardized Cambridge preparation for all regions. All prices in USD.</p>
+                    <p className="text-slate-900 font-semibold text-[15px]">Available Worldwide</p>
+                    <p className="text-slate-600 text-[13px] mt-1 leading-relaxed">Standardized Cambridge preparation for all regions. All prices in USD.</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="bg-white/5 p-3 rounded-xl shrink-0">
-                    <Lock className="w-6 h-6 text-blue-400" />
+                  <div className="bg-slate-50 border border-slate-200 p-3 rounded-xl shrink-0">
+                    <Lock className="w-6 h-6 text-[#2366c9]" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <p className="text-white font-semibold text-[15px]">Secure & Fast</p>
-                      <Zap className="w-4 h-4 text-blue-400" />
+                      <p className="text-slate-900 font-semibold text-[15px]">Secure & Fast</p>
+                      <Zap className="w-4 h-4 text-[#2366c9]" />
                     </div>
-                    <p className="text-slate-400 text-[13px] mt-1 leading-relaxed">Secure payment processing. Instant access immediately after checkout.</p>
+                    <p className="text-slate-600 text-[13px] mt-1 leading-relaxed">Secure payment processing. Instant access immediately after checkout.</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="bg-white/5 p-3 rounded-xl shrink-0">
-                    <GraduationCap className="w-6 h-6 text-[#4fb0ff]" />
+                  <div className="bg-slate-50 border border-slate-200 p-3 rounded-xl shrink-0">
+                    <GraduationCap className="w-6 h-6 text-[#2366c9]" />
                   </div>
                   <div>
-                    <p className="text-white font-semibold text-[15px]">Global Access Scholarship</p>
-                    <p className="text-slate-400 text-[13px] mt-1 leading-relaxed">Financial aid available for qualifying developing countries. Apply in minutes.</p>
+                    <p className="text-slate-900 font-semibold text-[15px]">Global Access Scholarship</p>
+                    <p className="text-slate-600 text-[13px] mt-1 leading-relaxed">Financial aid available for qualifying developing countries. Apply in minutes.</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-4 md:col-span-2">
-                  <div className="bg-white/5 p-3 rounded-xl shrink-0">
-                    <Activity className="w-6 h-6 text-[#4fb0ff]" />
+                  <div className="bg-slate-50 border border-slate-200 p-3 rounded-xl shrink-0">
+                    <Activity className="w-6 h-6 text-[#2366c9]" />
                   </div>
                   <div>
-                    <p className="text-white font-semibold text-[15px]">Free 30-Minute Diagnostic</p>
-                    <p className="text-slate-400 text-[13px] mt-1 leading-relaxed">
-                      Always available. <InquiryDialog defaultType="diagnostic" title="Free Diagnostic" trigger={<span className="text-[#4fb0ff] hover:underline cursor-pointer">Start Your Free Diagnostic Now</span>} />. Identify exactly what you need before buying.
+                    <p className="text-slate-900 font-semibold text-[15px]">Free 30-Minute Diagnostic</p>
+                    <p className="text-slate-600 text-[13px] mt-1 leading-relaxed">
+                      Always available. <InquiryDialog defaultType="diagnostic" title="Free Diagnostic" trigger={<span className="text-[#2366c9] font-bold hover:underline cursor-pointer">Start Your Free Diagnostic Now</span>} />. Identify exactly what you need before buying.
                     </p>
                   </div>
                 </div>

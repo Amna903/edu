@@ -50,7 +50,7 @@ export default function ForgotPassword() {
               Back to login
             </button>
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );
