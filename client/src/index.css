@@ -138,4 +138,83 @@
     text-wrap: pretty;
   }
 
+  .cambridge-consultancy-page {
+    --cambridge-primary: #0f766e;
+    --cambridge-primary-dark: #115e59;
+    --cambridge-accent: #b45309;
+    --cambridge-surface: #f7f3ea;
+    --cambridge-surface-alt: #fffaf0;
+    color: #1f2937;
+  }
+
+  .cambridge-consultancy-page h1 {
+    font-size: clamp(2.5rem, 4.8vw, 4.5rem) !important;
+    line-height: 1.04 !important;
+  }
+
+  .cambridge-consultancy-page h2 {
+    font-size: clamp(1.9rem, 3.5vw, 3.2rem) !important;
+    line-height: 1.08 !important;
+  }
+
+  .cambridge-consultancy-page h3 {
+    font-size: clamp(1.35rem, 2.2vw, 1.9rem) !important;
+  }
+
+  .cambridge-consultancy-page h4 {
+    font-size: clamp(1.05rem, 1.8vw, 1.35rem) !important;
+  }
+
+  .cambridge-consultancy-page .text-\[\#2366c9\],
+  .cambridge-consultancy-page .text-blue-100,
+  .cambridge-consultancy-page .text-blue-200,
+  .cambridge-consultancy-page .text-blue-300,
+  .cambridge-consultancy-page .text-blue-400,
+  .cambridge-consultancy-page .text-blue-600,
+  .cambridge-consultancy-page .text-blue-700 {
+    color: var(--cambridge-primary) !important;
+  }
+
+  .cambridge-consultancy-page .bg-\[\#2366c9\],
+  .cambridge-consultancy-page .bg-blue-400,
+  .cambridge-consultancy-page .bg-blue-600 {
+    background-color: var(--cambridge-primary) !important;
+  }
+
+  .cambridge-consultancy-page .bg-\[\#eef6ff\],
+  .cambridge-consultancy-page .bg-blue-50,
+  .cambridge-consultancy-page .bg-blue-100,
+  .cambridge-consultancy-page .bg-blue-200 {
+    background-color: var(--cambridge-surface) !important;
+  }
+
+  .cambridge-consultancy-page .border-\[\#2366c9\],
+  .cambridge-consultancy-page .border-blue-100,
+  .cambridge-consultancy-page .border-blue-200 {
+    border-color: color-mix(in srgb, var(--cambridge-primary) 24%, white) !important;
+  }
+
+  .cambridge-consultancy-page .hover\:bg-blue-50:hover,
+  .cambridge-consultancy-page .hover\:bg-blue-100:hover {
+    background-color: var(--cambridge-surface-alt) !important;
+  }
+
+  .cambridge-consultancy-page .hover\:text-\[\#17A589\]:hover,
+  .cambridge-consultancy-page .hover\:text-\[\#2366c9\]:hover,
+  .cambridge-consultancy-page .hover\:text-blue-600:hover {
+    color: var(--cambridge-primary) !important;
+  }
+
+  .cambridge-consultancy-page [class*="from-[#2366c9]"] {
+    --tw-gradient-from: var(--cambridge-primary) var(--tw-gradient-from-position) !important;
+  }
+
+  .cambridge-consultancy-page [class*="via-[#4f86e0]"] {
+    --tw-gradient-via: #0f9c8c var(--tw-gradient-via-position) !important;
+  }
+
+  .cambridge-consultancy-page [class*="to-[#eef6ff]"] {
+    --tw-gradient-to: var(--cambridge-surface) var(--tw-gradient-to-position) !important;
+  }
+
 }

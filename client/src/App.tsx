@@ -18,6 +18,7 @@ import ProgramDetails from "@/pages/ProgramDetails";
 import Courses from "@/pages/Courses";
 import Resources from "@/pages/Resources";
 import About from "@/pages/About";
+import CambridgeConsultancy from "@/pages/CambridgeConsultancy";
 import Cart from "@/pages/Cart";
 import Schools from "@/pages/Schools";
 import Tutors from "@/pages/Tutors";
@@ -64,7 +65,7 @@ function Router() {
       <Route path="/research" component={Research} />
       <Route path="/how-it-works" component={HowItWorks} />
       <Route path="/how-edumeup-is-different" component={WhyEduMeUp} />
-      <Route path="/cambridge-consultancy" component={About} />
+      <Route path="/cambridge-consultancy" component={CambridgeConsultancy} />
       <Route path="/impact-partnerships" component={ForSchoolsPartnership} />
       <Route path="/portals" component={Portals} />
       <Route path="/for-parents" component={ForParents} />

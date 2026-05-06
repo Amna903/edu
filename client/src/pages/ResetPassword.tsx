@@ -94,7 +94,7 @@ export default function ResetPassword() {
               {submitted ? "Sign In" : "Request a new reset link"}
             </button>
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );
