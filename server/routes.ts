@@ -4,7 +4,7 @@ import type { Server } from "http";
 import { storage } from "./storage.js";
 import { api } from "../shared/routes.js";
 import { z } from "zod";
-import { checkoutRequestSchema, insertInquirySchema, loginInputSchema, markNotificationReadInputSchema, parentLinkChildInputSchema, passwordChangeInputSchema, profileUpdateInputSchema, registerInputSchema } from "../shared/schema.js";
+import { checkoutRequestSchema, contactSubmissions, insertInquirySchema, loginInputSchema, markNotificationReadInputSchema, parentLinkChildInputSchema, passwordChangeInputSchema, profileUpdateInputSchema, registerInputSchema } from "../shared/schema.js";
 import { getLmsCourseById, getLmsCourseBySlug, getLmsCourses } from "./moodle.js";
 import { changeMoodlePassword, fetchCurrentUser, loginWithMoodle, registerWithMoodle, updateMoodleProfile } from "./moodle-auth.js";
 import { enrolUserInCourse } from "./moodle-commerce.js";
@@ -12,6 +12,7 @@ import { getStudentActivityTimelineForDashboard, getStudentCertificatesForDashbo
 import { buildOrigin, createSafepayCheckout } from "./payments.js";
 import { env } from "./config.js";
 import { prisma } from "./prisma.js";
+import { db } from "./db.js";
 import { getStoredUserByMoodleUserId, linkParentToChild, syncUserFromMoodleSession } from "./user-store.js";
 
 export async function registerRoutes(
@@ -19,6 +20,7 @@ export async function registerRoutes(
   app: Express
 ): Promise<Server> {
   const notificationReadByUser = new Map<number, Set<number>>();
+  const contactRateLimitByIp = new Map<string, number[]>();
 
   const aiSupportWebhookUrl =
     process.env.AI_SUPPORT_WEBHOOK_URL ??
@@ -249,7 +251,263 @@ export async function registerRoutes(
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   };
 
+  const publicContactSubmissionSchema = z.object({
+    route: z.enum(["school_partnership", "general_enquiry", "technical_support"]),
+    fullName: z.string().min(1).max(100),
+    email: z.string().email(),
+    honeypot: z.string().optional(),
+    recaptchaToken: z.string().optional(),
+    consultation_type: z.string().optional(),
+    firstName: z.string().optional(),
+    role: z.string().optional(),
+    schoolName: z.string().optional(),
+    country: z.string().optional(),
+    studentCount: z.string().optional(),
+    subject: z.string().optional(),
+    userType: z.string().optional(),
+    message: z.string().optional(),
+    problemType: z.string().optional(),
+    accountEmail: z.string().optional(),
+    device: z.string().optional(),
+    browser: z.string().optional(),
+    attachmentName: z.string().optional(),
+  });
+
+  const sendTransactionalEmail = async (payload: {
+    to: string | string[];
+    subject: string;
+    text: string;
+    cc?: string[];
+    replyTo?: string;
+  }) => {
+    if (!env.support.resendApiKey || !env.support.fromEmail) {
+      return;
+    }
+
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${env.support.resendApiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: env.support.fromEmail,
+        to: Array.isArray(payload.to) ? payload.to : [payload.to],
+        cc: payload.cc,
+        subject: payload.subject,
+        text: payload.text,
+        reply_to: payload.replyTo,
+      }),
+    });
+
+    if (!response.ok) {
+      const details = await response.text().catch(() => "");
+      throw new Error(`Failed to send email (${response.status}) ${details}`.trim());
+    }
+  };
+
+  const verifyRecaptchaScore = async (token?: string) => {
+    if (!env.support.recaptchaSecretKey) return { ok: true, score: 1 };
+    if (!token) return { ok: false, score: 0 };
+
+    const params = new URLSearchParams();
+    params.set("secret", env.support.recaptchaSecretKey);
+    params.set("response", token);
+
+    const response = await fetch("https://www.google.com/recaptcha/api/siteverify", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: params.toString(),
+    });
+
+    if (!response.ok) return { ok: false, score: 0 };
+    const payload = await response.json() as { success?: boolean; score?: number };
+    return { ok: Boolean(payload.success), score: payload.score ?? 0 };
+  };
+
+  const checkWorkbookPaymentConfirmation = async (email: string) => {
+    try {
+      const result = await prisma.$queryRawUnsafe<Array<{ confirmed: boolean }>>(
+        `SELECT true AS confirmed
+         FROM edume_purchases
+         WHERE lower(email) = lower($1)
+           AND status IN ('paid', 'completed', 'confirmed')
+         LIMIT 1`,
+        email,
+      );
+      return Boolean(result[0]?.confirmed);
+    } catch {
+      return false;
+    }
+  };
+
   // === INQUIRIES ===
+  app.post("/api/contact-submissions", async (req, res) => {
+    try {
+      const ip = req.ip || req.socket.remoteAddress || "unknown";
+      const now = Date.now();
+      const oneHourAgo = now - (60 * 60 * 1000);
+      const recent = (contactRateLimitByIp.get(ip) || []).filter((ts) => ts > oneHourAgo);
+      if (recent.length >= 3) {
+        return res.status(429).json({ message: "Too many submissions. Please try again in one hour." });
+      }
+
+      const input = publicContactSubmissionSchema.parse(req.body);
+      if (input.honeypot && input.honeypot.trim()) {
+        return res.status(200).json({ success: true });
+      }
+
+      const recaptcha = await verifyRecaptchaScore(input.recaptchaToken);
+      if (!recaptcha.ok || recaptcha.score < 0.3) {
+        return res.status(400).json({ message: "We could not verify your submission. Please try again." });
+      }
+
+      recent.push(now);
+      contactRateLimitByIp.set(ip, recent);
+
+      const subjectByRoute = {
+        school_partnership: `[School Enquiry] ${input.schoolName || "Unknown School"} — ${input.country || "Unknown Country"}`,
+        general_enquiry: input.subject || "General Enquiry",
+        technical_support: `[TECH] ${input.problemType || "Technical Support"}`,
+      } as const;
+
+      const workbookPaidConfirmed =
+        input.route === "technical_support" &&
+        input.problemType === "Workbook or past paper download issue" &&
+        await checkWorkbookPaymentConfirmation(input.accountEmail || input.email);
+
+      const urgentSupport = input.route === "technical_support" && (
+        ["Payment issue", "Cannot log in", "Course access problem"].includes(input.problemType || "") ||
+        workbookPaidConfirmed
+      );
+      const subject = urgentSupport
+        ? `[URGENT] ${subjectByRoute.technical_support}`
+        : subjectByRoute[input.route];
+      const prioritySupport = input.route === "general_enquiry" && (
+        input.userType === "Teacher" || input.subject === "Technical Problem"
+      );
+      const routedSubject = prioritySupport ? `[PRIORITY] ${subject}` : subject;
+
+      const details = [
+        `consultation_type=${input.route}`,
+        input.userType ? `user_type=${input.userType}` : "",
+        input.role ? `role=${input.role}` : "",
+        input.schoolName ? `school_name=${input.schoolName}` : "",
+        input.studentCount ? `student_count=${input.studentCount}` : "",
+        input.problemType ? `problem_type=${input.problemType}` : "",
+        input.accountEmail ? `account_email=${input.accountEmail}` : "",
+        input.device ? `device=${input.device}` : "",
+        input.browser ? `browser=${input.browser}` : "",
+        input.attachmentName ? `attachment=${input.attachmentName}` : "",
+      ].filter(Boolean).join("\n");
+
+      await storage.createInquiry({
+        type: "contact",
+        name: input.fullName,
+        email: input.email.toLowerCase(),
+        phone: null,
+        role: input.userType || input.role || null,
+        gradeLevel: "",
+        subjectInterest: routedSubject,
+        learningMode: input.route,
+        message: [details, input.message || ""].filter(Boolean).join("\n\n"),
+      });
+
+      await db.insert(contactSubmissions).values({
+        consultationType: input.route,
+        name: input.fullName,
+        email: input.email.toLowerCase(),
+        country: input.country || null,
+        subject: routedSubject,
+        message: input.message || null,
+        schoolName: input.schoolName || null,
+        studentCount: input.studentCount || null,
+        device: input.device || null,
+        problemType: input.problemType || null,
+      });
+
+      const body = [
+        `Name: ${input.fullName}`,
+        `Email: ${input.email}`,
+        input.userType ? `User Type: ${input.userType}` : "",
+        input.role ? `Role: ${input.role}` : "",
+        input.schoolName ? `School: ${input.schoolName}` : "",
+        input.country ? `Country: ${input.country}` : "",
+        input.studentCount ? `Cambridge Students: ${input.studentCount}` : "",
+        input.subject ? `Subject: ${input.subject}` : "",
+        input.problemType ? `Problem Type: ${input.problemType}` : "",
+        input.accountEmail ? `Account Email: ${input.accountEmail}` : "",
+        input.device ? `Device: ${input.device}` : "",
+        input.browser ? `Browser: ${input.browser}` : "",
+        input.attachmentName ? `Attachment: ${input.attachmentName}` : "",
+        "",
+        "Message:",
+        input.message || "(no message provided)",
+      ].filter(Boolean).join("\n");
+
+      if (input.route === "school_partnership") {
+        await sendTransactionalEmail({
+          to: env.support.schoolInboxEmail,
+          subject: subjectByRoute.school_partnership,
+          text: body,
+          replyTo: input.email,
+        });
+
+        await sendTransactionalEmail({
+          to: input.email,
+          subject: "EduMeUp School Strategy Session — We will be in touch shortly",
+          text: `Dear ${input.firstName || "there"},
+
+Thank you for requesting an EduMeUp School Strategy Session.
+Our Chief Adviser will contact you personally within 1 working day with available session times.
+
+Before the call, you may review school partnership details here:
+https://edumeup.com/for-schools
+
+Best regards,
+EduMeUp`,
+        });
+      }
+
+      if (input.route === "general_enquiry") {
+        await sendTransactionalEmail({
+          to: env.support.supportInboxEmail,
+          subject: routedSubject,
+          text: body,
+          replyTo: input.email,
+        });
+      }
+
+      if (input.route === "technical_support") {
+        const cc: string[] = [];
+        if ((input.problemType === "Payment issue" || urgentSupport) && env.support.financeCcEmail) {
+          cc.push(env.support.financeCcEmail);
+        }
+        if (workbookPaidConfirmed && env.support.developerCcEmail) {
+          cc.push(env.support.developerCcEmail);
+        }
+        await sendTransactionalEmail({
+          to: env.support.supportInboxEmail,
+          cc,
+          subject,
+          text: body,
+          replyTo: input.email,
+        });
+      }
+
+      return res.status(201).json({ success: true });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({
+          message: err.errors[0].message,
+          field: err.errors[0].path.join("."),
+        });
+      }
+
+      return res.status(500).json({ message: err instanceof Error ? err.message : "Failed to submit contact form" });
+    }
+  });
+
   app.get("/api/auth/verify-partner-code", async (req, res) => {
     const rawCode = typeof req.query.code === "string" ? req.query.code.trim().toUpperCase() : "";
     if (!rawCode) {

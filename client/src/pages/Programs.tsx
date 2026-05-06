@@ -1,497 +1,304 @@
+import { useEffect, useMemo, useState } from "react";
+import { Link, useLocation } from "wouter";
 import { Layout } from "@/components/Layout";
-import { ProgramCard } from "@/components/ProgramCard";
-import { usePrograms } from "@/hooks/use-programs";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, Languages, Globe, ShieldCheck, PieChart, FileText, ArrowRight, CheckCircle2, UserCheck, Zap, Sparkles } from "lucide-react";
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { ui } from "@/theme";
+import {
+  Target,
+  BookOpen,
+  Star,
+  Award,
+  GitBranch,
+  Languages,
+  NotebookPen,
+  Files,
+  FlaskConical,
+  Monitor,
+  FileCheck2,
+  BookMarked,
+  UserRound,
+  School,
+  GraduationCap,
+  ClipboardList,
+} from "lucide-react";
+
+type TabKey = "cambridge" | "pakistan";
+type Audience = "all" | "students" | "parents" | "teachers" | "schools";
+
+type ProgramCard = {
+  id: string;
+  icon: keyof typeof iconMap;
+  title: string;
+  description: string;
+  count: string;
+  audienceBadge: string;
+  audience: Audience[];
+  sellingLine: string;
+  href: string;
+  accent: string;
+};
+
+const iconMap = {
+  target: Target,
+  book: BookOpen,
+  star: Star,
+  award: Award,
+  bridge: GitBranch,
+  language: Languages,
+  notebook: NotebookPen,
+  files: Files,
+  flask: FlaskConical,
+  monitor: Monitor,
+  mock: FileCheck2,
+  workbook: BookMarked,
+  tutor: UserRound,
+  school: School,
+  grad: GraduationCap,
+  clipboard: ClipboardList,
+};
+
+const stakeholders: Array<{ key: Audience; label: string }> = [
+  { key: "all", label: "All" },
+  { key: "students", label: "Students" },
+  { key: "parents", label: "Parents" },
+  { key: "teachers", label: "Teachers" },
+  { key: "schools", label: "Schools" },
+];
+
+const cambridgeCards: ProgramCard[] = [
+  { id: "diagnostics", icon: "target", title: "Diagnostic Services", description: "AI-powered gap analysis before you study anything. Free and paid options.", count: "10 services — D1 to D10", audienceBadge: "All", audience: ["all"], sellingLine: "Identify your exact gaps before investing a single hour of study time.", href: "/programs/diagnostics", accent: "#EA580C" },
+  { id: "lower-secondary", icon: "book", title: "Lower Secondary — Grade 6 to 8", description: "Five subjects. All three grade levels in one enrolment. Self-learning and tutor-guided.", count: "5 subjects — Maths, Physics, Chemistry, Biology, English", audienceBadge: "Students Gr 6–8", audience: ["students", "parents"], sellingLine: "Build the foundation that makes O-Level possible — one subject at a time.", href: "/programs/lower-secondary", accent: "#2563EB" },
+  { id: "must-have", icon: "star", title: "Must-Have Courses", description: "Research-backed foundational skills every student needs before subject study begins.", count: "4 courses — Learn How to Learn, Vocab 5–7, RC 6–8, Classroom English", audienceBadge: "All Students", audience: ["students", "parents"], sellingLine: "The skills that make every other course more effective.", href: "/programs/must-have", accent: "#7C3AED" },
+  { id: "pre-olevel", icon: "award", title: "Pre-O-Level Certification", description: "Complete a Bridge Course and pass the certification exam to earn your EduMeUp readiness certificate.", count: "4 subjects — English, Mathematics, Physics, Chemistry", audienceBadge: "Bridge Students", audience: ["students", "parents"], sellingLine: "Formally confirm you are ready for O-Level. EduMeUp internal qualification.", href: "/certification", accent: "#D97706" },
+  { id: "bridge-courses", icon: "bridge", title: "Bridge Courses", description: "Pre-O-Level foundation courses — the last step before O-Level subject content begins.", count: "5 subjects — English, Mathematics, Physics, Chemistry, Economics", audienceBadge: "Gr 8 → O-Level", audience: ["students", "parents"], sellingLine: "Every Bridge Course includes the Pre-O-Level Certification Exam.", href: "/programs/bridge", accent: "#0F766E" },
+  { id: "english", icon: "language", title: "English Language Pathway", description: "The only end-to-end English pathway — Vocab 5–7 through to Cambridge O-Level mastery.", count: "12 courses — Vocab, RC, ESL1, ESL2, Bridge, O-Level, Writing, Comprehension", audienceBadge: "All English Levels", audience: ["students", "parents"], sellingLine: "Free AI Diagnostic tells you exactly which course to start from.", href: "/programs/english", accent: "#4F46E5" },
+  { id: "olevel-subjects", icon: "notebook", title: "O-Level Subject Courses", description: "Ten subjects. 114 topic courses. Each topic follows the 8-step mastery cycle.", count: "10 subjects — Maths, Physics, Chemistry, Biology, Economics, Business, Pak Studies, Islamiyat, Urdu, English", audienceBadge: "O-Level Students", audience: ["students", "parents"], sellingLine: "Enrol in one topic, several, or the full subject.", href: "/programs/o-level-subjects", accent: "#0EA5E9" },
+  { id: "chapter-wise", icon: "files", title: "Chapter-wise Courses", description: "Purchase a complete course for any single chapter of any O-Level subject.", count: "1 service — any subject, any chapter", audienceBadge: "O-Level Students", audience: ["students", "parents"], sellingLine: "Targeted catch-up on exactly the chapter you need.", href: "/programs/chapter-wise", accent: "#9333EA" },
+  { id: "atp", icon: "flask", title: "ATP Courses", description: "Alternative to Practical preparation for Physics, Chemistry and Biology.", count: "3 courses — Physics ATP, Chemistry ATP, Biology ATP", audienceBadge: "O-Level Science", audience: ["students", "parents", "teachers"], sellingLine: "No lab equipment needed. Full virtual preparation for Cambridge Paper 4.", href: "/programs/atp", accent: "#059669" },
+  { id: "exam-prep", icon: "monitor", title: "Online Exam Preparation", description: "Structured online exam preparation sessions for each O-Level subject.", count: "7 subjects — Maths, Physics, Chemistry, Biology, Economics, English, Business", audienceBadge: "O-Level Students", audience: ["students", "parents"], sellingLine: "Topic-wise practice, past paper sessions and error analysis.", href: "/programs/exam-prep", accent: "#EA580C" },
+  { id: "mock-exams", icon: "mock", title: "Final Mock Exams with Detailed Reports", description: "Full Cambridge-format timed mock examinations. AI report: AO scores, error analysis, predicted grade.", count: "7 subjects — Maths, Physics, Chemistry, Biology, Economics, English, Business", audienceBadge: "O-Level Students", audience: ["students", "parents"], sellingLine: "Simulate the real examination. Know your grade before exam day.", href: "/programs/mock-exams", accent: "#2563EB" },
+  { id: "workbooks", icon: "workbook", title: "Workbooks and Downloads", description: "Digitally downloadable workbooks — chapter-wise, topical past papers and year-wise past papers.", count: "3 workbook types — all O-Level subjects", audienceBadge: "O-Level Students", audience: ["students", "parents", "teachers"], sellingLine: "Enhanced solutions available on-platform. Download and study anywhere.", href: "/programs/workbooks", accent: "#0D9488" },
+  { id: "tutors", icon: "tutor", title: "Tutor Booking", description: "Book a certified EduMeUp tutor for one-to-one or small group online sessions.", count: "2 options — one-to-one and small group sessions", audienceBadge: "All Students", audience: ["students", "parents"], sellingLine: "Human expertise when you need it — booked from your dashboard.", href: "/programs/tutors", accent: "#7C3AED" },
+  { id: "teacher-dev", icon: "school", title: "Teacher and Professional Development", description: "Subject knowledge diagnostics, Cambridge workshops, SMK training, tutor certification and AI teaching tools.", count: "7 services — T1 to T6 + Classroom English Teacher Edition", audienceBadge: "Teachers / Schools", audience: ["teachers", "schools"], sellingLine: "Cambridge examiner intelligence. CPD certificate. AI teaching tools.", href: "/programs/teacher", accent: "#0F766E" },
+];
+
+const pakistanTopCards: ProgramCard[] = [
+  { id: "pk-matric", icon: "book", title: "Pakistan Matric Programme", description: "Complete preparation for Grade 9 and Grade 10 Matric students following the Federal and Provincial Matric syllabus.", count: "Programme Group", audienceBadge: "Matric Students", audience: ["students", "parents"], sellingLine: "Structured Matric coverage with topic clarity and exam alignment.", href: "/programs/pakistan#matric", accent: "#15803D" },
+  { id: "pk-fsc", icon: "book", title: "Pakistan FSc and ICS Programme", description: "Full science subject preparation for FSc Year 1 and Year 2 (Pre-Medical, Pre-Engineering) and ICS Year 2.", count: "Programme Group", audienceBadge: "FSc / ICS Students", audience: ["students", "parents"], sellingLine: "Build board-level mastery with clear technique and timed practice.", href: "/programs/pakistan#fsc", accent: "#B45309" },
+  { id: "pk-ecat", icon: "grad", title: "ECAT — Engineering Colleges Admission Test", description: "Comprehensive ECAT preparation — Mathematics, Physics and Chemistry. Topic coverage, timed practice tests and AI performance analysis.", count: "Programme Group", audienceBadge: "ECAT Candidates", audience: ["students", "parents"], sellingLine: "Exam-ready ECAT preparation with speed, accuracy, and confidence.", href: "/programs/pakistan#ecat", accent: "#B91C1C" },
+];
+
+const pakistanServiceCards: ProgramCard[] = [
+  { id: "pk-ex-mat", icon: "monitor", title: "Online Exam Preparation — Matric Mathematics", description: "Intensive online preparation for Matric Mathematics (Grade 9 and 10). Topic-wise practice, past paper sessions and error analysis aligned to Matric marking standards.", count: "PK-EX-MAT", audienceBadge: "Matric Students", audience: ["students", "parents"], sellingLine: "Focused Matric Maths preparation with better exam control.", href: "/programs/pakistan#pk-ex-mat", accent: "#0EA5E9" },
+  { id: "pk-ex-fsc", icon: "monitor", title: "Online Exam Preparation — FSc / ICS Core Subjects", description: "Online preparation for FSc and ICS core science subjects. Structured question technique, timed practice and AI feedback aligned to Inter Board standards.", count: "PK-EX-FSC", audienceBadge: "FSc / ICS Students", audience: ["students", "parents"], sellingLine: "Board-style technique and timed practice for stronger marks.", href: "/programs/pakistan#pk-ex-fsc", accent: "#2563EB" },
+  { id: "pk-ex-ecat", icon: "monitor", title: "Online Exam Preparation — ECAT", description: "Targeted online preparation for the ECAT — timed topic tests, full mock tests and AI gap analysis.", count: "PK-EX-ECAT", audienceBadge: "ECAT Candidates", audience: ["students", "parents"], sellingLine: "Tackle ECAT with guided speed and precision.", href: "/programs/pakistan#pk-ex-ecat", accent: "#0891B2" },
+  { id: "pk-mk-mat", icon: "clipboard", title: "Final Mock Exam + Report — Matric Mathematics", description: "Full time-bound mock for Matric Mathematics in the exact Matric paper format. AI report: section scores, common errors, marks by topic.", count: "PK-MK-MAT", audienceBadge: "Matric Students", audience: ["students", "parents"], sellingLine: "See your real exam readiness before test day.", href: "/programs/pakistan#pk-mk-mat", accent: "#EA580C" },
+  { id: "pk-mk-fsc", icon: "clipboard", title: "Final Mock Exam + Report — FSc / ICS Core Subjects", description: "Full time-bound mock examinations for FSc and ICS Physics, Chemistry and Mathematics. AI report: AO analysis and final revision guidance.", count: "PK-MK-FSC", audienceBadge: "FSc / ICS Students", audience: ["students", "parents"], sellingLine: "Pinpoint weak areas and revise with precision.", href: "/programs/pakistan#pk-mk-fsc", accent: "#DC2626" },
+  { id: "pk-mk-ecat", icon: "clipboard", title: "Final ECAT Mock Exam + Report", description: "Full time-bound ECAT mock — MCQ format matching actual ECAT paper. AI report: subject-level scores, accuracy rate, time management analysis.", count: "PK-MK-ECAT", audienceBadge: "ECAT Candidates", audience: ["students", "parents"], sellingLine: "Practice the real ECAT rhythm before the real paper.", href: "/programs/pakistan#pk-mk-ecat", accent: "#9333EA" },
+];
+
+function Card({ card }: { card: ProgramCard }) {
+  const Icon = iconMap[card.icon];
+  return (
+    <article
+      id={card.id}
+      data-audience={card.audience.join(",")}
+      className="group rounded-xl border border-[#dbe7f4] bg-white p-5 shadow-[0_2px_8px_rgba(0,0,0,0.06)] transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)]"
+      style={{ borderTopWidth: "4px", borderTopColor: card.accent }}
+    >
+      <div className="mb-1">
+        <Icon className="h-8 w-8" style={{ color: card.accent }} />
+      </div>
+      <h3 className="mt-3 text-lg font-semibold text-slate-900" style={{ color: card.accent }}>
+        {card.title}
+      </h3>
+      <p className="mt-2 line-clamp-2 text-sm text-slate-700">{card.description}</p>
+      <p className="mt-3 text-[13px] italic text-slate-600">{card.count}</p>
+      <span className="mt-3 inline-block rounded-full bg-[#2366c9] px-3 py-1 text-xs text-white">{card.audienceBadge}</span>
+      <p className="mt-3 text-sm italic text-slate-700">{card.sellingLine}</p>
+      <a href={card.href} className="mt-4 inline-block text-[13px] font-bold text-[#F97316]">
+        Browse {card.title} →
+      </a>
+    </article>
+  );
+}
 
 export default function Programs() {
-  const { data: programs, isLoading, error } = usePrograms();
+  const [location, setLocation] = useLocation();
+  const [tab, setTab] = useState<TabKey>("cambridge");
+  const [audience, setAudience] = useState<Audience>("all");
 
-  const categories = ["All", "O-Level", "Foundation", "Pakistan Board"];
+  useEffect(() => {
+    const params = new URLSearchParams(location.split("?")[1] || "");
+    setTab(params.get("tab") === "pakistan" ? "pakistan" : "cambridge");
+  }, [location]);
 
-  if (error) {
-    return (
-      <Layout>
-        <div className="container-custom py-20">
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>Failed to load programs. Please try again later.</AlertDescription>
-          </Alert>
-        </div>
-      </Layout>
-    );
-  }
+  useEffect(() => {
+    const title = "All Programs Directory | EduMeUp";
+    document.title = title;
+  }, []);
+
+  const filteredCambridge = useMemo(() => {
+    if (audience === "all") return cambridgeCards;
+    return cambridgeCards.filter((c) => c.audience.includes(audience));
+  }, [audience]);
+
+  const filteredPakistanTop = useMemo(() => {
+    if (audience === "all") return pakistanTopCards;
+    return pakistanTopCards.filter((c) => c.audience.includes(audience));
+  }, [audience]);
+
+  const filteredPakistanServices = useMemo(() => {
+    if (audience === "all") return pakistanServiceCards;
+    return pakistanServiceCards.filter((c) => c.audience.includes(audience));
+  }, [audience]);
+
+  const switchTab = (nextTab: TabKey) => {
+    setTab(nextTab);
+    const nextUrl = nextTab === "pakistan" ? "/programs?tab=pakistan" : "/programs";
+    setLocation(nextUrl);
+  };
+
+  const currentAnchors = tab === "cambridge"
+    ? cambridgeCards.map((c) => ({ label: c.title, id: c.id }))
+    : [
+        { label: "Pakistan Matric Programme", id: "pk-matric" },
+        { label: "Pakistan FSc and ICS Programme", id: "pk-fsc" },
+        { label: "ECAT Programme", id: "pk-ecat" },
+        { label: "Pakistan Exam Services", id: "pk-services" },
+      ];
 
   return (
     <Layout>
-      {/* HERO - EMOTIONAL HOOK */}
-      <section className="py-16 md:py-24 relative overflow-hidden bg-gradient-to-b from-blue-50/80 to-white">
-        <div className="container-custom relative z-10 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-8"
-          >
-
-            <h1 className="text-5xl md:text-6xl font-semibold mb-8 font-display leading-tight text-slate-900">
-              Stop The Study Struggle
-            </h1>
-            
-            <div className="max-w-3xl mx-auto space-y-6">
-              <p className="text-2xl md:text-3xl text-slate-700 font-semibold leading-tight">
-                Most students struggle because they forget 80% of what they learn within 48 hours.
-              </p>
-              <p className="text-lg text-slate-500 font-medium italic">
-                The "Ebbinghaus Forgetting Curve" isn't a theory—it's the reason for your exam anxiety. 
-                EduMeUp doesn't just teach; it ensures you never forget.
-              </p>
-            </div>
-
-            <div className="flex flex-wrap justify-center gap-4 pt-4">
-              <div className="bg-red-50 border border-red-200 px-6 py-3 rounded-full text-[14px] font-semibold text-red-600">
-                80% forget rate (traditional)
-              </div>
-              <div className="bg-green-50 border border-green-200 px-6 py-3 rounded-full text-[14px] font-semibold text-green-600">
-                92% grade improvement
-              </div>
-            </div>
-
-            <div className="inline-block bg-[#2366c9] text-white px-10 py-4 rounded-2xl font-semibold text-[14px] shadow-md mt-8">
-              Proven science. Guaranteed results.
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* SYSTEM ECOSYSTEM */}
-      <section className="py-20 bg-blue-50 border-y-4 border-blue-100">
-        <div className="container-custom text-center">
-          <div className="flex flex-wrap justify-center items-center gap-4 text-[14px] md:text-xs font-semibold text-slate-900/60">
-            <span>Diagnostic</span>
-            <span className="text-blue-400">→</span>
-            <span>Remedial</span>
-            <span className="text-blue-400">→</span>
-            <span>Foundation</span>
-            <span className="text-blue-400">→</span>
-            <span>Bridge</span>
-            <span className="text-blue-400">→</span>
-            <span>O-Level Mastery</span>
-            <span className="text-blue-400">→</span>
-            <span>Practice</span>
-            <span className="text-blue-400">→</span>
-            <span>Mock Exams</span>
-          </div>
-        </div>
-      </section>
-
-      {/* PROOF LAYER & RISK REVERSAL */}
-      <section className="py-16 md:py-32 bg-white">
-        <div className="container-custom">
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-20 items-center">
-            <div>
-              <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-8 leading-none">
-                PROVEN BY <span className="text-blue-600">NUMBERS</span>
-              </h2>
-              <div className="grid grid-cols-2 gap-8 mb-12">
-                {[
-                  { label: "Grade Improvement", val: "92%", sub: "2+ Grades Up" },
-                  { label: "Retention Rate", val: "85%", sub: "Long-term Memory" },
-                  { label: "Cost Savings", val: "70%", sub: "Vs. Private Tutors" },
-                  { label: "Students Served", val: "5k+", sub: "Since 2021" }
-                ].map((stat, i) => (
-                  <div key={i} className="p-8 bg-blue-50 rounded-[2.5rem] border-2 border-blue-100">
-                    <p className="text-4xl font-semibold text-slate-900 mb-1">{stat.val}</p>
-                    <p className="text-[14px] font-semibold text-blue-600 mb-1">{stat.label}</p>
-                    <p className="text-[14px] font-semibold text-slate-900/40 uppercase">{stat.sub}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="space-y-6">
-                <div className="flex items-start gap-4 p-6 bg-green-50 rounded-3xl border-2 border-green-100">
-                  <ShieldCheck className="h-6 w-6 text-green-600 mt-1" />
-                  <div>
-                    <h4 className="text-lg font-semibold text-slate-900">The EduMeUp guarantee</h4>
-                    <p className="text-[14px] text-slate-900/70 ">Try any program for 14 days. If you don't see a measurable shift in retention, we'll provide a 100% refund. No questions asked.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-8">
-              <div className="bg-[#2366c9] p-6 sm:p-10 md:p-12 rounded-[2rem] sm:rounded-[4rem] text-white shadow-2xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl"></div>
-                <h3 className="text-2xl font-semibold mb-8 text-white">Who it's not for</h3>
-                <ul className="space-y-6">
-                  {[
-                    "Lazy students looking for shortcuts",
-                    "Last-minute crammers (the science needs time)",
-                    "Anyone unwilling to follow a systematic roadmap",
-                    "Passive learners who only want to watch videos"
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-center gap-4 text-white font-semibold uppercase text-xs tracking-widest">
-                      <span className="text-red-500 text-lg">✕</span> {item}
-                    </li>
-                  ))}
-                </ul>
-                <div className="mt-12 pt-8 border-t border-white/10">
-                  <p className="text-xs font-semibold text-white uppercase tracking-[0.2em]">"We build serious scholars, not just exam takers."</p>
-                </div>
-              </div>
-
-              <div className="bg-blue-50 p-6 sm:p-10 md:p-12 rounded-[2rem] sm:rounded-[4rem] border-4 border-blue-100">
-                <h3 className="text-2xl font-semibold text-slate-900 mb-8">Success stories</h3>
-                <div className="space-y-6">
-                  <p className="text-slate-900/70 font-medium italic">"Ahmed went from a 'D' in Physics to an 'A*' in just 4 months. The diagnostic revealed he was missing Grade 7 fundamentals."</p>
-                  <p className="text-[14px] font-semibold text-blue-600">— O-Level parent</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* THE 4 LEARNING PATHWAYS */}
-      <section className="py-16 md:py-28 bg-white">
-        <div className="container-custom max-w-6xl">
-          <div className="text-center mb-12 md:mb-24">
-            <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-4">The 4 learning pathways</h2>
-            <p className="text-lg text-blue-600 font-semibold">Designed for every stage of the O-Level journey</p>
-          </div>
-
-          <div className="grid gap-8">
-            {[
-              {
-                id: "p1",
-                title: "Pathway 1: Foundation & Foundational O-Level Bridge Courses",
-                subtitle: "Build Strong Basics → Transition to O-Level",
-                for: "Grade 5-8 students, foundation gaps, curriculum transitions",
-                priorities: [
-                  { 
-                    title: "Diagnostic + Remedial", 
-                    details: "90-minute AI gap analysis pinpointing exact Grade 6-8 deficiencies. Result: Personalized remedial roadmap to fix 'leaky' foundations before starting O-Level.",
-                    cost: "$30 (Included in programs)"
-                  },
-                  { 
-                    title: "Pre-O-Level Victory Program", 
-                    details: "9-month comprehensive system covering Grade 6-8 repair + Foundational O-Level Bridge Courses + 30% O-Level syllabus. Available in Self-Learning ($199) or Teacher-Led ($360).",
-                    guarantee: "60% performance guarantee"
-                  }
-                ]
-              },
-              {
-                id: "p2",
-                title: "Pathway 2: O-Level Mastery",
-                subtitle: "Comprehensive Preparation → Exam Excellence",
-                for: "Current O-Level students (O1/O2), self-motivated learners",
-                priorities: [
-                  { 
-                    title: "Complete O-Level Subject Preparation", 
-                    details: "100% Cambridge syllabus coverage with 1000+ interactive H5P activities. Includes integrated past papers, anti-forgetting system, and 24/7 AI support.",
-                    pricing: "$65/year per subject"
-                  },
-                  { 
-                    title: "ATP Courses (Physics | Chemistry | Biology)", 
-                    details: "Virtual lab demonstrations for Paper 4 (Physics, Chemistry, Biology). Build analytical skills for unseen experiments without needing a physical lab.",
-                    pricing: "From $99/subject"
-                  }
-                ]
-              },
-              {
-                id: "p3",
-                title: "Pathway 3: Exam Specialization",
-                subtitle: "Master Exam Technique → Peak Performance",
-                for: "Exam preparation (1-6 months), technique mastery, time management",
-                priorities: [
-                  { 
-                    title: "Real-Time Exam Preparation", 
-                    details: "20+ actual Cambridge past papers with enhanced solutions. MCQ interface timed exactly like real exams with instant AI explanations for every mistake.",
-                    value: "50-80% cheaper than traditional mocks"
-                  },
-                  { 
-                    title: "Exam Practice Papers with Enhanced Solutions", 
-                    details: "Condensed syllabus review targeting high-yield topics. Formula sheets, magic sheets, and rapid practice for emergency 2-4 week preparation.",
-                    pricing: "From $40/subject"
-                  }
-                ]
-              },
-              {
-                id: "p4",
-                title: "Pathway 4: Personalized Support",
-                subtitle: "Human Guidance → Accelerated Progress",
-                for: "Students needing 1-on-1 guidance, accountability, human interaction",
-                priorities: [
-                  { 
-                    title: "Tutor Booking — 1-to-1 Personalised Education", 
-                    details: "Vetted, SMK-trained teachers matched to student needs. Includes 2 FREE sample lectures and full platform resource access ($360 value free).",
-                    availability: "Online & Physical (Selected cities)"
-                  }
-                ]
-              }
-            ].map((path, i) => (
-              <Accordion type="single" collapsible key={i} className="bg-blue-50 rounded-[2.5rem] border-4 border-white hover:border-blue-100 transition-all overflow-hidden shadow-sm">
-                <AccordionItem value={path.id} className="border-none">
-                  <AccordionTrigger className="px-4 sm:px-10 py-5 sm:py-8 hover:no-underline group">
-                    <div className="text-left">
-                      <h3 className="text-2xl font-semibold text-slate-900 group-hover:text-[#2366c9] transition-colors">{path.title}</h3>
-                      <p className="text-blue-600 font-semibold uppercase text-xs tracking-widest mt-1">{path.subtitle}</p>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent className="px-4 sm:px-10 pb-6 sm:pb-10">
-                    <div className="pt-6 border-t border-white/50">
-                      <div className="mb-8 p-6 bg-white/50 rounded-2xl border border-white">
-                        <span className="text-[14px] font-semibold text-slate-900/40">Ideal for</span>
-                        <p className="text-slate-900 font-semibold mt-1">{path.for}</p>
-                      </div>
-                      <div className="grid md:grid-cols-2 gap-8">
-                        {path.priorities.map((item, j) => (
-                          <div key={j} className="space-y-4">
-                            <div className="flex items-center gap-3">
-                              <div className="w-2 h-2 rounded-full bg-[#2366c9]" />
-                              <h4 className="text-lg font-semibold text-slate-900">{item.title}</h4>
-                            </div>
-                            <p className="text-[14px] text-slate-900/70 font-medium leading-relaxed">{item.details}</p>
-                            {('cost' in item || 'pricing' in item || 'value' in item) && (
-                              <div className="text-[14px] font-semibold text-[#2366c9] bg-white/50 inline-block px-3 py-1 rounded-full">
-                                {('cost' in item ? item.cost : 'pricing' in item ? item.pricing : 'value' in item ? item.value : '')}
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                      <div className="mt-10">
-                        <Button className="bg-[#2366c9] hover:bg-blue-600 h-14 px-8 rounded-xl font-semibold">Explore this pathway</Button>
-                      </div>
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* SYSTEM CAPABILITIES - COLLAPSIBLE */}
-      <section className="py-16 md:py-32 bg-[#2366c9] text-white">
-        <div className="container-custom">
-          <div className="text-center mb-12 md:mb-24">
-            <h2 className="text-4xl md:text-5xl text-white font-semibold">System capabilities</h2>
-            <p className="text-xl text-blue-400 font-semibold uppercase tracking-widest mt-4">The Engine Powering Your 10X Learning Leap</p>
-          </div>
-          
-          <Accordion type="multiple" className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-            {[
-              { icon: Languages, title: "Multilingual Support", desc: "Translate content instantly into 100+ languages to bridge any language gap." },
-              { icon: ShieldCheck, title: "$678 FREE Value", desc: "Diagnostic assessments, AI doubt support, and digital workbooks included in every major program." },
-              { icon: PieChart, title: "Automated Mastery Tracking", desc: "Real-time dashboards for students, parents, and schools. Identify gaps as they happen." },
-              { icon: FileText, title: "Dual Coding Mastery", desc: "Every lesson uses text + visuals to reduce cognitive load and double retention rates." },
-              { icon: Globe, title: "Global Benchmarking", desc: "See where you stand against students in 25+ countries with standardized mock exams." },
-              { icon: AlertCircle, title: "Predictive AI Diagnostics", desc: "Our AI predicts exam performance 4 weeks early, giving you time to remediate weak spots." },
-              { icon: Sparkles, title: "24/7 AI Tutor Access", desc: "Never wait for a teacher. Get instant, research-validated explanations at 2 AM or 2 PM." }
-            ].map((f, i) => (
-              <AccordionItem key={i} value={`cap-${i}`} className="border-none bg-white/5 rounded-[2.5rem] px-8 py-2 hover:bg-white/10 transition-all">
-                <AccordionTrigger className="hover:no-underline py-6 group">
-                  <div className="flex items-center gap-6">
-                    <div className="w-12 h-12 bg-blue-600/20 rounded-xl flex items-center justify-center group-hover:bg-blue-600 transition-colors">
-                      <f.icon className="h-6 w-6 text-blue-400 group-hover:text-white" />
-                    </div>
-                    <h3 className="text-lg text-white font-semibold text-left">{f.title}</h3>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="pb-8 pl-[4.5rem] pr-6">
-                  <p className="text-white/50 text-[14px]  leading-relaxed">{f.desc}</p>
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </div>
-      </section>
-
-      {/* DECISION FRAMEWORK */}
-      <section className="py-16 md:py-32 bg-white">
-        <div className="container-custom max-w-6xl">
-          <div className="text-center mb-24">
-            <h2 className="text-4xl md:text-5xl font-semibold text-slate-900">Choose your path</h2>
-            <p className="text-xl text-slate-900/40 font-semibold uppercase tracking-wide">Quick Decision Framework</p>
-          </div>
-
-          <div className="grid lg:grid-cols-2 gap-16">
-            <div className="space-y-8">
-              <h3 className="text-2xl font-semibold text-blue-600 px-4 border-l-8 border-blue-600">1. Where are you now?</h3>
-              <div className="grid gap-4">
-                {[
-                  { q: "GRADE 7-8", path: "Foundation & Foundational O-Level Bridge Courses", start: "Pre-O-Level Victory Program" },
-                  { q: "O-LEVEL YEAR 1", path: "Foundational O-Level Bridge Courses & Mastery", start: "Complete O-Level Subject Preparation" },
-                  { q: "O-LEVEL YEAR 2-3", path: "O-Level Mastery", start: "Complete O-Level Subject Preparation" },
-                  { q: "EXAM PREP", path: "Exam Specialization", start: "Real-Time Exam Preparation" },
-                ].map((item, i) => (
-                  <div key={i} className="p-8 bg-blue-50 rounded-3xl border-2 border-white hover:border-blue-100 transition-all">
-                    <span className="text-[14px] font-semibold text-[#2366c9]">{item.q}</span>
-                    <h4 className="text-xl font-semibold text-slate-900 mt-2 mb-1">{item.path}</h4>
-                    <p className="text-xs text-slate-900/40 font-semibold uppercase">Start With: {item.start}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-8">
-              <h3 className="text-2xl font-semibold text-blue-600 px-4 border-l-8 border-blue-600">2. Biggest challenge?</h3>
-              <div className="grid gap-4">
-                {[
-                  { q: "Foundation Gaps", path: "Diagnostic + Remedial + Foundational O-Level Bridge Courses" },
-                  { q: "Complete Prep", path: "Pre-O-Level Victory Program" },
-                  { q: "Exam Technique", path: "Real-Time Exam Preparation" },
-                  { q: "English Weakness", path: "English Paper 1 & 2 Skill Dev" },
-                ].map((item, i) => (
-                  <div key={i} className="p-8 bg-blue-50 rounded-3xl border-2 border-white hover:border-blue-100 transition-all flex items-center justify-between">
-                    <div>
-                      <h4 className="text-xl font-semibold text-slate-900">{item.q}</h4>
-                      <p className="text-xs text-slate-900/40 font-semibold uppercase mt-1">Recommended: {item.path}</p>
-                    </div>
-                    <ArrowRight className="text-blue-600" />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* PROGRAMS LISTING */}
-      <div className="container-custom py-24 bg-blue-50/30 rounded-[5rem] my-32 border-4 border-white shadow-inner">
-        <div className="text-center mb-20">
-          <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-4">Explore specific courses</h2>
-          <div className="w-24 h-4 bg-[#2366c9] mx-auto rounded-full"></div>
-        </div>
-
-        <Tabs defaultValue="All" className="w-full">
-          <div className="flex justify-center mb-16">
-            <TabsList className="grid w-full max-w-3xl grid-cols-4 bg-white p-2 rounded-[2rem] border-2 border-blue-100 shadow-lg">
-              {categories.map((cat) => (
-                <TabsTrigger 
-                  key={cat} 
-                  value={cat}
-                  className="rounded-2xl data-[state=active]:bg-[#2366c9] data_[state=active]:text-white data_[state=active]:shadow-xl font-semibold text-xs transition-all h-12"
-                >
-                  {cat}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </div>
-
-          <TabsContent value="All" className="mt-0 outline-none">
-            {isLoading ? (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="space-y-4">
-                    <Skeleton className="h-[400px] w-full rounded-[3rem] bg-white" />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-                {programs?.map((program, i) => (
-                  <motion.div
-                    key={program.id}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.1 }}
-                  >
-                    <ProgramCard program={program} />
-                  </motion.div>
-                ))}
-                {(!programs || programs.length === 0) && (
-                  <div className="col-span-full text-center py-32 bg-white rounded-[3rem] border-4 border-dashed border-blue-100 shadow-inner">
-                    <p className="text-slate-900/30 font-semibold text-[14px]">No programs found.</p>
-                  </div>
-                )}
-              </div>
-            )}
-          </TabsContent>
-
-          {categories.filter(c => c !== "All").map((cat) => (
-            <TabsContent key={cat} value={cat} className="mt-0 outline-none">
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-                 {programs?.filter(p => p.category && p.category.includes(cat === "O-Level" ? "o_level" : cat.toLowerCase().replace(" ", "_"))).map((program, i) => (
-                  <motion.div
-                    key={program.id}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.1 }}
-                  >
-                    <ProgramCard program={program} />
-                  </motion.div>
-                ))}
-              </div>
-            </TabsContent>
-          ))}
-        </Tabs>
-      </div>
-
-      {/* PRICING & BUNDLES */}
-      <section className="py-28 bg-blue-50 border-y-4 border-blue-100">
-        <div className="container-custom max-w-6xl">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-4">Flexible bundles</h2>
-            <p className="text-xl text-slate-900/40 font-semibold uppercase tracking-wide">Save Up to 40% with Subject Packages</p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { title: "2 Subjects", price: "$99", save: "$31", features: ["100% Syllabus Coverage", "24/7 AI Support", "Diagnostic Included"] },
-              { title: "4 Subjects", price: "$170", save: "$90", features: ["100% Syllabus Coverage", "24/7 AI Support", "Diagnostic Included", "Custom Roadmap"], popular: true },
-              { title: "8 Subjects", price: "$299", save: "$221", features: ["Complete O-Level Suite", "24/7 AI Support", "Priority Diagnostic", "Full Career Roadmap"] }
-            ].map((pkg, i) => (
-              <div key={i} className={`p-12 rounded-[3.5rem] border-4 ${pkg.popular ? 'border-[#2366c9] bg-white shadow-2xl' : 'border-white bg-white/50 shadow-sm'} relative`}>
-                {pkg.popular && <span className="absolute -top-6 left-1/2 -translate-x-1/2 bg-[#2366c9] text-white px-6 py-2 rounded-full text-xs font-semibold">Most popular</span>}
-                <h3 className="text-2xl font-semibold text-slate-900 mb-2">{pkg.title}</h3>
-                <div className="flex items-end gap-2 mb-8">
-                  <span className="text-5xl font-semibold text-[#2366c9]">{pkg.price}</span>
-                  <span className="text-[14px] font-semibold text-slate-900/40 uppercase mb-2">/ year</span>
-                </div>
-                <ul className="space-y-4 mb-10">
-                  {pkg.features.map((f, j) => (
-                    <li key={j} className="text-[14px] font-semibold text-slate-900/70 flex items-center gap-3">
-                      <div className="w-1.5 h-1.5 rounded-full bg-[#2366c9]" /> {f}
-                    </li>
-                  ))}
-                </ul>
-                <div className="text-[14px] font-medium text-emerald-500 bg-emerald-50/70 inline-block px-3 py-1 rounded-full mb-8">Save {pkg.save} vs individual</div>
-                <Button className={`w-full h-16 rounded-2xl font-semibold ${pkg.popular ? 'bg-[#2366c9] hover:bg-blue-600 shadow-lg shadow-blue-200' : 'bg-[#2366c9] hover:bg-black'}`}>Select package</Button>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FINAL CTA */}
-      <section className="py-20 md:py-32 bg-[#2366c9] text-white relative overflow-hidden">
-        <div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
-        <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
-        <div className="container-custom text-center relative z-10">
-          <div className="flex justify-center w-full mb-6">
-            <h2 className="text-4xl md:text-6xl text-white font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
-              Not sure which path to take?
-            </h2>
-          </div>
-          <p className="text-base text-blue-200 mb-12 max-w-3xl mx-auto">
-            Take our free 90-minute diagnostic and get a personalised program recommendation.
+      <section className="bg-white py-10 md:py-14">
+        <div className="container-custom max-w-7xl">
+          <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9]">EduMeUp | Cambridge O-Level / IGCSE | Pakistan Curriculum</p>
+          <h1 className="mt-3 text-4xl font-semibold text-slate-900 md:text-5xl">All Programmes — Find Exactly What You Need</h1>
+          <p className="mt-4 max-w-4xl text-slate-700">
+            From Grade 5 vocabulary foundation through to O-Level subject mastery, mock exams and teacher development — every EduMeUp programme is listed here.
+            Use the tabs to switch between Cambridge and Pakistan Curriculum programmes. Use the filter to find what is right for your role.
           </p>
-          <div className="flex flex-col md:flex-row justify-center gap-6 max-w-5xl mx-auto">
-            <Button size="lg" className="w-full md:w-auto min-w-[260px] bg-white text-[#2366c9] hover:bg-blue-50 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
-              Take Free Diagnostic (90 Min) <ArrowRight className="h-4 w-4" />
-            </Button>
-            <Button size="lg" variant="outline" className="w-full md:w-auto min-w-[260px] border border-white/30 text-white hover:bg-white/10 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
-              Talk to Education Expert <ArrowRight className="h-4 w-4" />
-            </Button>
+          <div className="mt-6 flex flex-wrap items-center gap-4">
+            <a href="/diagnostics" className="rounded-md bg-[#2366c9] px-5 py-3 text-sm font-semibold text-white">
+              TAKE FREE DIAGNOSTIC — FIND YOUR STARTING POINT
+            </a>
+            <p className="text-sm text-slate-600">
+              Already know what you need? Jump to:
+              {" "}
+              <a href="#diagnostics" className="font-semibold text-[#2366c9]">Diagnostics</a>
+              {" | "}
+              <a href="#lower-secondary" className="font-semibold text-[#2366c9]">Lower Secondary</a>
+              {" | "}
+              <a href="#bridge-courses" className="font-semibold text-[#2366c9]">Bridge Courses</a>
+              {" | "}
+              <a href="#olevel-subjects" className="font-semibold text-[#2366c9]">O-Level Subjects</a>
+              {" | "}
+              <a href="#english" className="font-semibold text-[#2366c9]">English Pathway</a>
+              {" | "}
+              <a href="#atp" className="font-semibold text-[#2366c9]">ATP</a>
+              {" | "}
+              <a href="#mock-exams" className="font-semibold text-[#2366c9]">Mock Exams</a>
+              {" | "}
+              <a href="/programs?tab=pakistan" className="font-semibold text-[#2366c9]">Pakistan Curriculum</a>
+            </p>
           </div>
+        </div>
+      </section>
+
+      <section className="bg-slate-50 py-8">
+        <div className="container-custom max-w-7xl grid grid-cols-1 gap-8 lg:grid-cols-[240px_minmax(0,1fr)]">
+          <aside className="space-y-4 lg:sticky lg:top-20 lg:self-start">
+            <div className={ui.cards.standard + " p-4"}>
+              <h3 className="text-sm font-semibold text-slate-900">Not sure where to start?</h3>
+              <p className="mt-2 text-sm text-slate-600">The free AI Diagnostic identifies your exact gaps and recommends which programme to begin with.</p>
+              <a href="/diagnostics" className="mt-3 block rounded-md bg-[#2366c9] px-3 py-2 text-center text-sm font-semibold text-white">TAKE FREE DIAGNOSTIC</a>
+            </div>
+
+            <div className={ui.cards.standard + " p-4"}>
+              <h3 className="text-sm font-semibold text-slate-900">Jump to what is right for you</h3>
+              <div className="mt-2 space-y-2 text-sm">
+                <button className="block text-left text-[#2366c9]" onClick={() => setAudience("students")}>I am a Student →</button>
+                <button className="block text-left text-[#2366c9]" onClick={() => setAudience("parents")}>I am a Parent →</button>
+                <button className="block text-left text-[#2366c9]" onClick={() => setAudience("teachers")}>I am a Teacher →</button>
+                <a className="block text-[#2366c9]" href="/for-schools">I represent a School →</a>
+              </div>
+            </div>
+
+            <div className={ui.cards.standard + " p-4"}>
+              <h3 className="text-sm font-semibold text-slate-900">Section Links</h3>
+              <div className="mt-2 space-y-2 text-sm">
+                {currentAnchors.map((anchor) => (
+                  <button
+                    key={anchor.id}
+                    onClick={() => document.getElementById(anchor.id)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                    className="block text-left text-[#2366c9]"
+                  >
+                    {anchor.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className={ui.cards.standard + " p-4 text-sm text-slate-700"}>
+              Want to see all prices in one place?{" "}
+              <a href="/pricing" className="font-semibold text-[#2366c9]">View Pricing Page</a>
+            </div>
+          </aside>
+
+          <main className="space-y-6">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <button onClick={() => switchTab("cambridge")} className={`rounded-lg px-4 py-3 text-sm font-semibold ${tab === "cambridge" ? "bg-[#2366c9] text-white" : "border border-[#dbe7f4] bg-white text-slate-700"}`}>
+                Cambridge / IGCSE Programmes
+              </button>
+              <button onClick={() => switchTab("pakistan")} className={`rounded-lg px-4 py-3 text-sm font-semibold ${tab === "pakistan" ? "bg-[#2366c9] text-white" : "border border-[#dbe7f4] bg-white text-slate-700"}`}>
+                Pakistan Curriculum Programmes
+              </button>
+            </div>
+
+            <div className="overflow-x-auto">
+              <div className="inline-flex min-w-full gap-2">
+                {stakeholders.map((option) => (
+                  <button
+                    key={option.key}
+                    onClick={() => setAudience(option.key)}
+                    className={`rounded-full px-4 py-2 text-sm font-medium ${audience === option.key ? "bg-[#2366c9] text-white" : "border border-[#dbe7f4] bg-white text-slate-700"}`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {tab === "cambridge" && (
+              <section className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                {filteredCambridge.map((card) => <Card key={card.id} card={card} />)}
+              </section>
+            )}
+
+            {tab === "pakistan" && (
+              <section className="space-y-6">
+                <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                  {filteredPakistanTop.map((card) => <Card key={card.id} card={card} />)}
+                </div>
+                <h2 id="pk-services" className="text-xl font-semibold text-slate-900">Online Exam Preparation and Final Mock Exams — Matric, FSc / ICS, ECAT</h2>
+                <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                  {filteredPakistanServices.map((card) => <Card key={card.id} card={card} />)}
+                </div>
+              </section>
+            )}
+
+            <section className="rounded-[2rem] bg-[#2366c9] px-6 py-8 text-white">
+              <h2 className="text-2xl font-semibold">Not Sure Which Programme Is Right for You?</h2>
+              <p className="mt-3 max-w-4xl text-sm text-slate-100">
+                Take the free AI Diagnostic — 30 minutes, no account required. It identifies exactly where you are, which programme matches your current level, and what to study first.
+                Or browse the full programme list above and enrol directly.
+              </p>
+              <div className="mt-5 flex flex-wrap gap-3">
+                <a href="/diagnostics" className="rounded-md bg-white px-4 py-2 text-sm font-semibold text-[#2366c9]">TAKE FREE DIAGNOSTIC</a>
+                <a href="/pricing" className="rounded-md border border-white/60 px-4 py-2 text-sm font-semibold text-white">VIEW PRICING — ALL PROGRAMMES</a>
+                <Link href="/contact?type=general" className="self-center text-sm font-medium text-slate-100 underline">Have a question? Chat with us on WhatsApp →</Link>
+              </div>
+            </section>
+          </main>
         </div>
       </section>
     </Layout>

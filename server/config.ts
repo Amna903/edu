@@ -141,8 +141,20 @@ export const env = {
   },
 
   support: {
+    // Resend API key used for outbound transactional contact emails.
     resendApiKey: process.env.RESEND_API_KEY || "",
+    // Verified sender identity in Resend, e.g. "EduMeUp Support <support@edumeup.com>".
     fromEmail: process.env.SUPPORT_FROM_EMAIL || "",
+    // Dedicated Chief Adviser inbox for school strategy submissions.
+    schoolInboxEmail: process.env.SCHOOL_INBOX_EMAIL || "schools@edumeup.com",
+    // Main support inbox for general and technical support enquiries.
+    supportInboxEmail: process.env.SUPPORT_INBOX_EMAIL || "support@edumeup.com",
+    // Optional CC for urgent/payment-related technical tickets.
+    financeCcEmail: process.env.FINANCE_CC_EMAIL || "",
+    // Optional CC for workbook access issues confirmed as paid.
+    developerCcEmail: process.env.DEVELOPER_CC_EMAIL || "",
+    // Optional reCAPTCHA v3 secret for spam protection on public contact forms.
+    recaptchaSecretKey: process.env.RECAPTCHA_SECRET_KEY || "",
   },
 } as const;
 

@@ -1,119 +1,216 @@
-import { useEffect } from "react";
-import { Layout } from "@/components/Layout";
+import { Link } from "wouter";
+import { LegalList, LegalPageShell, LegalSection, LegalTable } from "@/components/legal/LegalPageShell";
 
 export default function Privacy() {
-  useEffect(() => {
-    const previousTitle = document.title;
-    const metaDescription = document.querySelector('meta[name="description"]');
-    const previousDescription = metaDescription?.getAttribute("content") || "";
-
-    document.title = "Privacy Policy | EduMeUp";
-    if (metaDescription) {
-      metaDescription.setAttribute(
-        "content",
-        "Read the EduMeUp privacy policy covering data collection, usage, retention, and learner privacy rights.",
-      );
-    }
-
-    return () => {
-      document.title = previousTitle;
-      if (metaDescription) {
-        metaDescription.setAttribute("content", previousDescription);
-      }
-    };
-  }, []);
-
   return (
-    <Layout>
-      <section className="py-16 md:py-24 bg-gradient-to-b from-blue-50/80 to-white">
-        <div className="container-custom max-w-4xl">
-          <h1 className="text-4xl md:text-6xl font-semibold text-slate-900">Privacy Policy</h1>
-          <p className="mt-4 text-sm text-slate-600">Last Updated: [INSERT DATE BEFORE PUBLISHING]</p>
-        </div>
-      </section>
+    <LegalPageShell
+      title="Privacy Policy"
+      documentTitle="EduMeUp is committed to protecting the privacy of every person who uses our platform."
+      description="Read the EduMeUp Privacy Policy covering personal data collection, AI-powered features, sharing, retention, rights, security, and children's data."
+    >
+      <LegalSection title="Privacy Policy">
+        <p>
+          EduMeUp.com ("EduMeUp", "we", "us", "our") is committed to protecting the privacy of every person who uses our platform - students, parents, teachers, and school administrators. This Privacy Policy explains what personal data we collect, why we collect it, how we use it, who we share it with, and what rights you have over it.
+        </p>
+        <p>
+          By registering for or using the EduMeUp platform, you agree to this Privacy Policy. If you do not agree, please do not use our platform. If you are registering a child under 18, you confirm that you are their parent or legal guardian and you provide consent on their behalf.
+        </p>
+      </LegalSection>
 
-      <section className="pb-16 md:pb-24">
-        <div className="container-custom max-w-4xl space-y-8">
-          <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
-            <h2 className="text-2xl font-semibold text-slate-900">1. Who We Are</h2>
-            <p className="mt-3 text-sm text-slate-700 leading-relaxed">
-              EduMeUp.com is an educational technology platform operated by [EduMeUp / Legal Entity Name, Address].
-              Our platform provides interactive learning courses, diagnostic assessments, examination preparation resources,
-              and teacher training programmes for Cambridge O-Level and IGCSE students.
-            </p>
-          </div>
+      <LegalSection title="1. Who We Are">
+        <p>
+          EduMeUp.com is an online educational platform offering Cambridge O-Level and IGCSE preparation courses, diagnostics, AI-powered study tools, certified tutoring, and performance reporting services. The platform operates globally and is accessible to students, parents, teachers, and schools worldwide.
+        </p>
+      </LegalSection>
 
-          <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
-            <h2 className="text-2xl font-semibold text-slate-900">2. What Personal Data We Collect</h2>
-            <ul className="mt-3 space-y-2 text-sm text-slate-700">
-              <li>Account information: name, email address, phone number, role (student, parent, teacher, school administrator).</li>
-              <li>Learning data: diagnostic results, course progress, test scores, platform activity logs.</li>
-              <li>Payment information: processed through [INSERT PAYMENT PROVIDER]. We do not store card details directly.</li>
-              <li>Device and technical data: IP address, browser type, device type, pages visited, session duration.</li>
-              <li>Communications: messages submitted through contact or support channels.</li>
-            </ul>
-          </div>
+      <LegalSection title="2. What Personal Data We Collect">
+        <h3 className="font-semibold text-slate-950">2.1 Data You Give Us Directly at Registration</h3>
+        <LegalList
+          items={[
+            "Student: first name, last name, email address, grade level, country, password hashed and never stored in plain text.",
+            "Parent: first name, last name, email address, child's name and grade, password.",
+            "Teacher: first name, last name, email address, subjects taught, teaching role, city, country, password.",
+            "School Admin: first name, last name, school email address, school name, partner code, role at school, password.",
+          ]}
+        />
+        <h3 className="font-semibold text-slate-950">2.2 Data Created When You Use the Platform</h3>
+        <LegalList
+          items={[
+            "Course enrolment records and completion progress.",
+            "Diagnostic test attempts, scores, and section-level results.",
+            "Written response submissions for AI-graded questions.",
+            "Tutoring session bookings, attendance records, and session notes.",
+            "Performance report data including mastery scores, topic completion, and test results.",
+            "Purchase records including products bought and payment confirmation references, but not card details.",
+            "Login timestamps, IP address at time of login, device type, and browser type.",
+            "Pages visited, time on platform, and feature usage patterns for analytics.",
+          ]}
+        />
+        <h3 className="font-semibold text-slate-950">2.3 Data From the Free Diagnostic</h3>
+        <p>
+          If you take a free diagnostic without registering an account, we collect your IP address, the subject and grade level you selected, and your diagnostic results. This data is linked to your IP address. If you subsequently register an account, this data is linked to your account.
+        </p>
+        <h3 className="font-semibold text-slate-950">2.4 Payment Data</h3>
+        <p>
+          EduMeUp processes payments through Stripe. We do not store credit card numbers, expiry dates, or CVV codes on our servers. Stripe processes and stores payment data under its own Privacy Policy and PCI-DSS compliance. EduMeUp receives only a payment confirmation reference, the amount paid, the product purchased, and the associated email address.
+        </p>
+        <h3 className="font-semibold text-slate-950">2.5 Data We Do NOT Collect</h3>
+        <LegalList
+          items={[
+            "Government ID numbers, national identity card data, or passport information.",
+            "Biometric data.",
+            "Medical or health data.",
+            "Social media profile data unless you voluntarily share it with us.",
+            "Scholarship application documents. The application uses name, email, country, and declaration only.",
+          ]}
+        />
+      </LegalSection>
 
-          <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
-            <h2 className="text-2xl font-semibold text-slate-900">3. How We Use Your Data</h2>
-            <ul className="mt-3 space-y-2 text-sm text-slate-700">
-              <li>Provide and personalize learning experiences.</li>
-              <li>Generate diagnostics and personalized pathways.</li>
-              <li>Provide progress visibility to parents and school administrators where applicable.</li>
-              <li>Send service communications such as setup, progress, and booking alerts.</li>
-              <li>Improve platform quality using aggregated anonymized usage data.</li>
-              <li>Comply with legal obligations.</li>
-            </ul>
-            <p className="mt-3 text-sm text-slate-700">We do not sell personal data and do not use personal data for advertising profiling.</p>
-          </div>
+      <LegalSection title="3. How We Use Your Data">
+        <LegalTable
+          headers={["Purpose", "Data Used", "Legal Basis"]}
+          rows={[
+            ["Provide the learning platform and courses", "Enrolment records, progress data, diagnostic results, course completion", "Contract performance"],
+            ["Generate diagnostic and performance reports", "Section scores, written response data, AI evaluation results", "Contract performance"],
+            ["Operate the tutoring service", "Booking records, session notes, teacher-submitted monthly report form data", "Contract performance"],
+            ["Send transactional communications", "Email address, purchase reference", "Contract performance"],
+            ["Enforce access control", "IP address, user account flag, grade level", "Legitimate interest"],
+            ["Manage scholarship applications", "Name, email, country, declaration", "Legitimate interest"],
+            ["Maintain security and prevent fraud", "IP address, login attempts, session tokens", "Legitimate interest"],
+            ["Improve platform features and content", "Anonymised usage analytics", "Legitimate interest"],
+            ["Send marketing communications", "Email address", "Consent - opt-in only. Unsubscribe at any time."],
+            ["Comply with legal obligations", "Any data relevant to legal requests", "Legal obligation"],
+          ]}
+        />
+      </LegalSection>
 
-          <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
-            <h2 className="text-2xl font-semibold text-slate-900">4. Data Sharing</h2>
-            <p className="mt-3 text-sm text-slate-700 leading-relaxed">
-              Data is shared only with essential service providers under processing agreements, relevant school or parent
-              account stakeholders for learner progress where applicable, and legal or regulatory authorities when required by law.
-            </p>
-          </div>
+      <LegalSection title="4. AI-Powered Features and Your Data">
+        <p>
+          EduMeUp uses AI tools as processing tools. AI does not make autonomous decisions that affect your legal rights or that have significant consequences without human review.
+        </p>
+        <LegalList
+          items={[
+            "Diagnostic report generation: section scores and pre-written template texts are sent to an AI system to produce a personalised narrative report. The AI personalises language; recommendations and resource links are pre-set by the EduMeUp Academic Team.",
+            "Written response grading: written responses are sent to an AI system with the marking rubric. The EduMeUp Academic Team may review AI-graded responses on request.",
+            "AI Study Advisor: in-session questions and current topic context are sent to an AI system to generate guidance responses. Logged-in session history may be stored in your account.",
+            "Predictive risk flagging: aggregated mastery data is used to flag students at risk of falling behind. This is visible to school admins only and is advisory, not determinative.",
+          ]}
+        />
+        <p>We do not use your data to train AI models. Your personal data and responses are not shared with AI model providers for training purposes.</p>
+      </LegalSection>
 
-          <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
-            <h2 className="text-2xl font-semibold text-slate-900">5. Data Retention</h2>
-            <p className="mt-3 text-sm text-slate-700 leading-relaxed">
-              Account data is retained while accounts remain active and for [INSERT PERIOD e.g. 2 years] after closure.
-              Learning progress data is retained during active programme subscription periods.
-              Users may request deletion at any time via support@edumeup.com.
-            </p>
-          </div>
+      <LegalSection title="5. Who We Share Your Data With">
+        <h3 className="font-semibold text-slate-950">5.1 Service Providers</h3>
+        <LegalList
+          items={[
+            "Stripe for payment processing confirmation data only.",
+            "Cloud hosting and database providers for secure platform hosting.",
+            "Email service providers for transactional and marketing emails.",
+            "AI API providers for diagnostic section scores, written responses, and rubric data. No names or contact details are included in AI API calls.",
+            "Cloud storage providers for PDF files such as workbooks, past papers, and mind maps.",
+          ]}
+        />
+        <h3 className="font-semibold text-slate-950">5.2 Sharing Within EduMeUp</h3>
+        <LegalList
+          items={[
+            "Student data is shared with the student's linked parent account for direct registration.",
+            "Student data is shared with school admin accounts for school-partner students.",
+            "Tutoring session notes and monthly report input forms are visible to the assigned tutor and EduMeUp Academic Team only.",
+            "At-risk flags are visible to school admins only, not to students or parents.",
+          ]}
+        />
+        <h3 className="font-semibold text-slate-950">5.3 We Do NOT Sell Your Data</h3>
+        <p>EduMeUp does not sell, rent, or trade your personal data to any third party for any commercial purpose.</p>
+      </LegalSection>
 
-          <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
-            <h2 className="text-2xl font-semibold text-slate-900">6. Your Rights</h2>
-            <p className="mt-3 text-sm text-slate-700 leading-relaxed">
-              Subject to applicable law, users may access, correct, delete, object to certain processing, and request portability
-              of their personal data. To exercise rights, contact support@edumeup.com.
-            </p>
-          </div>
+      <LegalSection title="6. Children's Data">
+        <p>EduMeUp serves students from Grade 6, typically age 11-12, and above. We take the protection of children's data seriously.</p>
+        <LegalList
+          items={[
+            "Students under 18 who register directly confirm they have parental permission or are registering with parental knowledge and consent.",
+            "Parents who register on behalf of their child provide consent through the parent registration form.",
+            "School admin accounts enrol students on behalf of schools, and the school confirms it has appropriate parental consent.",
+            "We do not show advertising to any user on EduMeUp. EduMeUp products are ad-free.",
+            "We do not use children's data for profiling, behavioural targeting, or commercial purposes beyond delivering educational services.",
+            "Parents can request access, correction, or deletion of their child's data by contacting privacy@edumeup.com.",
+          ]}
+        />
+      </LegalSection>
 
-          <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
-            <h2 className="text-2xl font-semibold text-slate-900">7. Cookies</h2>
-            <p className="mt-3 text-sm text-slate-700 leading-relaxed">
-              We use cookies and similar technologies for platform operation, preference storage, and usage analytics.
-              See Cookie Policy at edumeup.com/cookies for full details.
-            </p>
-          </div>
+      <LegalSection title="7. Data Retention">
+        <LegalTable
+          headers={["Data Type", "Retention Period"]}
+          rows={[
+            ["Active account data", "Retained for as long as your account is active."],
+            ["Inactive accounts", "Accounts with no login activity for 36 months are notified by email and deleted after a 30-day grace period."],
+            ["Diagnostic and performance data", "Retained for 24 months from the date of assessment, or for the duration of the account, whichever is longer."],
+            ["Purchase records", "Retained for 7 years for legal and accounting purposes."],
+            ["Teacher monthly report input forms", "Retained for 36 months from submission date."],
+            ["IP address logs", "Retained for 90 days for security purposes."],
+            ["Deleted accounts", "All personal data deleted within 30 days. Anonymised analytics data may be retained."],
+          ]}
+        />
+      </LegalSection>
 
-          <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
-            <h2 className="text-2xl font-semibold text-slate-900">8. Children's Privacy</h2>
-            <p className="mt-3 text-sm text-slate-700 leading-relaxed">
-              The platform may serve students under 18. Minor accounts must be created and managed by parents or school administrators.
-              We do not knowingly collect personal data from children under 13 without parental consent.
-            </p>
-          </div>
+      <LegalSection title="8. Your Rights">
+        <p>Depending on your country of residence, you may have the following rights. Contact privacy@edumeup.com. We will respond within 30 days.</p>
+        <LegalTable
+          headers={["Right", "What It Means"]}
+          rows={[
+            ["Access", "Request a copy of all personal data EduMeUp holds about you."],
+            ["Correction", "Request correction of inaccurate personal data."],
+            ["Deletion", "Request deletion of your personal data, subject to legal retention obligations."],
+            ["Portability", "Request your data in a machine-readable format."],
+            ["Restriction", "Request that we restrict processing in certain circumstances."],
+            ["Object", "Object to processing based on legitimate interest, including marketing emails."],
+            ["Withdraw Consent", "Withdraw consent for marketing communications at any time."],
+            ["Complaint", "Lodge a complaint with your relevant national data protection authority."],
+          ]}
+        />
+      </LegalSection>
 
-          <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
-            <h2 className="text-2xl font-semibold text-slate-900">9. Contact</h2>
-            <p className="mt-3 text-sm text-slate-700">Privacy enquiries: support@edumeup.com | EduMeUp.com</p>
-          </div>
-        </div>
-      </section>
-    </Layout>
+      <LegalSection title="9. International Data Transfers">
+        <p>
+          EduMeUp is a global platform and your data may be processed on servers located outside your home country. Where we transfer data internationally, we ensure appropriate safeguards are in place, including data processing agreements with standard contractual clauses where required by applicable law.
+        </p>
+      </LegalSection>
+
+      <LegalSection title="10. Security">
+        <LegalList
+          items={[
+            "Passwords are stored as hashed values and never in plain text.",
+            "JWT authentication tokens are stored in httpOnly cookies and are not accessible to JavaScript.",
+            "All data is transmitted over HTTPS and encrypted in transit.",
+            "PDF files are stored in private cloud storage and accessible via signed, time-limited URLs only.",
+            "Rate limiting on login and registration helps prevent brute-force attacks.",
+            "Role-based access controls restrict users to their own permitted data.",
+          ]}
+        />
+        <p>No system is completely secure. If you believe your account has been compromised, contact support@edumeup.com immediately.</p>
+      </LegalSection>
+
+      <LegalSection title="11. Cookies">
+        <p>
+          EduMeUp uses cookies and similar technologies. For full details, please see our <Link href="/cookies">Cookie Policy</Link>.
+        </p>
+      </LegalSection>
+
+      <LegalSection title="12. Changes to This Privacy Policy">
+        <p>
+          We may update this Privacy Policy from time to time. When we do, we will update the Effective Date and notify registered users by email if changes are material. Continued use after a change constitutes acceptance of the updated policy.
+        </p>
+      </LegalSection>
+
+      <LegalSection title="13. Contact Us">
+        <LegalList
+          items={[
+            "Privacy enquiries: privacy@edumeup.com",
+            "General enquiries: support@edumeup.com",
+            <span>Contact form: <Link href="/contact">/contact</Link></span>,
+            "Response time: within 5 working days for privacy enquiries.",
+          ]}
+        />
+      </LegalSection>
+    </LegalPageShell>
   );
 }

@@ -112,7 +112,7 @@ export function Navbar() {
   const navLinkClass = (path?: string, activeOverride?: boolean) => {
     const active = activeOverride ?? Boolean(path && isActive(path));
 
-    return `relative flex h-12 items-center whitespace-nowrap px-0 pt-0.5 font-[Arial] text-[12px] font-semibold uppercase tracking-normal transition-colors after:absolute after:bottom-[8px] after:left-0 after:h-[2px] after:bg-[#17A589] after:transition-all xl:h-14 xl:text-[13px] ${
+    return `relative flex h-12 items-center whitespace-nowrap px-0 pt-0.5 font-[Arial] text-[12px] font-semibold uppercase tracking-normal transition-colors after:absolute after:bottom-[8px] after:left-0 after:h-[2px] after:bg-[#93c5fd] after:transition-all xl:h-14 xl:text-[13px] ${
       active
         ? "text-white after:w-full"
         : "text-white/85 after:w-0 hover:text-white hover:after:w-full"
@@ -120,7 +120,7 @@ export function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-[1000] w-full border-b border-white/10 bg-gradient-to-r from-[#162B48] via-[#1E3A5F] to-[#163052] shadow-[0_2px_16px_rgba(0,0,0,0.25)]">
+    <nav className="sticky top-0 z-[1000] w-full border-b border-white/20 bg-gradient-to-r from-[#1a4fa0] via-[#2366c9] to-[#1a4fa0] shadow-[0_2px_16px_rgba(0,0,0,0.25)]">
       <div className="relative flex h-14 w-full items-center gap-4 px-4 md:px-5 xl:h-16 xl:px-7 2xl:px-10">
         <Link href="/" className="flex shrink-0 items-center lg:w-[160px] 2xl:w-[200px]">
           <img
@@ -153,8 +153,8 @@ export function Navbar() {
               <span>Learn</span>
               <ChevronDown className="ml-1 h-4 w-4" />
             </button>
-            <div className="invisible absolute left-0 top-full w-screen translate-y-1 border-t border-[#17A589]/30 bg-[#F8FAFC] opacity-0 shadow-[0_24px_50px_rgba(15,23,42,0.22)] transition-all duration-150 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
-              <div className="h-1 w-full bg-gradient-to-r from-[#17A589] via-[#2E75B6] to-[#17A589]" />
+            <div className="invisible absolute left-0 top-full w-screen translate-y-1 border-t border-[#2366c9]/30 bg-[#F8FAFC] opacity-0 shadow-[0_24px_50px_rgba(15,23,42,0.22)] transition-all duration-150 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+              <div className="h-1 w-full bg-gradient-to-r from-[#2366c9] via-[#4f86e0] to-[#2366c9]" />
               <div className="mx-auto grid max-w-7xl grid-cols-3 gap-4 px-6 py-5 xl:px-8 xl:py-6">
                 {learnColumns.map((column) => (
                   <div
@@ -169,7 +169,7 @@ export function Navbar() {
                         <Link
                           key={`${item.label}-${item.href}`}
                           href={item.href}
-                          className="block rounded-md border-l-2 border-transparent px-2.5 py-1.5 transition hover:border-[#17A589] hover:bg-[#EAF7F4]"
+                          className="block rounded-md border-l-2 border-transparent px-2.5 py-1.5 transition hover:border-[#2366c9] hover:bg-[#eef6ff]"
                         >
                           <span className="block font-[Arial] text-[12px] font-bold uppercase leading-4 text-slate-800">
                             {item.label}
@@ -187,7 +187,7 @@ export function Navbar() {
               </div>
               <Link
                 href="/all-programs"
-                className="block border-t border-slate-200 bg-white px-8 py-3 text-center font-[Arial] text-[13px] font-bold uppercase tracking-[0.06em] text-[#1E3A5F] transition hover:bg-[#17A589] hover:text-white"
+                className="block border-t border-slate-200 bg-white px-8 py-3 text-center font-[Arial] text-[13px] font-bold uppercase tracking-[0.06em] text-[#1E3A5F] transition hover:bg-[#2366c9] hover:text-white"
               >
                 All Courses - View the complete EduMeUp programme catalogue &gt;
               </Link>
@@ -222,7 +222,7 @@ export function Navbar() {
         <div className="shrink-0 items-center justify-end gap-2 lg:flex lg:w-[330px] 2xl:w-[390px] 2xl:gap-3 hidden">
           <Link
             href="/free-resources"
-            className="whitespace-nowrap rounded-md border border-[#17A589] px-4 py-2.5 font-[Arial] text-[12px] font-semibold leading-none text-[#17A589] transition hover:bg-[#17A589] hover:text-white xl:px-5 xl:py-3 xl:text-[13px]"
+            className="whitespace-nowrap rounded-md border border-white/70 px-4 py-2.5 font-[Arial] text-[12px] font-semibold leading-none text-white transition hover:bg-white hover:text-[#2366c9] xl:px-5 xl:py-3 xl:text-[13px]"
           >
             Free Resources
           </Link>
@@ -238,24 +238,24 @@ export function Navbar() {
             <div className="group relative">
               <button
                 type="button"
-                className="flex items-center whitespace-nowrap rounded-md bg-[#17A589] px-4 py-2.5 font-[Arial] text-[12px] font-semibold leading-none text-white transition hover:bg-[#1DC8A7] xl:px-5 xl:py-3 xl:text-[13px]"
+                className="flex items-center whitespace-nowrap rounded-md bg-white px-4 py-2.5 font-[Arial] text-[12px] font-semibold leading-none text-[#2366c9] transition hover:bg-[#eef6ff] xl:px-5 xl:py-3 xl:text-[13px]"
               >
                 {firstName}
                 <ChevronDown className="ml-1 h-4 w-4" />
               </button>
               <div className="invisible absolute right-0 top-full w-40 translate-y-1 overflow-hidden rounded-b-lg border border-slate-200 bg-white py-2 opacity-0 shadow-[0_18px_36px_rgba(15,23,42,0.18)] transition-all duration-150 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
-                <div className="mb-1 h-1 bg-gradient-to-r from-[#17A589] to-[#2E75B6]" />
-                <Link href={dashboardPath} className="mx-2 block rounded-md px-3 py-2 font-[Arial] text-[12px] font-semibold text-slate-700 transition hover:bg-[#EAF7F4] hover:text-[#1E3A5F]">
+                <div className="mb-1 h-1 bg-gradient-to-r from-[#2366c9] to-[#4f86e0]" />
+                <Link href={dashboardPath} className="mx-2 block rounded-md px-3 py-2 font-[Arial] text-[12px] font-semibold text-slate-700 transition hover:bg-[#eef6ff] hover:text-[#1E3A5F]">
                   Dashboard
                 </Link>
-                <Link href="/dashboard/profile" className="mx-2 block rounded-md px-3 py-2 font-[Arial] text-[12px] font-semibold text-slate-700 transition hover:bg-[#EAF7F4] hover:text-[#1E3A5F]">
+                <Link href="/dashboard/profile" className="mx-2 block rounded-md px-3 py-2 font-[Arial] text-[12px] font-semibold text-slate-700 transition hover:bg-[#eef6ff] hover:text-[#1E3A5F]">
                   Profile
                 </Link>
                 <div className="my-1 h-px bg-slate-200" />
                 <button
                   type="button"
                   onClick={() => logout.mutate()}
-                  className="mx-2 block w-[calc(100%-16px)] rounded-md px-3 py-2 text-left font-[Arial] text-[12px] font-semibold text-slate-700 transition hover:bg-[#EAF7F4] hover:text-[#1E3A5F]"
+                  className="mx-2 block w-[calc(100%-16px)] rounded-md px-3 py-2 text-left font-[Arial] text-[12px] font-semibold text-slate-700 transition hover:bg-[#eef6ff] hover:text-[#1E3A5F]"
                 >
                   Log out
                 </button>
@@ -264,7 +264,7 @@ export function Navbar() {
           ) : (
             <Link
               href="/login"
-              className="whitespace-nowrap rounded-md bg-[#17A589] px-4 py-2.5 font-[Arial] text-[12px] font-semibold leading-none text-white transition hover:bg-[#1DC8A7] xl:px-5 xl:py-3 xl:text-[13px]"
+              className="whitespace-nowrap rounded-md bg-white px-4 py-2.5 font-[Arial] text-[12px] font-semibold leading-none text-[#2366c9] transition hover:bg-[#eef6ff] xl:px-5 xl:py-3 xl:text-[13px]"
             >
               Login
             </Link>
@@ -297,7 +297,7 @@ function SimpleDropdown({
       <div
         className={`invisible absolute right-0 top-full ${widthClass} translate-y-1 overflow-hidden rounded-b-lg border border-slate-200 bg-white pb-2 opacity-0 shadow-[0_18px_36px_rgba(15,23,42,0.18)] transition-all duration-150 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100`}
       >
-        <div className="h-1 bg-gradient-to-r from-[#17A589] to-[#2E75B6]" />
+        <div className="h-1 bg-gradient-to-r from-[#2366c9] to-[#4f86e0]" />
         {items.map((item, index) =>
           item.type === "separator" ? (
             <div key={`separator-${index}`} className="my-2 h-px bg-slate-200" />
@@ -305,7 +305,7 @@ function SimpleDropdown({
             <Link
               key={item.href}
               href={item.href}
-              className="mx-2 mt-1 block rounded-md border-l-2 border-transparent px-3 py-2 transition hover:border-[#17A589] hover:bg-[#EAF7F4]"
+              className="mx-2 mt-1 block rounded-md border-l-2 border-transparent px-3 py-2 transition hover:border-[#2366c9] hover:bg-[#eef6ff]"
             >
               <span className="block font-[Arial] text-[12px] font-bold leading-4 text-slate-800">
                 {item.label}

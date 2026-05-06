@@ -1,114 +1,168 @@
-import { useEffect } from "react";
-import { Layout } from "@/components/Layout";
+import { Link } from "wouter";
+import { LegalList, LegalPageShell, LegalSection } from "@/components/legal/LegalPageShell";
 
 export default function Terms() {
-  useEffect(() => {
-    const previousTitle = document.title;
-    const metaDescription = document.querySelector('meta[name="description"]');
-    const previousDescription = metaDescription?.getAttribute("content") || "";
-
-    document.title = "Terms of Use | EduMeUp";
-    if (metaDescription) {
-      metaDescription.setAttribute(
-        "content",
-        "Read EduMeUp terms of use including account rules, subscriptions, intellectual property, and legal conditions.",
-      );
-    }
-
-    return () => {
-      document.title = previousTitle;
-      if (metaDescription) {
-        metaDescription.setAttribute("content", previousDescription);
-      }
-    };
-  }, []);
-
   return (
-    <Layout>
-      <section className="py-16 md:py-24 bg-gradient-to-b from-blue-50/80 to-white">
-        <div className="container-custom max-w-4xl">
-          <h1 className="text-4xl md:text-6xl font-semibold text-slate-900">Terms of Use</h1>
-          <p className="mt-4 text-sm text-slate-600">Last Updated: [INSERT DATE BEFORE PUBLISHING]</p>
-        </div>
-      </section>
+    <LegalPageShell
+      title="Terms of Use"
+      documentTitle="These Terms govern your access to and use of the EduMeUp.com platform."
+      description="Read EduMeUp Terms of Use covering eligibility, course access, payments, tutoring, acceptable use, intellectual property, AI features, and liability."
+    >
+      <LegalSection title="Terms of Use">
+        <p>
+          These Terms of Use ("Terms") govern your access to and use of the EduMeUp.com platform, including all courses, diagnostics, tutoring services, workbooks, performance reports, and AI-powered tools ("the Platform"). By registering for or using the Platform, you agree to be bound by these Terms. If you do not agree, do not use the Platform.
+        </p>
+      </LegalSection>
 
-      <section className="pb-16 md:pb-24">
-        <div className="container-custom max-w-4xl space-y-8">
-          <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
-            <h2 className="text-2xl font-semibold text-slate-900">1. Acceptance of Terms</h2>
-            <p className="mt-3 text-sm text-slate-700 leading-relaxed">
-              By accessing or using EduMeUp.com, you agree to be bound by these Terms of Use. If you do not agree, do not use
-              the platform. These terms apply to all users including students, parents, teachers, and school administrators.
-            </p>
-          </div>
+      <LegalSection title="1. Eligibility">
+        <LegalList
+          items={[
+            "You must be at least 11 years old, Grade 6 or above, to use EduMeUp independently.",
+            "Users under 18 must have the knowledge and consent of a parent or legal guardian.",
+            "By registering, you confirm that all information you provide is accurate and complete.",
+            "Each person may hold only one EduMeUp account per email address.",
+            "EduMeUp reserves the right to refuse registration or suspend accounts that violate these Terms.",
+          ]}
+        />
+      </LegalSection>
 
-          <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
-            <h2 className="text-2xl font-semibold text-slate-900">2. Use of the Platform</h2>
-            <ul className="mt-3 space-y-2 text-sm text-slate-700">
-              <li>You must be 18 or older to create an account, or have parental/school guardian consent if under 18.</li>
-              <li>You may use the platform only for lawful educational purposes.</li>
-              <li>You may not share account credentials, resell access, or reproduce platform content without written permission.</li>
-              <li>You may not attempt to reverse-engineer, copy, or extract platform content or code.</li>
-            </ul>
-          </div>
+      <LegalSection title="2. Account Security">
+        <LegalList
+          items={[
+            "You are responsible for maintaining the confidentiality of your password and for all activity under your account.",
+            "You must notify EduMeUp immediately at support@edumeup.com if you suspect unauthorised account access.",
+            "EduMeUp will never ask for your password by email, WhatsApp, or any channel outside the Platform's own login page.",
+            "You may not share your account credentials with any other person.",
+          ]}
+        />
+      </LegalSection>
 
-          <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
-            <h2 className="text-2xl font-semibold text-slate-900">3. Accounts and Access</h2>
-            <p className="mt-3 text-sm text-slate-700 leading-relaxed">
-              You are responsible for maintaining the security of your account. EduMeUp is not liable for loss resulting from
-              unauthorized account use. School administrators are responsible for accounts created within their school partnership.
-            </p>
-          </div>
+      <LegalSection title="3. Course Access and Enrolment">
+        <LegalList
+          items={[
+            "Access to paid courses begins immediately on confirmed payment and continues for the access period stated at purchase.",
+            "Access is personal and enrolled in your account only. Courses may not be shared, transferred, or resold.",
+            "EduMeUp's mastery system requires 80% on topic assessments before advancing. This gate cannot be bypassed.",
+            "EduMeUp may update course content at any time. Syllabus updates are provided to enrolled students at no additional charge.",
+            "ATP courses are updated annually. Your access period includes the most current version of ATP content.",
+          ]}
+        />
+      </LegalSection>
 
-          <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
-            <h2 className="text-2xl font-semibold text-slate-900">4. Subscriptions and Payments</h2>
-            <p className="mt-3 text-sm text-slate-700 leading-relaxed">
-              Subscription fees are listed on the Pricing page at the time of purchase. Prices may change with notice.
-              Refunds are available within [INSERT REFUND PERIOD e.g. 14 days] if the programme has not been substantially accessed.
-              Contact support@edumeup.com for refund requests.
-            </p>
-          </div>
+      <LegalSection title="4. Payments and Refunds">
+        <h3 className="font-semibold text-slate-950">4.1 Payments</h3>
+        <LegalList
+          items={[
+            "All prices are in USD. Payments are processed securely by Stripe.",
+            "EduMeUp does not store credit card or payment card data.",
+            "Subscription plans are billed monthly or annually as selected. Cancellation stops future charges but does not refund the current billing period.",
+          ]}
+        />
+        <h3 className="font-semibold text-slate-950">4.2 Refund Policy</h3>
+        <LegalList
+          items={[
+            "Course refunds: if you have not accessed lesson content, a full refund is available within 7 days of purchase. Once lesson content has been accessed, no refund is available.",
+            "Diagnostic refunds: once a diagnostic session has started, no refund is available. If a technical error prevents completion, contact support@edumeup.com within 48 hours.",
+            "Workbook and past paper refunds: once a PDF has been downloaded, no refund is available. Corrupted or incorrect files can be replaced.",
+            "Tutoring refunds: sessions cancelled by the student with less than 24 hours' notice are not refunded. Sessions cancelled by EduMeUp or the tutor are refunded or rescheduled.",
+            "Cambridge O-Level Readiness Forecast: once the assessment session has started, no refund is available.",
+          ]}
+        />
+      </LegalSection>
 
-          <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
-            <h2 className="text-2xl font-semibold text-slate-900">5. Intellectual Property</h2>
-            <p className="mt-3 text-sm text-slate-700 leading-relaxed">
-              All content on EduMeUp.com, including courses, workbooks, worksheets, assessments, and research articles, is the
-              intellectual property of EduMeUp.com. Content may be accessed for personal educational use only. You may not copy,
-              distribute, publish, or create derivative works from EduMeUp content.
-            </p>
-          </div>
+      <LegalSection title="5. Tutoring Terms">
+        <LegalList
+          items={[
+            "All EduMeUp tutors are certified through the EduMeUp certification process before matching.",
+            "All tutoring fees are paid to EduMeUp, never directly to the tutor.",
+            "Tutors use EduMeUp curriculum materials and session guidelines, while their professional teaching judgement remains their own.",
+            "EduMeUp does not guarantee specific academic outcomes from tutoring.",
+            "Tutoring plans are monthly with a minimum commitment of one full month and may be cancelled after the first month with 7 days' written notice.",
+            "A free 30-minute demo session is offered before any paid tutoring plan is confirmed.",
+          ]}
+        />
+      </LegalSection>
 
-          <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
-            <h2 className="text-2xl font-semibold text-slate-900">6. Limitation of Liability</h2>
-            <p className="mt-3 text-sm text-slate-700 leading-relaxed">
-              EduMeUp provides the platform on an "as is" basis. We do not guarantee uninterrupted access or error-free operation.
-              EduMeUp is not liable for indirect, incidental, or consequential damages from platform use. Total liability is limited
-              to the amount paid by you in the 12 months preceding the claim.
-            </p>
-          </div>
+      <LegalSection title="6. Acceptable Use">
+        <p>You agree not to:</p>
+        <LegalList
+          items={[
+            "Use the Platform for unlawful, harmful, or prohibited purposes.",
+            "Share, copy, redistribute, or resell EduMeUp content without written permission.",
+            "Reverse-engineer, decompile, or extract source code from the Platform.",
+            "Use automated tools, bots, or scripts to access the Platform or extract data.",
+            "Impersonate another user, EduMeUp staff, or any other person.",
+            "Submit false or misleading information, including false scholarship declarations.",
+            "Upload or transmit offensive, harmful, defamatory, or unlawful content.",
+            "Attempt to bypass diagnostic limits, access controls, or Platform security measures.",
+          ]}
+        />
+      </LegalSection>
 
-          <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
-            <h2 className="text-2xl font-semibold text-slate-900">7. Governing Law</h2>
-            <p className="mt-3 text-sm text-slate-700 leading-relaxed">
-              These terms are governed by the laws of [INSERT JURISDICTION e.g. Pakistan]. Any dispute shall be subject to the
-              exclusive jurisdiction of the courts of [INSERT JURISDICTION].
-            </p>
-          </div>
+      <LegalSection title="7. Intellectual Property">
+        <LegalList
+          items={[
+            "All course content, diagnostic questions, workbooks, past paper solutions, mind maps, AI tools, performance reports, and Platform design are the intellectual property of EduMeUp.com.",
+            "You receive a personal, non-exclusive, non-transferable licence to access Platform content for your own educational purposes during your access period.",
+            "This licence does not permit downloading course videos, scraping content, sharing materials with third parties, or commercial use.",
+            "Cambridge past papers remain the intellectual property of Cambridge Assessment International Education. EduMeUp reproduces them under applicable fair use and educational licensing principles.",
+          ]}
+        />
+      </LegalSection>
 
-          <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
-            <h2 className="text-2xl font-semibold text-slate-900">8. Changes to These Terms</h2>
-            <p className="mt-3 text-sm text-slate-700 leading-relaxed">
-              We may update these Terms of Use with notice. Continued use of the platform after changes are posted constitutes
-              acceptance of the revised terms.
-            </p>
-          </div>
+      <LegalSection title="8. AI-Powered Features - Limitations">
+        <LegalList
+          items={[
+            "AI-generated diagnostic reports, grade forecasts, and study recommendations are educational guidance only.",
+            "AI-graded written responses are evaluated against rubric criteria. EduMeUp's Academic Team may review AI-graded responses on request.",
+            "The Cambridge O-Level Readiness Forecast is data-informed, not a guarantee of results.",
+            "EduMeUp AI tools support learning and do not replace teacher judgement, parental guidance, or student responsibility.",
+          ]}
+        />
+      </LegalSection>
 
-          <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
-            <h2 className="text-2xl font-semibold text-slate-900">9. Contact</h2>
-            <p className="mt-3 text-sm text-slate-700">Legal enquiries: support@edumeup.com | EduMeUp.com</p>
-          </div>
-        </div>
-      </section>
-    </Layout>
+      <LegalSection title="9. Platform Availability">
+        <p>
+          EduMeUp aims for continuous Platform availability but does not guarantee uninterrupted access. Scheduled maintenance will be announced in advance where possible. EduMeUp is not liable for loss or inconvenience caused by downtime, provided it takes reasonable steps to minimise disruption.
+        </p>
+      </LegalSection>
+
+      <LegalSection title="10. Limitation of Liability">
+        <LegalList
+          items={[
+            "EduMeUp's total liability for any claim is limited to the amount paid for the specific product or service in the 12 months preceding the claim.",
+            "EduMeUp is not liable for indirect, incidental, or consequential losses, loss of data, loss of educational opportunity, or Cambridge examination results.",
+            "EduMeUp is not liable for acts or omissions of certified tutors beyond its certification and matching responsibilities.",
+            "Nothing in these Terms excludes liability that cannot be limited by law.",
+          ]}
+        />
+      </LegalSection>
+
+      <LegalSection title="11. Termination">
+        <LegalList
+          items={[
+            "You may close your account at any time from dashboard settings. Closure does not entitle you to a refund.",
+            "EduMeUp may suspend or terminate your account if you breach these Terms.",
+            "On termination, access to paid course content ends. Personal data is handled according to the Privacy Policy.",
+          ]}
+        />
+      </LegalSection>
+
+      <LegalSection title="12. Changes to These Terms">
+        <p>
+          EduMeUp may update these Terms. Material changes will be communicated by email with at least 14 days' notice before they take effect. Continued use after the effective date constitutes acceptance.
+        </p>
+      </LegalSection>
+
+      <LegalSection title="13. Governing Law and Disputes">
+        <p>
+          These Terms are governed by applicable law. EduMeUp encourages users to contact support@edumeup.com first to resolve any dispute informally. EduMeUp is committed to resolving complaints fairly and promptly.
+        </p>
+      </LegalSection>
+
+      <LegalSection title="14. Contact">
+        <LegalList items={["General: support@edumeup.com", "Legal: legal@edumeup.com", <span>Contact form: <Link href="/contact">/contact</Link></span>]} />
+      </LegalSection>
+    </LegalPageShell>
   );
 }

@@ -1,108 +1,95 @@
-import { useEffect } from "react";
-import { Layout } from "@/components/Layout";
+import { Link } from "wouter";
+import { LegalList, LegalPageShell, LegalSection, LegalTable } from "@/components/legal/LegalPageShell";
 
 export default function Cookies() {
-  useEffect(() => {
-    const previousTitle = document.title;
-    const metaDescription = document.querySelector('meta[name="description"]');
-    const previousDescription = metaDescription?.getAttribute("content") || "";
-
-    document.title = "Cookie Policy | EduMeUp";
-    if (metaDescription) {
-      metaDescription.setAttribute(
-        "content",
-        "Read EduMeUp cookie policy including necessary, functional, analytics, and performance cookie usage.",
-      );
-    }
-
-    return () => {
-      document.title = previousTitle;
-      if (metaDescription) {
-        metaDescription.setAttribute("content", previousDescription);
-      }
-    };
-  }, []);
-
   return (
-    <Layout>
-      <section className="py-16 md:py-24 bg-gradient-to-b from-blue-50/80 to-white">
-        <div className="container-custom max-w-4xl">
-          <h1 className="text-4xl md:text-6xl font-semibold text-slate-900">Cookie Policy</h1>
-          <p className="mt-4 text-sm text-slate-600">Last Updated: [INSERT DATE BEFORE PUBLISHING]</p>
-        </div>
-      </section>
+    <LegalPageShell
+      title="Cookie Policy"
+      documentTitle="This Cookie Policy explains what cookies and similar technologies EduMeUp.com uses."
+      description="Read EduMeUp Cookie Policy covering essential cookies, functional cookies, analytics cookies, Stripe cookies, consent, and browser controls."
+    >
+      <LegalSection title="Cookie Policy">
+        <p>
+          This Cookie Policy explains what cookies and similar technologies EduMeUp.com uses, why we use them, and how you can manage your cookie preferences. This policy forms part of our <Link href="/privacy">Privacy Policy</Link>.
+        </p>
+      </LegalSection>
 
-      <section className="pb-16 md:pb-24">
-        <div className="container-custom max-w-4xl space-y-8">
-          <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
-            <h2 className="text-2xl font-semibold text-slate-900">1. What Are Cookies</h2>
-            <p className="mt-3 text-sm text-slate-700 leading-relaxed">
-              Cookies are small text files placed on your device when you visit a website. They help websites recognize devices,
-              remember preferences, and collect usage insights.
-            </p>
-          </div>
+      <LegalSection title="1. What Are Cookies?">
+        <p>
+          Cookies are small text files placed on your device when you visit a website. They allow the website to remember your actions and preferences over time. Some cookies are essential for the website to work correctly. Others help us understand how visitors use the Platform so we can improve it.
+        </p>
+      </LegalSection>
 
-          <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
-            <h2 className="text-2xl font-semibold text-slate-900">2. Cookies We Use</h2>
-            <div className="mt-4 overflow-x-auto rounded-2xl border border-slate-200 shadow-md">
-              <table className="w-full min-w-[640px]">
-                <thead>
-                  <tr className="bg-[#2366c9] text-white text-left">
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Cookie Type</th>
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Purpose</th>
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Can Be Disabled?</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-t border-blue-100">
-                    <td className="px-4 py-3 text-sm font-medium text-slate-800">Strictly Necessary</td>
-                    <td className="px-4 py-3 text-sm text-slate-700">Required for login sessions, security, and platform access.</td>
-                    <td className="px-4 py-3 text-sm text-slate-700">No - platform cannot function without these.</td>
-                  </tr>
-                  <tr className="border-t border-blue-100">
-                    <td className="px-4 py-3 text-sm font-medium text-slate-800">Functional</td>
-                    <td className="px-4 py-3 text-sm text-slate-700">Remember language and display preferences.</td>
-                    <td className="px-4 py-3 text-sm text-slate-700">Yes - preferences reset if disabled.</td>
-                  </tr>
-                  <tr className="border-t border-blue-100">
-                    <td className="px-4 py-3 text-sm font-medium text-slate-800">Analytics</td>
-                    <td className="px-4 py-3 text-sm text-slate-700">Understand visitor behavior and improve content/navigation. We use [INSERT ANALYTICS TOOL e.g. Google Analytics 4].</td>
-                    <td className="px-4 py-3 text-sm text-slate-700">Yes - opt out in cookie settings.</td>
-                  </tr>
-                  <tr className="border-t border-blue-100">
-                    <td className="px-4 py-3 text-sm font-medium text-slate-800">Performance</td>
-                    <td className="px-4 py-3 text-sm text-slate-700">Measure load times and identify technical issues.</td>
-                    <td className="px-4 py-3 text-sm text-slate-700">Yes - opt out in cookie settings.</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+      <LegalSection title="2. What Cookies Does EduMeUp Use?">
+        <LegalTable
+          headers={["Cookie Name / Type", "Category", "Duration", "Purpose"]}
+          rows={[
+            ["edume_auth", "Essential", "7 days, or 30 days if Remember Me is selected", "Authentication token stored httpOnly. Keeps you logged in. Cannot be disabled."],
+            ["edume_session", "Essential", "Session", "Maintains current session state such as diagnostic in progress or course position. Cannot be disabled."],
+            ["edume_csrf", "Essential", "Session", "Cross-site request forgery prevention token. Cannot be disabled."],
+            ["edume_prefs", "Functional", "1 year", "Stores non-essential preferences including language, dashboard layout, and notifications."],
+            ["_ga / _ga_XXXX", "Analytics", "2 years", "Google Analytics measures platform usage. IP addresses are anonymised before storage. Can be disabled."],
+            ["_gid", "Analytics", "24 hours", "Google Analytics differentiates between sessions. Can be disabled."],
+            ["stripe_sid / stripe_mid", "Functional - Third Party", "Session / 1 year", "Stripe payment processing cookies active on payment pages and required for Stripe Checkout."],
+          ]}
+        />
+      </LegalSection>
 
-          <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
-            <h2 className="text-2xl font-semibold text-slate-900">3. Managing Your Cookie Preferences</h2>
-            <p className="mt-3 text-sm text-slate-700 leading-relaxed">
-              Manage preferences through the cookie settings banner or browser controls. Disabling certain cookies may affect
-              how some platform features work.
-            </p>
-          </div>
+      <LegalSection title="3. What We Do Not Use Cookies For">
+        <LegalList
+          items={[
+            "We do not use advertising or tracking cookies from social media platforms.",
+            "We do not use cookies to build personal profiles for advertising purposes.",
+            "We do not share cookie data with advertisers or data brokers.",
+            "EduMeUp is an ad-free platform and uses no advertising cookies of any kind.",
+          ]}
+        />
+      </LegalSection>
 
-          <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
-            <h2 className="text-2xl font-semibold text-slate-900">4. Third-Party Cookies</h2>
-            <p className="mt-3 text-sm text-slate-700 leading-relaxed">
-              Some features may use third-party services that set their own cookies: [INSERT e.g. YouTube, Google Analytics,
-              payment processor]. We do not control these cookies. Review third-party privacy policies for details.
-            </p>
-          </div>
+      <LegalSection title="4. Essential Cookies - Cannot Be Disabled">
+        <p>
+          The authentication cookie, session cookie, and CSRF token are essential for the Platform to function. They cannot be disabled. If your browser blocks these cookies, you will not be able to log in or use the Platform.
+        </p>
+      </LegalSection>
 
-          <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
-            <h2 className="text-2xl font-semibold text-slate-900">5. Contact</h2>
-            <p className="mt-3 text-sm text-slate-700">Cookie and privacy enquiries: support@edumeup.com | EduMeUp.com</p>
-          </div>
+      <LegalSection title="5. How to Manage Cookies">
+        <h3 className="font-semibold text-slate-950">5.1 Via Your Browser</h3>
+        <LegalList
+          items={[
+            "Google Chrome: Settings > Privacy and Security > Cookies and other site data.",
+            "Mozilla Firefox: Settings > Privacy and Security > Cookies and Site Data.",
+            "Safari: Preferences > Privacy > Manage Website Data.",
+            "Microsoft Edge: Settings > Privacy, Search and Services > Cookies.",
+          ]}
+        />
+        <p>Blocking all cookies will prevent you from logging in to EduMeUp. We recommend allowing cookies from EduMeUp while blocking third-party cookies if you have privacy concerns.</p>
+        <h3 className="font-semibold text-slate-950">5.2 Analytics Opt-Out</h3>
+        <p>
+          To opt out of Google Analytics tracking specifically, you can install the Google Analytics Opt-Out Browser Add-On at tools.google.com/dlpage/gaoptout.
+        </p>
+      </LegalSection>
 
-          <p className="text-xs text-slate-500">Prepared for: Muhammad Benyameen, Chief Adviser - EduMeUp.com | 13 Missing Pages - Complete Copy | Locked Output</p>
-        </div>
-      </section>
-    </Layout>
+      <LegalSection title="6. Cookie Consent">
+        <p>When you first visit EduMeUp, a cookie consent notice will appear. You can:</p>
+        <LegalList
+          items={[
+            "Accept all cookies - essential, functional, and analytics.",
+            "Accept essential cookies only - functional and analytics cookies will not be set.",
+            "Manage your preferences in detail.",
+          ]}
+        />
+        <p>You can change cookie preferences at any time by clicking Cookie Settings in the footer of any page.</p>
+      </LegalSection>
+
+      <LegalSection title="7. Changes to This Cookie Policy">
+        <p>
+          We may update this Cookie Policy when we add or remove cookies from the Platform. The Effective Date will be updated accordingly. Significant changes will be notified through the cookie consent notice on your next visit.
+        </p>
+      </LegalSection>
+
+      <LegalSection title="8. Contact">
+        <p>Questions about our use of cookies: privacy@edumeup.com</p>
+      </LegalSection>
+    </LegalPageShell>
   );
 }

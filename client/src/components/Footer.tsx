@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { Facebook, Instagram, Linkedin, Mail, MessageCircle, Twitter, Youtube } from "lucide-react";
-import logoImage from "@/assets/edumeup-engine.png";
+import logoImage from "@/assets/WhatsApp_Image_2026-02-22_at_20.36.37_1771782478374.jpeg";
 
 const learnLinks = [
   { label: "Must-Have Courses", href: "/programs" },
@@ -51,9 +51,13 @@ const socialLinks = [
 ];
 
 export function Footer() {
+  const goToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
-    <footer className="w-full bg-[#1E3A5F] font-[Arial] text-white">
-      <div className="h-1 w-full bg-[#17A589]" />
+    <footer className="w-full bg-[#2366c9] font-[Arial] text-white">
+      <div className="h-1 w-full bg-[#4f86e0]" />
 
       <div className="mx-auto max-w-[1200px] px-6 pb-10 pt-10 md:px-8 md:pb-10 md:pt-10 lg:px-20 lg:pb-12 lg:pt-[60px]">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-12 lg:grid-cols-[1.3fr_1fr_1fr_1fr_1fr] lg:gap-10">
@@ -61,7 +65,7 @@ export function Footer() {
             <img
               src={logoImage}
               alt="EduMeUp"
-              className="h-9 w-auto object-contain brightness-0 invert"
+              className="h-9 w-auto object-contain"
             />
             <p className="max-w-[300px] text-[14px] leading-6 text-white/90">
               From content delivery to learning mastery - for every learner, everywhere.
@@ -74,7 +78,7 @@ export function Footer() {
                   target="_blank"
                   rel="noreferrer"
                   aria-label={label}
-                  className="text-white transition-colors hover:text-[#17A589]"
+                  className="text-white transition-colors hover:text-[#dbeafe]"
                 >
                   <Icon className="h-5 w-5" />
                 </a>
@@ -93,7 +97,7 @@ export function Footer() {
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-[14px] leading-5 text-white/90 transition-colors hover:text-[#17A589]"
+                    className="text-[14px] leading-5 text-white/90 transition-colors hover:text-[#dbeafe]"
                   >
                     {link.label}
                   </Link>
@@ -103,13 +107,13 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="mb-4 text-[12px] font-bold uppercase tracking-[2px] text-[#17A589]">
+            <h3 className="mb-4 text-[12px] font-bold uppercase tracking-[2px] text-[#dbeafe]">
               CONTACT US
             </h3>
 
             <a
               href="#"
-              className="mb-4 flex w-full items-center justify-center gap-2 rounded-md bg-[#17A589] px-3 py-3 text-[13px] font-semibold text-white transition hover:bg-[#149174]"
+              className="mb-4 flex w-full items-center justify-center gap-2 rounded-md bg-white px-3 py-3 text-[13px] font-semibold text-[#2366c9] transition hover:bg-[#eef6ff]"
             >
               <MessageCircle className="h-4 w-4" />
               Chat With Us on WhatsApp
@@ -117,7 +121,7 @@ export function Footer() {
 
             <a
               href="mailto:support@edumeup.com"
-              className="mb-3 inline-flex items-center gap-2 text-[14px] text-white transition-colors hover:text-[#17A589]"
+              className="mb-3 inline-flex items-center gap-2 text-[14px] text-white transition-colors hover:text-[#dbeafe]"
             >
               <Mail className="h-4 w-4" />
               support@edumeup.com
@@ -126,7 +130,7 @@ export function Footer() {
             <div className="mb-3">
               <Link
                 href="/contact"
-                className="text-[14px] text-white transition-colors hover:text-[#17A589]"
+                className="text-[14px] text-white transition-colors hover:text-[#dbeafe]"
               >
                 Contact Us
               </Link>
@@ -139,20 +143,46 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="bg-[#162D4A]">
+      <div className="bg-[#1a4fa0]">
         <div className="mx-auto flex max-w-[1200px] flex-col items-start gap-3 px-6 py-4 text-[12px] text-white/90 md:px-8 lg:flex-row lg:items-center lg:justify-between lg:px-20">
           <p className="whitespace-nowrap">&copy; 2026 EduMeUp.com - All rights reserved</p>
 
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-            <a href="#" className="transition-colors hover:text-[#17A589]">Privacy Policy</a>
-            <span className="text-white/55">|</span>
-            <a href="#" className="transition-colors hover:text-[#17A589]">Terms of Use</a>
-            <span className="text-white/55">|</span>
-            <a href="#" className="transition-colors hover:text-[#17A589]">Cookie Policy</a>
-            <span className="text-white/55">|</span>
-            <a href="#" className="transition-colors hover:text-[#17A589]">Teacher T&amp;C</a>
-            <span className="text-white/55">|</span>
-            <a href="#" className="transition-colors hover:text-[#17A589]">Parent T&amp;C</a>
+            <Link
+              href="/privacy"
+              onClick={goToTop}
+              className="text-[11px] italic text-white underline underline-offset-2 transition hover:text-[#dbeafe]"
+            >
+              Privacy Policy
+            </Link>
+            <Link
+              href="/terms"
+              onClick={goToTop}
+              className="text-[11px] italic text-white underline underline-offset-2 transition hover:text-[#dbeafe]"
+            >
+              Terms of Use
+            </Link>
+            <Link
+              href="/cookies"
+              onClick={goToTop}
+              className="text-[11px] italic text-white underline underline-offset-2 transition hover:text-[#dbeafe]"
+            >
+              Cookie Policy
+            </Link>
+            <Link
+              href="/terms-teacher"
+              onClick={goToTop}
+              className="text-[11px] italic text-white underline underline-offset-2 transition hover:text-[#dbeafe]"
+            >
+              Teacher T&amp;C
+            </Link>
+            <Link
+              href="/terms-parent"
+              onClick={goToTop}
+              className="text-[11px] italic text-white underline underline-offset-2 transition hover:text-[#dbeafe]"
+            >
+              Parent T&amp;C
+            </Link>
           </div>
 
           <p className="whitespace-nowrap">EduMeUp.com</p>
@@ -171,7 +201,7 @@ function FooterColumn({
 }) {
   return (
     <div>
-      <h3 className="mb-4 text-[12px] font-bold uppercase tracking-[2px] text-[#17A589]">
+      <h3 className="mb-4 text-[12px] font-bold uppercase tracking-[2px] text-[#dbeafe]">
         {title}
       </h3>
       <ul className="space-y-2.5">
@@ -179,7 +209,7 @@ function FooterColumn({
           <li key={link.label}>
             <Link
               href={link.href}
-              className="text-[14px] leading-5 text-white/90 transition-colors hover:text-[#17A589]"
+              className="text-[14px] leading-5 text-white/90 transition-colors hover:text-[#dbeafe]"
             >
               {link.label}
             </Link>

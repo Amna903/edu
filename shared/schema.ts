@@ -71,6 +71,21 @@ export const enrollments = pgTable("enrollments", {
   enrolledAt: timestamp("enrolled_at").defaultNow(),
 });
 
+export const contactSubmissions = pgTable("edume_contact_submissions", {
+  id: serial("id").primaryKey(),
+  consultationType: text("consultation_type").notNull(),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  country: text("country"),
+  subject: text("subject"),
+  message: text("message"),
+  schoolName: text("school_name"),
+  studentCount: text("student_count"),
+  device: text("device"),
+  problemType: text("problem_type"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // === SCHEMAS ===
 export const insertOrderSchema = createInsertSchema(orders).omit({ 
   id: true, 
@@ -97,6 +112,11 @@ export const insertResourceSchema = createInsertSchema(resources).omit({
 export const insertProgramSchema = createInsertSchema(programs).omit({ 
   id: true, 
   createdAt: true 
+});
+
+export const insertContactSubmissionSchema = createInsertSchema(contactSubmissions).omit({
+  id: true,
+  createdAt: true,
 });
 
 export const lmsCourseSchema = z.object({

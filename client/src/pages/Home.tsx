@@ -4,41 +4,41 @@ import { Layout } from "@/components/Layout";
 
 const styles = `
   .emu-body * { box-sizing:border-box; }
-  .emu-body { font-family: Arial, sans-serif; color:#1E3A5F; background:#fff; }
+  .emu-body { font-family:'Aeonik', 'Inter', sans-serif; color:#1E3A5F; background:#fff; }
   .emu-page-shell { display:flex; align-items:flex-start; }
   .emu-sidebar { width:230px; flex-shrink:0; position:sticky; top:64px; max-height:calc(100vh - 64px); overflow-y:auto; background:#fff; border-right:1px solid #dbe4ef; padding:20px 14px; }
-  .emu-sidebar-diag { background:#1E3A5F; color:#fff; border-radius:8px; padding:14px; margin-bottom:16px; text-align:center; }
+  .emu-sidebar-diag { background:#2366c9; color:#fff; border-radius:8px; padding:14px; margin-bottom:16px; text-align:center; }
   .emu-sidebar-diag p { font-size:12px; font-weight:700; margin:0 0 8px; color:#fff; }
   .emu-sidebar-diag a { display:block; text-decoration:none; background:#fff; color:#1E3A5F; font-size:11px; font-weight:700; border-radius:5px; padding:7px 10px; }
   .emu-sidebar-label { font-size:10px; letter-spacing:1.4px; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:12px; padding-left:10px; }
   .emu-sidebar-group { margin-bottom:14px; }
   .emu-sidebar-group-title { font-size:11px; font-weight:700; color:#1E3A5F; letter-spacing:.8px; text-transform:uppercase; padding:6px 10px; }
   .emu-sidebar-link { display:block; text-decoration:none; font-size:13px; font-weight:600; color:#475569; padding:7px 10px; border-left:3px solid transparent; border-radius:6px; margin-bottom:2px; transition:all .2s ease; }
-  .emu-sidebar-link:hover { color:#1E3A5F; border-left-color:#17A589; background:#EAF7F4; }
+  .emu-sidebar-link:hover { color:#1E3A5F; border-left-color:#2366c9; background:#eef6ff; }
   .emu-main { flex:1; min-width:0; }
-  .emu-label { font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#17A589; font-weight:700; margin-bottom:10px; }
+  .emu-label { font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#2366c9; font-weight:700; margin-bottom:10px; }
 
-  .emu-hero { min-height:520px; background:repeating-linear-gradient(-35deg, rgba(23,165,137,.15) 0, rgba(23,165,137,.15) 2px, transparent 2px, transparent 18px), #1E3A5F; border-bottom:6px solid #17A589; padding:72px 60px 60px; }
+  .emu-hero { min-height:520px; background:repeating-linear-gradient(-35deg, rgba(255,255,255,.12) 0, rgba(255,255,255,.12) 2px, transparent 2px, transparent 18px), #2366c9; border-bottom:6px solid #2366c9; padding:72px 60px 60px; }
   .emu-hero-grid { display:grid; grid-template-columns:minmax(0, 3fr) minmax(320px, 2fr); gap:28px; align-items:center; }
   .emu-hero h1 { color:#fff; font-size:48px; line-height:1.1; margin:0 0 16px; font-weight:700; }
   .emu-hero p { color:rgba(255,255,255,.9); font-size:17px; line-height:1.7; max-width:760px; margin-bottom:24px; }
   .emu-cta-row { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:22px; }
   .emu-cta { text-decoration:none; border-radius:8px; padding:12px 18px; font-size:16px; font-weight:700; display:inline-block; }
-  .emu-cta-primary { background:#17A589; color:#fff; }
+  .emu-cta-primary { background:#fff; color:#2366c9; }
   .emu-cta-secondary { border:2px solid rgba(255,255,255,.85); color:#fff; }
   .emu-hero-trust { display:grid; grid-template-columns:repeat(4,1fr); border:1px solid rgba(255,255,255,.2); border-radius:10px; overflow:hidden; background:rgba(0,0,0,.15); }
   .emu-hero-trust div { color:#fff; font-size:13px; padding:10px 12px; border-left:1px solid rgba(255,255,255,.15); }
   .emu-hero-trust div:first-child { border-left:none; }
-  .emu-hero-visual { position:relative; min-height:420px; border-radius:28px; padding:18px; background:radial-gradient(circle at 20% 20%, rgba(255,255,255,.14), transparent 36%), radial-gradient(circle at 80% 20%, rgba(23,165,137,.18), transparent 32%), linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03)); border:1px solid rgba(255,255,255,.16); box-shadow:0 24px 70px rgba(0,0,0,.18); overflow:hidden; }
+  .emu-hero-visual { position:relative; min-height:420px; border-radius:28px; padding:18px; background:radial-gradient(circle at top right, rgba(35,102,201,0.18), transparent 40%), radial-gradient(circle at bottom left, rgba(79,134,224,0.16), transparent 35%), radial-gradient(circle at 20% 20%, rgba(255,255,255,.14), transparent 36%), linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03)); border:1px solid rgba(255,255,255,.16); box-shadow:0 24px 70px rgba(0,0,0,.18); overflow:hidden; }
   .emu-hero-visual::before { content:""; position:absolute; inset:12px; border-radius:22px; border:1px solid rgba(255,255,255,.08); pointer-events:none; }
   .emu-hero-visual-header { display:flex; align-items:center; justify-content:space-between; gap:12px; color:#fff; margin-bottom:12px; position:relative; z-index:1; }
-  .emu-hero-visual-label { font-size:11px; letter-spacing:2px; text-transform:uppercase; font-weight:700; color:#9ce7d7; }
+  .emu-hero-visual-label { font-size:11px; letter-spacing:2px; text-transform:uppercase; font-weight:700; color:#bfdbfe; }
   .emu-hero-visual-title { font-size:16px; font-weight:700; }
-  .emu-hero-visual-chip { font-size:11px; font-weight:700; color:#1E3A5F; background:#9ce7d7; border-radius:999px; padding:6px 10px; }
+  .emu-hero-visual-chip { font-size:11px; font-weight:700; color:#1E3A5F; background:#bfdbfe; border-radius:999px; padding:6px 10px; }
   .emu-hero-visual svg { width:100%; height:auto; display:block; position:relative; z-index:1; }
   .emu-hero-visual-footer { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:12px; position:relative; z-index:1; }
   .emu-hero-visual-card { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); border-radius:14px; padding:10px 12px; color:#fff; }
-  .emu-hero-visual-card .k { display:block; font-size:10px; text-transform:uppercase; letter-spacing:1.8px; color:#9ce7d7; margin-bottom:4px; }
+  .emu-hero-visual-card .k { display:block; font-size:10px; text-transform:uppercase; letter-spacing:1.8px; color:#bfdbfe; margin-bottom:4px; }
   .emu-hero-visual-card .v { display:block; font-size:14px; font-weight:700; }
   @keyframes emuFloat {
     0%, 100% { transform: translateY(0px); }
@@ -53,12 +53,12 @@ const styles = `
   .emu-spin-medium { transform-origin: 50% 50%; animation: emuSpin 16s linear infinite reverse; }
   .emu-spin-fast { transform-origin: 50% 50%; animation: emuSpin 10s linear infinite; }
 
-  .emu-stats { background:#F5F5F5; padding:34px 60px 26px; }
+  .emu-stats { background:#eef6ff; padding:34px 60px 26px; }
   .emu-stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:12px; }
   .emu-stat { background:#fff; border:1px solid #dbe4ef; border-radius:10px; text-align:center; padding:18px 12px; }
-  .emu-stat .num { color:#17A589; font-size:36px; font-weight:700; line-height:1; }
+  .emu-stat .num { color:#2366c9; font-size:36px; font-weight:700; line-height:1; }
   .emu-stat .title { color:#1E3A5F; font-size:14px; font-weight:700; margin-top:8px; }
-  .emu-stat .q { color:#17A589; font-size:11px; font-style:italic; margin-top:5px; }
+  .emu-stat .q { color:#2366c9; font-size:11px; font-style:italic; margin-top:5px; }
   .emu-footnote { font-size:12px; font-style:italic; color:#475569; }
 
   .emu-section { padding:56px 60px; }
@@ -71,80 +71,84 @@ const styles = `
   .emu-card p { margin:0 0 8px; color:#334155; font-size:14px; line-height:1.55; }
   .emu-price { font-size:20px; font-weight:700; margin:6px 0; }
   .emu-link { color:#1E3A5F; text-decoration:none; font-weight:700; font-size:14px; }
-  .emu-callout { border:1px solid #17A589; border-radius:8px; text-align:center; padding:12px; font-size:14px; }
-  .emu-callout a { color:#17A589; text-decoration:none; font-weight:700; }
+  .emu-callout { border:1px solid #2366c9; border-radius:8px; text-align:center; padding:12px; font-size:14px; }
+  .emu-callout a { color:#2366c9; text-decoration:none; font-weight:700; }
 
-  .emu-students { background:#1E3A5F; }
+  .emu-students { background:#2366c9; }
   .emu-students h2 { color:#fff; }
+  .emu-students .emu-label { color:#dbeafe; }
   .emu-two-col { display:grid; grid-template-columns:1.45fr .55fr; gap:20px; align-items:start; }
   .emu-bullets { list-style:none; padding:0; margin:0; }
   .emu-bullets li { color:rgba(255,255,255,.92); font-size:14px; line-height:1.65; margin-bottom:8px; padding-left:16px; position:relative; }
-  .emu-bullets li::before { content:"•"; position:absolute; left:0; color:#17A589; }
+  .emu-bullets li::before { content:"•"; position:absolute; left:0; color:#2366c9; }
   .emu-device { background:#fff; border-radius:12px; padding:12px; }
   .emu-device svg { width:100%; }
   .emu-outline-white { border:1px solid rgba(255,255,255,.75); color:#fff; text-decoration:none; padding:10px 14px; border-radius:8px; display:inline-block; margin-top:10px; font-weight:700; }
 
-  .emu-parents { background:#F5F5F5; }
+  .emu-parents { background:#eef6ff; }
   .emu-grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
   .emu-teachers { background:#fff; }
-  .emu-teachers .head { border-left:5px solid #17A589; padding-left:10px; }
+  .emu-teachers .head { border-left:5px solid #2366c9; padding-left:10px; }
   .emu-grid2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-  .emu-schools { background:#1E3A5F; }
+  .emu-schools { background:#2366c9; }
   .emu-schools h2 { color:#fff; }
+  .emu-schools .emu-label { color:#dbeafe; }
   .emu-grid4 { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
 
-  .emu-cycle { background:#F5F5F5; }
+  .emu-cycle { background:#eef6ff; }
   .emu-cycle-sub { color:#334155; font-size:15px; line-height:1.65; max-width:940px; margin-bottom:18px; }
   .emu-cycle-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
   .emu-stage { background:#fff; border:1px solid #dbe4ef; border-radius:12px; padding:14px; position:relative; text-align:center; }
-  .emu-stage:not(:last-child)::after { content:"→"; color:#17A589; font-size:20px; font-weight:700; position:absolute; right:-13px; top:50%; transform:translateY(-50%); }
+  .emu-stage:not(:last-child)::after { content:"→"; color:#2366c9; font-size:20px; font-weight:700; position:absolute; right:-13px; top:50%; transform:translateY(-50%); }
   .emu-stage:nth-child(3)::after { display:none; }
   .emu-stage:nth-child(4)::after { content:"↩"; left:-11px; right:auto; }
-  .emu-num { width:42px; height:42px; border-radius:50%; background:#17A589; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; margin:0 auto 8px; }
+  .emu-num { width:42px; height:42px; border-radius:50%; background:#2366c9; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; margin:0 auto 8px; }
   .emu-stage h3 { font-size:13px; margin:0 0 6px; }
   .emu-stage p { font-size:12px; color:#334155; line-height:1.5; margin:0; }
 
   .emu-ai { background:#fff; }
   .emu-ai-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
-  .emu-ai-card { border:1px solid #dbe4ef; border-top:4px solid #17A589; border-radius:10px; padding:16px; background:#fff; transition:.2s; }
+  .emu-ai-card { border:1px solid #dbe4ef; border-top:4px solid #2366c9; border-radius:10px; padding:16px; background:#fff; transition:.2s; }
   .emu-ai-card:hover { transform:translateY(-3px); box-shadow:0 10px 20px rgba(30,58,95,.12); }
 
-  .emu-tutoring { background:#1E3A5F; }
+  .emu-tutoring { background:#2366c9; }
   .emu-tutoring h2 { color:#fff; }
+  .emu-tutoring .emu-label { color:#dbeafe; }
   .emu-tutor-grid { display:grid; grid-template-columns:1.1fr .9fr; gap:16px; }
   .emu-tutor-bullets { list-style:none; padding:0; margin:0; }
   .emu-tutor-bullets li { color:rgba(255,255,255,.92); font-size:14px; line-height:1.65; margin-bottom:8px; padding-left:16px; position:relative; }
-  .emu-tutor-bullets li::before { content:"•"; position:absolute; left:0; color:#17A589; }
+  .emu-tutor-bullets li::before { content:"•"; position:absolute; left:0; color:#2366c9; }
   .emu-tutor-cards { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
   .emu-tutor-card { background:#fff; border:1px solid #dbe4ef; border-radius:10px; padding:14px; }
   .emu-tutor-card p { color:#334155; font-size:13px; line-height:1.55; margin:0; }
   .emu-tutor-ctas { display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
   .emu-tutor-ctas a { text-decoration:none; border-radius:8px; padding:10px 14px; font-size:14px; font-weight:700; }
-  .emu-tutor-ctas a:first-child { background:#17A589; color:#fff; }
+  .emu-tutor-ctas a:first-child { background:#fff; color:#2366c9; }
   .emu-tutor-ctas a:last-child { border:1px solid rgba(255,255,255,.75); color:#fff; }
 
-  .emu-free { background:#F5F5F5; }
+  .emu-free { background:#eef6ff; }
   .emu-free-sub { color:#334155; font-size:15px; line-height:1.65; margin-bottom:18px; max-width:980px; }
   .emu-trust { background:#fff; }
   .emu-trust h2 { text-align:center; }
   .emu-trust-grid { display:grid; grid-template-columns:1.2fr .8fr; gap:16px; }
   .emu-testi { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
-  .emu-testi-card { background:#fff; border:1px solid #dbe4ef; border-left:4px solid #17A589; border-radius:8px; padding:12px; }
+  .emu-testi-card { background:#fff; border:1px solid #dbe4ef; border-left:4px solid #2366c9; border-radius:8px; padding:12px; }
   .emu-testi-card p { margin:0 0 8px; color:#334155; font-size:13px; line-height:1.55; font-style:italic; }
   .emu-testi-card span { font-size:12px; font-weight:700; }
-  .emu-proof { background:#F8FAFC; border:1px solid #dbe4ef; border-radius:10px; padding:14px; }
-  .emu-proof .n { color:#17A589; font-size:28px; font-weight:700; line-height:1; margin-top:6px; }
+  .emu-proof { background:#eef6ff; border:1px solid #dbe4ef; border-radius:10px; padding:14px; }
+  .emu-proof .n { color:#2366c9; font-size:28px; font-weight:700; line-height:1; margin-top:6px; }
   .emu-proof .l { font-size:13px; color:#334155; margin-bottom:8px; }
   .emu-logo-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; }
   .emu-logo { border:1px solid #dbe4ef; background:#fff; border-radius:6px; text-align:center; font-size:12px; padding:8px; color:#1E3A5F; }
 
-  .emu-final { background:#1E3A5F; text-align:center; }
+  .emu-final { background:#2366c9; text-align:center; }
   .emu-final h2 { color:#fff; font-size:32px; }
   .emu-final p { color:rgba(255,255,255,.9); font-size:16px; line-height:1.65; max-width:900px; margin:0 auto 20px; }
+  .emu-final .emu-label { color:#dbeafe; }
   .emu-final-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; text-align:left; }
   .emu-final-card { border:1px solid #dbe4ef; background:#fff; border-radius:10px; padding:14px; }
   .emu-final-card p { color:#334155; font-size:13px; line-height:1.55; margin-bottom:10px; }
-  .emu-final-card a { color:#17A589; text-decoration:none; font-weight:700; font-size:13px; }
+  .emu-final-card a { color:#2366c9; text-decoration:none; font-weight:700; font-size:13px; }
 
   @media (max-width:1024px) {
     .emu-page-shell { display:block; }
@@ -229,7 +233,9 @@ export default function Home() {
     const styleEl = document.createElement("style");
     styleEl.textContent = styles;
     document.head.appendChild(styleEl);
-    return () => document.head.removeChild(styleEl);
+    return () => {
+      styleEl.remove();
+    };
   }, []);
 
   useEffect(() => {
@@ -318,14 +324,14 @@ export default function Home() {
                   <svg viewBox="0 0 420 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Animated mastery cycle visual">
                     <defs>
                       <linearGradient id="cycleRing" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#9ce7d7" />
+                        <stop offset="0%" stopColor="#bfdbfe" />
                         <stop offset="50%" stopColor="#2E75B6" />
-                        <stop offset="100%" stopColor="#17A589" />
+                        <stop offset="100%" stopColor="#2366c9" />
                       </linearGradient>
                       <radialGradient id="cycleGlow" cx="50%" cy="50%" r="50%">
                         <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
-                        <stop offset="45%" stopColor="#e6fbf7" stopOpacity="0.9" />
-                        <stop offset="100%" stopColor="#17A589" stopOpacity="0" />
+                        <stop offset="45%" stopColor="#eef6ff" stopOpacity="0.9" />
+                        <stop offset="100%" stopColor="#2366c9" stopOpacity="0" />
                       </radialGradient>
                     </defs>
 
@@ -334,7 +340,7 @@ export default function Home() {
                     <circle cx="210" cy="190" r="92" fill="none" stroke="rgba(255,255,255,0.22)" strokeWidth="1.5" className="emu-spin-medium" />
                     <circle cx="210" cy="190" r="58" fill="url(#cycleGlow)" opacity="0.85" />
                     <circle cx="210" cy="190" r="28" fill="#fff" fillOpacity="0.94" />
-                    <circle cx="210" cy="190" r="15" fill="#17A589" />
+                    <circle cx="210" cy="190" r="15" fill="#2366c9" />
 
                     <motion.g className="emu-spin-fast" style={{ transformOrigin: "210px 190px" }}>
                       <circle cx="210" cy="72" r="12" fill="url(#cycleRing)" />
@@ -343,9 +349,9 @@ export default function Home() {
                       <circle cx="92" cy="190" r="12" fill="url(#cycleRing)" />
                     </motion.g>
 
-                    <path d="M210 72c65 0 118 53 118 118" fill="none" stroke="rgba(156,231,215,0.55)" strokeWidth="8" strokeLinecap="round" strokeDasharray="8 18" />
+                    <path d="M210 72c65 0 118 53 118 118" fill="none" stroke="rgba(191,219,254,0.55)" strokeWidth="8" strokeLinecap="round" strokeDasharray="8 18" />
                     <path d="M328 190c0 65-53 118-118 118" fill="none" stroke="rgba(46,117,182,0.55)" strokeWidth="8" strokeLinecap="round" strokeDasharray="8 18" />
-                    <path d="M210 308c-65 0-118-53-118-118" fill="none" stroke="rgba(23,165,137,0.55)" strokeWidth="8" strokeLinecap="round" strokeDasharray="8 18" />
+                    <path d="M210 308c-65 0-118-53-118-118" fill="none" stroke="rgba(35,102,201,0.55)" strokeWidth="8" strokeLinecap="round" strokeDasharray="8 18" />
                     <path d="M92 190c0-65 53-118 118-118" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="8" strokeLinecap="round" strokeDasharray="8 18" />
 
                     <g>
@@ -432,7 +438,7 @@ export default function Home() {
                 <a href="/for-students" className="emu-outline-white">Explore Student Courses</a>
               </div>
               <div className="emu-device" aria-hidden="true">
-                <svg viewBox="0 0 420 280" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="400" height="260" rx="12" fill="#eef2f7"/><rect x="30" y="34" width="95" height="210" rx="8" fill="#1E3A5F"/><rect x="138" y="34" width="252" height="40" rx="8" fill="#dbe4ef"/><rect x="138" y="84" width="120" height="72" rx="8" fill="#17A589"/><rect x="270" y="84" width="120" height="72" rx="8" fill="#2E75B6"/></svg>
+                <svg viewBox="0 0 420 280" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="400" height="260" rx="12" fill="#eef2f7"/><rect x="30" y="34" width="95" height="210" rx="8" fill="#1E3A5F"/><rect x="138" y="34" width="252" height="40" rx="8" fill="#dbe4ef"/><rect x="138" y="84" width="120" height="72" rx="8" fill="#2366c9"/><rect x="270" y="84" width="120" height="72" rx="8" fill="#2E75B6"/></svg>
               </div>
             </div>
           </section>

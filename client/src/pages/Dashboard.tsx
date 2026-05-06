@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { BarChart3, Bell, BookOpen, Check, CreditCard, Download, ExternalLink, GraduationCap, LayoutDashboard, LifeBuoy, LogOut, RefreshCw, Shield, UserCircle2, Users } from "lucide-react";
+import { BarChart3, Bell, BookOpen, Check, CreditCard, Download, ExternalLink, FileText, GraduationCap, LayoutDashboard, LifeBuoy, LogOut, RefreshCw, Shield, UserCircle2, Users } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,9 @@ import { Separator } from "@/components/ui/separator";
 import { AIChatLauncher } from "@/components/AIChatLauncher";
 import SchoolPurchaseSeatsCard from "@/components/dashboard/SchoolPurchaseSeatsCard";
 import SchoolAnalyticsClient from "@/components/dashboard/SchoolAnalyticsClient";
+import { DashboardReportsSection } from "@/components/dashboard/DashboardReportsSection";
+import { SchoolAtRiskPanel } from "@/components/dashboard/SchoolAtRiskPanel";
+import { StudentDashboardSection } from "@/components/dashboard/StudentDashboardSection";
 import { useAuthUser, useLogout } from "@/hooks/use-auth";
 import { useOrders } from "@/hooks/use-orders";
 import { useChangePassword, useUpdateProfile } from "@/hooks/use-profile";
@@ -26,6 +29,7 @@ function getDashboardPath(role?: string | null) {
 function getDashboardMenu(role?: string | null, unreadNotifications = 0) {
   const common = [
     { href: role ? getDashboardPath(role) : "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/dashboard/reports", label: "Reports", icon: FileText, badge: unreadNotifications > 0 ? "New" : null },
     { href: "/dashboard/profile", label: "Profile", icon: UserCircle2 },
     { href: "/dashboard/notifications", label: "Notifications", icon: Bell, badge: unreadNotifications > 0 ? (unreadNotifications > 99 ? "99+" : String(unreadNotifications)) : null },
     { href: role === "admin" ? "/dashboard/admin/support" : "/dashboard/support", label: "Support", icon: LifeBuoy },
@@ -198,6 +202,7 @@ export default function Dashboard() {
   const onMainDashboard = location === "/dashboard" || location === getDashboardPath(user?.role);
   const onProfile = location === "/dashboard/profile";
   const onNotifications = location === "/dashboard/notifications";
+  const onReports = location === "/dashboard/reports";
   const onOrders = location === "/dashboard/orders";
   const onSupport = location === "/dashboard/support";
   const onAdminSupport = location === "/dashboard/admin/support";
@@ -356,7 +361,15 @@ export default function Dashboard() {
                 </CardContent>
               </Card>
 
-              {onMainDashboard && user.role === "student" && studentDashboard.data && (
+              {onMainDashboard && user.role === "student" && (
+                <StudentDashboardSection
+                  data={studentDashboard.data}
+                  fullname={user.fullname}
+                />
+              )}
+
+              {/* Old student dashboard code - kept as reference but StudentDashboardSection replaces it */}
+              {false && onMainDashboard && user.role === "student" && studentDashboard.data && (
                 <div className="space-y-6">
                   <div className="grid gap-4 md:grid-cols-3">
                     <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Enrolled Courses</p><p className="mt-2 text-3xl font-black text-slate-900">{studentDashboard.data.stats.enrolledCourses}</p></CardContent></Card>
@@ -683,6 +696,8 @@ export default function Dashboard() {
                         ))}
                       </CardContent>
                     </Card>
+
+                    <SchoolAtRiskPanel schoolName={user.fullname} />
                   </div>
 
                   <div className="space-y-6">
@@ -1144,6 +1159,18 @@ export default function Dashboard() {
                     )}
                   </CardContent>
                 </Card>
+              )}
+
+              {onReports && (
+                <DashboardReportsSection
+                  role={user.role}
+                  fullname={user.fullname}
+                  studentDashboard={studentDashboard.data}
+                  parentDashboard={parentDashboard.data}
+                  schoolDashboard={schoolDashboard.data}
+                  adminDashboard={adminDashboard.data}
+                  onDownloadParentReport={downloadParentReport}
+                />
               )}
 
               {onProfile && (

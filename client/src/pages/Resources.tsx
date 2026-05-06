@@ -1,417 +1,495 @@
 import { Layout } from "@/components/Layout";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Download, Search, FileText, CheckCircle2, Zap, LayoutDashboard, Microscope, BookOpen, Clock, Users, ShieldCheck, PieChart, ArrowRight } from "lucide-react";
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Link } from "wouter";
+import {
+  BookOpenCheck,
+  Bot,
+  ClipboardCheck,
+  Download,
+  FileCheck2,
+  FileText,
+  GraduationCap,
+  Library,
+  ListChecks,
+  MonitorPlay,
+  PenLine,
+  Search,
+  ShieldCheck,
+  Sparkles,
+  TableProperties,
+  Users,
+} from "lucide-react";
+import { useMemo, useState } from "react";
+import type { LucideIcon } from "lucide-react";
+
+type ResourceType =
+  | "Interactive H5P Module Sample"
+  | "Bridge Course Sample Module"
+  | "Magic Sheet"
+  | "Sample Workbook"
+  | "Diagnostic Test Sample"
+  | "Past Paper Sample Solution"
+  | "Essay Rubric & Sample Answer"
+  | "ATP Practical Guide Sample"
+  | "Study Planning Template"
+  | "Parent Guide"
+  | "Expert Roadmap"
+  | "Lesson Plan Template"
+  | "Teacher Resource Guide"
+  | "O-Level Survival Kit"
+  | "AI Chatbot Demo";
+
+type FreeResource = {
+  type: ResourceType;
+  subject: string;
+  title: string;
+  fileType: string;
+  fileLink?: string;
+  icon: LucideIcon;
+};
+
+const resourceTypes: ResourceType[] = [
+  "Interactive H5P Module Sample",
+  "Bridge Course Sample Module",
+  "Magic Sheet",
+  "Sample Workbook",
+  "Diagnostic Test Sample",
+  "Past Paper Sample Solution",
+  "Essay Rubric & Sample Answer",
+  "ATP Practical Guide Sample",
+  "Study Planning Template",
+  "Parent Guide",
+  "Expert Roadmap",
+  "Lesson Plan Template",
+  "Teacher Resource Guide",
+  "O-Level Survival Kit",
+  "AI Chatbot Demo",
+];
+
+const registryResources: FreeResource[] = [
+  {
+    type: "Interactive H5P Module Sample",
+    subject: "Physics - Electromagnetic Waves",
+    title: "Physics Topic: Electromagnetic Waves - Complete Interactive Module",
+    fileType: "H5P / Link",
+    icon: MonitorPlay,
+  },
+  {
+    type: "Interactive H5P Module Sample",
+    subject: "Chemistry - Atomic Structure",
+    title: "Chemistry Topic: Atomic Structure and Chemical Bonding - Interactive Module",
+    fileType: "H5P / Link",
+    icon: MonitorPlay,
+  },
+  {
+    type: "Interactive H5P Module Sample",
+    subject: "Biology - Photosynthesis",
+    title: "Biology Topic: Plant Nutrition (Photosynthesis) - Interactive Module",
+    fileType: "H5P / Link",
+    icon: MonitorPlay,
+  },
+  {
+    type: "Bridge Course Sample Module",
+    subject: "Bridge Chemistry - Module 1",
+    title: "Bridge Chemistry Module 1: Matter and Separation - Sample Module",
+    fileType: "H5P / Link",
+    icon: GraduationCap,
+  },
+  {
+    type: "Bridge Course Sample Module",
+    subject: "Bridge Mathematics - Module 1",
+    title: "Bridge Mathematics Module 1: Number and Everyday Mathematics - Sample Module",
+    fileType: "H5P / Link",
+    icon: GraduationCap,
+  },
+  {
+    type: "Magic Sheet",
+    subject: "Physics - O-Level",
+    title: "Physics O-Level Magic Sheet: Electromagnetic Waves and Spectrum",
+    fileType: "PDF",
+    icon: Sparkles,
+  },
+  {
+    type: "Magic Sheet",
+    subject: "Chemistry - O-Level",
+    title: "Chemistry O-Level Magic Sheet: Organic Chemistry Summary",
+    fileType: "PDF",
+    icon: Sparkles,
+  },
+  {
+    type: "Magic Sheet",
+    subject: "English Language - O-Level",
+    title: "English Language O-Level Magic Sheet: Directed Writing Formats",
+    fileType: "PDF",
+    icon: Sparkles,
+  },
+  {
+    type: "Sample Workbook",
+    subject: "Mathematics - Statistics",
+    title: "O-Level Mathematics Workbook Sample: Statistics - Cumulative Frequency and Histograms",
+    fileType: "PDF",
+    icon: BookOpenCheck,
+  },
+  {
+    type: "Sample Workbook",
+    subject: "Physics - Kinematics",
+    title: "O-Level Physics Workbook Sample: Kinematics - Equations of Motion",
+    fileType: "PDF",
+    icon: BookOpenCheck,
+  },
+  {
+    type: "Diagnostic Test Sample",
+    subject: "Mathematics - Full Syllabus",
+    title: "O-Level Mathematics Diagnostic Sample: 10 Questions - Algebra to Statistics",
+    fileType: "Online / PDF",
+    icon: ClipboardCheck,
+  },
+  {
+    type: "Diagnostic Test Sample",
+    subject: "English Language - CEFR",
+    title: "English Language Level Assessment Sample: CEFR A2 to B1 Sample Questions",
+    fileType: "Online / PDF",
+    icon: ClipboardCheck,
+  },
+  {
+    type: "Past Paper Sample Solution",
+    subject: "Physics - June 2024",
+    title: "O-Level Physics June 2024: Selected Structured Question Model Answers",
+    fileType: "PDF",
+    icon: FileCheck2,
+  },
+  {
+    type: "Past Paper Sample Solution",
+    subject: "Economics - June 2024",
+    title: "O-Level Economics June 2024: Data Response Section - Model Answers",
+    fileType: "PDF",
+    icon: FileCheck2,
+  },
+  {
+    type: "Essay Rubric & Sample Answer",
+    subject: "English - Argumentative",
+    title: "O-Level English: Argumentative Essay - Band 1 Rubric and Model Answer",
+    fileType: "PDF",
+    icon: PenLine,
+  },
+  {
+    type: "Essay Rubric & Sample Answer",
+    subject: "Economics - 12-mark Essay",
+    title: "O-Level Economics: Evaluate Essay - Marking Criteria and Model Answer",
+    fileType: "PDF",
+    icon: PenLine,
+  },
+  {
+    type: "ATP Practical Guide Sample",
+    subject: "Physics ATP - Q1 Design",
+    title: "Physics ATP: Q-Type 1 - Experimental Design Guide with Worked Example",
+    fileType: "PDF",
+    icon: ListChecks,
+  },
+  {
+    type: "ATP Practical Guide Sample",
+    subject: "Chemistry ATP - Q5 Conclusions",
+    title: "Chemistry ATP: Q-Type 5 - Drawing Conclusions Guide with Worked Example",
+    fileType: "PDF",
+    icon: ListChecks,
+  },
+  {
+    type: "Study Planning Template",
+    subject: "O-Level - Weekly",
+    title: "Weekly Study Planner with Spaced Retrieval Slots - Fillable PDF",
+    fileType: "PDF",
+    icon: TableProperties,
+  },
+  {
+    type: "Parent Guide",
+    subject: "O-Level System",
+    title: "Parent Guide 1: Cambridge O-Level Explained - Grades, Papers, Timeline",
+    fileType: "PDF",
+    icon: Users,
+  },
+  {
+    type: "Expert Roadmap",
+    subject: "Subject Selection",
+    title: "Expert Roadmap: O-Level Subject Selection Decision Guide",
+    fileType: "PDF",
+    icon: ShieldCheck,
+  },
+  {
+    type: "Lesson Plan Template",
+    subject: "Diagnostic-to-Instruction",
+    title: "Diagnostic-to-Instruction Bridge Lesson Plan Template",
+    fileType: "PDF / Word",
+    icon: FileText,
+  },
+  {
+    type: "Teacher Resource Guide",
+    subject: "Platform Integration",
+    title: "Using EduMeUp in Your Classroom - Flipped and Blended Learning Guide",
+    fileType: "PDF",
+    icon: Library,
+  },
+  {
+    type: "O-Level Survival Kit",
+    subject: "All Subjects - Cross-cutting",
+    title: "Cambridge O-Level Complete Preparation Guide - Survival Kit PDF",
+    fileType: "PDF",
+    icon: ShieldCheck,
+  },
+  {
+    type: "AI Chatbot Demo",
+    subject: "Physics / Chemistry / Maths / English",
+    title: "EduMeUp AI Tutor Live Demo - 5 free questions, no login required",
+    fileType: "Live Link",
+    icon: Bot,
+  },
+];
+
+const slugify = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
 export default function Resources() {
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState<string>("all");
+  const [activeType, setActiveType] = useState<ResourceType | "all">("all");
 
-  const freeResources = [
-    { title: "Physics - Forces and Motion", type: "Magic Sheet", subject: "physics", icon: FileText },
-    { title: "Chemistry - Ionic Bonding", type: "Magic Sheet", subject: "chemistry", icon: FileText },
-    { title: "Biology - Photosynthesis", type: "Magic Sheet", subject: "biology", icon: FileText },
-    { title: "Mathematics - Algebra Basics", type: "Magic Sheet", subject: "math", icon: FileText },
-    { title: "Economics - Supply and Demand", type: "Magic Sheet", subject: "economics", icon: FileText },
-    { title: "Physics - Forces Calculations", type: "Workbook", subject: "physics", icon: BookOpen },
-    { title: "Chemistry - Balancing Equations", type: "Workbook", subject: "chemistry", icon: BookOpen },
-    { title: "Mathematics - Quadratic Equations", type: "Workbook", subject: "math", icon: BookOpen },
-    { title: "Weekly Study Schedule", type: "Planner", subject: "general", icon: Clock },
-    { title: "O-Level Survival Guide", type: "Guide", subject: "general", icon: ShieldCheck },
-  ];
+  const publishedResources = registryResources.filter((resource) => Boolean(resource.fileLink));
+  const pendingCount = registryResources.length - publishedResources.length;
 
-  const filteredResources = freeResources.filter(r => 
-    (category === "all" || r.type.toLowerCase().replace(" ", "_") === category) &&
-    (r.title.toLowerCase().includes(search.toLowerCase()))
-  );
+  const visibleResources = useMemo(() => {
+    const normalizedSearch = search.trim().toLowerCase();
+
+    return publishedResources.filter((resource) => {
+      const matchesType = activeType === "all" || resource.type === activeType;
+      const matchesSearch =
+        normalizedSearch.length === 0 ||
+        [resource.title, resource.subject, resource.type, resource.fileType]
+          .join(" ")
+          .toLowerCase()
+          .includes(normalizedSearch);
+
+      return matchesType && matchesSearch;
+    });
+  }, [activeType, search]);
+
+  const categoryStats = resourceTypes.map((type) => ({
+    type,
+    total: registryResources.filter((resource) => resource.type === type).length,
+    published: publishedResources.filter((resource) => resource.type === type).length,
+  }));
 
   return (
     <Layout>
-      {/* SECTION 1: HERO */}
-      <section className="py-16 md:py-24 relative overflow-hidden bg-gradient-to-b from-blue-50/80 to-white text-center">
-        <div className="container-custom relative z-10">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          
-            <h1 className="text-5xl md:text-6xl text-slate-900 font-semibold font-display mb-8 leading-tight">
-              Experience <span className="text-[#2366c9]">$698</span> worth of resources free
-            </h1>
-            <p className="text-2xl text-slate-700 max-w-3xl mx-auto mb-16 font-medium">
-              Everything here is free. Forever. No credit card. No hidden costs. 
-              Just research-backed learning resources to help you succeed.
-            </p>
-
-            <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8 items-center bg-white p-10 rounded-2xl border border-blue-100 shadow-sm text-left">
-              <div>
-                <h3 className="text-2xl font-semibold mb-6 text-blue-400">Free resources â€“ no catch</h3>
-                <ul className="space-y-4">
-                  {[
-                    "15+ Interactive Module Samples",
-                    "10 Subject Magic Sheets",
-                    "12 Sample Workbooks",
-                    "Study Planning Templates",
-                    "Parent Guides",
-                    "Expert Roadmaps",
-                    "Diagnostic Test Samples"
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-center gap-4 text-[14px] font-medium text-slate-700">
-                      <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0" /> {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="text-center">
-                <div className="text-5xl font-semibold mb-4 text-slate-900">$698</div>
-                <div className="text-[#2366c9] font-semibold text-xs mb-10">Total sample value free</div>
-                <Button className="w-full bg-[#2366c9] hover:bg-blue-700 text-white font-semibold text-[14px] py-3 px-6">
-                  Take Free Diagnostic Test
-                </Button>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* SECTION 2: WHY WE OFFER FREE RESOURCES */}
-      <section className="py-40 bg-white">
-        <div className="container-custom">
-          <div className="text-center max-w-4xl mx-auto mb-32">
-            <Badge className="bg-blue-50 text-[#2366c9] mb-6 px-4 py-1 rounded-full font-semibold">Our commitment</Badge>
-            <h2 className="text-4xl md:text-5xl font-semibold font-display mb-8 text-slate-900 leading-tight">Accessible <span className="text-[#2366c9]">education</span></h2>
-          </div>
-
-          <div className="grid lg:grid-cols-2 gap-24 items-center">
-            <div className="space-y-12">
-              <div>
-                <h3 className="text-2xl font-semibold mb-6 text-slate-900">1. Experience quality before purchasing</h3>
-                <p className="text-lg text-slate-900/60 font-medium leading-relaxed">
-                  These aren't low-quality "freebies" designed to upsell. These are actual samples from our premium courses—same quality, same standards. Try before you buy and see our research-backed methodology firsthand.
-                </p>
-              </div>
-              <div>
-                <h3 className="text-2xl font-semibold mb-6 text-slate-900">2. Support those who cannot afford</h3>
-                <p className="text-lg text-slate-900/60 font-medium leading-relaxed">
-                  Education is a right, not a privilege. Even if you never purchase our Exam Mastery Path programs, these resources are yours to keep. Supplement school learning, prepare for exams independently, and improve grades without expensive tutoring.
-                </p>
-              </div>
+      <section className="bg-[#2366c9] text-white">
+        <div className="container-custom py-16 md:py-24">
+          <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+            <div>
+              <Badge className="mb-5 rounded-full bg-white/15 px-4 py-1 text-white hover:bg-white/15">
+                Free Resource Zone
+              </Badge>
+              <h1 className="max-w-4xl font-display text-4xl font-semibold leading-tight tracking-tight text-white md:text-6xl">
+                Sample lessons, guides, planners, and exam tools from the EduMeUp registry.
+              </h1>
+              <p className="mt-6 max-w-2xl text-base leading-7 text-blue-50 md:text-lg">
+                Browse free resources by type, subject, and file format. Only resources with approved file paths or live links are shown here.
+              </p>
             </div>
 
-            <div className="bg-[#2366c9] p-16 rounded-[4rem] text-white">
-               <h3 className="text-2xl font-semibold mb-10 text-blue-400">What makes this different</h3>
-               <div className="space-y-6">
-                 <div className="grid grid-cols-2 gap-4 border-b border-white/10 pb-6">
-                   <div className="text-red-400 font-semibold text-xs">Traditional freebies</div>
-                   <div className="text-green-400 font-semibold text-xs">EduMeUp free resources</div>
-                 </div>
-                 <div className="grid grid-cols-2 gap-4 border-b border-white/10 pb-6">
-                   <div className="text-slate-300 font-semibold italic">Low-quality upsell</div>
-                   <div className="text-white font-semibold">Premium course samples âœ“</div>
-                 </div>
-                 <div className="grid grid-cols-2 gap-4 border-b border-white/10 pb-6">
-                   <div className="text-slate-300 font-semibold italic">Generic textbook copy</div>
-                   <div className="text-white font-semibold">Purpose-built, tested âœ“</div>
-                 </div>
-                 <div className="grid grid-cols-2 gap-4">
-                   <div className="text-slate-300 font-semibold italic">Time-limited access</div>
-                   <div className="text-white font-semibold">Free forever, unlimited âœ“</div>
-                 </div>
-               </div>
-               <Link href="/programs">
-                 <Button className="w-full mt-12 h-20 bg-[#2366c9] hover:bg-blue-500 rounded-2xl font-semibold">Explore full programs</Button>
-               </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 3: EVIDENCE-BASED DESIGN */}
-      <section className="py-40 bg-blue-50">
-        <div className="container-custom">
-          <div className="grid lg:grid-cols-2 gap-24 items-center">
-             <div>
-               <h2 className="text-4xl md:text-5xl font-semibold mb-10 text-slate-900 leading-tight">Evidence-based <span className="text-[#2366c9]">design</span></h2>
-               <p className="text-xl text-slate-900/60 font-medium mb-12">We don't create resources based on guesswork. Every resource follows a rigorous 5-step process.</p>
-               <div className="space-y-6">
-                 {[
-                   "Research Analysis - 50+ studies per type",
-                   "Cognitive Science Design - Proven strategies",
-                   "Expert Review - Pedagogical validation",
-                   "Pilot Testing - Real student tracking",
-                   "Continuous Improvement - Annual updates"
-                 ].map((step, i) => (
-                   <div key={i} className="flex items-center gap-4 p-6 bg-white rounded-2xl border-2 border-blue-100 shadow-sm">
-                     <div className="h-10 w-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold">{i+1}</div>
-                     <span className="font-semibold text-slate-900 text-[14px]">{step}</span>
-                   </div>
-                 ))}
-               </div>
-             </div>
-             <div className="bg-[#2366c9] p-16 rounded-[4rem] text-white shadow-2xl relative overflow-hidden">
-                <Microscope className="absolute -top-10 -right-10 h-60 w-60 text-blue-500 opacity-10" />
-                <h3 className="text-2xl font-semibold mb-8 text-blue-400">Quality threshold</h3>
-                <div className="text-5xl font-semibold text-white mb-4">85%</div>
-                <p className="text-blue-100/60 font-medium uppercase tracking-widest text-xs mb-10">Minimum student satisfaction rate</p>
-                <div className="text-5xl font-semibold text-white mb-4">70%</div>
-                <p className="text-blue-100/60 font-medium uppercase tracking-widest text-xs mb-10">Minimum improvement on topic assessments</p>
-                <div className="pt-10 border-t border-white/10">
-                  <p className="text-xs font-medium text-blue-200 italic">"Active learning produces 6% higher scores and 55% reduction in failures." (Freeman et al., 2014)</p>
-                </div>
-             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 4: INTERACTIVE MODULES */}
-      <section className="py-40 bg-white">
-        <div className="container-custom">
-          <div className="text-center max-w-4xl mx-auto mb-32">
-             <h2 className="text-4xl md:text-5xl font-semibold mb-8 text-slate-900 leading-tight">Experience <span className="text-[#2366c9]">interactive</span> courses</h2>
-             <p className="text-lg text-slate-900/40 font-medium">Free access to 15 selected modules</p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {[
-              { s: "Physics", t: "Newton's Laws", time: "45-60 min", link: "https://moodle.example.com/physics1" },
-              { s: "Chemistry", t: "Atomic Structure", time: "55-70 min", link: "https://moodle.example.com/chem1" },
-              { s: "Biology", t: "Cell Organization", time: "50-60 min", link: "https://moodle.example.com/bio1" },
-              { s: "Math", t: "Linear Equations", time: "45-60 min", link: "https://moodle.example.com/math1" },
-              { s: "Economics", t: "Market Equilibrium", time: "65-80 min", link: "https://moodle.example.com/econ1" },
-              { s: "Business", t: "Marketing Mix (4 Ps)", time: "60-75 min", link: "https://moodle.example.com/biz1" }
-            ].map((mod, i) => (
-              <Card key={i} className="rounded-[3rem] border-4 border-blue-50 overflow-hidden hover:border-[#2366c9] transition-all group shadow-xl">
-                 <CardHeader className="p-10 bg-blue-50 group-hover:bg-[#2366c9] transition-colors">
-                    <Badge className="bg-[#2366c9] text-white w-fit mb-4">{mod.s}</Badge>
-                    <h4 className="text-2xl font-semibold text-slate-900 group-hover:text-white leading-none">{mod.t}</h4>
-                 </CardHeader>
-                 <CardContent className="p-10">
-                    <p className="text-xs font-medium text-slate-900/40 mb-10 flex items-center gap-2">
-                       <Clock className="h-4 w-4" /> {mod.time}
-                    </p>
-                    <Button className="w-full bg-[#2366c9] hover:bg-[#2366c9] h-16 rounded-xl font-semibold" onClick={() => window.open(mod.link, '_blank')}>
-                      START MODULE
-                    </Button>
-                 </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          <div className="mt-32 p-16 bg-[#2366c9] rounded-[4rem] text-white text-center shadow-2xl relative overflow-hidden">
-            <Zap className="absolute -top-10 -left-10 h-40 w-40 text-blue-500 opacity-10" />
-            <h3 className="text-3xl text-white font-semibold mb-8">Ready for the full structured course?</h3>
-            <p className="text-xl text-blue-100 max-w-3xl mx-auto mb-16 font-medium">1000+ interactive modules, automated spaced repetition, adaptive difficulty, and 24/7 AI support.</p>
-            <div className="flex flex-wrap justify-center gap-8">
-              <Button size="lg" className="bg-white text-slate-900 hover:bg-blue-50 h-20 px-12 rounded-2xl font-semibold">Explore Free Library</Button>
-              <Link href="/programs">
-                <Button size="lg" variant="outline" className="border-4 border-white text-white hover:bg-white/10 h-20 px-12 rounded-2xl font-semibold">Explore full programs</Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 4B: 15 INTERACTIVE MODULE SAMPLES */}
-      <section className="py-40 bg-white">
-        <div className="container-custom">
-          <div className="text-center max-w-4xl mx-auto mb-32">
-            <h2 className="text-4xl md:text-5xl font-semibold mb-8 text-slate-900 leading-tight">15 Free <span className="text-[#2366c9]">interactive</span> modules</h2>
-            <p className="text-lg text-slate-900/40 font-medium">Try our premium learning experience across core subjects</p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              { s: "Physics", t: "Forces and Motion - Newton's Laws" },
-              { s: "Physics", t: "Electricity - Current, Voltage, Resistance" },
-              { s: "Physics", t: "Light - Reflection and Refraction" },
-              { s: "Chemistry", t: "Atomic Structure and Periodic Table" },
-              { s: "Chemistry", t: "Ionic Bonding - Formation and Properties" },
-              { s: "Chemistry", t: "Acids, Bases, and Salts" },
-              { s: "Biology", t: "Cell Structure and Organization" },
-              { s: "Biology", t: "Photosynthesis - Process and Factors" },
-              { s: "Biology", t: "Enzymes - Structure, Function, Activity" },
-              { s: "Mathematics", t: "Algebra - Solving Linear Equations" },
-              { s: "Mathematics", t: "Geometry - Angles and Triangles" },
-              { s: "Mathematics", t: "Graphs - Linear Functions" },
-              { s: "Economics", t: "Demand and Supply - Market Equilibrium" },
-              { s: "Economics", t: "Market Failure - Externalities" },
-              { s: "Business", t: "Marketing Mix - The 4 Ps" }
-            ].map((mod, i) => (
-              <Card key={i} className="rounded-3xl border-2 border-blue-50 hover:border-blue-200 transition-all group overflow-hidden">
-                <CardContent className="p-8">
-                  <div className="flex justify-between items-start mb-6">
-                    <Badge variant="secondary" className="bg-blue-50 text-[#2366c9] border-none font-semibold px-4 py-1">{mod.s}</Badge>
-                    <div className="h-8 w-8 rounded-full bg-green-50 text-green-600 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Zap className="h-4 w-4" />
-                    </div>
+            <div className="space-y-4">
+              <div className="rounded-lg border border-white/15 bg-white/10 p-5 shadow-xl backdrop-blur">
+                <div className="mb-5 flex items-center justify-between">
+                  <div className="text-sm font-semibold text-white">Resource preview</div>
+                  <div className="flex h-9 w-9 items-center justify-center rounded-md bg-white text-[#2366c9]">
+                    <Library className="h-5 w-5" />
                   </div>
-                  <h4 className="text-xl font-semibold text-slate-900 mb-6 leading-tight min-h-[3.5rem]">{mod.t}</h4>
-                  <Button className="w-full bg-slate-50 hover:bg-[#2366c9] hover:text-white text-[#2366c9] border-none font-semibold h-14 rounded-xl transition-all">TRY MODULE</Button>
-                </CardContent>
-              </Card>
-            ))}
+                </div>
+                <div className="space-y-3">
+                  {[
+                    { icon: MonitorPlay, label: "Interactive H5P Modules", meta: "Lessons" },
+                    { icon: Sparkles, label: "Magic Sheets", meta: "PDF" },
+                    { icon: ClipboardCheck, label: "Diagnostic Samples", meta: "Online" },
+                  ].map((item) => {
+                    const Icon = item.icon;
+
+                    return (
+                      <div key={item.label} className="flex items-center gap-3 rounded-md bg-white/10 p-3">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-white/15 text-white">
+                          <Icon className="h-5 w-5" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="truncate text-sm font-semibold text-white">{item.label}</div>
+                          <div className="text-xs text-blue-50">{item.meta}</div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3 rounded-lg border border-white/10 bg-white/5 p-4">
+                <div className="rounded-md bg-white/10 p-4">
+                  <div className="text-3xl font-semibold">{resourceTypes.length}</div>
+                  <div className="mt-1 text-xs font-medium uppercase text-blue-50">Types</div>
+                </div>
+                <div className="rounded-md bg-white/10 p-4">
+                  <div className="text-3xl font-semibold">{publishedResources.length}</div>
+                  <div className="mt-1 text-xs font-medium uppercase text-blue-50">Live</div>
+                </div>
+                <div className="rounded-md bg-white/10 p-4">
+                  <div className="text-3xl font-semibold">{pendingCount}</div>
+                  <div className="mt-1 text-xs font-medium uppercase text-blue-50">Pending</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
-      <section className="py-40 bg-blue-50">
-        <div className="container-custom">
-           <div className="text-center max-w-4xl mx-auto mb-32">
-             <h2 className="text-4xl md:text-5xl font-semibold mb-8 text-slate-900 leading-tight">Revision <span className="text-[#2366c9]">& practice</span> tools</h2>
-             <p className="text-lg text-slate-900/40 font-medium">Download premium magic sheets and workbooks</p>
-          </div>
 
-          <div className="max-w-4xl mx-auto flex flex-col sm:flex-row gap-6 mb-20 bg-white p-6 rounded-[3rem] shadow-xl border-4 border-blue-900/10">
-            <div className="relative flex-1">
-              <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-6 w-6 text-blue-400" />
-              <Input 
-                placeholder="Search resources..." 
-                className="pl-16 h-16 rounded-2xl border-blue-50 bg-blue-50/50 focus:bg-white transition-all font-semibold"
+      <section className="border-b border-slate-200 bg-white">
+        <div className="container-custom py-8">
+          <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+              <Input
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Search by subject, title, file type, or resource category"
+                className="h-12 rounded-md border-slate-200 pl-12 text-[15px]"
               />
             </div>
-            <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger className="w-full sm:w-[260px] h-16 rounded-2xl border-blue-50 bg-blue-50/50 font-semibold">
-                <SelectValue placeholder="Category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="magic_sheet">Magic Sheets</SelectItem>
-                <SelectItem value="workbook">Workbooks</SelectItem>
-                <SelectItem value="planner">Planners</SelectItem>
-                <SelectItem value="guide">Guides</SelectItem>
-              </SelectContent>
-            </Select>
+            <Button
+              variant="outline"
+              className="h-12 justify-center rounded-md border-slate-300 px-5"
+              onClick={() => {
+                setActiveType("all");
+                setSearch("");
+              }}
+            >
+              Clear filters
+            </Button>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {filteredResources.map((res, i) => (
-               <Card key={i} className="rounded-[3rem] border-4 border-white shadow-xl bg-white group hover:border-[#2366c9] transition-all">
-                  <CardContent className="p-10">
-                     <div className="h-20 w-20 bg-blue-50 rounded-2xl flex items-center justify-center mb-8 text-[#2366c9] group-hover:scale-110 transition-transform">
-                        <res.icon className="h-10 w-10" />
-                     </div>
-                     <Badge className="bg-blue-100 text-[#2366c9] mb-4 border-none">{res.type}</Badge>
-                     <h4 className="text-2xl font-semibold text-slate-900 leading-tight mb-8">{res.title}</h4>
-                     <Button className="w-full bg-[#2366c9] hover:bg-[#2366c9] h-16 rounded-xl font-semibold gap-2">
-                        <Download className="h-5 w-5" /> DOWNLOAD PDF
-                     </Button>
-                  </CardContent>
-               </Card>
+          <div className="mt-5 flex gap-2 overflow-x-auto pb-2">
+            <Button
+              variant={activeType === "all" ? "default" : "outline"}
+              className="h-10 shrink-0 rounded-full px-4"
+              onClick={() => setActiveType("all")}
+            >
+              All types
+            </Button>
+            {categoryStats.map((category) => (
+              <Button
+                key={category.type}
+                variant={activeType === category.type ? "default" : "outline"}
+                className="h-10 shrink-0 rounded-full px-4"
+                onClick={() => setActiveType(category.type)}
+              >
+                {category.type}
+                <span className="ml-2 rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-700">
+                  {category.published}/{category.total}
+                </span>
+              </Button>
             ))}
           </div>
         </div>
       </section>
 
-      {/* SECTION 8: PARENT SUPPORT */}
-      <section className="py-20 md:py-28 bg-[#2366c9] text-white relative overflow-hidden">
-        <div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
-        <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
-        <div className="container-custom relative z-10">
-           <div className="grid lg:grid-cols-2 gap-16 items-center">
-              <div className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm">
-                 <h2 className="text-4xl md:text-5xl font-semibold mb-6 text-[#2366c9] leading-tight">Parent support</h2>
-                 <p className="text-[14px] text-black font-medium mb-8">Supporting your child's O-Level journey with research-backed guides.</p>
-                 <div className="space-y-3">
-                    {[
-                      "O-Level Survival Guide (20 pages)",
-                      "Monthly Parent Check-In Guide",
-                      "Tutor Evaluation Rubric",
-                      "Understanding Cambridge Reports"
-                    ].map((guide, i) => (
-                      <div key={i} className="flex items-center justify-between p-4 border border-blue-100 rounded-lg bg-blue-50/50 hover:border-[#2366c9] transition-all group">
-                         <span className="font-medium text-[14px] text-black">{guide}</span>
-                         <Button variant="ghost" className="text-[#2366c9] hover:text-blue-700 p-0 h-auto">
-                            <Download className="h-5 w-5" />
-                         </Button>
-                      </div>
-                    ))}
-                 </div>
-              </div>
-              <div className="space-y-8">
-                 <h2 className="text-4xl md:text-5xl text-white font-semibold leading-tight">Schools use these resources</h2>
-                 <p className="text-base text-blue-200 font-medium leading-relaxed">Many partner schools distribute our parent guides during O-Level orientation programs to help families understand the system.</p>
-                  <Link href="/for-schools">
-                    <Button size="lg" className="w-full md:w-auto min-w-[260px] bg-white text-[#2366c9] hover:bg-blue-50 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
-                      Explore Schools <ArrowRight className="h-4 w-4" />
-                    </Button>
-                 </Link>
-              </div>
-           </div>
-        </div>
-      </section>
-
-      {/* FINAL CTA: FREE VS PAID */}
-      <section className="py-40 bg-white">
+      <section className="bg-slate-50 py-12 md:py-16">
         <div className="container-custom">
-           <div className="text-center max-w-4xl mx-auto mb-32">
-              <h2 className="text-4xl md:text-5xl font-semibold mb-8 text-slate-900 leading-tight">Value <span className="text-[#2366c9]">comparison</span></h2>
-              <p className="text-lg text-slate-900/40 font-medium">Free resources vs full programs</p>
-           </div>
-           
-           <div className="max-w-5xl mx-auto border-8 border-blue-50 rounded-[4rem] overflow-hidden shadow-2xl">
-              <div className="grid grid-cols-3 bg-[#2366c9] text-white p-10 font-semibold text-xs">
-                 <div>Feature</div>
-                 <div className="text-center">Free Resources</div>
-                 <div className="text-center text-blue-400">Paid Programs</div>
+          <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <div>
+              <h2 className="font-display text-3xl font-semibold text-slate-950">Published resources</h2>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+                New downloads and live demos appear here as soon as their files are ready.
+              </p>
+            </div>
+            <Badge variant="outline" className="w-fit rounded-full border-amber-300 bg-amber-50 px-4 py-1 text-amber-800">
+              Hidden until file/link is ready
+            </Badge>
+          </div>
+
+          {visibleResources.length > 0 ? (
+            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+              {visibleResources.map((resource) => {
+                const Icon = resource.icon;
+
+                return (
+                  <Card key={`${resource.type}-${resource.title}`} className="rounded-lg border-slate-200 shadow-sm">
+                    <CardContent className="flex h-full flex-col p-6">
+                      <div className="mb-5 flex items-start justify-between gap-4">
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-blue-50 text-[#2366c9]">
+                          <Icon className="h-5 w-5" />
+                        </div>
+                        <Badge variant="outline" className="rounded-full border-emerald-200 bg-emerald-50 text-emerald-700">
+                          Ready
+                        </Badge>
+                      </div>
+                      <div className="mb-3 text-xs font-semibold uppercase text-[#2366c9]">{resource.type}</div>
+                      <h3 className="text-lg font-semibold leading-snug text-slate-950">{resource.title}</h3>
+                      <p className="mt-3 text-sm text-slate-600">{resource.subject}</p>
+                      <div className="mt-5 flex flex-wrap gap-2">
+                        <Badge variant="secondary" className="rounded-md bg-slate-100 text-slate-700">
+                          {resource.fileType}
+                        </Badge>
+                        <Badge variant="secondary" className="rounded-md bg-slate-100 text-slate-700">
+                          {slugify(resource.type)}
+                        </Badge>
+                      </div>
+                      <Button className="mt-6 h-11 rounded-md bg-[#2366c9] hover:bg-blue-700" asChild>
+                        <a href={resource.fileLink} target="_blank" rel="noreferrer">
+                          <Download className="mr-2 h-4 w-4" />
+                          Open resource
+                        </a>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-md bg-amber-50 text-amber-700">
+                <FileText className="h-6 w-6" />
               </div>
-              {[
-                { f: "Module Access", free: "15 Samples", paid: "1000+ Modules" },
-                { f: "Syllabus Coverage", free: "Topic Samples", paid: "100% Comprehensive" },
-                { f: "AI Tutor Support", free: "Limited", paid: "24/7 Unlimited" },
-                { f: "Analytics Dashboards", free: "Basic", paid: "Student, Parent, School" },
-                { f: "Spaced Repetition", free: "Manual", paid: "Automated System" },
-                { f: "Adaptive Difficulty", free: "Static", paid: "AI-Driven" }
-              ].map((row, i) => (
-                <div key={i} className={`grid grid-cols-3 p-10 border-b-2 border-blue-50 font-semibold uppercase text-[14px] ${i % 2 === 0 ? 'bg-white' : 'bg-blue-50/20'}`}>
-                   <div className="text-slate-900">{row.f}</div>
-                   <div className="text-center text-slate-900/40">{row.free}</div>
-                   <div className="text-center text-[#2366c9] font-semibold">{row.paid}</div>
-                </div>
-              ))}
-           </div>
-           <div className="text-center mt-16">
-              <Link href="/programs">
-                <Button size="lg" className="bg-[#2366c9] hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-xl text-[14px] shadow-md inline-flex items-center gap-2">
-                  Upgrade to Full Access <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
-           </div>
+              <h3 className="mt-5 text-xl font-semibold text-slate-950">No approved files are linked yet</h3>
+              <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-slate-600">
+                The resource categories are ready, but the downloadable PDFs, H5P modules, Moodle links, and live demos still need final links before they can be opened.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
-      {/* FINAL CTA */}
-      <section className="py-20 md:py-32 bg-[#2366c9] text-white relative overflow-hidden">
-        <div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
-        <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
-        <div className="container-custom text-center relative z-10">
-          <div className="flex justify-center w-full mb-6">
-            <h2 className="text-4xl md:text-6xl text-white font-semibold leading-[1.05] mb-3 text-center tracking-tight px-4">
-              Start Learning — Free, Right Now
-            </h2>
+      <section className="bg-white py-12 md:py-16">
+        <div className="container-custom">
+          <div className="mb-8">
+            <h2 className="font-display text-3xl font-semibold text-slate-950">Resource registry structure</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
+              These are the categories from the April 2026 Free Resource Zone registry. Counts show how many example rows are already mapped in the page data.
+            </p>
           </div>
-          <p className="text-base text-blue-200 mb-12 max-w-3xl mx-auto">
-            Take the free diagnostic to find your exact gaps, then explore the full resource library.
-          </p>
-          <div className="flex flex-col md:flex-row justify-center gap-6 max-w-5xl mx-auto">
-            <Link href="/programs/ai-diagnostic">
-              <Button size="lg" className="w-full md:w-auto min-w-[260px] bg-white text-[#2366c9] hover:bg-blue-50 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
-                Take Free Diagnostic <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-            <Link href="/programs">
-              <Button size="lg" variant="outline" className="w-full md:w-auto min-w-[260px] border border-white/30 text-white hover:bg-white/10 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
-                Browse All Programs <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
+
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {categoryStats.map((category) => (
+              <button
+                key={category.type}
+                type="button"
+                onClick={() => setActiveType(category.type)}
+                className="rounded-lg border border-slate-200 bg-white p-5 text-left transition hover:border-[#2366c9] hover:shadow-sm"
+              >
+                <div className="flex items-center justify-between gap-4">
+                  <h3 className="font-semibold text-slate-950">{category.type}</h3>
+                  <Badge variant="secondary" className="shrink-0 rounded-full bg-slate-100 text-slate-700">
+                    {category.total}
+                  </Badge>
+                </div>
+                <p className="mt-3 text-sm text-slate-600">
+                  {category.published} live, {category.total - category.published} waiting for final file or link.
+                </p>
+              </button>
+            ))}
           </div>
         </div>
       </section>
     </Layout>
   );
 }
-

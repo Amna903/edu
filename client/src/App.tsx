@@ -47,6 +47,8 @@ import AllResources from "@/pages/resources/AllResources";
 import Privacy from "@/pages/Privacy";
 import Terms from "@/pages/Terms";
 import Cookies from "@/pages/Cookies";
+import TeacherTerms from "@/pages/TeacherTerms";
+import ParentTerms from "@/pages/ParentTerms";
 import AIDiagnostic from "@/pages/programs/AIDiagnostic";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
@@ -103,6 +105,7 @@ function Router() {
       <Route path="/courses/:slug" component={ProgramDetails} />
       <Route path="/resources" component={Resources} />
       <Route path="/free-resources" component={Resources} />
+      <Route path="/freeresources" component={Resources} />
       <Route path="/resources/freebies" component={Resources} />
       <Route path="/resources/all" component={AllResources} />
       <Route path="/exam-prep-workbooks" component={TopicalWorkbooks} />
@@ -123,6 +126,8 @@ function Router() {
       <Route path="/privacy" component={Privacy} />
       <Route path="/terms" component={Terms} />
       <Route path="/cookies" component={Cookies} />
+      <Route path="/terms-teacher" component={TeacherTerms} />
+      <Route path="/terms-parent" component={ParentTerms} />
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
       <Route path="/register/verify-pending" component={VerifyPending} />
@@ -133,6 +138,7 @@ function Router() {
       <Route path="/dashboard/student" component={Dashboard} />
       <Route path="/dashboard/student/certificates" component={Dashboard} />
       <Route path="/dashboard/parent" component={Dashboard} />
+      <Route path="/dashboard/reports" component={Dashboard} />
       <Route path="/dashboard/school" component={Dashboard} />
       <Route path="/dashboard/school/analytics" component={Dashboard} />
       <Route path="/dashboard/admin" component={Dashboard} />
@@ -162,4 +168,3 @@ function App() {
 }
 
 export default App;
-
