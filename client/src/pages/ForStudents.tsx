@@ -191,7 +191,7 @@ export default function ForStudents() {
       who: "Every student from Grade 6 upward — regardless of subject level or Cambridge stage.",
       courses: "Learn How to Learn (6 modules) — Cornell note-taking, spaced retrieval, exam strategy, academic independence. Vocabulary Mastery Gr5-7 (7 modules). Reading Comprehension RC68 (10 modules, Foundation and Challenge tracks, CEFR A2-B1+). ESL1 (CEFR A2). ESL2 (CEFR B1). English Bridge B1+ to B2. Classroom English Communication (student sections).",
       linkText: "Start here",
-      link: "/must-have-courses",
+      link: "/programs/must-have-courses",
       color: "border-[#2366c9]"
     },
     {
@@ -200,7 +200,7 @@ export default function ForStudents() {
       who: "Students in Grade 7-8 or in the first months of O-Level Year 1 who want to build a strong foundation before full O-Level study begins.",
       courses: "Pre-O-Level Chemistry (11 chapters — Atomic Structure through Organic Chemistry introduction, covers 30-40% of O-Level syllabus). Pre-O-Level Mathematics (13 topics — Numbers through Basic Trigonometry). Pre-O-Level Physics (15 topics — Physics and Units through Current Electricity). Pre-O-Level Biology. Certification examination included for all Pre-O-Level programmes.",
       linkText: "Build your foundation",
-      link: "/bridge-sciences-economics",
+      link: "/programs/bridge-courses",
       color: "border-blue-500"
     },
     {
@@ -209,7 +209,7 @@ export default function ForStudents() {
       who: "Students entering or already in O-Level who have identified specific foundational gaps through the diagnostic.",
       courses: "O-Level Bridge: English, Chemistry, Physics, Mathematics, Economics. Topic-selectable — your diagnostic tells you which topics you need. 80% mastery gate before advancing to the full O-Level subject course. AI diagnostic identifies your entry point in each bridge course automatically.",
       linkText: "Take the diagnostic first",
-      link: "/diagnostic",
+      link: "/diagnostics",
       color: "border-indigo-500"
     },
     {
@@ -218,7 +218,7 @@ export default function ForStudents() {
       who: "Students actively studying for Cambridge O-Level examinations — all levels.",
       courses: "Mathematics (25 topics — 14 available now, more being added continuously). Physics (6 main topics, 27 sub-topics — almost all available). Chemistry (11 topics — almost all available). Biology (21 topics — almost all available). Economics (complete). Business Studies (complete). English Language (10 courses — Comprehension, Essay/Composition, Directed Writing). Urdu, Islamiyat, Pakistan Studies (complete per current syllabus). Chapter-by-chapter purchase available for all subjects.",
       linkText: "Browse all subjects",
-      link: "/olevel-subjects",
+      link: "/programs/complete-o-level",
       color: "border-sky-500"
     },
     {
@@ -227,7 +227,7 @@ export default function ForStudents() {
       who: "Students preparing specifically for Cambridge O-Level English Language Paper 1 (Reading) and Paper 2 (Writing).",
       courses: "5 Comprehension courses (one per Cambridge past paper set — Paper 1 Reading: two texts, structured and extended writing questions). 3 Essay and Composition courses (F1: Essay Types and Structure; F2: 10-Day Band 3 to Band 1 Bridge; F3: Complete Mastery Band 3 to Band 1). 2 Directed Writing courses (Part 1: non-letter types including Format A and B with 2024 papers; Part 2: 6 letter types, formal email, mock exam).",
       linkText: "See all English courses",
-      link: "/all-english-courses",
+      link: "/programs/english-mastery",
       color: "border-cyan-500"
     },
     {
@@ -236,7 +236,7 @@ export default function ForStudents() {
       who: "Students taking Cambridge Paper 4 (Alternative to Practical) in Physics, Chemistry, and Biology.",
       courses: "ATP Physics (built from latest 5 years ATP past papers — teach the skill, worked examples, interactive practice, solved past papers). ATP Chemistry (same structure). ATP Biology (same structure). All ATP courses fully integrate Cambridge Paper 4 past papers. Suitable for schools without laboratory facilities and for students wanting maximum Paper 4 preparation.",
       linkText: "See ATP courses",
-      link: "/atp-courses",
+      link: "/programs/atp-courses",
       color: "border-teal-500"
     }
   ];

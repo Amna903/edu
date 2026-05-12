@@ -41,11 +41,14 @@ const learnColumns: MegaColumn[] = [
     items: [
       { label: "Lower Secondary", href: "/programs", eyebrow: "Gr 6-8" },
       { label: "Pre-O-Level", href: "/programs/pre-o-level-victory" },
-      { label: "Must-Have Courses", href: "/programs" },
+      { label: "Must-Have Courses", href: "/programs/must-have-courses" },
       { label: "O-Level English", href: "/programs/english-mastery", eyebrow: "10 courses" },
       { label: "O-Level Subjects", href: "/programs/complete-o-level", eyebrow: "10 subjects" },
       { label: "ATP Courses", href: "/programs/atp-courses" },
-      { label: "Bridge Courses", href: "/programs/bridge-courses" },
+          { label: "Bridge Courses", href: "/programs/bridge-courses" },
+          { label: "English Pathway", href: "/programs/english-pathway", eyebrow: "Complete pathway" },
+      { label: "Bridge English", href: "/programs/bridge-english" },
+      { label: "Bridge Sciences & Economics", href: "/programs/bridge-sciences-economics" },
     ],
   },
   {
@@ -142,6 +145,7 @@ export function Navbar() {
                 undefined,
                 [
                   "/programs",
+                  "/programs/english-pathway",
                   "/all-programs",
                   "/free-resources",
                   "/teacher-courses",

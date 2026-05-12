@@ -35,10 +35,14 @@ import Matric from "@/pages/programs/Matric";
 import FscIcs from "@/pages/programs/FscIcs";
 import Ecat from "@/pages/programs/Ecat";
 import BridgeCourses from "@/pages/programs/BridgeCourses";
+import BridgeEnglishPage from "@/pages/programs/BridgeEnglish";
+import BridgeSciencesEconomics from "@/pages/programs/BridgeSciencesEconomics";
 import EnglishMastery from "@/pages/programs/EnglishMastery";
+import EnglishPathway from "@/pages/programs/EnglishPathway";
 import PreOLevelVictory from "@/pages/programs/PreOLevelVictory";
 import CompleteOLevel from "@/pages/programs/CompleteOLevel";
 import ExamPrep from "@/pages/programs/ExamPrep";
+import MustHaveCoursesPage from "@/pages/programs/MustHaveCourses";
 import ConceptualWorkbooks from "@/pages/resources/ConceptualWorkbooks";
 import TopicalWorkbooks from "@/pages/resources/TopicalWorkbooks";
 import ExamPapers from "@/pages/resources/ExamPapers";
@@ -90,8 +94,13 @@ function Router() {
       
       {/* Flagship Cambridge O-Level Programme Routes */}
       <Route path="/programs/bridge-courses" component={BridgeCourses} />
+      <Route path="/programs/bridge-english" component={BridgeEnglishPage} />
+      <Route path="/programs/bridge-sciences-economics" component={BridgeSciencesEconomics} />
+      <Route path="/programs/english-pathway" component={EnglishPathway} />
       <Route path="/programs/english-mastery" component={EnglishMastery} />
       <Route path="/programs/pre-o-level-victory" component={PreOLevelVictory} />
+      <Route path="/programs/must-have" component={MustHaveCoursesPage} />
+      <Route path="/programs/must-have-courses" component={MustHaveCoursesPage} />
       <Route path="/programs/complete-o-level" component={CompleteOLevel} />
       <Route path="/programs/exam-prep" component={ExamPrep} />
       
