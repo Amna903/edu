@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import { useLocation } from "wouter";
+import { useLocation, useSearch } from "wouter";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Navbar } from "@/components/Navbar";
 import { useLogin, useRegister } from "@/hooks/use-auth";
 import { CheckCircle2, Eye, EyeOff, GraduationCap, Loader2, Presentation, School, ShieldCheck } from "lucide-react";
 import logoImage from "@/assets/WhatsApp_Image_2026-02-22_at_20.36.37_1771782478374.jpeg";
@@ -49,6 +50,7 @@ function getSafeReturnUrl() {
 
 export default function Login() {
   const [location, navigate] = useLocation();
+  const search = useSearch();
   const login = useLogin();
   const register = useRegister();
 
@@ -82,9 +84,10 @@ export default function Login() {
   const [schoolForm, setSchoolForm] = useState({ partnerCode: "", schoolAdminRole: "" });
 
   useEffect(() => {
-    const tab = getQueryParam("tab");
-    setActiveTab(tab === "register" ? "register" : "login");
-  }, [location]);
+    const tab = new URLSearchParams(search).get("tab");
+    const shouldShowRegister = location === "/register" || tab === "register";
+    setActiveTab(shouldShowRegister ? "register" : "login");
+  }, [location, search]);
 
   const loginInputHasError = Boolean(loginError);
   const loginButtonLabel = rememberMe ? "Sign In (30 days)" : "Sign In";
@@ -167,7 +170,8 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-white font-[Arial]">
-      <div className="mx-auto grid min-h-screen w-full md:grid-cols-[40%_60%]">
+      <Navbar />
+      <div className="mx-auto grid min-h-[calc(100vh-3.5rem)] w-full md:min-h-[calc(100vh-4rem)] md:grid-cols-[40%_60%]">
         <aside className="hidden bg-[#1E3A5F] md:flex md:flex-col md:justify-between md:p-10 lg:p-12">
           <div />
           <div className="mx-auto max-w-sm text-center">
@@ -183,7 +187,7 @@ export default function Login() {
             </ul>
           </div>
           <div className="text-center">
-            <button type="button" onClick={() => navigate("/login?tab=register")} className="text-sm text-[#17A589] underline-offset-4 hover:underline">
+            <button type="button" onClick={() => navigate("/register")} className="text-sm text-[#17A589] underline-offset-4 hover:underline">
               New to EduMeUp? Register -&gt;
             </button>
           </div>
@@ -191,7 +195,7 @@ export default function Login() {
 
         <header className="flex h-20 items-center justify-between bg-[#1E3A5F] px-5 md:hidden">
           <img src={logoImage} alt="EduMeUp" className="h-11 w-auto rounded bg-white p-1.5" />
-          <button type="button" onClick={() => navigate("/login?tab=register")} className="text-xs font-semibold text-[#17A589] underline-offset-4 hover:underline">
+          <button type="button" onClick={() => navigate("/register")} className="text-xs font-semibold text-[#17A589] underline-offset-4 hover:underline">
             New here? Register -&gt;
           </button>
         </header>
@@ -202,7 +206,7 @@ export default function Login() {
               <button type="button" onClick={() => navigate("/login")} className={`flex-1 rounded-md px-4 py-2 text-sm font-semibold transition ${activeTab === "login" ? "bg-[#1E3A5F] text-white" : "text-slate-600 hover:bg-slate-50"}`}>
                 Login
               </button>
-              <button type="button" onClick={() => navigate("/login?tab=register")} className={`flex-1 rounded-md px-4 py-2 text-sm font-semibold transition ${activeTab === "register" ? "bg-[#1E3A5F] text-white" : "text-slate-600 hover:bg-slate-50"}`}>
+              <button type="button" onClick={() => navigate("/register")} className={`flex-1 rounded-md px-4 py-2 text-sm font-semibold transition ${activeTab === "register" ? "bg-[#1E3A5F] text-white" : "text-slate-600 hover:bg-slate-50"}`}>
                 Register
               </button>
             </div>
@@ -262,7 +266,7 @@ export default function Login() {
                   </Button>
                   <p className="text-sm text-slate-600">
                     Don&apos;t have an account?{" "}
-                    <button type="button" onClick={() => navigate("/login?tab=register")} className="font-semibold text-[#17A589] hover:underline">
+                    <button type="button" onClick={() => navigate("/register")} className="font-semibold text-[#17A589] hover:underline">
                       Register here -&gt;
                     </button>
                   </p>

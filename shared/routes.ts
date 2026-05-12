@@ -1,6 +1,6 @@
 
 import { z } from 'zod';
-import { insertInquirySchema, insertResourceSchema, inquiries, resources, programs, lmsCourseSchema, authUserSchema, loginInputSchema, registerInputSchema, checkoutRequestSchema, orderHistorySchema, passwordChangeInputSchema, profileUpdateInputSchema, studentDashboardSchema, parentDashboardSchema, schoolDashboardSchema, adminDashboardSchema, adminUsersListSchema, adminActivityLogsListSchema, adminSuspendUserInputSchema, adminAssignRoleInputSchema, adminResetPasswordInputSchema, adminActionResponseSchema, adminCoursesListSchema, adminUpdateCoursePricingInputSchema, adminUpdateCourseVisibilityInputSchema, adminUpdateCourseCategoryInputSchema, adminSyncCoursesInputSchema, adminSyncCoursesResponseSchema, parentLinkChildInputSchema, paymentInitRequestSchema, paymentInitResponseSchema, paymentVerifyRequestSchema, paymentVerifyResponseSchema, registerResponseSchema, studentCertificateSchema, schoolSeatPurchaseInputSchema, dashboardNotificationListSchema, markNotificationReadInputSchema, markNotificationReadResponseSchema, revenueReportSchema, enrollmentReportSchema, progressAnalyticsSchema, usageMetricsSchema, analyticsQueryInputSchema, analyticsReportSchema, bulkLicensePurchaseInputSchema, bulkLicensePurchaseResponseSchema, schoolStudentUploadSchema, bulkSeatAssignmentInputSchema, bulkSeatAssignmentResponseSchema, licenseUsageMetricsSchema, schoolUsageReportSchema } from './schema.js';
+import { insertInquirySchema, insertResourceSchema, inquiries, resources, programs, lmsCourseSchema, authUserSchema, loginInputSchema, registerInputSchema, checkoutRequestSchema, orderHistorySchema, passwordChangeInputSchema, profileUpdateInputSchema, studentDashboardSchema, parentDashboardSchema, schoolDashboardSchema, adminDashboardSchema, adminUsersListSchema, adminActivityLogsListSchema, adminSuspendUserInputSchema, adminAssignRoleInputSchema, adminResetPasswordInputSchema, adminActionResponseSchema, adminCoursesListSchema, adminUpdateCoursePricingInputSchema, adminUpdateCourseVisibilityInputSchema, adminUpdateCourseCategoryInputSchema, adminSyncCoursesInputSchema, adminSyncCoursesResponseSchema, parentLinkChildInputSchema, paymentInitRequestSchema, paymentInitResponseSchema, paymentVerifyRequestSchema, paymentVerifyResponseSchema, registerResponseSchema, studentCertificateSchema, schoolSeatPurchaseInputSchema, dashboardNotificationListSchema, markNotificationReadInputSchema, markNotificationReadResponseSchema, revenueReportSchema, enrollmentReportSchema, progressAnalyticsSchema, usageMetricsSchema, analyticsQueryInputSchema, analyticsReportSchema, bulkLicensePurchaseInputSchema, bulkLicensePurchaseResponseSchema, schoolStudentUploadSchema, bulkSeatAssignmentInputSchema, bulkSeatAssignmentResponseSchema, licenseUsageMetricsSchema, schoolUsageReportSchema, diagnosticEligibilityInputSchema, diagnosticEligibilityResponseSchema, diagnosticStartInputSchema, diagnosticStartResponseSchema, diagnosticContentRequestSchema, diagnosticContentResponseSchema, diagnosticAnswerInputSchema, diagnosticCompleteInputSchema, diagnosticResultSchema } from './schema.js';
 
 export const errorSchemas = {
   validation: z.object({
@@ -140,6 +140,62 @@ export const api = {
       responses: {
         200: z.object({ success: z.literal(true) }),
         400: errorSchemas.validation,
+      },
+    },
+  },
+  diagnostics: {
+    eligibility: {
+      method: 'GET' as const,
+      path: '/api/diagnostic/eligibility' as const,
+      input: diagnosticEligibilityInputSchema.partial().optional(),
+      responses: {
+        200: diagnosticEligibilityResponseSchema,
+      },
+    },
+    start: {
+      method: 'POST' as const,
+      path: '/api/diagnostic/start' as const,
+      input: diagnosticStartInputSchema,
+      responses: {
+        200: diagnosticStartResponseSchema,
+      },
+    },
+    content: {
+      method: 'GET' as const,
+      path: '/api/diagnostic/content/:sessionToken' as const,
+      responses: {
+        200: diagnosticContentResponseSchema,
+      },
+    },
+    answer: {
+      method: 'POST' as const,
+      path: '/api/diagnostic/answer' as const,
+      input: diagnosticAnswerInputSchema,
+      responses: {
+        200: z.object({ success: z.literal(true) }),
+      },
+    },
+    complete: {
+      method: 'POST' as const,
+      path: '/api/diagnostic/complete' as const,
+      input: diagnosticCompleteInputSchema,
+      responses: {
+        200: z.object({ reportId: z.string(), redirectUrl: z.string() }),
+      },
+    },
+    results: {
+      method: 'GET' as const,
+      path: '/api/diagnostic/results/:sessionToken' as const,
+      responses: {
+        200: diagnosticResultSchema,
+      },
+    },
+    paidStart: {
+      method: 'POST' as const,
+      path: '/api/diagnostic/paid-start' as const,
+      input: diagnosticStartInputSchema,
+      responses: {
+        200: diagnosticStartResponseSchema,
       },
     },
   },

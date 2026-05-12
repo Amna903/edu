@@ -419,6 +419,26 @@ export async function updateMoodleProfile(userId: number, input: {
   return true;
 }
 
+export async function setMoodleUserCustomField(userId: number, fieldName: string, value: string, sessionToken?: string) {
+  const params = new URLSearchParams({
+    "users[0][id]": String(userId),
+    "users[0][customfields][0][type]": fieldName,
+    "users[0][customfields][0][value]": value,
+  });
+
+  try {
+    await moodlePost(getAdminToken(), "core_user_update_users", params);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "";
+    if (!sessionToken || !message.toLowerCase().includes("invalid token")) {
+      throw error;
+    }
+    await moodlePost(sessionToken, "core_user_update_users", params);
+  }
+
+  return true;
+}
+
 export async function changeMoodlePassword(input: {
   username: string;
   userId: number;

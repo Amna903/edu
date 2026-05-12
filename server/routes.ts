@@ -4,7 +4,7 @@ import type { Server } from "http";
 import { storage } from "./storage.js";
 import { api } from "../shared/routes.js";
 import { z } from "zod";
-import { checkoutRequestSchema, contactSubmissions, insertInquirySchema, loginInputSchema, markNotificationReadInputSchema, parentLinkChildInputSchema, passwordChangeInputSchema, profileUpdateInputSchema, registerInputSchema } from "../shared/schema.js";
+import { checkoutRequestSchema, contactSubmissions, insertInquirySchema, loginInputSchema, markNotificationReadInputSchema, parentLinkChildInputSchema, passwordChangeInputSchema, profileUpdateInputSchema, registerInputSchema, diagnosticEligibilityInputSchema, diagnosticStartInputSchema, diagnosticAnswerInputSchema, diagnosticCompleteInputSchema } from "../shared/schema.js";
 import { getLmsCourseById, getLmsCourseBySlug, getLmsCourses } from "./moodle.js";
 import { changeMoodlePassword, fetchCurrentUser, loginWithMoodle, registerWithMoodle, updateMoodleProfile } from "./moodle-auth.js";
 import { enrolUserInCourse } from "./moodle-commerce.js";
@@ -14,6 +14,7 @@ import { env } from "./config.js";
 import { prisma } from "./prisma.js";
 import { db } from "./db.js";
 import { getStoredUserByMoodleUserId, linkParentToChild, syncUserFromMoodleSession } from "./user-store.js";
+import { completeDiagnosticSession, createDiagnosticSession, getDiagnosticContent, getDiagnosticEligibility, getDiagnosticResults, linkGuestDiagnosticToAccount, saveDiagnosticAnswer } from "./diagnostics.js";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -52,6 +53,14 @@ export async function registerRoutes(
   const loadLinkedChildren = async (parentId: number) => {
     const { getLinkedChildren: resolveLinkedChildren } = await import("./user-store.js");
     return resolveLinkedChildren(parentId);
+  };
+
+  const getClientIp = (req: Request) => {
+    const forwarded = req.headers["x-forwarded-for"];
+    if (typeof forwarded === "string" && forwarded.trim()) {
+      return forwarded.split(",")[0]?.trim() || req.ip || req.socket.remoteAddress || "unknown";
+    }
+    return req.ip || req.socket.remoteAddress || "unknown";
   };
 
   const finalizePaidOrder = async (orderRef: string, tracker?: string) => {
@@ -539,6 +548,7 @@ EduMeUp`,
       req.session.moodleToken = result.token;
       req.session.moodlePrivateToken = result.privateToken ?? undefined;
       req.session.user = result.user;
+      await linkGuestDiagnosticToAccount({ moodleUserId: result.user.id, ip: getClientIp(req) }).catch(() => undefined);
       res.json(result.user);
     } catch (err) {
       if (err instanceof z.ZodError) {
@@ -567,6 +577,7 @@ EduMeUp`,
         req.session.moodleToken = loginResult.token;
         req.session.moodlePrivateToken = loginResult.privateToken ?? undefined;
         req.session.user = loginResult.user;
+        await linkGuestDiagnosticToAccount({ moodleUserId: loginResult.user.id, ip: getClientIp(req) }).catch(() => undefined);
       }
 
       res.status(201).json({
@@ -598,10 +609,158 @@ EduMeUp`,
 
       const user = await fetchCurrentUser(req.session.moodleToken);
       req.session.user = user;
+      await linkGuestDiagnosticToAccount({ moodleUserId: user.id, ip: getClientIp(req) }).catch(() => undefined);
       res.json(user);
     } catch (err) {
       req.session.destroy(() => undefined);
       res.status(401).json({ message: "Not authenticated" });
+    }
+  });
+
+  app.get(api.diagnostics.eligibility.path, async (req, res) => {
+    try {
+      const parsed = diagnosticEligibilityInputSchema.partial().safeParse({
+        diagnosticType: req.query.diagnosticType ? Number(req.query.diagnosticType) : req.query.type ? Number(req.query.type) : undefined,
+        grade: typeof req.query.grade === "string" ? req.query.grade : undefined,
+        subject: typeof req.query.subject === "string" ? req.query.subject : undefined,
+      });
+
+      if (!parsed.success) {
+        return res.status(400).json({ message: parsed.error.errors[0]?.message || "Invalid request" });
+      }
+
+      const diagnosticType = Number((req.query.diagnosticType ?? req.query.type) || 1);
+      const eligibility = await getDiagnosticEligibility({
+        diagnosticType,
+        moodleUserId: req.session.user?.id ?? null,
+        grade: parsed.data.grade ?? null,
+        subject: parsed.data.subject ?? null,
+        ip: getClientIp(req),
+      });
+
+      return res.json(eligibility);
+    } catch (err) {
+      return res.status(500).json({ message: err instanceof Error ? err.message : "Failed to check eligibility" });
+    }
+  });
+
+  app.post(api.diagnostics.start.path, async (req, res) => {
+    try {
+      const input = diagnosticStartInputSchema.parse(req.body);
+
+      const session = await createDiagnosticSession({
+        diagnosticType: input.diagnosticType,
+        moodleUserId: req.session.user?.id ?? null,
+        ip: getClientIp(req),
+        grade: input.grade ?? null,
+        subject: input.subject ?? null,
+        paid: input.paid ?? false,
+      });
+
+      if (!session.eligible) {
+        return res.json(session);
+      }
+
+      return res.json({
+        eligible: true,
+        sessionToken: session.sessionToken,
+        variant: session.variant ?? null,
+        diagnosticType: session.diagnosticType,
+        redirectUrl: `/diagnostics/results/${session.sessionToken}`,
+      });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({ message: err.errors[0].message, field: err.errors[0].path.join(".") });
+      }
+      return res.status(500).json({ message: err instanceof Error ? err.message : "Failed to start diagnostic" });
+    }
+  });
+
+  app.get(api.diagnostics.content.path, async (req, res) => {
+    try {
+      const sessionToken = typeof req.params.sessionToken === "string" ? req.params.sessionToken : "";
+      const content = await getDiagnosticContent(sessionToken);
+      if (!content) {
+        return res.status(404).json({ message: "Diagnostic session not found" });
+      }
+
+      return res.json(content);
+    } catch (err) {
+      return res.status(500).json({ message: err instanceof Error ? err.message : "Failed to load diagnostic content" });
+    }
+  });
+
+  app.post(api.diagnostics.answer.path, async (req, res) => {
+    try {
+      const input = diagnosticAnswerInputSchema.parse(req.body);
+      await saveDiagnosticAnswer({
+        sessionToken: input.sessionToken,
+        questionId: input.questionId,
+        answer: input.answer,
+      });
+      return res.json({ success: true });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({ message: err.errors[0].message, field: err.errors[0].path.join(".") });
+      }
+      return res.status(500).json({ message: err instanceof Error ? err.message : "Failed to save answer" });
+    }
+  });
+
+  app.post(api.diagnostics.complete.path, async (req, res) => {
+    try {
+      const input = diagnosticCompleteInputSchema.parse(req.body);
+      const result = await completeDiagnosticSession({ sessionToken: input.sessionToken });
+      return res.json({ reportId: result.reportId, redirectUrl: result.redirectUrl });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({ message: err.errors[0].message, field: err.errors[0].path.join(".") });
+      }
+      return res.status(500).json({ message: err instanceof Error ? err.message : "Failed to complete diagnostic" });
+    }
+  });
+
+  app.get(api.diagnostics.results.path, async (req, res) => {
+    try {
+      const sessionToken = typeof req.params.sessionToken === "string" ? req.params.sessionToken : "";
+      const result = await getDiagnosticResults(sessionToken);
+      if (!result) {
+        return res.status(404).json({ message: "Diagnostic results not found" });
+      }
+      return res.json(result);
+    } catch (err) {
+      return res.status(500).json({ message: err instanceof Error ? err.message : "Failed to load diagnostic results" });
+    }
+  });
+
+  app.post(api.diagnostics.paidStart.path, async (req, res) => {
+    try {
+      const input = diagnosticStartInputSchema.parse(req.body);
+      const session = await createDiagnosticSession({
+        diagnosticType: input.diagnosticType,
+        moodleUserId: req.session.user?.id ?? null,
+        ip: getClientIp(req),
+        grade: input.grade ?? null,
+        subject: input.subject ?? null,
+        paid: true,
+      });
+
+      if (!session.eligible) {
+        return res.json(session);
+      }
+
+      return res.json({
+        eligible: true,
+        sessionToken: session.sessionToken,
+        variant: session.variant ?? null,
+        diagnosticType: session.diagnosticType,
+        redirectUrl: `/diagnostics/results/${session.sessionToken}`,
+      });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({ message: err.errors[0].message, field: err.errors[0].path.join(".") });
+      }
+      return res.status(500).json({ message: err instanceof Error ? err.message : "Failed to start paid diagnostic" });
     }
   });
 

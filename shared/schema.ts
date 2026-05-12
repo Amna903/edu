@@ -86,6 +86,50 @@ export const contactSubmissions = pgTable("edume_contact_submissions", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// === DIAGNOSTICS ===
+export const diagnosticGuestDiagnostics = pgTable("edume_guest_diagnostics", {
+  id: serial("id").primaryKey(),
+  ipAddress: text("ip_address").notNull(),
+  subject: text("subject").notNull(),
+  diagnosticType: text("diagnostic_type").notNull(),
+  startedAt: timestamp("started_at").defaultNow(),
+  completed: boolean("completed").notNull().default(false),
+  completedAt: timestamp("completed_at"),
+  sessionToken: text("session_token").notNull().unique(),
+  moodleUserId: integer("moodle_user_id"),
+});
+
+export const diagnosticAccountFlags = pgTable("edume_diagnostic_account_flags", {
+  moodleUserId: integer("moodle_user_id").primaryKey(),
+  freeDiagnosticUsed: boolean("free_diagnostic_used").notNull().default(false),
+  teacherT1Attempts: integer("teacher_t1_attempts").notNull().default(0),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const diagnosticSessions = pgTable("edume_diagnostic_sessions", {
+  id: serial("id").primaryKey(),
+  sessionToken: text("session_token").notNull().unique(),
+  moodleUserId: integer("moodle_user_id"),
+  ipAddress: text("ip_address").notNull(),
+  diagnosticType: integer("diagnostic_type").notNull(),
+  subject: text("subject"),
+  grade: text("grade"),
+  variant: text("variant"),
+  paid: boolean("paid").notNull().default(false),
+  status: text("status").notNull().default("started"),
+  startedAt: timestamp("started_at").defaultNow(),
+  completedAt: timestamp("completed_at"),
+  resultJson: jsonb("result_json").$type<Record<string, unknown> | null>(),
+});
+
+export const diagnosticAnswers = pgTable("edume_diagnostic_answers", {
+  id: serial("id").primaryKey(),
+  sessionToken: text("session_token").notNull(),
+  questionId: text("question_id").notNull(),
+  answer: jsonb("answer").$type<unknown>().notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // === SCHEMAS ===
 export const insertOrderSchema = createInsertSchema(orders).omit({ 
   id: true, 
@@ -117,6 +161,100 @@ export const insertProgramSchema = createInsertSchema(programs).omit({
 export const insertContactSubmissionSchema = createInsertSchema(contactSubmissions).omit({
   id: true,
   createdAt: true,
+});
+
+export const diagnosticTypeSchema = z.union([
+  z.literal(1),
+  z.literal(2),
+  z.literal(3),
+  z.literal(4),
+  z.literal(5),
+  z.literal(6),
+]);
+
+export const diagnosticEligibilityInputSchema = z.object({
+  diagnosticType: diagnosticTypeSchema,
+  grade: z.string().optional(),
+  subject: z.string().optional(),
+});
+
+export const diagnosticEligibilityResponseSchema = z.object({
+  eligible: z.boolean(),
+  reason: z.string().optional(),
+  softGate: z.boolean().optional(),
+  freeUsed: z.boolean().optional(),
+  teacherAttempts: z.number().optional(),
+});
+
+export const diagnosticStartInputSchema = z.object({
+  diagnosticType: diagnosticTypeSchema,
+  subject: z.string().optional(),
+  grade: z.string().optional(),
+  paid: z.boolean().optional(),
+});
+
+export const diagnosticStartResponseSchema = z.object({
+  eligible: z.boolean(),
+  reason: z.string().optional(),
+  softGate: z.boolean().optional(),
+  sessionToken: z.string().optional(),
+  redirectUrl: z.string().optional(),
+  variant: z.string().optional(),
+  diagnosticType: diagnosticTypeSchema.optional(),
+});
+
+export const diagnosticContentRequestSchema = z.object({
+  sessionToken: z.string().min(1),
+});
+
+export const diagnosticQuestionSchema = z.object({
+  id: z.string(),
+  prompt: z.string(),
+  type: z.enum(["single-choice", "multi-choice", "text"]),
+  options: z.array(z.string()).optional(),
+});
+
+export const diagnosticContentResponseSchema = z.object({
+  sessionToken: z.string(),
+  diagnosticType: diagnosticTypeSchema,
+  subject: z.string().nullable(),
+  grade: z.string().nullable(),
+  variant: z.string().nullable(),
+  questions: z.array(diagnosticQuestionSchema),
+});
+
+export const diagnosticAnswerInputSchema = z.object({
+  sessionToken: z.string().min(1),
+  questionId: z.string().min(1),
+  answer: z.unknown(),
+  timestamp: z.string().optional(),
+});
+
+export const diagnosticCompleteInputSchema = z.object({
+  sessionToken: z.string().min(1),
+});
+
+export const diagnosticResultTopicSchema = z.object({
+  name: z.string(),
+  score: z.number(),
+  mastery: z.enum(["Mastered", "In Progress", "Gap"]),
+});
+
+export const diagnosticResultSchema = z.object({
+  sessionToken: z.string(),
+  diagnosticType: diagnosticTypeSchema,
+  subject: z.string().nullable(),
+  grade: z.string().nullable(),
+  variant: z.string().nullable(),
+  score: z.number(),
+  cefrLevel: z.string().nullable(),
+  strengths: z.array(z.string()),
+  gaps: z.array(z.string()),
+  topics: z.array(diagnosticResultTopicSchema),
+  nextSteps: z.array(z.string()),
+  remedialActions: z.array(z.object({ topic: z.string(), action: z.string() })),
+  freeUsed: z.boolean(),
+  paid: z.boolean(),
 });
 
 export const lmsCourseSchema = z.object({

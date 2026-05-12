@@ -27,8 +27,9 @@ const learnColumns: MegaColumn[] = [
   {
     heading: "Diagnostics & Assessment",
     items: [
-      { label: "Diagnostic Services", href: "/programs/ai-diagnostic", eyebrow: "Assessment" },
-      { label: "O-Level Bridge Diagnostic", href: "/programs/ai-diagnostic" },
+      { label: "Diagnostic Services", href: "/diagnostics", eyebrow: "Assessment" },
+      { label: "O-Level Bridge Diagnostic", href: "/diagnostics/start?type=1" },
+      { label: "O-Level Readiness Forecast", href: "/olevel-readiness-forecast", eyebrow: "Forecast" },
       { label: "English Level Check", href: "/programs/english-mastery" },
       { label: "O-Level Subject Diagnostic", href: "/programs/complete-o-level" },
       { label: "ATP Diagnostic", href: "/programs/atp-courses" },

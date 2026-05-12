@@ -53,9 +53,13 @@ import Terms from "@/pages/Terms";
 import Cookies from "@/pages/Cookies";
 import TeacherTerms from "@/pages/TeacherTerms";
 import ParentTerms from "@/pages/ParentTerms";
-import AIDiagnostic from "@/pages/programs/AIDiagnostic";
+import Diagnostics from "@/pages/Diagnostics";
+import DiagnosticsStart from "@/pages/DiagnosticsStart";
+import OLevelReadinessForecast from "@/pages/OLevelReadinessForecast";
+import OLevelReadinessForecastStart from "@/pages/OLevelReadinessForecastStart";
+import OLevelReadinessForecastResults from "@/pages/OLevelReadinessForecastResults";
+import OLevelSubjectPage from "@/pages/OLevelSubjectPage";
 import Login from "@/pages/Login";
-import Register from "@/pages/Register";
 import ForgotPassword from "@/pages/ForgotPassword";
 import ResetPassword from "@/pages/ResetPassword";
 import VerifyPending from "@/pages/VerifyPending";
@@ -87,8 +91,14 @@ function Router() {
       <Route path="/all-programs" component={Programs} />
       <Route path="/courses" component={Courses} />
       <Route path="/tutoring" component={TutorBooking} />
-      <Route path="/diagnostics" component={AIDiagnostic} />
-      <Route path="/programs/ai-diagnostic" component={AIDiagnostic} />
+      <Route path="/diagnostics" component={Diagnostics} />
+      <Route path="/diagnostics/start" component={DiagnosticsStart} />
+      <Route path="/programs/ai-diagnostic" component={Diagnostics} />
+      <Route path="/olevel-readiness-forecast" component={OLevelReadinessForecast} />
+      <Route path="/olevel-readiness-forecast/start" component={OLevelReadinessForecastStart} />
+      <Route path="/olevel-readiness-forecast/results/:sessionId" component={OLevelReadinessForecastResults} />
+      <Route path="/olevel-subjects" component={CompleteOLevel} />
+      <Route path="/olevel/:subjectSlug" component={OLevelSubjectPage} />
       <Route path="/programs/atp-courses" component={ATPCourses} />
       <Route path="/programs/tutor-booking" component={TutorBooking} />
       
@@ -138,7 +148,7 @@ function Router() {
       <Route path="/terms-teacher" component={TeacherTerms} />
       <Route path="/terms-parent" component={ParentTerms} />
       <Route path="/login" component={Login} />
-      <Route path="/register" component={Register} />
+      <Route path="/register" component={Login} />
       <Route path="/register/verify-pending" component={VerifyPending} />
       <Route path="/register/verify-expired" component={VerifyExpired} />
       <Route path="/forgot-password" component={ForgotPassword} />

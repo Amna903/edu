@@ -55,6 +55,14 @@ const completeOLevelSubjectsIncluded = [
   "English Language (Papers 1, 2 & extended)",
 ];
 
+const oLevelSubjectPages = [
+  { name: "Mathematics", href: "/olevel/mathematics" },
+  { name: "Physics", href: "/olevel/physics" },
+  { name: "Chemistry", href: "/olevel/chemistry" },
+  { name: "Biology", href: "/olevel/biology" },
+  { name: "English Language", href: "/olevel/english-language" },
+];
+
 export default function CompleteOLevel() {
   useEffect(() => {
     const previousTitle = document.title;
@@ -125,6 +133,19 @@ export default function CompleteOLevel() {
                   <ArrowRight className="h-4 w-4" />
                 </span>
               </Link>
+            </div>
+
+            <div className="mt-8 rounded-2xl border border-blue-100 bg-white p-5 text-left shadow-sm">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#2366c9]">Open the new SEO subject pages</p>
+              <div className="mt-4 flex flex-wrap gap-3">
+                {oLevelSubjectPages.map((subject) => (
+                  <Link key={subject.name} href={subject.href}>
+                    <span className="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-medium text-slate-900 hover:border-blue-300 hover:text-[#2366c9]">
+                      {subject.name}
+                    </span>
+                  </Link>
+                ))}
+              </div>
             </div>
           </motion.div>
         </div>
@@ -285,6 +306,20 @@ export default function CompleteOLevel() {
                   <ArrowRight className="h-4 w-4" />
                 </span>
               </Link>
+            </div>
+
+            <div className="mt-8 rounded-2xl border border-blue-100 bg-blue-50/40 p-5">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#2366c9]">Direct subject page routes</p>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {oLevelSubjectPages.map((subject) => (
+                  <Link key={subject.name} href={subject.href}>
+                    <span className="flex items-center justify-between rounded-xl border border-blue-200 bg-white px-4 py-3 text-sm font-semibold text-slate-900 hover:border-blue-300 hover:text-[#2366c9]">
+                      {subject.name}
+                      <ArrowRight className="h-4 w-4" />
+                    </span>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         </div>

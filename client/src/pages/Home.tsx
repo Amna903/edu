@@ -555,6 +555,9 @@ export default function Home() {
           <section id="final-cta" className="emu-section emu-final">
             <h2>Ready to Begin? The Diagnostic Is Free.</h2>
             <p>Take the free 40-60 minute diagnostic and find out exactly which subjects and topics you need. No commitment. No payment required.</p>
+            <p style={{ marginTop: 8, marginBottom: 18, color: "rgba(255,255,255,.88)", fontSize: 15 }}>
+              Looking for a grade prediction instead of a gap check? <a href="/olevel-readiness-forecast" style={{ color: "#dbeafe", fontWeight: 700, textDecoration: "underline" }}>View the O-Level Readiness Forecast</a>.
+            </p>
             <div className="emu-final-grid">
               <div className="emu-final-card"><h3>Take the Free Diagnostic</h3><p>Start with a free 40-60 minute subject diagnostic. Full detailed report. No payment required.</p><a href="/diagnostics">Start Free Diagnostic</a></div>
               <div className="emu-final-card"><h3>Explore All Courses</h3><p>Browse all Cambridge O-Level, Pre-O-Level, A-Level and Teacher Training courses.</p><a href="/all-programs">All Courses</a></div>
