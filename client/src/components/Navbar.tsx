@@ -47,6 +47,7 @@ const learnColumns: MegaColumn[] = [
       { label: "O-Level Subjects", href: "/programs/complete-o-level", eyebrow: "10 subjects" },
       { label: "ATP Courses", href: "/programs/atp-courses" },
           { label: "Bridge Courses", href: "/programs/bridge-courses" },
+          { label: "Pakistan Curriculum", href: "/programs/pakistan-curriculum", eyebrow: "Matric · FSc · ECAT" },
           { label: "English Pathway", href: "/programs/english-pathway", eyebrow: "Complete pathway" },
       { label: "Bridge English", href: "/programs/bridge-english" },
       { label: "Bridge Sciences & Economics", href: "/programs/bridge-sciences-economics" },

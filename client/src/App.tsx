@@ -27,6 +27,8 @@ import Portals from "@/pages/Portals";
 import ForSchools from "@/pages/ForSchools";
 import ForSchoolsPartnership from "@/pages/ForSchoolsPartnership";
 import TeacherTraining from "@/pages/TeacherTraining";
+import TeacherCourses from "@/pages/TeacherCourses";
+import MockExams from "@/pages/programs/MockExams";
 import WhyEduMeUp from "@/pages/WhyEduMeUp";
 import EightStepModel from "@/pages/EightStepModel";
 import ATPCourses from "@/pages/programs/ATPCourses";
@@ -39,6 +41,7 @@ import BridgeEnglishPage from "@/pages/programs/BridgeEnglish";
 import BridgeSciencesEconomics from "@/pages/programs/BridgeSciencesEconomics";
 import EnglishMastery from "@/pages/programs/EnglishMastery";
 import EnglishPathway from "@/pages/programs/EnglishPathway";
+import PakistanCurriculum from "@/pages/programs/PakistanCurriculum";
 import PreOLevelVictory from "@/pages/programs/PreOLevelVictory";
 import CompleteOLevel from "@/pages/programs/CompleteOLevel";
 import ExamPrep from "@/pages/programs/ExamPrep";
@@ -106,6 +109,7 @@ function Router() {
       <Route path="/programs/bridge-courses" component={BridgeCourses} />
       <Route path="/programs/bridge-english" component={BridgeEnglishPage} />
       <Route path="/programs/bridge-sciences-economics" component={BridgeSciencesEconomics} />
+      <Route path="/programs/pakistan-curriculum" component={PakistanCurriculum} />
       <Route path="/programs/english-pathway" component={EnglishPathway} />
       <Route path="/programs/english-mastery" component={EnglishMastery} />
       <Route path="/programs/pre-o-level-victory" component={PreOLevelVictory} />
@@ -113,7 +117,8 @@ function Router() {
       <Route path="/programs/must-have-courses" component={MustHaveCoursesPage} />
       <Route path="/programs/complete-o-level" component={CompleteOLevel} />
       <Route path="/programs/exam-prep" component={ExamPrep} />
-      
+      <Route path="/programs/mock-exams" component={MockExams} />
+
       {/* Pakistan Board Programmes - Routes must be before dynamic :slug route */}
       <Route path="/programs/matric" component={Matric} />
       <Route path="/programs/fsc-ics" component={FscIcs} />
@@ -137,7 +142,7 @@ function Router() {
       <Route path="/for-schools" component={ForSchools} />
       <Route path="/for-schools/partnership" component={ForSchoolsPartnership} />
       <Route path="/teacher-training" component={TeacherTraining} />
-      <Route path="/teacher-courses" component={TeacherTraining} />
+      <Route path="/teacher-courses" component={TeacherCourses} />
       <Route path="/why-edumeup" component={WhyEduMeUp} />
       <Route path="/why-edumeup/how-it-works" component={HowItWorks} />
       <Route path="/why-edumeup/8-step-model" component={EightStepModel} />
