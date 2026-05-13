@@ -4,7 +4,7 @@ export const theme = {
       primary: "#2366c9",
       primaryDark: "#1a4fa0",
       primarySoft: "#eef6ff",
-      navy: "#0b3c5d",
+      navy: "#1e3a5f",
       sky: "#4f86e0",
     },
     neutral: {

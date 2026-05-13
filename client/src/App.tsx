@@ -11,6 +11,7 @@ import Research from "@/pages/Research";
 import ForParents from "@/pages/ForParents";
 import ForParentsMain from "@/pages/ForParentsMain";
 import ForStudents from "@/pages/ForStudents";
+import ForTeachers from "@/pages/ForTeachers";
 import Blog from "@/pages/Blog";
 import HowItWorks from "@/pages/HowItWorks";
 import Programs from "@/pages/Programs";
@@ -84,7 +85,7 @@ function Router() {
       <Route path="/for-parents" component={ForParents} />
       <Route path="/for-parents/main" component={ForParentsMain} />
       <Route path="/for-students" component={ForStudents} />
-      <Route path="/for-teachers" component={Tutors} />
+      <Route path="/for-teachers" component={ForTeachers} />
       <Route path="/portals/parents" component={ForParents} />
       <Route path="/portals/students" component={ForStudents} />
       <Route path="/portals/teachers" component={Tutors} />
