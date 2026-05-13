@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "wouter";
 import { ArrowRight, Search } from "lucide-react";
 import { motion } from "framer-motion";
@@ -74,7 +74,7 @@ export default function AllResources() {
             </div>
             <div className="mt-8">
               <Link href="/resources/all">
-                <span className="inline-flex items-center gap-2 rounded-lg bg-[#2366c9] px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700">
+                <span className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-6 py-3 text-sm font-semibold text-white hover:bg-brand-primary-dark">
                   Browse All Resources
                   <ArrowRight className="h-4 w-4" />
                 </span>
@@ -90,13 +90,13 @@ export default function AllResources() {
           <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {resourceCategories.map((category) => (
               <div key={category.title} className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
-                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100 text-[#2366c9]">
+                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100 text-brand-primary">
                   <category.icon className="h-5 w-5" />
                 </div>
                 <h3 className="text-xl font-semibold text-slate-900">{category.title}</h3>
                 <p className="mt-3 text-sm leading-relaxed text-slate-700">{category.description}</p>
                 <Link href={category.href}>
-                  <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[#2366c9] hover:text-blue-700">
+                  <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-brand-primary hover:text-brand-primary-dark">
                     {category.cta}
                     <ArrowRight className="h-4 w-4" />
                   </span>
@@ -118,7 +118,7 @@ export default function AllResources() {
                 onClick={() => setActiveSubject(subject)}
                 className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
                   activeSubject === subject
-                    ? "border-[#2366c9] bg-[#2366c9] text-white"
+                    ? "border-brand-primary bg-brand-primary text-white"
                     : "border-blue-200 bg-white text-slate-900 hover:border-blue-300"
                 }`}
               >
@@ -160,13 +160,13 @@ export default function AllResources() {
           <div className="mx-auto max-w-5xl rounded-2xl border border-blue-100 bg-white p-6 shadow-sm md:p-8">
             <div className="grid gap-4 sm:grid-cols-2">
               <Link href="/programs/ai-diagnostic">
-                <span className="flex items-center justify-between rounded-xl bg-[#2366c9] px-5 py-4 text-sm font-semibold text-white hover:bg-blue-700">
+                <span className="flex items-center justify-between rounded-xl bg-brand-primary px-5 py-4 text-sm font-semibold text-white hover:bg-brand-primary-dark">
                   Start Free Diagnostic
                   <ArrowRight className="h-4 w-4" />
                 </span>
               </Link>
               <Link href="/programs">
-                <span className="flex items-center justify-between rounded-xl border border-blue-200 bg-white px-5 py-4 text-sm font-semibold text-slate-900 hover:border-blue-300 hover:text-[#2366c9]">
+                <span className="flex items-center justify-between rounded-xl border border-blue-200 bg-white px-5 py-4 text-sm font-semibold text-slate-900 hover:border-blue-300 hover:text-brand-primary">
                   Explore Programmes
                   <ArrowRight className="h-4 w-4" />
                 </span>

@@ -4,7 +4,6 @@ import { PageSidebar } from "@/components/PageSidebar";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ui } from "@/theme";
 import {
   ArrowRight,
   Brain,
@@ -75,7 +74,7 @@ const phase1Steps = [
     research: "Bloom (1984) — Mastery Learning & 2 Sigma Problem (d=2.0). VanLehn (2011) — Intelligent Tutoring Systems.",
     popup:
       "Bloom's research showed that starting instruction from a student's actual knowledge level — not an assumed level — produces outcomes 2 standard deviations above conventional instruction. This diagnostic is the foundation of the entire personalised learning architecture.",
-    color: "bg-[#2366c9]",
+    color: "bg-brand-primary",
   },
   {
     number: 2,
@@ -90,7 +89,7 @@ const phase1Steps = [
     research: "Vygotsky (1978) — Zone of Proximal Development (ZPD). Black & Wiliam (1998) — Formative Assessment.",
     popup:
       "Most students who struggle in Cambridge exams have compounding gaps — a concept from Grade 7 that was never fully understood is still missing in Grade 10, silently undermining every subsequent topic. EduMeUp's remedial step eliminates this root cause before it can compound further.",
-    color: "bg-[#2366c9]",
+    color: "bg-brand-primary",
   },
   {
     number: 3,
@@ -105,7 +104,7 @@ const phase1Steps = [
     research: "Vygotsky (1978) — Scaffolding and ZPD. Freeman et al. (2014) — Active Learning meta-analysis.",
     popup:
       "Bridge courses are a must-have, not optional. Students who skip this step and move directly into O-Level content without the right foundations typically regress, requiring more remediation later. The bridge is the investment that makes Phase 2 efficient.",
-    color: "bg-[#2366c9]",
+    color: "bg-brand-primary",
   },
 ];
 
@@ -123,7 +122,7 @@ const phase2Steps = [
     research: "Paivio (1971) — Dual Coding Theory (2× memory consolidation). Mayer (2009) — Multimedia Learning. Freeman et al. (2014) — Active Learning meta-analysis.",
     popup:
       "The distinction between interactive H5P learning and passive video is not cosmetic. Research consistently shows that requiring active retrieval during learning — not after it — produces dramatically higher retention. EduMeUp courses are built around this finding from the ground up.",
-    color: "bg-[#1e1b4b]",
+    color: "bg-brand-navy",
   },
   {
     number: 5,
@@ -138,7 +137,7 @@ const phase2Steps = [
     research: "Bransford et al. (2000) — Transfer of Learning. Hattie (2009) — Visible Learning (deliberate practice).",
     popup:
       "Most students see past papers for the first time in the final weeks before an exam — when it is too late to correct the conceptual misunderstandings the papers reveal. EduMeUp integrates past papers from the beginning because transfer of learning must be practised, not crammed.",
-    color: "bg-[#1e1b4b]",
+    color: "bg-brand-navy",
   },
   {
     number: 6,
@@ -153,7 +152,7 @@ const phase2Steps = [
     research: "Roediger & Karpicke (2006) — Retrieval Practice Effect. Cepeda et al. (2006) — Spacing Effect. Bjork & Bjork (2011) — Desirable Difficulties.",
     popup:
       "Spaced retrieval is the most powerful evidence-based tool for defeating the Ebbinghaus Forgetting Curve. The critical difference in EduMeUp is that retrieval is automated and individually calibrated — students do not need to remember to revise. The system tracks, schedules, and delivers.",
-    color: "bg-[#1e1b4b]",
+    color: "bg-brand-navy",
   },
   {
     number: 7,
@@ -191,7 +190,7 @@ const stakeholders = [
   {
     icon: "🎓",
     title: "Students",
-    color: "border-l-[#2366c9]",
+    color: "border-l-brand-primary",
     bg: "bg-blue-50/60",
     steps: [
       "Step 1: Take the AI Diagnostic — know exactly what to focus on and what to skip",
@@ -207,7 +206,7 @@ const stakeholders = [
   {
     icon: "📋",
     title: "Teachers",
-    color: "border-l-[#1e1b4b]",
+    color: "border-l-brand-navy",
     bg: "bg-slate-50",
     steps: [
       "Diagnostic generates a detailed class gap report — exact weak concepts by AO level",
@@ -320,25 +319,25 @@ function StepCard({ step, index }: { step: any; index: number }) {
 
       {/* Body */}
       <div className="bg-blue-50/60 rounded-b-[2rem] p-8 border-4 border-white hover:shadow-2xl transition-all duration-300">
-        <p className="text-[14px] text-slate-700 leading-relaxed mb-6 font-medium">{step.desc}</p>
+        <p className="text-base text-slate-700 leading-relaxed mb-6 font-medium">{step.desc}</p>
 
         <div className="grid md:grid-cols-3 gap-4 mb-6">
           <div className="bg-white rounded-xl p-4 border border-blue-100">
-            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#2366c9] mb-2">Cambridge AI Tutor</p>
+            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-brand-primary mb-2">Cambridge AI Tutor</p>
             <p className="text-[13px] text-slate-700 leading-relaxed">{step.aiTutor}</p>
           </div>
           <div className="bg-white rounded-xl p-4 border border-blue-100">
-            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#2366c9] mb-2">Cambridge Examiner Link</p>
+            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-brand-primary mb-2">Cambridge Examiner Link</p>
             <p className="text-[13px] text-slate-700 leading-relaxed">{step.examinerLink}</p>
           </div>
           <div className="bg-white rounded-xl p-4 border border-blue-100">
-            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#2366c9] mb-2">Research</p>
+            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-brand-primary mb-2">Research</p>
             <p className="text-[13px] text-slate-600 italic leading-relaxed">{step.research}</p>
           </div>
         </div>
 
         {/* Hover popup strip */}
-        <div className="border-l-4 border-[#2366c9] bg-white/80 rounded-r-xl p-4">
+        <div className="border-l-4 border-brand-primary bg-white/80 rounded-r-xl p-4">
           <p className="text-[13px] text-slate-700 leading-relaxed">{step.popup}</p>
         </div>
       </div>
@@ -350,7 +349,7 @@ function StepCard({ step, index }: { step: any; index: number }) {
 
 const sidebarLinks = [
   { label: "The 10X Difference", href: "#hero" },
-  { label: "Typical vs EduMeUp", href: "#two-systems comparison" },
+  { label: "Typical vs EduMeUp", href: "#two-systems-comparison" },
   { label: "The 8-Step Method", href: "#step-1" },
   { label: "— Step 1: Diagnostic", href: "#step-1" },
   { label: "— Step 2: Remedial", href: "#step-2" },
@@ -369,7 +368,7 @@ const sidebarLinks = [
 
 export default function HowItWorks() {
   useEffect(() => {
-    const previousTitle = document.title; // eslint-disable-line @typescript-eslint/no-unused-vars
+    const previousTitle = document.title;
     const metaDescription = document.querySelector('meta[name="description"]');
     const previousDescription = metaDescription?.getAttribute("content") || "";
 
@@ -406,7 +405,7 @@ export default function HowItWorks() {
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className={ui.sections.brand + " rounded-[2rem] md:rounded-[3rem] p-8 md:p-12 shadow-2xl"}
+                    className="bg-brand-primary text-white relative overflow-hidden rounded-[2rem] md:rounded-[3rem] p-8 md:p-12 shadow-2xl"
                   >
                     <div className="absolute -top-20 -right-16 h-56 w-56 rounded-full bg-white/10 blur-3xl" />
                     <div className="relative z-10 max-w-2xl space-y-6">
@@ -424,12 +423,12 @@ export default function HowItWorks() {
                       </p>
                       <div className="flex flex-col sm:flex-row gap-4 pt-2">
                         <Link href="/programs/ai-diagnostic">
-                          <Button className={`${ui.buttons.brandLight} font-semibold px-6 py-3 rounded-xl text-[14px] shadow-md flex items-center gap-2`}>
+                          <Button className="bg-white text-brand-primary hover:bg-blue-50 font-semibold px-6 py-3 rounded-xl text-base shadow-md flex items-center gap-2">
                             Start Your Free Diagnostic <ArrowRight className="h-4 w-4" />
                           </Button>
                         </Link>
                         <a href="#step-1">
-                          <Button variant="outline" className="border border-white/35 text-white hover:bg-white/10 font-semibold px-6 py-3 rounded-xl text-[14px] flex items-center gap-2">
+                          <Button variant="outline" className="border border-white/35 text-white hover:bg-white/10 font-semibold px-6 py-3 rounded-xl text-base flex items-center gap-2">
                             See the 8 Steps <ArrowRight className="h-4 w-4" />
                           </Button>
                         </a>
@@ -442,13 +441,13 @@ export default function HowItWorks() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
-                    className={ui.cards.standard + " rounded-[2rem] md:rounded-[3rem] p-8 md:p-10 shadow-lg"}
+                    className="rounded-2xl border border-slate-200 bg-white shadow-lg relative p-8 md:p-10"
                   >
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(35,102,201,0.18),transparent_40%),radial-gradient(circle_at_bottom_left,rgba(79,134,224,0.16),transparent_35%)]" />
                     <div className="relative z-10 flex h-full flex-col justify-between gap-8">
                       <div>
-                        <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-4">System Overview</p>
-                        <div className="bg-gradient-to-br from-[#2366c9] via-[#4f86e0] to-[#eef6ff] p-8 rounded-[1.5rem] text-white text-center space-y-2">
+                        <p className="text-[11px] font-black uppercase tracking-[0.28em] text-brand-primary mb-4">System Overview</p>
+                        <div className="bg-gradient-to-br from-brand-primary via-brand-sky to-blue-50 p-8 rounded-[1.5rem] text-white text-center space-y-2">
                           <p className="text-sm font-semibold text-blue-100 uppercase tracking-wider">The Mastery Cycle</p>
                           <p className="text-[13px] text-white/80 leading-relaxed">
                             Diagnose → Repair → Bridge → Learn → Practise → Retrieve → Assess → Simulate →{" "}
@@ -462,8 +461,8 @@ export default function HowItWorks() {
                           { stat: "85%+", label: "Retention" },
                           { stat: "271%", label: "ROI" },
                         ].map((item) => (
-                          <div key={item.stat} className={ui.cards.standard + " rounded-2xl p-4 text-center shadow-sm"}>
-                            <p className="text-2xl font-semibold text-[#2366c9]">{item.stat}</p>
+                          <div key={item.stat} className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4 text-center">
+                            <p className="text-2xl font-semibold text-brand-primary">{item.stat}</p>
                             <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 mt-1">{item.label}</p>
                           </div>
                         ))}
@@ -477,10 +476,10 @@ export default function HowItWorks() {
             <main className="w-full min-w-0 space-y-0">
 
               {/* ═══════════════════════════════ SECTION 2: TWO SYSTEMS ══ */}
-              <section id="two-systems comparison" className="py-16 md:py-24 bg-[#FFF8EC] -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
+              <section id="two-systems-comparison" className="py-16 md:py-24 bg-[#FFF8EC] -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
                 <div className="w-full max-w-6xl mx-auto">
                   <div className="mb-10">
-                    <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">
+                    <p className="text-[11px] font-black uppercase tracking-[0.28em] text-brand-primary mb-3">
                       The Difference Is Not Cosmetic — It Is Structural
                     </p>
                     <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-6">
@@ -499,7 +498,7 @@ export default function HowItWorks() {
                           <th className="p-4 text-left font-semibold text-sm bg-red-500/90 text-white rounded-tl-[1.5rem]">
                             Typical EdTech / Tutoring — 5–10% knowledge retention
                           </th>
-                          <th className="p-4 text-left font-semibold text-sm bg-[#2366c9] text-white rounded-tr-[1.5rem]">
+                          <th className="p-4 text-left font-semibold text-sm bg-brand-primary text-white rounded-tr-[1.5rem]">
                             EduMeUp 8-Step Mastery Cycle — 50–75%+ durable knowledge retention
                           </th>
                         </tr>
@@ -507,10 +506,10 @@ export default function HowItWorks() {
                       <tbody>
                         {comparisonRows.map((row, i) => (
                           <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-slate-50"}>
-                            <td className="p-4 border-t border-slate-100 text-[14px] text-slate-500 line-through decoration-red-300 decoration-2">
+                            <td className="p-4 border-t border-slate-100 text-base text-slate-500 line-through decoration-red-300 decoration-2">
                               {row.typical}
                             </td>
-                            <td className="p-4 border-t border-blue-100 text-[14px] text-slate-900 font-semibold">
+                            <td className="p-4 border-t border-blue-100 text-base text-slate-900 font-semibold">
                               {row.edumeup}
                             </td>
                           </tr>
@@ -520,7 +519,7 @@ export default function HowItWorks() {
                   </div>
 
                   {/* Outcome strip */}
-                  <div className={ui.sections.brand + " p-6 rounded-[1.5rem] text-center"}>
+                  <div className="bg-brand-primary text-white relative overflow-hidden p-6 rounded-[1.5rem] text-center">
                     <p className="text-white font-semibold text-lg">
                       Typical EdTech: 5–10% retention →→→ EduMeUp 8-Step System: 50–75%+ retention
                     </p>
@@ -530,10 +529,10 @@ export default function HowItWorks() {
               </section>
 
               {/* ═════════════════════════════════════ SECTION 3: 8 STEPS ══ */}
-              <section id="step-1" className={ui.sections.softBlue + " py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0"}>
+              <section id="step-1" className="bg-blue-50/20 py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
                 <div className="w-full max-w-6xl mx-auto">
                   <div className="text-center mb-10 md:mb-16">
-                    <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">
+                    <p className="text-[11px] font-black uppercase tracking-[0.28em] text-brand-primary mb-3">
                       The Method Behind the Results
                     </p>
                     <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-4">
@@ -546,7 +545,7 @@ export default function HowItWorks() {
 
                   {/* Phase 1 */}
                   <div className="mb-12" id="phase1-diagnostic">
-                    <div className="bg-[#2366c9] text-white rounded-2xl px-6 py-4 mb-6 inline-block">
+                    <div className="bg-brand-primary text-white rounded-2xl px-6 py-4 mb-6 inline-block">
                       <h3 className="text-lg font-semibold text-white">Phase 1 — Diagnostic &amp; Remedial</h3>
                       <p className="text-blue-200 text-sm">Steps 1–3 | Goal: Know exactly what to fix before teaching a single new concept</p>
                     </div>
@@ -561,7 +560,7 @@ export default function HowItWorks() {
 
                   {/* Phase 2 */}
                   <div>
-                    <div className="bg-[#1e1b4b] text-white rounded-2xl px-6 py-4 mb-6 inline-block">
+                    <div className="bg-brand-navy text-white rounded-2xl px-6 py-4 mb-6 inline-block">
                       <h3 className="text-lg font-semibold text-white">Phase 2 — Systematic Mastery</h3>
                       <p className="text-blue-200 text-sm">Steps 4–8 | Goal: Active learning → long-term retention → Cambridge exam readiness</p>
                     </div>
@@ -580,10 +579,10 @@ export default function HowItWorks() {
               <section className="py-10 bg-white -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
                 <div className="w-full max-w-6xl mx-auto text-center">
                   <h2 className="text-2xl md:text-3xl font-semibold text-slate-900 mb-3">The Cycle at a Glance</h2>
-                  <div className="flex flex-wrap justify-center gap-2 items-center text-[14px] font-medium text-slate-700">
+                  <div className="flex flex-wrap justify-center gap-2 items-center text-base font-medium text-slate-700">
                     {["Diagnose", "Repair", "Bridge", "Learn", "Practise", "Retrieve", "Assess", "Correct", "Simulate"].map((s, i, arr) => (
                       <span key={s} className="flex items-center gap-2">
-                        <span className={`px-3 py-1 rounded-full text-white text-xs font-bold ${i < 3 ? "bg-[#2366c9]" : i < 6 ? "bg-[#1e1b4b]" : i < 8 ? "bg-slate-600" : "bg-yellow-500"}`}>
+                        <span className={`px-3 py-1 rounded-full text-white text-xs font-bold ${i < 3 ? "bg-brand-primary" : i < 6 ? "bg-brand-navy" : i < 8 ? "bg-slate-600" : "bg-yellow-500"}`}>
                           {s}
                         </span>
                         {i < arr.length - 1 && <ArrowRight className="h-3 w-3 text-slate-400" />}
@@ -592,7 +591,7 @@ export default function HowItWorks() {
                     <ArrowRight className="h-3 w-3 text-slate-400" />
                     <span className="px-3 py-1 rounded-full text-white text-xs font-bold bg-yellow-500">MASTERY</span>
                   </div>
-                  <p className="mt-3 text-[14px] text-slate-500">Each step creates the conditions for the next. The sequence is the product.</p>
+                  <p className="mt-3 text-base text-slate-500">Each step creates the conditions for the next. The sequence is the product.</p>
                 </div>
               </section>
 
@@ -600,7 +599,7 @@ export default function HowItWorks() {
               <section id="course-types" className="py-16 md:py-24 bg-[#FFF8EC] -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
                 <div className="w-full max-w-6xl mx-auto">
                   <div className="text-center mb-10 md:mb-16">
-                    <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">Understanding the Two Course Categories</p>
+                    <p className="text-[11px] font-black uppercase tracking-[0.28em] text-brand-primary mb-3">Understanding the Two Course Categories</p>
                     <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-4">
                       Not All EduMeUp Courses Are the Same — By Design.
                     </h2>
@@ -610,28 +609,28 @@ export default function HowItWorks() {
                   </div>
 
                   <div className="space-y-6">
-                    <div className="bg-white rounded-[2rem] p-8 border-l-4 border-l-[#2366c9] shadow-sm">
+                    <div className="bg-white rounded-[2rem] p-8 border-l-4 border-l-brand-primary shadow-sm">
                       <div className="flex items-center gap-3 mb-4">
-                        <BookOpen className="h-6 w-6 text-[#2366c9]" />
+                        <BookOpen className="h-6 w-6 text-brand-primary" />
                         <h3 className="text-2xl font-semibold text-slate-900">Must-Have &amp; Bridge Courses</h3>
                       </div>
                       <p className="text-[15px] text-slate-700 leading-relaxed mb-4">
                         Essential prerequisite courses — not full subject preparation. They cover foundational knowledge, skills, and thinking frameworks that students must have before they can succeed in O-Level subject courses. They correspond to Steps 2 and 3 of the 8-step cycle.
                       </p>
-                      <p className="text-[14px] text-slate-500">
+                      <p className="text-base text-slate-500">
                         <span className="font-semibold text-slate-700">Examples:</span> Pre-O-Level mathematics foundations · English academic language and command word skills · Scientific literacy for IGCSE sciences · Study skills and examination technique preparation · Conceptual bridging for students transitioning from other curricula
                       </p>
                     </div>
 
-                    <div className="bg-white rounded-[2rem] p-8 border-l-4 border-l-[#1e1b4b] shadow-sm">
+                    <div className="bg-white rounded-[2rem] p-8 border-l-4 border-l-brand-navy shadow-sm">
                       <div className="flex items-center gap-3 mb-4">
-                        <School className="h-6 w-6 text-[#1e1b4b]" />
+                        <School className="h-6 w-6 text-brand-navy" />
                         <h3 className="text-2xl font-semibold text-slate-900">Subject Courses</h3>
                       </div>
                       <p className="text-[15px] text-slate-700 leading-relaxed mb-4">
                         Complete, systematic O-Level subject preparation courses — covering the full Cambridge syllabus for each subject, chapter by chapter, topic by topic, assessment objective by assessment objective. Built around all 8 steps of the mastery cycle.
                       </p>
-                      <p className="text-[14px] text-slate-500">
+                      <p className="text-base text-slate-500">
                         <span className="font-semibold text-slate-700">Available subjects:</span> Physics · Chemistry · Biology · Mathematics · Additional Mathematics · Economics · Business Studies · English Language · English Literature · Computer Science · and more
                       </p>
                     </div>
@@ -639,7 +638,7 @@ export default function HowItWorks() {
 
                   <div className="text-center mt-8">
                     <Link href="/courses">
-                      <Button className="bg-[#2366c9] hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl text-[14px] flex items-center gap-2 mx-auto">
+                      <Button className="bg-brand-primary hover:bg-brand-primary/90 text-white font-semibold px-6 py-3 rounded-xl text-base flex items-center gap-2 mx-auto">
                         Browse All Courses <ArrowRight className="h-4 w-4" />
                       </Button>
                     </Link>
@@ -648,10 +647,10 @@ export default function HowItWorks() {
               </section>
 
               {/* ════════════════════════════════ SECTION 5: STAKEHOLDERS ══ */}
-              <section id="stakeholders" className={ui.sections.softBlue + " py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0"}>
+              <section id="stakeholders" className="bg-blue-50/20 py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
                 <div className="w-full max-w-6xl mx-auto">
                   <div className="text-center mb-10 md:mb-16">
-                    <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">The System Serves Everyone — Simultaneously</p>
+                    <p className="text-[11px] font-black uppercase tracking-[0.28em] text-brand-primary mb-3">The System Serves Everyone — Simultaneously</p>
                     <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-4">
                       One System. Four Stakeholder Experiences.
                     </h2>
@@ -669,8 +668,8 @@ export default function HowItWorks() {
                         </div>
                         <ul className="space-y-3">
                           {s.steps.map((step, j) => (
-                            <li key={j} className="flex items-start gap-3 text-[14px] font-medium text-slate-700">
-                              <ArrowRight className="h-4 w-4 text-[#2366c9] mt-0.5 flex-shrink-0" />
+                            <li key={j} className="flex items-start gap-3 text-base font-medium text-slate-700">
+                              <ArrowRight className="h-4 w-4 text-brand-primary mt-0.5 flex-shrink-0" />
                               {step}
                             </li>
                           ))}
@@ -685,7 +684,7 @@ export default function HowItWorks() {
               <section id="research" className="py-16 md:py-24 bg-white -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
                 <div className="w-full max-w-6xl mx-auto">
                   <div className="text-center mb-10 md:mb-16">
-                    <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">The Evidence</p>
+                    <p className="text-[11px] font-black uppercase tracking-[0.28em] text-brand-primary mb-3">The Evidence</p>
                     <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-4">
                       Six Foundational Studies — Implemented, Not Cited.
                     </h2>
@@ -700,9 +699,9 @@ export default function HowItWorks() {
                         key={i}
                         className="group bg-white rounded-[1.5rem] p-6 border border-blue-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-default relative overflow-hidden"
                       >
-                        <div className="h-1 bg-[#2366c9] rounded-full w-12 mb-4" />
-                        <p className="text-lg font-bold text-[#2366c9]">{study.author} ({study.year})</p>
-                        <p className="text-[14px] font-semibold text-slate-900 mb-2">{study.study}</p>
+                        <div className="h-1 bg-brand-primary rounded-full w-12 mb-4" />
+                        <p className="text-lg font-bold text-brand-primary">{study.author} ({study.year})</p>
+                        <p className="text-base font-semibold text-slate-900 mb-2">{study.study}</p>
                         <p className="text-[12px] text-slate-500 mb-3">Implemented in {study.step}</p>
                         <p className="text-[13px] text-slate-600 leading-relaxed">{study.desc}</p>
                       </div>
@@ -710,7 +709,7 @@ export default function HowItWorks() {
                   </div>
 
                   <div className="text-center mt-8">
-                    <a href="/research-rnd" className="inline-flex items-center gap-2 text-[14px] font-semibold text-[#2366c9] hover:text-blue-700">
+                    <a href="/research-rnd" className="inline-flex items-center gap-2 text-base font-semibold text-brand-primary hover:text-brand-primary/80">
                       See the Full Research Foundation <ArrowRight className="h-4 w-4" />
                     </a>
                   </div>
@@ -718,7 +717,7 @@ export default function HowItWorks() {
               </section>
 
               {/* ═══════════════════════════════════════ SECTION 7: OUTCOMES ══ */}
-              <section id="outcomes" className={ui.sections.softBlue + " py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0"}>
+              <section id="outcomes" className="bg-blue-50/20 py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
                 <div className="w-full max-w-6xl mx-auto">
                   <div className="text-center mb-10 md:mb-16">
                     <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-4">
@@ -729,7 +728,7 @@ export default function HowItWorks() {
                     </p>
                   </div>
 
-                  <div className={ui.sections.brand + " p-12 rounded-[3rem] mb-8"}>
+                  <div className="bg-brand-primary text-white relative overflow-hidden p-12 rounded-[3rem] mb-8">
                     <div className="grid md:grid-cols-3 gap-8 text-center">
                       {[
                         { stat: "91%", label: "Exam pass rate (vs. approximately 35% traditional average)" },
@@ -750,7 +749,7 @@ export default function HowItWorks() {
               </section>
 
               {/* ═══════════════════════════════════════════ FINAL CTA SECTION ══ */}
-              <section id="get-started" className={ui.sections.brand + " py-20 md:py-32 relative overflow-hidden"}>
+              <section id="get-started" className="bg-brand-primary text-white relative overflow-hidden py-20 md:py-32">
                 <div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-blue-600 opacity-30 blur-3xl" />
                 <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-blue-600 opacity-30 blur-3xl" />
                 <div className="container-custom max-w-6xl mx-auto text-center relative z-10">
@@ -762,27 +761,27 @@ export default function HowItWorks() {
                   </p>
 
                   <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-12">
-                    <div className="bg-[#2366c9] border-4 border-white/20 rounded-[2rem] p-8 text-left flex flex-col shadow-2xl md:scale-105">
+                    <div className="bg-brand-primary border-4 border-white/20 rounded-[2rem] p-8 text-left flex flex-col shadow-2xl md:scale-105">
                       <h3 className="text-xl font-semibold text-white mb-2">Start Your Free Diagnostic</h3>
                       <p className="text-blue-200 text-sm font-semibold mb-4">~90 minutes. No credit card required.</p>
-                      <p className="text-white/80 text-[14px] leading-relaxed mb-6 flex-1">
+                      <p className="text-white/80 text-base leading-relaxed mb-6 flex-1">
                         Our AI identifies your exact sub-skill gaps and produces a personalised learning plan before spending a single dollar on courses.
                       </p>
                       <Link href="/programs/ai-diagnostic">
-                        <Button className="w-full bg-white text-[#2366c9] hover:bg-blue-50 font-semibold py-3 rounded-xl text-[14px] flex items-center justify-center gap-2">
+                        <Button className="w-full bg-white text-brand-primary hover:bg-blue-50 font-semibold py-3 rounded-xl text-base flex items-center justify-center gap-2">
                           Start Free Diagnostic <ArrowRight className="h-4 w-4" />
                         </Button>
                       </Link>
                     </div>
 
-                    <div className="bg-white border-4 border-[#2366c9] rounded-[2rem] p-8 text-left flex flex-col shadow-xl">
+                    <div className="bg-white border-4 border-brand-primary rounded-[2rem] p-8 text-left flex flex-col shadow-xl">
                       <h3 className="text-xl font-semibold text-slate-900 mb-2">Browse All Courses</h3>
-                      <p className="text-[#2366c9] text-sm font-semibold mb-4">O-Level subjects. Bridge courses. Must-have courses.</p>
-                      <p className="text-slate-700 text-[14px] leading-relaxed mb-6 flex-1">
+                      <p className="text-brand-primary text-sm font-semibold mb-4">O-Level subjects. Bridge courses. Must-have courses.</p>
+                      <p className="text-slate-700 text-base leading-relaxed mb-6 flex-1">
                         Explore the full course library — subject courses, bridge courses, and free modules.
                       </p>
                       <Link href="/courses">
-                        <Button variant="outline" className="w-full border-2 border-[#2366c9] text-[#2366c9] hover:bg-[#2366c9] hover:text-white font-semibold py-3 rounded-xl text-[14px] flex items-center justify-center gap-2">
+                        <Button variant="outline" className="w-full border-2 border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white font-semibold py-3 rounded-xl text-base flex items-center justify-center gap-2">
                           Browse Courses <ArrowRight className="h-4 w-4" />
                         </Button>
                       </Link>
@@ -791,45 +790,19 @@ export default function HowItWorks() {
                     <div className="bg-slate-100 rounded-[2rem] p-8 text-left flex flex-col shadow-sm">
                       <h3 className="text-xl font-semibold text-slate-900 mb-2">Book a Free Consultation</h3>
                       <p className="text-slate-500 text-sm font-semibold mb-4">30 minutes with a Cambridge expert. No obligation.</p>
-                      <p className="text-slate-600 text-[14px] leading-relaxed mb-6 flex-1">
+                      <p className="text-slate-600 text-base leading-relaxed mb-6 flex-1">
                         Schools, parents, and students can book a free consultation to understand how the 8-step system applies to their specific context.
                       </p>
                       <InquiryDialog
                         defaultType="consultation"
                         title="Book Free Consultation"
                         trigger={
-                          <Button variant="outline" className="w-full border-2 border-slate-300 text-slate-700 hover:bg-slate-200 font-semibold py-3 rounded-xl text-[14px] flex items-center justify-center gap-2">
-                            Book Free Consultation <ArrowRight className="h-4 w-4" />
+                          <Button className="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3 rounded-xl text-base flex items-center justify-center gap-2">
+                            Contact Us <ArrowRight className="h-4 w-4" />
                           </Button>
                         }
                       />
                     </div>
-                  </div>
-
-                  {/* Trust strip */}
-                  <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-blue-200 font-medium">
-                    {[
-                      "🎓 2,000+ Students",
-                      "🌍 25+ Countries",
-                      "🏛 University-Validated (3 years)",
-                      "📊 91% Pass Rate",
-                      "🔒 30-Day Money-Back Guarantee",
-                      "📞 24/7 Cambridge Expert Support",
-                    ].map((item, i) => (
-                      <span key={i}>{item}</span>
-                    ))}
-                  </div>
-                </div>
-              </section>
-
-              {/* ─── References strip ─── */}
-              <section className="py-10 bg-white border-t border-blue-100">
-                <div className="container-custom max-w-4xl mx-auto">
-                  <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-4">Research Foundation</h3>
-                  <div className="flex flex-wrap gap-x-8 gap-y-2 text-xs text-slate-500">
-                    {["Black & Wiliam (1998)", "Bloom (1984)", "Freeman et al. (2014)", "Roediger & Karpicke (2006)", "Hattie & Timperley (2007)", "Bjork & Bjork (2011)", "Vygotsky (1978)", "Paivio (1971)", "Mayer (2009)", "Cepeda et al. (2006)"].map((r) => (
-                      <span key={r}>{r}</span>
-                    ))}
                   </div>
                 </div>
               </section>

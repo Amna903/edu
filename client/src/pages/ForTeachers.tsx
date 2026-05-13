@@ -36,7 +36,7 @@ import { Layout as MainLayout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { theme, ui } from "@/theme";
+
 
 const secondaryNavLinks = [
   { label: "Overview", href: "#overview" },
@@ -303,13 +303,7 @@ export default function ForTeachers() {
   return (
     <MainLayout>
       {/* S1 — Hero Banner */}
-      <section 
-        id="overview" 
-        className="py-24 px-6 md:px-12 relative overflow-hidden min-h-[320px] md:min-h-[420px] flex items-center"
-        style={{ 
-          backgroundColor: theme.colors.brand.navy
-        }}
-      >
+      <section className="py-24 px-6 md:px-12 relative overflow-hidden min-h-[320px] md:min-h-[420px] flex items-center bg-brand-navy">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-12 relative z-10 w-full">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -317,13 +311,13 @@ export default function ForTeachers() {
             transition={{ duration: 0.6 }}
             className="flex-1 space-y-8"
           >
-            <div className={ui.pills.brand}>
+            <div className="inline-flex rounded-full border border-white/10 bg-brand-primary px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white">
               The Professional Home for Teachers
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold leading-tight tracking-tight text-white">
               Teach Smarter. <br />
               Grow Further. <br />
-              <span className={`text-[${theme.colors.brand.primary}]`}>Earn More.</span>
+              <span className="text-brand-primary">Earn More.</span>
             </h1>
             <p className="text-xl md:text-2xl text-blue-100 max-w-3xl leading-relaxed font-medium">
               Whether you teach in a school or on your own terms — EduMeUp gives you the training, tools, students, and recognition to reach your full potential as an educator.
@@ -331,21 +325,21 @@ export default function ForTeachers() {
             <div className="flex flex-col sm:flex-row flex-wrap gap-4">
               <Button 
                 onClick={() => scrollTo("courses-strip")}
-                className={`w-full sm:w-auto px-8 h-[60px] md:h-[72px] rounded-2xl text-lg font-bold shadow-lg ${ui.buttons.brand}`}
+                className="w-full sm:w-auto px-8 h-[60px] md:h-[72px] rounded-2xl text-lg font-bold bg-brand-primary hover:bg-brand-primary-dark text-white"
               >
                 Explore Training Courses →
               </Button>
               <Button 
                 onClick={() => scrollTo("independent-teachers")}
                 variant="outline"
-                className={`w-full sm:w-auto px-8 h-[60px] md:h-[72px] rounded-2xl text-lg font-bold ${ui.buttons.brandOutline}`}
+                className="w-full sm:w-auto px-8 h-[60px] md:h-[72px] rounded-2xl text-lg font-bold border border-white/30 text-white hover:bg-white/10"
               >
                 Apply to Teach on EduMeUp
               </Button>
               <Link href="/contact" className="w-full sm:w-auto">
                 <Button 
                   variant="outline"
-                  className={`w-full px-8 h-[60px] md:h-[72px] rounded-2xl text-lg font-bold ${ui.buttons.brandOutline}`}
+                  className="w-full px-8 h-[60px] md:h-[72px] rounded-2xl text-lg font-bold border border-white/30 text-white hover:bg-white/10"
                 >
                   Talk to Us
                 </Button>
@@ -353,13 +347,13 @@ export default function ForTeachers() {
             </div>
             
             <div className="flex flex-wrap gap-4 md:gap-6 pt-4 border-t border-white/10">
-              <div className="flex items-center gap-2 text-blue-200 text-[10px] md:text-sm font-bold uppercase tracking-widest">
+              <div className="flex items-center gap-2 text-blue-200 text-xs md:text-sm font-bold uppercase tracking-widest">
                 <CheckCircle2 className="w-3 h-3 md:w-4 h-4" /> Capacity Building
               </div>
-              <div className="flex items-center gap-2 text-blue-200 text-[10px] md:text-sm font-bold uppercase tracking-widest">
+              <div className="flex items-center gap-2 text-blue-200 text-xs md:text-sm font-bold uppercase tracking-widest">
                 <CheckCircle2 className="w-3 h-3 md:w-4 h-4" /> Professional Credibility
               </div>
-              <div className="flex items-center gap-2 text-blue-200 text-[10px] md:text-sm font-bold uppercase tracking-widest">
+              <div className="flex items-center gap-2 text-blue-200 text-xs md:text-sm font-bold uppercase tracking-widest">
                 <CheckCircle2 className="w-3 h-3 md:w-4 h-4" /> Global Income Access
               </div>
             </div>
@@ -367,26 +361,26 @@ export default function ForTeachers() {
         </div>
         
         {/* Brand accent line at bottom */}
-        <div className={`absolute bottom-0 left-0 w-full h-1.5 bg-[${theme.colors.brand.primary}]`}></div>
+        <div className="absolute bottom-0 left-0 w-full h-1.5 bg-brand-primary"></div>
       </section>
 
       {/* Trust Strip Below Hero */}
-      <div className={`bg-[${theme.colors.neutral.surfaceAlt}] border-b border-slate-200 h-auto md:h-[60px] flex items-center`}>
+      <div className="bg-neutral-surface-alt border-b border-slate-200 h-auto md:h-[60px] flex items-center">
         <div className="max-w-7xl mx-auto px-6 py-4 md:py-0 flex flex-wrap justify-center gap-x-8 gap-y-3">
-          <div className="flex items-center text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-widest whitespace-nowrap">
-            <Target className={`w-4 h-4 mr-2 text-[${theme.colors.brand.primary}]`} />
+          <div className="flex items-center text-xs md:text-xs font-bold text-slate-500 uppercase tracking-widest whitespace-nowrap">
+            <Target className="w-4 h-4 mr-2 text-brand-primary" />
             T1–T6 Training Pathway
           </div>
-          <div className="flex items-center text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-widest whitespace-nowrap">
-            <Award className={`w-4 h-4 mr-2 text-[${theme.colors.brand.primary}]`} />
+          <div className="flex items-center text-xs md:text-xs font-bold text-slate-500 uppercase tracking-widest whitespace-nowrap">
+            <Award className="w-4 h-4 mr-2 text-brand-primary" />
             CCTE Certificate Issued
           </div>
-          <div className="flex items-center text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-widest whitespace-nowrap">
-            <Clock className={`w-4 h-4 mr-2 text-[${theme.colors.brand.primary}]`} />
+          <div className="flex items-center text-xs md:text-xs font-bold text-slate-500 uppercase tracking-widest whitespace-nowrap">
+            <Clock className="w-4 h-4 mr-2 text-brand-primary" />
             7 CPD Hours per Workshop
           </div>
-          <div className="flex items-center text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-widest whitespace-nowrap">
-            <Globe className={`w-4 h-4 mr-2 text-[${theme.colors.brand.primary}]`} />
+          <div className="flex items-center text-xs md:text-xs font-bold text-slate-500 uppercase tracking-widest whitespace-nowrap">
+            <Globe className="w-4 h-4 mr-2 text-brand-primary" />
             Global Online Tutor Network
           </div>
         </div>
@@ -394,8 +388,7 @@ export default function ForTeachers() {
 
       {/* Sticky Secondary Nav */}
       <div 
-        className="sticky top-[64px] z-40 border-b border-white/10 shadow-lg"
-        style={{ backgroundColor: theme.colors.brand.navy }}
+        className="sticky top-[64px] z-40 border-b border-white/10 shadow-lg bg-brand-navy"
       >
         <div className="max-w-7xl mx-auto px-4 flex overflow-x-auto scrollbar-hide">
           <div className="flex mx-auto">
@@ -403,7 +396,7 @@ export default function ForTeachers() {
               <button
                 key={link.href}
                 onClick={() => scrollTo(link.href.substring(1))}
-                className={`px-4 md:px-6 py-4 text-[10px] md:text-xs font-black uppercase tracking-widest transition-all relative whitespace-nowrap ${
+                className={`px-4 md:px-6 py-4 text-xs md:text-xs font-black uppercase tracking-widest transition-all relative whitespace-nowrap ${
                   activeNav === link.href.substring(1) ? "text-white" : "text-white/60 hover:text-white"
                 }`}
               >
@@ -411,7 +404,7 @@ export default function ForTeachers() {
                 {activeNav === link.href.substring(1) && (
                   <motion.div 
                     layoutId="activeNav"
-                    className={`absolute bottom-0 left-0 w-full h-1 bg-[${theme.colors.brand.primary}]`}
+                    className="absolute bottom-0 left-0 w-full h-1 bg-brand-primary"
                   />
                 )}
               </button>
@@ -425,10 +418,10 @@ export default function ForTeachers() {
         <section className="py-[60px] px-6">
           <div className="grid md:grid-cols-2 gap-0 rounded-[2.5rem] overflow-hidden shadow-2xl">
             {/* School Teachers Card */}
-            <div className={`p-10 md:p-12 flex flex-col items-start bg-[${theme.colors.brand.navy}]`}>
+            <div className="p-10 md:p-12 flex flex-col items-start bg-brand-navy">
               <div className="flex-1 space-y-6 flex flex-col items-start w-full">
-                <School className={`w-10 h-10 text-[${theme.colors.brand.primary}]`} />
-                <span className={theme.components.label}>SCHOOL & INSTITUTION TEACHERS</span>
+                <School className="w-10 h-10 text-brand-primary" />
+                <span className="text-xs font-black uppercase tracking-widest text-brand-primary bg-brand-primary/10 px-3 py-1 rounded-full">SCHOOL & INSTITUTION TEACHERS</span>
                 <h2 className="text-3xl md:text-4xl font-bold text-white">Grow Within Your Role</h2>
                 <p className="text-lg text-blue-50 leading-relaxed font-medium">
                   Build your skills, earn your Cambridge Teaching Excellence Certificate, and bring mastery-based learning into your classroom. EduMeUp supports you at every stage — from your first diagnostic to full AI-assisted teaching.
@@ -436,20 +429,20 @@ export default function ForTeachers() {
               </div>
               <Button 
                 onClick={() => scrollTo("school-teachers")}
-                className={`mt-8 px-8 h-[64px] rounded-2xl font-bold ${ui.buttons.brand}`}
+                className="mt-8 px-8 h-[64px] rounded-2xl font-bold bg-brand-primary hover:bg-brand-primary-dark text-white"
               >
                 Show Me How →
               </Button>
             </div>
             
             {/* Independent Teachers Card */}
-            <div className={`p-10 md:p-12 flex flex-col items-start bg-[${theme.colors.brand.primary}]`}>
+            <div className="p-10 md:p-12 flex flex-col items-start bg-brand-primary">
               <div className="flex-1 space-y-6 flex flex-col items-start w-full">
                 <div className="flex gap-3">
                   <Globe className="w-10 h-10 text-white" />
                   <Layout className="w-10 h-10 text-white" />
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-[0.28em] text-white/80">INDEPENDENT & SELF-EMPLOYED TEACHERS</span>
+                <span className="text-xs font-black uppercase tracking-[0.28em] text-white/80">INDEPENDENT & SELF-EMPLOYED TEACHERS</span>
                 <h2 className="text-3xl md:text-4xl font-bold text-white">Be Your Own Boss — on a Global Platform</h2>
                 <p className="text-lg text-white/90 leading-relaxed font-medium">
                   Reach students globally online or in person across major cities. Get certified, get matched with enrolled students, and build a teaching career with flexible hours, structured resources, and a platform that does the admin for you.
@@ -457,7 +450,7 @@ export default function ForTeachers() {
               </div>
               <Button 
                 onClick={() => scrollTo("independent-teachers")}
-                className={`mt-8 px-8 h-[64px] rounded-2xl font-bold ${ui.buttons.brandLight}`}
+                className="mt-8 px-8 h-[64px] rounded-2xl font-bold bg-white text-brand-primary hover:bg-brand-primary-soft"
               >
                 Show Me Opportunities →
               </Button>
@@ -466,18 +459,36 @@ export default function ForTeachers() {
         </section>
 
         {/* S3 — For School & Institution Teachers */}
-        <section id="school-teachers" className={`py-24 bg-[${theme.colors.neutral.surfaceAlt}] -mx-6 md:-mx-12 lg:-mx-24 px-12 md:px-24 lg:px-48`}>
+        <section id="school-teachers" className="py-24 bg-neutral-surface-alt -mx-6 md:-mx-12 lg:-mx-24 px-12 md:px-24 lg:px-48">
           <div className="max-w-7xl mx-auto">
-            <div className={`border-l-4 border-[${theme.colors.brand.navy}] pl-6 mb-12`}>
-              <span className={theme.components.label}>FOR SCHOOL TEACHERS</span>
+            <div className="border-l-4 border-brand-navy pl-6 mb-12">
+              <span className="text-xs font-black uppercase tracking-widest text-brand-primary bg-brand-primary/10 px-3 py-1 rounded-full">FOR SCHOOL TEACHERS</span>
               <h2 className="text-3xl md:text-5xl font-bold text-slate-900">Your Path to Professional Excellence</h2>
+            </div>
+
+            {/* Link to Teacher Training Program */}
+            <div className="mb-16 bg-white border-l-4 border-brand-primary rounded-r-lg p-6 md:p-8 shadow-sm">
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Complete Training Ecosystem</p>
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                  <h3 className="text-lg md:text-xl font-bold text-slate-900 mb-2">Explore the Full T1–T6 Teacher Training Pathway</h3>
+                  <p className="text-sm text-slate-600 font-medium">
+                    Learn about all six programmes — from diagnostic to certification to AI-assisted teaching — plus research foundations and school partnership models.
+                  </p>
+                </div>
+                <Link href="/teacher-training">
+                  <Button className="shrink-0 px-6 h-12 rounded-lg font-semibold text-base bg-brand-primary hover:bg-brand-primary-dark text-white">
+                    View Teacher Training <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </Link>
+              </div>
             </div>
 
             {/* Sub-Section A — Capacity Building */}
             <div className="mb-20">
               <div className="max-w-3xl mb-12">
                 <h3 className="text-2xl font-bold text-slate-800 mb-2">Capacity Building</h3>
-                <p className={`text-xl font-bold text-[${theme.colors.brand.primary}] mb-4`}>
+                <p className="text-xl font-bold text-brand-primary mb-4">
                   We build the teacher before the teacher builds the student.
                 </p>
                 <p className="text-lg text-slate-600 font-medium">
@@ -486,12 +497,12 @@ export default function ForTeachers() {
               </div>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {schoolTeacherCards.map((card, idx) => (
-                  <Card key={idx} className={`border-t-4 border-t-[${theme.colors.brand.primary}] shadow-sm hover:shadow-xl transition-all duration-300 rounded-2xl overflow-hidden group h-full flex flex-col`}>
+                  <Card key={idx} className="border-t-4 border-t-brand-primary shadow-sm hover:shadow-xl transition-all duration-300 rounded-2xl overflow-hidden group h-full flex flex-col">
                     <CardContent className="p-8 space-y-4 flex-1 flex flex-col">
-                      <card.icon className={`w-8 h-8 text-[${theme.colors.brand.primary}]`} />
-                      <h4 className={`text-xl font-bold text-slate-900 group-hover:text-[${theme.colors.brand.primary}] transition-colors`}>{card.title}</h4>
-                      <p className="text-[14px] text-slate-600 leading-relaxed flex-1">{card.body}</p>
-                      <Link href="/teacher-courses" className={`text-sm font-bold text-[${theme.colors.brand.primary}] hover:underline inline-flex items-center gap-1 mt-4`}>
+                      <card.icon className="w-8 h-8 text-brand-primary" />
+                      <h4 className="text-xl font-bold text-slate-900 group-hover:text-brand-primary transition-colors">{card.title}</h4>
+                      <p className="text-base text-slate-600 leading-relaxed flex-1">{card.body}</p>
+                      <Link href="/teacher-courses" className="text-sm font-bold text-brand-primary hover:underline inline-flex items-center gap-1 mt-4">
                         View Course <ArrowRight className="w-3 h-3" />
                       </Link>
                     </CardContent>
@@ -504,7 +515,7 @@ export default function ForTeachers() {
             <div className="mb-20">
               <div className="max-w-3xl mb-12">
                 <h3 className="text-2xl font-bold text-slate-800 mb-2">Empowering Teachers</h3>
-                <p className={`text-xl font-bold text-[${theme.colors.brand.primary}] mb-4`}>
+                <p className="text-xl font-bold text-brand-primary mb-4">
                   Save time. Teach better. See results.
                 </p>
                 <p className="text-lg text-slate-600 font-medium">
@@ -513,12 +524,12 @@ export default function ForTeachers() {
               </div>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {empoweringTeacherCards.map((card, idx) => (
-                  <Card key={idx} className={`border-t-4 border-t-[${theme.colors.brand.primary}] shadow-sm hover:shadow-xl transition-all duration-300 rounded-2xl overflow-hidden group h-full flex flex-col`}>
+                  <Card key={idx} className="border-t-4 border-t-brand-primary shadow-sm hover:shadow-xl transition-all duration-300 rounded-2xl overflow-hidden group h-full flex flex-col">
                     <CardContent className="p-8 space-y-4 flex-1 flex flex-col">
-                      <card.icon className={`w-8 h-8 text-[${theme.colors.brand.primary}]`} />
-                      <h4 className={`text-xl font-bold text-slate-900 group-hover:text-[${theme.colors.brand.primary}] transition-colors`}>{card.title}</h4>
-                      <p className="text-[14px] text-slate-600 leading-relaxed flex-1">{card.body}</p>
-                      <Link href="/teacher-courses" className={`text-sm font-bold text-[${theme.colors.brand.primary}] hover:underline inline-flex items-center gap-1 mt-4`}>
+                      <card.icon className="w-8 h-8 text-brand-primary" />
+                      <h4 className="text-xl font-bold text-slate-900 group-hover:text-brand-primary transition-colors">{card.title}</h4>
+                      <p className="text-base text-slate-600 leading-relaxed flex-1">{card.body}</p>
+                      <Link href="/teacher-courses" className="text-sm font-bold text-brand-primary hover:underline inline-flex items-center gap-1 mt-4">
                         View Tool <ArrowRight className="w-3 h-3" />
                       </Link>
                     </CardContent>
@@ -531,9 +542,9 @@ export default function ForTeachers() {
             <div className="mt-16 rounded-[2rem] overflow-hidden border border-slate-200 shadow-lg">
               <Table>
                 <TableHeader>
-                  <TableRow className={`bg-[${theme.colors.brand.navy}] hover:bg-[${theme.colors.brand.navy}]`}>
-                    <TableHead className="text-white font-black uppercase tracking-widest text-[11px] h-14 px-8">You Are Dealing With</TableHead>
-                    <TableHead className="text-white font-black uppercase tracking-widest text-[11px] h-14 px-8">EduMeUp Gives You</TableHead>
+                  <TableRow className="bg-brand-navy hover:bg-brand-navy">
+                    <TableHead className="text-white font-black uppercase tracking-widest text-xs h-14 px-8">You Are Dealing With</TableHead>
+                    <TableHead className="text-white font-black uppercase tracking-widest text-xs h-14 px-8">EduMeUp Gives You</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -546,7 +557,7 @@ export default function ForTeachers() {
                     ["No AI integration in teaching", "T6 AI Tools Subscription — lesson planning, feedback, differentiation — automated"],
                     ["Difficulty teaching in English", "Classroom English Communication course in Urdu-speaker and Arabic-speaker versions"]
                   ].map((row, i) => (
-                    <TableRow key={i} className={i % 2 === 0 ? "bg-white" : `bg-[${theme.colors.neutral.surfaceAlt}]`}>
+                    <TableRow key={i} className={i % 2 === 0 ? "bg-white" : "bg-neutral-surface-alt"}>
                       <TableCell className="font-bold text-slate-800 px-8 py-4">{row[0]}</TableCell>
                       <TableCell className="text-slate-600 px-8 py-4">{row[1]}</TableCell>
                     </TableRow>
@@ -558,7 +569,7 @@ export default function ForTeachers() {
             <div className="mt-12 flex justify-center">
               <Button 
                 onClick={() => scrollTo("courses-strip")}
-                className={`px-10 py-6 rounded-2xl text-lg shadow-xl ${ui.buttons.brand}`}
+                className="px-10 py-6 rounded-2xl text-lg shadow-xl bg-brand-primary hover:bg-brand-primary-dark text-white"
               >
                 Explore Teacher Training →
               </Button>
@@ -566,10 +577,10 @@ export default function ForTeachers() {
           </div>
         </section>
 
-        <section id="independent-teachers" className={`py-24 ${theme.sections.white} -mx-6 md:-mx-12 lg:-mx-24 px-12 md:px-24 lg:px-48`}>
+        <section id="independent-teachers" className="py-24 bg-white text-slate-900 -mx-6 md:-mx-12 lg:-mx-24 px-12 md:px-24 lg:px-48">
           <div className="max-w-7xl mx-auto">
-            <div className={`border-l-4 border-[${theme.colors.brand.primary}] pl-6 mb-12`}>
-              <span className={theme.components.label}>FOR INDEPENDENT TEACHERS</span>
+            <div className="border-l-4 border-brand-primary pl-6 mb-12">
+              <span className="text-xs font-black uppercase tracking-widest text-brand-primary bg-brand-primary/10 px-3 py-1 rounded-full">FOR INDEPENDENT TEACHERS</span>
               <h2 className="text-3xl md:text-5xl font-bold text-slate-900">Your Platform. Your Students. Your Income.</h2>
             </div>
 
@@ -585,9 +596,9 @@ export default function ForTeachers() {
                 {independentTeacherCards.map((card, idx) => (
                   <Card key={idx} className="border-t-4 border-t-[#0b3c5d] shadow-sm hover:shadow-xl transition-all duration-300 rounded-2xl overflow-hidden group">
                     <CardContent className="p-8 space-y-4">
-                      <card.icon className={`w-8 h-8 text-[${theme.colors.brand.navy}]`} />
-                      <h4 className={`text-xl font-bold text-slate-900 group-hover:text-[${theme.colors.brand.navy}] transition-colors`}>{card.title}</h4>
-                      <p className="text-[14px] text-slate-600 leading-relaxed">{card.body}</p>
+                      <card.icon className="w-8 h-8 text-brand-navy" />
+                      <h4 className="text-xl font-bold text-slate-900 group-hover:text-brand-navy transition-colors">{card.title}</h4>
+                      <p className="text-base text-slate-600 leading-relaxed">{card.body}</p>
                     </CardContent>
                   </Card>
                 ))}
@@ -606,12 +617,30 @@ export default function ForTeachers() {
                 {growProfileCards.map((card, idx) => (
                   <Card key={idx} className="border-t-4 border-t-[#0b3c5d] shadow-sm hover:shadow-xl transition-all duration-300 rounded-2xl overflow-hidden group">
                     <CardContent className="p-8 space-y-4">
-                      <card.icon className={`w-8 h-8 text-[${theme.colors.brand.navy}]`} />
-                      <h4 className={`text-xl font-bold text-slate-900 group-hover:text-[${theme.colors.brand.navy}] transition-colors`}>{card.title}</h4>
-                      <p className="text-[14px] text-slate-600 leading-relaxed">{card.body}</p>
+                      <card.icon className="w-8 h-8 text-brand-navy" />
+                      <h4 className="text-xl font-bold text-slate-900 group-hover:text-brand-navy transition-colors">{card.title}</h4>
+                      <p className="text-base text-slate-600 leading-relaxed">{card.body}</p>
                     </CardContent>
                   </Card>
                 ))}
+              </div>
+            </div>
+
+            {/* Link to T5 & Teacher Training */}
+            <div className="mb-16 bg-brand-primary-soft border-l-4 border-brand-primary rounded-r-lg p-6 md:p-8">
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">T5 Certification Pathway</p>
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                  <h3 className="text-lg md:text-xl font-bold text-slate-900 mb-2">Become a Certified EduMeUp Tutor</h3>
+                  <p className="text-sm text-slate-700 font-medium">
+                    T5 Tutor Certification is your gateway to the full EduMeUp student network. Complete the T1–T4 pathway first to build your Cambridge expertise, then complete T5 to unlock unlimited student matches and global teaching opportunities.
+                  </p>
+                </div>
+                <Link href="/teacher-training">
+                  <Button className="shrink-0 px-6 h-12 rounded-lg font-semibold text-base bg-brand-primary hover:bg-brand-primary-dark text-white">
+                    View T5 Path <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </Link>
               </div>
             </div>
 
@@ -619,9 +648,9 @@ export default function ForTeachers() {
             <div className="mt-16 rounded-[2rem] overflow-hidden border border-slate-200 shadow-lg">
               <Table>
                 <TableHeader>
-                  <TableRow className={`bg-[${theme.colors.brand.primary}] hover:bg-[${theme.colors.brand.primaryDark}]`}>
-                    <TableHead className="text-white font-black uppercase tracking-widest text-[11px] h-14 px-8">You Are Dealing With</TableHead>
-                    <TableHead className="text-white font-black uppercase tracking-widest text-[11px] h-14 px-8">EduMeUp Gives You</TableHead>
+                  <TableRow className="bg-brand-primary hover:bg-brand-primary-dark">
+                    <TableHead className="text-white font-black uppercase tracking-widest text-xs h-14 px-8">You Are Dealing With</TableHead>
+                    <TableHead className="text-white font-black uppercase tracking-widest text-xs h-14 px-8">EduMeUp Gives You</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -634,7 +663,7 @@ export default function ForTeachers() {
                     ["Admin takes time away from teaching", "Scheduling, billing, and communications handled by EduMeUp platform"],
                     ["No access to institutional students", "Teach institutes and schools online (global) or physically (main cities) via EduMeUp"]
                   ].map((row, i) => (
-                    <TableRow key={i} className={i % 2 === 0 ? "bg-white" : `bg-[${theme.colors.neutral.surfaceAlt}]`}>
+                    <TableRow key={i} className={i % 2 === 0 ? "bg-white" : "bg-neutral-surface-alt"}>
                       <TableCell className="font-bold text-slate-800 px-8 py-4">{row[0]}</TableCell>
                       <TableCell className="text-slate-600 px-8 py-4">{row[1]}</TableCell>
                     </TableRow>
@@ -646,7 +675,7 @@ export default function ForTeachers() {
             <div className="mt-12 flex justify-center">
               <Link href="/tutor-application">
                 <Button 
-                  className={`px-10 py-6 rounded-2xl text-lg shadow-xl ${ui.buttons.brand}`}
+                  className="px-10 py-6 rounded-2xl text-lg shadow-xl bg-brand-primary hover:bg-brand-primary-dark text-white"
                 >
                   Apply to Teach on EduMeUp →
                 </Button>
@@ -656,47 +685,49 @@ export default function ForTeachers() {
         </section>
 
         {/* S5 — Teacher Training Courses Strip (T1–T6) */}
-        <section id="courses-strip" className={`py-24 ${theme.sections.navy} -mx-6 md:-mx-12 lg:-mx-24 px-12 md:px-24 lg:px-48`}>
+        <section id="courses-strip" className="py-24 bg-white text-slate-900 -mx-6 md:-mx-12 lg:-mx-24 px-12 md:px-24 lg:px-48">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16 space-y-4">
-              <span className={theme.components.label.replace(theme.colors.brand.primary, "#60a5fa")}>OUR TRAINING PATHWAY</span>
-              <h2 className="text-3xl md:text-5xl font-bold text-white leading-tight">From Diagnostic to AI-Powered Teaching — Six Stages. One Journey.</h2>
-              <p className="text-lg text-blue-100 max-w-3xl mx-auto font-medium">
+              <span className="text-xs font-black uppercase tracking-widest text-brand-primary bg-brand-primary/10 px-3 py-1 rounded-full">OUR TRAINING PATHWAY</span>
+              <h2 className="text-3xl md:text-5xl font-bold text-brand-navy leading-tight">From Diagnostic to AI-Powered Teaching — Six Stages. One Journey.</h2>
+              <p className="text-lg text-brand-navy max-w-3xl mx-auto font-medium opacity-80">
                 Every EduMeUp teacher training course is designed to build on the previous one — creating a structured pathway from assessment to mastery to certification.
               </p>
             </div>
 
-            <div className="flex overflow-x-auto pb-12 gap-6 scrollbar-hide snap-x">
-              {coursePathway.map((course, idx) => (
-                <Card key={idx} className="min-w-[320px] max-w-[320px] snap-center border-t-8 border-t-[#0b3c5d] shadow-2xl rounded-2xl overflow-hidden bg-white flex flex-col group">
-                  <CardContent className="p-8 space-y-6 flex-1 flex flex-col">
-                    <div className="flex items-center justify-between">
-                      <span className={`bg-[${theme.colors.brand.primary}] text-white font-black px-4 py-1.5 rounded-full text-sm`}>{course.code}</span>
-                      <span className="text-[11px] font-bold text-slate-400 uppercase">{course.format}</span>
-                    </div>
-                    <div className="space-y-2">
-                      <h4 className={`text-xl font-bold text-slate-900 group-hover:text-[${theme.colors.brand.primary}] transition-colors`}>{course.name}</h4>
-                      <div className="flex flex-col gap-1">
-                        <p className={`text-[11px] font-bold text-[${theme.colors.brand.primary}] uppercase tracking-wider`}>{course.duration}</p>
-                        <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{course.cert}</p>
+            <div className="relative overflow-hidden -mx-6 md:-mx-12 lg:-mx-24 px-6 md:px-12 lg:px-24" style={{ maskImage: "linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)" }}>
+              <div className="flex overflow-x-auto pb-12 gap-6 scrollbar-hide snap-x scroll-smooth" style={{ scrollBehavior: "smooth" }}>
+                {coursePathway.map((course, idx) => (
+                  <Card key={idx} className="min-w-[320px] max-w-[320px] snap-center border-t-8 border-t-[#0b3c5d] rounded-2xl overflow-hidden bg-white flex flex-col group">
+                    <CardContent className="p-8 space-y-6 flex-1 flex flex-col">
+                      <div className="flex items-center justify-between">
+                        <span className="bg-brand-primary text-white font-black px-4 py-1.5 rounded-full text-sm">{course.code}</span>
+                        <span className="text-xs font-bold text-slate-400 uppercase">{course.format}</span>
                       </div>
-                    </div>
-                    <p className="text-[14px] text-slate-600 leading-relaxed flex-1 italic">
-                      "{course.body}"
-                    </p>
-                    <Link href="/teacher-courses">
-                      <Button className={`w-full font-bold py-4 rounded-xl mt-4 ${ui.buttons.brand}`}>
-                        View Course →
-                      </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
-              ))}
+                      <div className="space-y-2">
+                        <h4 className="text-xl font-bold text-slate-900 group-hover:text-brand-primary transition-colors">{course.name}</h4>
+                        <div className="flex flex-col gap-1">
+                          <p className="text-xs font-bold text-brand-primary uppercase tracking-wider">{course.duration}</p>
+                          <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">{course.cert}</p>
+                        </div>
+                      </div>
+                      <p className="text-base text-slate-600 leading-relaxed flex-1 italic">
+                        "{course.body}"
+                      </p>
+                      <Link href="/teacher-courses">
+                        <Button className="w-full font-bold py-4 rounded-xl mt-4 bg-brand-primary hover:bg-brand-primary-dark text-white">
+                          View Course →
+                        </Button>
+                      </Link>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </div>
 
             <div className="mt-8 flex justify-center">
               <Link href="/teacher-courses">
-                <Button className={`px-10 py-6 rounded-2xl text-lg shadow-xl ${ui.buttons.brandLight}`}>
+                <Button className="px-10 py-6 rounded-2xl text-lg shadow-xl bg-white text-brand-primary hover:bg-brand-primary-soft">
                   View Full Teacher Training Pathway →
                 </Button>
               </Link>
@@ -705,34 +736,36 @@ export default function ForTeachers() {
         </section>
 
         {/* S6 — AI & Platform Advantage Strip */}
-        <section id="ai-advantage" className={`py-24 ${theme.sections.softBlue} -mx-6 md:-mx-12 lg:-mx-24 px-12 md:px-24 lg:px-48`}>
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-16 space-y-4">
-              <span className={theme.components.label}>THE PLATFORM BEHIND YOUR TEACHING</span>
-              <h2 className="text-3xl md:text-5xl font-bold text-slate-900">Technology That Works For You — Not Against You</h2>
-              <p className="text-lg text-slate-600 max-w-3xl mx-auto font-medium">
-                EduMeUp's AI and platform tools are designed to reduce your workload, sharpen your teaching, and make every student session more effective.
-              </p>
-            </div>
+        <section id="ai-advantage" className="py-24 bg-brand-primary-soft text-slate-900 w-screen relative left-[calc(-50vw+50%)]">
+          <div className="px-6 md:px-12 lg:px-24">
+            <div className="max-w-7xl mx-auto">
+              <div className="text-center mb-16 space-y-4">
+                <span className="text-xs font-black uppercase tracking-widest text-brand-primary bg-brand-primary/10 px-3 py-1 rounded-full">THE PLATFORM BEHIND YOUR TEACHING</span>
+                <h2 className="text-3xl md:text-5xl font-bold text-slate-900">Technology That Works For You — Not Against You</h2>
+                <p className="text-lg text-slate-600 max-w-3xl mx-auto font-medium">
+                  EduMeUp's AI and platform tools are designed to reduce your workload, sharpen your teaching, and make every student session more effective.
+                </p>
+              </div>
 
-            <div className="grid md:grid-cols-3 gap-8">
-              {aiAdvantageCards.map((card, idx) => (
-                <div key={idx} className="bg-white p-10 rounded-[2.5rem] shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col items-center text-center space-y-6 group hover:-translate-y-2 border border-slate-100">
-                  <div className={`bg-[#eef6ff] p-5 rounded-[2rem] group-hover:bg-[${theme.colors.brand.primary}] group-hover:text-white transition-all duration-300`}>
-                    <card.icon className={`w-10 h-10 text-[${theme.colors.brand.primary}] group-hover:text-white`} />
+              <div className="grid md:grid-cols-3 gap-8">
+                {aiAdvantageCards.map((card, idx) => (
+                  <div key={idx} className="bg-white p-10 rounded-[2.5rem] shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col items-center text-center space-y-6 group hover:-translate-y-2 border border-slate-100">
+                    <div className={`bg-brand-primary/5 p-5 rounded-[2rem] group-hover:bg-brand-primary group-hover:text-white transition-all duration-300`}>
+                      <card.icon className="w-10 h-10 text-brand-primary group-hover:text-white" />
+                    </div>
+                    <h4 className="text-xl font-bold text-slate-900">{card.title}</h4>
+                    <p className="text-[15px] text-slate-600 leading-relaxed font-medium">
+                      {card.description}
+                    </p>
                   </div>
-                  <h4 className="text-xl font-bold text-slate-900">{card.title}</h4>
-                  <p className="text-[15px] text-slate-600 leading-relaxed font-medium">
-                    {card.description}
-                  </p>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </section>
 
         {/* S7 — Community, Trust & First-Mover Strip */}
-        <section id="community" className={`py-24 ${theme.sections.navy} -mx-6 md:-mx-12 lg:-mx-24 px-12 md:px-24 lg:px-48 text-white`}>
+        <section id="community" className="py-24 bg-white text-slate-900 -mx-6 md:-mx-12 lg:-mx-24 px-12 md:px-24 lg:px-48">
           <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
             {/* Left Side — Trust & Stats Block */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-12">
@@ -743,46 +776,47 @@ export default function ForTeachers() {
                 { label: "Global + Local Reach", value: "Unlimited", sub: "Teach students online anywhere — or in person in major cities" }
               ].map((stat, i) => (
                 <div key={i} className="space-y-3">
-                  <p className={`text-4xl md:text-5xl font-black text-[${theme.colors.brand.primary}]`}>{stat.value}</p>
-                  <p className="text-base font-bold text-white tracking-tight">{stat.label}</p>
-                  <p className="text-[12px] text-blue-200 leading-tight">{stat.sub}</p>
+                  <p className="text-4xl md:text-5xl font-black text-brand-primary">{stat.value}</p>
+                  <p className="text-base font-bold text-brand-navy tracking-tight">{stat.label}</p>
+                  <p className="text-[12px] text-brand-navy/70 leading-tight">{stat.sub}</p>
                 </div>
               ))}
             </div>
 
             {/* Right Side — Testimonial Placeholder */}
-            <div className={`bg-white/5 border-l-4 border-l-[${theme.colors.brand.primary}] p-12 rounded-r-[3rem] space-y-8`}>
-              <p className="text-2xl md:text-3xl font-bold italic leading-relaxed text-blue-50">
+            <div className="bg-brand-primary/5 border-l-4 border-l-brand-primary p-12 rounded-r-[3rem] space-y-8">
+              <p className="text-2xl md:text-3xl font-bold italic leading-relaxed text-brand-navy">
                 "EduMeUp gave me a structured teaching credential, a stream of matched students, and tools that save me hours every week. For the first time, my teaching career has a real direction."
               </p>
               <div>
-                <p className="font-black text-xl text-white">EduMeUp Certified Tutor</p>
-                <p className={`text-[${theme.colors.brand.primary}] font-bold uppercase tracking-widest text-xs mt-1`}>[Placeholder — replace with verified testimonial]</p>
+                <p className="font-black text-xl text-brand-navy">EduMeUp Certified Tutor</p>
+                <p className="text-brand-primary font-bold uppercase tracking-widest text-xs mt-1">[Placeholder — replace with verified testimonial]</p>
               </div>
             </div>
           </div>
           
           {/* First-Mover Urgency Banner */}
-          <div className={`mt-20 bg-[${theme.colors.brand.primary}] -mx-6 md:-mx-12 lg:-mx-24 px-6 md:px-24 py-8 md:py-5 flex flex-col md:flex-row justify-center items-center gap-4 group`}>
-            <Rocket className="w-5 h-5 animate-bounce" />
-            <p className="text-sm md:text-[15px] font-black uppercase tracking-[0.2em] text-center">
+          <div className="mt-20 bg-brand-primary -mx-6 md:-mx-12 lg:-mx-24 px-6 md:px-24 py-8 md:py-5 flex flex-col md:flex-row justify-center items-center gap-4 group">
+            <Rocket className="w-5 h-5 animate-bounce text-white" />
+            <p className="text-sm md:text-[15px] font-black uppercase tracking-[0.2em] text-center text-white">
               Early certified tutors receive priority student matching. Certification is open now — spaces are limited in each subject.
             </p>
           </div>
         </section>
 
         {/* S8 — Call to Action Block */}
-        <section id="cta" className={`py-24 ${theme.sections.softBlue} -mx-6 md:-mx-12 lg:-mx-24 px-12 md:px-24 lg:px-48`}>
-          <div className="max-w-7xl mx-auto text-center mb-16 space-y-4">
-            <h2 className={`text-3xl md:text-5xl font-bold text-[${theme.colors.brand.navy}]`}>Ready to Take the Next Step?</h2>
-            <p className="text-xl text-slate-600 font-medium">Choose your path — or talk to us first.</p>
-          </div>
+        <section id="cta" className="py-24 bg-brand-primary/5 w-screen relative left-[calc(-50vw+50%)]">
+          <div className="px-6 md:px-12 lg:px-24">
+            <div className="max-w-7xl mx-auto text-center mb-16 space-y-4">
+              <h2 className="text-3xl md:text-5xl font-bold text-brand-navy">Ready to Take the Next Step?</h2>
+              <p className="text-xl text-slate-600 font-medium">Choose your path — or talk to us first.</p>
+            </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid md:grid-cols-3 gap-8">
             {/* CTA 1 — Training */}
-            <Card className={`rounded-[2.5rem] border border-[${theme.colors.brand.primary}]/20 shadow-xl overflow-hidden hover:scale-[1.02] transition-all duration-300 group`}>
+            <Card className="rounded-[2.5rem] border border-brand-primary/20 shadow-xl overflow-hidden hover:scale-[1.02] transition-all duration-300 group">
               <CardContent className="p-12 flex flex-col h-full space-y-8 items-center text-center">
-                <div className={`bg-[#eef6ff] p-6 rounded-full text-[${theme.colors.brand.primary}]`}>
+                <div className="bg-brand-primary/5 p-6 rounded-full text-brand-primary">
                   <GraduationCap className="w-12 h-12" />
                 </div>
                 <div className="space-y-4 flex-1">
@@ -792,7 +826,7 @@ export default function ForTeachers() {
                   </p>
                 </div>
                 <Link href="/teacher-courses" className="w-full">
-                  <Button className={`w-full font-black py-6 rounded-2xl text-lg uppercase tracking-widest shadow-xl ${ui.buttons.brand}`}>
+                  <Button className="w-full font-black py-6 rounded-2xl text-lg uppercase tracking-widest shadow-xl bg-brand-primary hover:bg-brand-primary-dark text-white">
                     Get Certified
                   </Button>
                 </Link>
@@ -800,9 +834,9 @@ export default function ForTeachers() {
             </Card>
 
             {/* CTA 2 — Teach */}
-            <Card className={`rounded-[2.5rem] border border-[${theme.colors.brand.navy}]/20 shadow-xl overflow-hidden hover:scale-[1.02] transition-all duration-300 group`}>
+            <Card className="rounded-[2.5rem] border border-brand-navy/20 shadow-xl overflow-hidden hover:scale-[1.02] transition-all duration-300 group">
               <CardContent className="p-12 flex flex-col h-full space-y-8 items-center text-center">
-                <div className={`bg-[#eef6ff] p-6 rounded-full text-[${theme.colors.brand.navy}]`}>
+                <div className="bg-brand-primary/5 p-6 rounded-full text-brand-navy">
                   <Users className="w-12 h-12" />
                 </div>
                 <div className="space-y-4 flex-1">
@@ -812,7 +846,7 @@ export default function ForTeachers() {
                   </p>
                 </div>
                 <Link href="/tutor-application" className="w-full">
-                  <Button className={`w-full font-black py-6 rounded-2xl text-lg uppercase tracking-widest shadow-xl ${ui.buttons.brand}`}>
+                  <Button className="w-full font-black py-6 rounded-2xl text-lg uppercase tracking-widest shadow-xl bg-brand-primary hover:bg-brand-primary-dark text-white">
                     Apply Now
                   </Button>
                 </Link>
@@ -822,7 +856,7 @@ export default function ForTeachers() {
             {/* CTA 3 — Talk */}
             <Card className="rounded-[2.5rem] border border-blue-400/20 shadow-xl overflow-hidden hover:scale-[1.02] transition-all duration-300 group">
               <CardContent className="p-12 flex flex-col h-full space-y-8 items-center text-center">
-                <div className="bg-[#eef6ff] p-6 rounded-full text-blue-600">
+                <div className="bg-brand-primary/5 p-6 rounded-full text-blue-600">
                   <MessageCircle className="w-12 h-12" />
                 </div>
                 <div className="space-y-4 flex-1">
@@ -832,15 +866,17 @@ export default function ForTeachers() {
                   </p>
                 </div>
                 <Link href="/contact" className="w-full">
-                  <Button className={`w-full font-black py-6 rounded-2xl text-lg uppercase tracking-widest shadow-xl ${ui.buttons.brand}`}>
+                  <Button className="w-full font-black py-6 rounded-2xl text-lg uppercase tracking-widest shadow-xl bg-brand-primary hover:bg-brand-primary-dark text-white">
                     WhatsApp Us
                   </Button>
                 </Link>
               </CardContent>
             </Card>
+            </div>
           </div>
         </section>
       </div>
     </MainLayout>
   );
 }
+

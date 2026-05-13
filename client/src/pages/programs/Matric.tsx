@@ -1,4 +1,4 @@
-﻿import { useEffect } from "react";
+import { useEffect } from "react";
 import { Link } from "wouter";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -124,7 +124,7 @@ export default function Matric() {
 
             <div className="mt-10">
               <Link href="/programs/ai-diagnostic">
-                <span className="inline-flex items-center gap-2 rounded-lg bg-[#2366c9] px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700">
+                <span className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-6 py-3 text-sm font-semibold text-white hover:bg-brand-navy transition-colors">
                   Start Free Diagnostic
                   <ArrowRight className="h-4 w-4" />
                 </span>
@@ -136,8 +136,8 @@ export default function Matric() {
 
       <section className="py-14 md:py-20">
         <div className="container-custom">
-          <div className="mx-auto max-w-4xl rounded-2xl border border-blue-100 bg-white p-6 shadow-sm md:p-8">
-            <h2 className="text-3xl font-semibold text-slate-900 md:text-4xl">
+          <div className="mx-auto max-w-4xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
+            <h2 className="text-3xl font-semibold text-brand-navy md:text-4xl">
               Why Pakistan Matric Students Struggle (And How We Fix It)
             </h2>
             <p className="mt-4 text-sm leading-relaxed text-slate-700 md:text-base">
@@ -150,7 +150,7 @@ export default function Matric() {
       <section className="pb-14 md:pb-20">
         <div className="container-custom">
           <div className="mb-8 text-center">
-            <h2 className="text-3xl font-semibold text-slate-900 md:text-4xl">
+            <h2 className="text-3xl font-semibold text-brand-navy md:text-4xl">
               What the Matric Programme Covers
             </h2>
           </div>
@@ -159,9 +159,9 @@ export default function Matric() {
             {matricCoverage.map((item) => (
               <div
                 key={item.title}
-                className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm"
+                className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
               >
-                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100 text-[#2366c9]">
+                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-[#eef6ff] text-brand-primary">
                   <item.icon className="h-5 w-5" />
                 </div>
                 <h3 className="text-xl font-semibold text-slate-900">{item.title}</h3>
@@ -174,10 +174,10 @@ export default function Matric() {
         </div>
       </section>
 
-      <section className="border-y border-blue-100 bg-blue-50/40 py-14 md:py-20">
+      <section className="border-y border-slate-100 bg-[#f8fbff]/50 py-14 md:py-20">
         <div className="container-custom">
           <div className="mb-8 text-center">
-            <h2 className="text-3xl font-semibold text-slate-900 md:text-4xl">
+            <h2 className="text-3xl font-semibold text-brand-navy md:text-4xl">
               How It Works
             </h2>
           </div>
@@ -185,9 +185,9 @@ export default function Matric() {
             {matricHowItWorks.map((item) => (
               <div
                 key={item.title}
-                className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm"
+                className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
               >
-                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100 text-[#2366c9]">
+                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-[#eef6ff] text-brand-primary">
                   <item.icon className="h-5 w-5" />
                 </div>
                 <h3 className="text-xl font-semibold text-slate-900">{item.title}</h3>
@@ -203,26 +203,26 @@ export default function Matric() {
       <section className="py-14 md:py-20">
         <div className="container-custom">
           <div className="grid gap-6 md:grid-cols-2">
-            <div className="rounded-2xl border border-green-200 bg-white p-6 shadow-sm">
-              <h2 className="text-2xl font-semibold text-slate-900">
+            <div className="rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm">
+              <h2 className="text-2xl font-semibold text-brand-navy">
                 Who This Is For
               </h2>
               <div className="mt-5 space-y-3">
                 {matricWhoItsFor.map((item) => (
                   <p key={item} className="flex items-start gap-2 text-sm text-slate-700">
-                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-green-600" />
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
                     <span>{item}</span>
                   </p>
                 ))}
               </div>
             </div>
 
-            <div className="rounded-2xl border border-blue-200 bg-white p-6 shadow-sm">
-              <h2 className="text-2xl font-semibold text-slate-900">Subjects Included</h2>
+            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h2 className="text-2xl font-semibold text-brand-navy">Subjects Included</h2>
               <div className="mt-5 space-y-3">
                 {matricSubjectsIncluded.map((item) => (
                   <p key={item} className="flex items-start gap-2 text-sm text-slate-700">
-                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#2366c9]" />
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-primary" />
                     <span>{item}</span>
                   </p>
                 ))}
@@ -234,33 +234,33 @@ export default function Matric() {
 
       <section className="pb-14 md:pb-20">
         <div className="container-custom">
-          <div className="mx-auto max-w-5xl rounded-2xl border border-blue-100 bg-white p-6 shadow-sm md:p-8">
-            <h2 className="text-3xl font-semibold text-slate-900 md:text-4xl">Pricing</h2>
+          <div className="mx-auto max-w-5xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
+            <h2 className="text-3xl font-semibold text-brand-navy md:text-4xl">Pricing</h2>
 
-            <div className="mt-6 overflow-x-auto rounded-2xl border border-slate-200 shadow-md">
+            <div className="mt-6 overflow-x-auto rounded-2xl border border-slate-200 shadow-sm">
               <table className="w-full min-w-[640px]">
                 <thead>
-                  <tr className="bg-[#2366c9] text-white text-left">
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide">
+                  <tr className="bg-brand-primary text-white text-left">
+                    <th className="px-4 py-3 text-xs font-bold uppercase tracking-wider">
                       Plan
                     </th>
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide">
+                    <th className="px-4 py-3 text-xs font-bold uppercase tracking-wider">
                       Monthly
                     </th>
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide">
+                    <th className="px-4 py-3 text-xs font-bold uppercase tracking-wider">
                       Annual
                     </th>
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide">
+                    <th className="px-4 py-3 text-xs font-bold uppercase tracking-wider">
                       What's Included
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="border-t border-blue-100">
+                  <tr className="border-t border-slate-100">
                     <td className="px-4 py-3 text-sm font-semibold text-slate-900">Pakistan Matric (All 5 Subjects)</td>
                     <td className="px-4 py-3 text-sm font-semibold text-slate-900">$18/mo</td>
                     <td className="px-4 py-3 text-sm font-semibold text-slate-900">$160/yr</td>
-                    <td className="px-4 py-3 text-sm text-slate-800">
+                    <td className="px-4 py-3 text-sm text-slate-700 leading-relaxed">
                       Complete Grade 9-10 curriculum, AI diagnostics, 2000+ activities, mock exams
                     </td>
                   </tr>
@@ -270,13 +270,13 @@ export default function Matric() {
 
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
               <Link href="/programs">
-                <span className="flex items-center justify-between rounded-xl border border-blue-200 bg-white px-5 py-4 text-sm font-semibold text-slate-900 hover:border-blue-300 hover:text-[#2366c9]">
+                <span className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-5 py-4 text-sm font-semibold text-slate-700 hover:border-brand-primary hover:text-brand-primary transition-all">
                   Browse All Programmes
                   <ArrowRight className="h-4 w-4" />
                 </span>
               </Link>
               <Link href="/programs/ai-diagnostic">
-                <span className="flex items-center justify-between rounded-xl bg-[#2366c9] px-5 py-4 text-sm font-semibold text-white hover:bg-blue-700">
+                <span className="flex items-center justify-between rounded-xl bg-brand-primary px-5 py-4 text-sm font-semibold text-white hover:bg-brand-navy transition-all">
                   Start Free Diagnostic First
                   <ArrowRight className="h-4 w-4" />
                 </span>

@@ -1,3 +1,4 @@
+
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useSearch } from "wouter";
 import { Label } from "@/components/ui/label";
@@ -169,52 +170,53 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-white font-[Arial]">
+    <div className="min-h-screen bg-white">
       <Navbar />
-      <div className="mx-auto grid min-h-[calc(100vh-3.5rem)] w-full md:min-h-[calc(100vh-4rem)] md:grid-cols-[40%_60%]">
-        <aside className="hidden bg-[#1E3A5F] md:flex md:flex-col md:justify-between md:p-10 lg:p-12">
+      <div className="mx-auto grid min-h-[calc(100vh-3.5rem)] w-full md:h-[calc(100vh-4rem)] md:grid-cols-[40%_60%] md:overflow-hidden">
+        <aside className="hidden bg-brand-primary md:flex md:flex-col md:justify-between md:p-10 lg:p-12">
           <div />
-          <div className="mx-auto max-w-sm text-center">
+          <div className="mx-auto max-sm text-center">
             <img src={logoImage} alt="EduMeUp" className="mx-auto h-auto w-[120px] rounded-md bg-white p-2" />
-            <p className="mt-6 text-[16px] italic text-white">From content delivery to learning mastery.</p>
+            <p className="mt-6 text-base italic text-blue-100">From content delivery to learning mastery.</p>
             <ul className="mt-8 space-y-4 text-left">
               {TRUST_POINTS.map((point) => (
                 <li key={point} className="flex items-start gap-3 text-sm text-white/90">
-                  <span className="mt-0.5 text-[#17A589]">✦</span>
+                  <span className="mt-0.5 text-blue-300">✦</span>
                   <span>{point}</span>
                 </li>
               ))}
             </ul>
           </div>
           <div className="text-center">
-            <button type="button" onClick={() => navigate("/register")} className="text-sm text-[#17A589] underline-offset-4 hover:underline">
-              New to EduMeUp? Register -&gt;
+            <button type="button" onClick={() => navigate(activeTab === "login" ? "/register" : "/login")} className="text-sm font-medium text-white underline-offset-4 hover:text-blue-100 hover:underline">
+              {activeTab === "login" ? "New to EduMeUp? Register ->" : "Already have an account? Login ->"}
             </button>
           </div>
         </aside>
 
-        <header className="flex h-20 items-center justify-between bg-[#1E3A5F] px-5 md:hidden">
+        <header className="flex h-20 items-center justify-between bg-brand-primary px-5 md:hidden">
           <img src={logoImage} alt="EduMeUp" className="h-11 w-auto rounded bg-white p-1.5" />
-          <button type="button" onClick={() => navigate("/register")} className="text-xs font-semibold text-[#17A589] underline-offset-4 hover:underline">
+          <button type="button" onClick={() => navigate("/register")} className="text-xs font-semibold text-brand-primary underline-offset-4 hover:underline">
             New here? Register -&gt;
           </button>
         </header>
 
-        <main className="flex items-center px-6 py-10 md:px-10 lg:px-12">
-          <div className="mx-auto w-full max-w-[560px]">
-            <div className="mb-7 flex rounded-lg border border-slate-200 p-1">
-              <button type="button" onClick={() => navigate("/login")} className={`flex-1 rounded-md px-4 py-2 text-sm font-semibold transition ${activeTab === "login" ? "bg-[#1E3A5F] text-white" : "text-slate-600 hover:bg-slate-50"}`}>
+        <main className="flex justify-center px-6 md:h-full md:overflow-y-auto md:px-10 lg:px-12">
+          <div className="flex min-h-full w-full max-w-[560px] flex-col py-12">
+            <div className="my-auto w-full">
+            <div className="mb-7 flex gap-2 rounded-lg border border-slate-200 p-1">
+              <button type="button" onClick={() => navigate("/login")} className={`flex-1 rounded-md px-4 py-2 text-sm font-semibold transition ${activeTab === "login" ? "bg-brand-primary text-white" : "text-slate-600 hover:bg-slate-50"}`}>
                 Login
               </button>
-              <button type="button" onClick={() => navigate("/register")} className={`flex-1 rounded-md px-4 py-2 text-sm font-semibold transition ${activeTab === "register" ? "bg-[#1E3A5F] text-white" : "text-slate-600 hover:bg-slate-50"}`}>
+              <button type="button" onClick={() => navigate("/register")} className={`flex-1 rounded-md px-4 py-2 text-sm font-semibold transition ${activeTab === "register" ? "bg-brand-primary text-white" : "text-slate-600 hover:bg-slate-50"}`}>
                 Register
               </button>
             </div>
 
             {activeTab === "login" ? (
               <>
-                <h1 className="text-[28px] font-bold text-[#1E3A5F]">Welcome back.</h1>
-                <p className="mt-2 text-[15px] text-slate-500">Sign in to your EduMeUp account.</p>
+                <h1 className="text-3xl font-bold tracking-tight text-brand-primary">Welcome back.</h1>
+                <p className="mt-2 text-base text-slate-500">Sign in to your EduMeUp account.</p>
                 <form
                   className="mt-7 space-y-5"
                   onSubmit={async (event) => {
@@ -248,13 +250,13 @@ export default function Login() {
                         <input type="checkbox" checked={rememberMe} onChange={(event) => setRememberMe(event.target.checked)} />
                         Remember Me
                       </label>
-                      <button type="button" onClick={() => navigate("/forgot-password")} className="text-[13px] text-slate-500 transition hover:text-[#17A589]">
+                      <button type="button" onClick={() => navigate("/forgot-password")} className="text-[13px] text-slate-500 transition hover:text-brand-primary">
                         Forgot your password?
                       </button>
                     </div>
                   </div>
                   {loginError && <p className="text-sm text-red-600">{loginError}</p>}
-                  <Button type="submit" disabled={login.isPending} className="h-12 w-full rounded-lg bg-[#17A589] text-base font-bold text-white hover:bg-[#139577]">
+                  <Button type="submit" disabled={login.isPending} className="h-12 w-full rounded-lg bg-brand-primary text-base font-bold text-white hover:bg-brand-primary-dark">
                     {login.isPending ? (
                       <span className="inline-flex items-center gap-2">
                         <Loader2 className="h-4 w-4 animate-spin" />
@@ -266,7 +268,7 @@ export default function Login() {
                   </Button>
                   <p className="text-sm text-slate-600">
                     Don&apos;t have an account?{" "}
-                    <button type="button" onClick={() => navigate("/register")} className="font-semibold text-[#17A589] hover:underline">
+                    <button type="button" onClick={() => navigate("/register")} className="font-semibold text-brand-primary hover:underline">
                       Register here -&gt;
                     </button>
                   </p>
@@ -274,32 +276,28 @@ export default function Login() {
               </>
             ) : (
               <>
-                <h1 className="text-[24px] font-bold text-[#1E3A5F]">Who are you registering as?</h1>
-                <p className="mt-2 text-[15px] text-slate-500">Choose the option that best describes you. You can only have one account per email address.</p>
+                <h1 className="text-2xl font-bold tracking-tight text-brand-primary">Who are you registering as?</h1>
+                <p className="mt-2 text-base text-slate-500">Choose the option that best describes you. You can only have one account per email address.</p>
                 <div className="mt-6 grid grid-cols-2 gap-3">
                   {ROLE_CARDS.map(({ value, title, description, Icon }) => {
                     const isActive = selectedRole === value;
                     return (
-                      <button key={value} type="button" onClick={() => { setSelectedRole(value); setRegisterError(""); setRegisterSuccess(""); }} className={`relative min-h-[120px] rounded-xl border p-3 text-left transition ${isActive ? "border-[#1E3A5F] bg-[#1E3A5F] text-white" : "border-[#1E3A5F]/35 bg-white text-slate-800 hover:border-[#1E3A5F]"}`}>
-                        <Icon className={`h-8 w-8 ${isActive ? "text-white" : "text-[#1E3A5F]"}`} />
-                        <p className="mt-2 text-sm font-bold">{title}</p>
-                        <p className={`mt-1 text-xs leading-4 ${isActive ? "text-white/90" : "text-slate-500"}`}>{description}</p>
-                        {isActive && <CheckCircle2 className="absolute right-2 top-2 h-5 w-5 text-[#17A589]" />}
+                      <button key={value} type="button" onClick={() => { setSelectedRole(value); setShowRoleForm(true); setRegisterError(""); setRegisterSuccess(""); }} className={`relative min-h-[120px] rounded-xl border p-4 text-left transition ${isActive ? "border-brand-primary bg-brand-primary text-white shadow-lg" : "border-slate-200 bg-white text-slate-800 hover:border-brand-primary"}`}>
+                        <Icon className={`h-8 w-8 ${isActive ? "text-white" : "text-brand-primary"}`} />
+                        <p className={`mt-3 text-[15px] font-bold ${isActive ? "text-white" : "text-slate-900"}`}>{title}</p>
+                        <p className={`mt-1.5 text-xs leading-relaxed ${isActive ? "text-white/95" : "text-slate-500"}`}>{description}</p>
+                        {isActive && <CheckCircle2 className="absolute right-3 top-3 h-5 w-5 text-white" />}
                       </button>
                     );
                   })}
                 </div>
-                <div className="mt-4">
-                  {!showRoleForm ? (
-                    <Button type="button" onClick={() => setShowRoleForm(true)} disabled={!selectedRole} className="h-11 w-full rounded-lg bg-[#17A589] text-white hover:bg-[#139577]">
-                      Continue -&gt;
-                    </Button>
-                  ) : (
-                    <button type="button" onClick={() => setShowRoleForm(false)} className="text-sm font-semibold text-slate-500 underline-offset-4 hover:underline">
-                      Change Role
+                {showRoleForm && (
+                  <div className="mt-4">
+                    <button type="button" onClick={() => setShowRoleForm(false)} className="text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-brand-primary transition-colors flex items-center gap-1">
+                      &lt;- Change Role
                     </button>
-                  )}
-                </div>
+                  </div>
+                )}
 
                 <form
                   className={`space-y-5 ${showRoleForm ? "mt-6" : "mt-4 opacity-60 pointer-events-none"}`}
@@ -362,7 +360,7 @@ export default function Login() {
                   <div className="space-y-2">
                     <Label htmlFor="register-confirm-password">Confirm Password</Label>
                     <Input id="register-confirm-password" type="password" autoComplete="new-password" value={baseRegisterForm.confirmPassword} onChange={(event) => setBaseRegisterForm((current) => ({ ...current, confirmPassword: event.target.value }))} required />
-                    {baseRegisterForm.confirmPassword && <p className={`text-xs ${confirmMatches ? "text-[#17A589]" : "text-red-600"}`}>{confirmMatches ? "Passwords match" : "Passwords do not match"}</p>}
+                    {baseRegisterForm.confirmPassword && <p className={`text-xs ${confirmMatches ? "text-brand-primary" : "text-red-600"}`}>{confirmMatches ? "Passwords match" : "Passwords do not match"}</p>}
                   </div>
 
                   {selectedRole === "student" && (
@@ -388,7 +386,7 @@ export default function Login() {
                             </option>
                           ))}
                         </select>
-                        {countryScholarshipHint && <p className="rounded-md bg-[#17A589]/10 px-3 py-2 text-xs text-[#0f766e]">You may be eligible for a scholarship - see /pricing#scholarship after registration.</p>}
+                        {countryScholarshipHint && <p className="rounded-md bg-brand-primary/10 px-3 py-2 text-xs text-brand-primary">You may be eligible for a scholarship - see /pricing#scholarship after registration.</p>}
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="student-hear">How did you hear about EduMeUp</Label>
@@ -524,11 +522,11 @@ export default function Login() {
                     <input type="checkbox" checked={baseRegisterForm.termsAccepted} onChange={(event) => setBaseRegisterForm((current) => ({ ...current, termsAccepted: event.target.checked }))} className="mt-0.5" />
                     <span>
                       I agree to the{" "}
-                      <a href="/terms" target="_blank" rel="noreferrer" className="font-semibold text-[#17A589] hover:underline">
+                      <a href="/terms" target="_blank" rel="noreferrer" className="font-semibold text-brand-primary hover:underline">
                         Terms of Use
                       </a>{" "}
                       and{" "}
-                      <a href="/privacy" target="_blank" rel="noreferrer" className="font-semibold text-[#17A589] hover:underline">
+                      <a href="/privacy" target="_blank" rel="noreferrer" className="font-semibold text-brand-primary hover:underline">
                         Privacy Policy
                       </a>
                       .
@@ -536,10 +534,10 @@ export default function Login() {
                   </label>
 
                   {registerError && <p className="text-sm text-red-600">{registerError}</p>}
-                  {registerSuccess && <p className="text-sm text-[#17A589]">{registerSuccess}</p>}
+                  {registerSuccess && <p className="text-sm text-brand-primary">{registerSuccess}</p>}
                   {selectedRole === "teacher" && <p className="text-xs text-slate-500">Teacher role is currently mapped through existing backend role support; dashboard specialization can be extended server-side.</p>}
 
-                  <Button type="submit" disabled={register.isPending || !canSubmitRegister} className="h-12 w-full rounded-lg bg-[#17A589] text-base font-bold text-white hover:bg-[#139577]">
+                  <Button type="submit" disabled={register.isPending || !canSubmitRegister} className="h-12 w-full rounded-lg bg-brand-primary text-base font-bold text-white hover:bg-brand-primary-dark">
                     {register.isPending ? (
                       <span className="inline-flex items-center gap-2">
                         <Loader2 className="h-4 w-4 animate-spin" />
@@ -552,16 +550,18 @@ export default function Login() {
 
                   <p className="text-sm text-slate-600">
                     Already have an account?{" "}
-                    <button type="button" onClick={() => navigate("/login")} className="font-semibold text-[#17A589] hover:underline">
+                    <button type="button" onClick={() => navigate("/login")} className="font-semibold text-brand-primary hover:underline">
                       Login here -&gt;
                     </button>
                   </p>
                 </form>
               </>
             )}
+            </div>
           </div>
         </main>
       </div>
     </div>
   );
 }
+    

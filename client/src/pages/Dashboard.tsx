@@ -1,3 +1,4 @@
+
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { BarChart3, Bell, BookOpen, Check, CreditCard, Download, ExternalLink, FileText, GraduationCap, LayoutDashboard, LifeBuoy, LogOut, RefreshCw, Shield, UserCircle2, Users } from "lucide-react";
@@ -73,13 +74,13 @@ function CourseImage({ imageUrl, title }: { imageUrl?: string | null; title: str
     .toUpperCase();
 
   return (
-    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#2366c9] to-[#4f46e5] text-white">
+    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-brand-primary to-[#4f46e5] text-white">
       <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/graphy.png')] opacity-20"></div>
       <div className="relative z-10 flex flex-col items-center gap-2">
         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm text-3xl font-black">
           {initials}
         </div>
-        <span className="text-[10px] font-bold uppercase tracking-widest opacity-60">Learning Module</span>
+        <span className="text-xs font-bold uppercase tracking-widest opacity-60">Learning Module</span>
       </div>
     </div>
   );
@@ -268,7 +269,7 @@ export default function Dashboard() {
               <h1 className="text-3xl font-black tracking-tight text-slate-900">Sign in to open your dashboard</h1>
               <p className="text-slate-600">Your role-based student, parent, school, or admin dashboard lives inside `edu` now.</p>
               <div className="flex justify-center gap-3">
-                <Button className="bg-[#2366c9] text-white hover:bg-blue-700" onClick={() => navigate("/login")}>
+                <Button className="bg-brand-primary text-white hover:bg-brand-primary-dark" onClick={() => navigate("/login")}>
                   Sign In
                 </Button>
                 <Button variant="outline" onClick={() => navigate("/register")}>
@@ -300,13 +301,13 @@ export default function Dashboard() {
                     <Link key={item.href} href={item.href}>
                       <div
                         className={`flex cursor-pointer items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition ${
-                          active ? "bg-[#2366c9] text-white shadow-lg shadow-blue-100" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                          active ? "bg-brand-primary text-white shadow-lg shadow-blue-100" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                         }`}
                       >
                         <Icon className="h-4 w-4" />
                         <span>{item.label}</span>
                         {item.badge ? (
-                          <span className={`ml-auto rounded-full px-2 py-0.5 text-[10px] font-black ${active ? "bg-white text-[#2366c9]" : "bg-red-500 text-white"}`}>
+                          <span className={`ml-auto rounded-full px-2 py-0.5 text-xs font-black ${active ? "bg-white text-brand-primary" : "bg-red-500 text-white"}`}>
                             {item.badge}
                           </span>
                         ) : null}
@@ -344,126 +345,44 @@ export default function Dashboard() {
                     </p>
                     {user.role === "student" && (
                       <div className="mt-5">
-                        <AIChatLauncher className="bg-[#2366c9] text-white hover:bg-[#1c56aa]" />
+                        <AIChatLauncher className="bg-brand-primary text-white hover:bg-brand-primary-dark" />
                       </div>
                     )}
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="rounded-3xl bg-white p-4 shadow-sm">
                       <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Username</p>
-                      <p className="mt-2 font-bold text-slate-900">{user.username}</p>
+                      <p className="mt-2 font-bold text-slate-900">{user?.username}</p>
                     </div>
                     <div className="rounded-3xl bg-white p-4 shadow-sm">
                       <p className="text-xs uppercase tracking-[0.18em] text-slate-400">User ID</p>
-                      <p className="mt-2 font-bold text-slate-900">{user.id}</p>
+                      <p className="mt-2 font-bold text-slate-900">{user?.id}</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              {onMainDashboard && user.role === "student" && (
+              {onMainDashboard && user?.role === "student" && (
                 <StudentDashboardSection
-                  data={studentDashboard.data}
-                  fullname={user.fullname}
+                  data={studentDashboard.data ? {
+                    ...studentDashboard.data,
+                    courses: studentDashboard.data.courses.map(c => ({
+                      id: String(c.id),
+                      title: c.title,
+                      progress: c.progress,
+                      mastery: c.progress,
+                      thumbnail: c.imageUrl || undefined,
+                    })),
+                    stats: {
+                      overallMastery: studentDashboard.data.stats.averageProgress,
+                      topicsCompleted: studentDashboard.data.stats.completedCourses,
+                      topicsTotal: studentDashboard.data.stats.enrolledCourses,
+                      testsTaken: 0,
+                      streak: 0,
+                    }
+                  } : undefined}
+                  fullname={user?.fullname || ""}
                 />
-              )}
-
-              {/* Old student dashboard code - kept as reference but StudentDashboardSection replaces it */}
-              {false && onMainDashboard && user.role === "student" && studentDashboard.data && (
-                <div className="space-y-6">
-                  <div className="grid gap-4 md:grid-cols-3">
-                    <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Enrolled Courses</p><p className="mt-2 text-3xl font-black text-slate-900">{studentDashboard.data.stats.enrolledCourses}</p></CardContent></Card>
-                    <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Completed</p><p className="mt-2 text-3xl font-black text-slate-900">{studentDashboard.data.stats.completedCourses}</p></CardContent></Card>
-                    <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Average Progress</p><p className="mt-2 text-3xl font-black text-slate-900">{studentDashboard.data.stats.averageProgress}%</p></CardContent></Card>
-                  </div>
-                  <Card className="border-0 shadow-none bg-transparent">
-                    <CardHeader className="px-0"><CardTitle className="text-2xl font-black">My Enrolled Courses</CardTitle></CardHeader>
-                    <CardContent className="px-0">
-                      {studentDashboard.data.courses.length > 0 ? (
-                        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-                          {studentDashboard.data.courses.map((course) => (
-                            <div key={course.id} className="group relative flex flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white transition-all hover:shadow-2xl hover:shadow-blue-100/40">
-                              <div className="aspect-[16/10] w-full overflow-hidden bg-slate-100 relative">
-                                <CourseImage imageUrl={course.imageUrl} title={course.title} />
-                              </div>
-                              <div className="flex flex-1 flex-col p-7">
-                                <div className="flex items-center gap-2">
-                                  <span className="rounded-full bg-blue-50 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-[#2366c9]">
-                                    {course.shortName || "Course"}
-                                  </span>
-                                  {course.completed && (
-                                    <span className="rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-emerald-600">
-                                      Completed
-                                    </span>
-                                  )}
-                                </div>
-                                <h3 className="mt-4 line-clamp-2 min-h-[3rem] text-lg font-extrabold leading-tight text-slate-900 group-hover:text-[#2366c9]">
-                                  {course.title}
-                                </h3>
-                                
-                                <div className="mt-8">
-                                  <div className="flex items-center justify-between gap-2 text-xs font-bold">
-                                    <span className="text-slate-400 uppercase tracking-tighter">Your Progress</span>
-                                    <span className="text-[#2366c9]">{Math.round(course.progress)}%</span>
-                                  </div>
-                                  <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
-                                    <div 
-                                      className="h-full rounded-full bg-gradient-to-r from-[#2366c9] to-indigo-500 transition-all duration-1000 ease-out" 
-                                      style={{ width: `${course.progress}%` }} 
-                                    />
-                                  </div>
-                                </div>
-
-                                <div className="mt-8 flex items-center justify-between gap-4">
-                                  <div className="min-w-0">
-                                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Current Grade</p>
-                                    <p className="mt-1 font-black text-slate-900">{course.grade || "N/A"}</p>
-                                  </div>
-                                </div>
-
-                                <div className="mt-8">
-                                  <button 
-                                    onClick={() => handleLaunchCourse(course.id, course.lmsCourseUrl || "#")}
-                                    disabled={launchingCourseId === course.id}
-                                    className={`inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-[#2366c9] px-6 py-4 text-sm font-black text-white shadow-xl shadow-blue-200 transition-all hover:scale-[1.02] hover:bg-blue-700 active:scale-[0.98] ${launchingCourseId === course.id ? "opacity-70 cursor-not-allowed" : ""}`}
-                                  >
-                                    {launchingCourseId === course.id ? (
-                                      <>
-                                        <RefreshCw className="h-4 w-4 animate-spin" />
-                                        <span>Launching...</span>
-                                      </>
-                                    ) : (
-                                      <>
-                                        <span>Continue Learning</span>
-                                        <ExternalLink className="h-4 w-4" />
-                                      </>
-                                    )}
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center justify-center py-20 text-center bg-white rounded-3xl border border-dashed border-slate-200">
-                          <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-blue-50 text-blue-600">
-                            <BookOpen className="h-12 w-12" />
-                          </div>
-                          <h3 className="text-2xl font-black text-slate-900">Your learning journey starts here!</h3>
-                          <p className="mt-3 max-w-sm text-slate-500 font-medium">
-                            You haven't enrolled in any courses yet. Explore our high-impact preparation programs and start excelling today.
-                          </p>
-                          <Button 
-                            className="mt-10 bg-[#2366c9] text-white hover:bg-blue-700 font-bold px-10 py-7 rounded-2xl shadow-2xl shadow-blue-200 transition-all hover:translate-y-[-2px] active:scale-95" 
-                            onClick={() => navigate("/programs")}
-                          >
-                            Browse Programs
-                          </Button>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                </div>
               )}
 
               {onMainDashboard && user.role === "parent" && (
@@ -492,7 +411,7 @@ export default function Dashboard() {
                         </Button>
                         <Button
                           type="button"
-                          className="justify-start rounded-2xl bg-[#2366c9] text-white hover:bg-blue-700 sm:col-span-2"
+                          className="justify-start rounded-2xl bg-brand-primary text-white hover:bg-brand-primary-dark sm:col-span-2"
                           onClick={downloadParentReport}
                           disabled={reportDownloadState.pending}
                         >
@@ -631,10 +550,10 @@ export default function Dashboard() {
                                         <p className="font-semibold text-slate-900">{course.courseName}</p>
                                         <p className="text-xs text-slate-500">Enrolled course</p>
                                       </div>
-                                      <p className="text-sm font-bold text-[#2366c9]">Progress {Math.round(course.progress)}%</p>
+                                      <p className="text-sm font-bold text-brand-primary">Progress {Math.round(course.progress)}%</p>
                                     </div>
                                     <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
-                                      <div className="h-full rounded-full bg-gradient-to-r from-[#2366c9] to-indigo-500" style={{ width: `${course.progress}%` }} />
+                                      <div className="h-full rounded-full bg-gradient-to-r from-brand-primary to-indigo-500" style={{ width: `${course.progress}%` }} />
                                     </div>
                                   </div>
                                 ))}
@@ -1057,7 +976,7 @@ export default function Dashboard() {
                           <p className="font-bold text-slate-900">{certificate.name}</p>
                           <p className="mt-1 text-sm text-slate-500">{certificate.courseName}</p>
                         </div>
-                        <a href={certificate.url} target="_blank" rel="noreferrer" className="inline-flex items-center rounded-full bg-[#2366c9] px-4 py-2 text-sm font-semibold text-white">
+                        <a href={certificate.url} target="_blank" rel="noreferrer" className="inline-flex items-center rounded-full bg-brand-primary px-4 py-2 text-sm font-semibold text-white">
                           Open Certificate
                         </a>
                       </div>
@@ -1125,7 +1044,7 @@ export default function Dashboard() {
                                 <button
                                   type="button"
                                   onClick={() => navigate(notification.actionUrl || "/dashboard")}
-                                  className="mt-3 inline-flex text-xs font-semibold text-[#2366c9]"
+                                  className="mt-3 inline-flex text-xs font-semibold text-brand-primary"
                                 >
                                   Open related section
                                 </button>
@@ -1204,7 +1123,7 @@ export default function Dashboard() {
                       <div className="space-y-2"><Label htmlFor="country">Country</Label><Input id="country" value={effectiveProfile.country} onChange={(event) => setProfileForm((current) => ({ ...current, country: event.target.value }))} /></div>
                       <div className="space-y-2 md:col-span-2"><Label htmlFor="description">Bio</Label><Textarea id="description" value={effectiveProfile.description} onChange={(event) => setProfileForm((current) => ({ ...current, description: event.target.value }))} /></div>
                       {updateProfile.error && <p className="text-sm text-red-600 md:col-span-2">{updateProfile.error.message}</p>}
-                      <div className="md:col-span-2"><Button type="submit" className="bg-[#2366c9] text-white hover:bg-blue-700">{updateProfile.isPending ? "Saving..." : "Save Profile"}</Button></div>
+                      <div className="md:col-span-2"><Button type="submit" className="bg-brand-primary text-white hover:bg-brand-primary-dark">{updateProfile.isPending ? "Saving..." : "Save Profile"}</Button></div>
                     </form>
 
                     <Separator />
@@ -1289,7 +1208,7 @@ export default function Dashboard() {
                               onClick={() => setSelectedTicketId(ticket.id)}
                               className={`w-full rounded-2xl border p-4 text-left transition ${
                                 selectedTicketId === ticket.id
-                                  ? "border-[#2366c9] bg-blue-50"
+                                  ? "border-brand-primary bg-blue-50"
                                   : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
                               }`}
                             >
@@ -1298,7 +1217,7 @@ export default function Dashboard() {
                                   <p className="text-sm font-semibold text-slate-900">{ticket.subjectInterest || "Support Ticket"}</p>
                                   <p className="mt-1 text-xs text-slate-500">{ticket.type} • {ticket.status}</p>
                                 </div>
-                                <p className="text-[11px] text-slate-400">
+                                <p className="text-sm-small text-slate-400">
                                   {ticket.createdAt ? new Date(ticket.createdAt).toLocaleDateString() : ""}
                                 </p>
                               </div>
@@ -1508,7 +1427,7 @@ export default function Dashboard() {
                         {supportState.error && <p className="text-sm text-red-600">{supportState.error}</p>}
                         {supportState.success && <p className="text-sm text-emerald-600">{supportState.success}</p>}
 
-                        <Button type="submit" className="bg-[#2366c9] text-white hover:bg-blue-700">
+                        <Button type="submit" className="bg-brand-primary text-white hover:bg-brand-primary-dark">
                           {supportState.pending ? "Submitting..." : "Submit Ticket"}
                         </Button>
                       </form>
@@ -1544,7 +1463,7 @@ export default function Dashboard() {
                                 onClick={() => setSelectedTicketId(ticket.id)}
                                 className={`w-full rounded-2xl border p-4 text-left transition ${
                                   selectedTicketId === ticket.id
-                                    ? "border-[#2366c9] bg-blue-50"
+                                    ? "border-brand-primary bg-blue-50"
                                     : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
                                 }`}
                               >
@@ -1553,7 +1472,7 @@ export default function Dashboard() {
                                     <p className="text-sm font-semibold text-slate-900">{ticket.subjectInterest || "Support Ticket"}</p>
                                     <p className="mt-1 text-xs text-slate-500">{ticket.type} • {ticket.status}</p>
                                   </div>
-                                  <p className="text-[11px] text-slate-400">
+                                  <p className="text-sm-small text-slate-400">
                                     {ticket.createdAt ? new Date(ticket.createdAt).toLocaleDateString() : ""}
                                   </p>
                                 </div>
@@ -1595,7 +1514,7 @@ export default function Dashboard() {
                                   {ticketReplyState.error && <p className="text-sm text-red-600">{ticketReplyState.error}</p>}
                                   {ticketReplyState.success && <p className="text-sm text-emerald-600">{ticketReplyState.success}</p>}
                                   <Button
-                                    className="bg-[#2366c9] text-white hover:bg-blue-700"
+                                    className="bg-brand-primary text-white hover:bg-brand-primary-dark"
                                     onClick={async () => {
                                       if (!selectedTicketId) return;
                                       const replyText = ticketReplyState.message.trim();
@@ -1667,3 +1586,4 @@ export default function Dashboard() {
     </Layout>
   );
 }
+

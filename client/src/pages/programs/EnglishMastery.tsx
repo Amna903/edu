@@ -1,18 +1,11 @@
-﻿import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "wouter";
 import { ArrowRight, CheckCircle2, BookOpen, PenTool, FileText, GraduationCap } from "lucide-react";
 import { motion } from "framer-motion";
 import { Layout } from "@/components/Layout";
 
 // ─── DESIGN TOKENS (mirrors About page) ────────────────────────────────────────
-const NAVY = "#1E3A5F";
-const INDIGO = "#2366c9";
-const DARK_NAVY = "#1a4fa0";
-const ORANGE = "#2366c9";
-const SOFT_BLUE = "#eef6ff";
-const BORDER = "#dbe7f4";
-const META = "#64748B";
-const BODY = "#1E293B";
+
 
 // ─── CAMBRIDGE BAND DATA ────────────────────────────────────────────────────────
 const cambridgeBands = [
@@ -31,7 +24,7 @@ const cambridgeBands = [
       "Clear, organised, mostly accurate — clearly communicates but lacks the precision and variety of Band 1.",
     edumeupDoes:
       "The gap from Band 2 to Band 1 is a vocabulary and sentence variety problem — both taught explicitly in F2 and F3.",
-    color: "#2563eb",
+    color: "#2366c9", // brand-primary
     bg: "#eff6ff",
   },
   {
@@ -312,7 +305,7 @@ const pricingRows = [
 ];
 
 // ─── SIDEBAR ────────────────────────────────────────────────────────────────────
-function OLevelSidebar({ activeSection }) {
+function OLevelSidebar({ activeSection }: { activeSection: string }) {
   const links = [
     { href: "the-standard", label: "The Cambridge Standard" },
     { href: "paper-structure", label: "Paper Structure" },
@@ -339,30 +332,19 @@ function OLevelSidebar({ activeSection }) {
         height: "calc(100vh - 64px)",
         overflowY: "auto",
         background: "#FFFFFF",
-        borderRight: `1px solid ${BORDER}`,
+        borderRight: "1px solid #dbe7f4",
         padding: "28px 0",
       }}
     >
       <div className="px-4 mb-5">
-        <p
-          style={{
-            fontFamily: "Sora, sans-serif",
-            fontWeight: 700,
-            fontSize: "13px",
-            color: NAVY,
-            marginBottom: "4px",
-          }}
-        >
+        <p className="font-bold text-[13px] text-brand-navy mb-1">
           O-Level English
         </p>
-        <p style={{ fontSize: "11px", color: META }}>Cambridge Paper 1 & Paper 2</p>
+        <p className="text-[11px] text-slate-500">Cambridge Paper 1 & Paper 2</p>
       </div>
 
       <div className="px-4 mb-4">
-        <p
-          className="uppercase mb-2"
-          style={{ fontSize: "10px", fontWeight: 700, color: META, letterSpacing: "0.15em" }}
-        >
+        <p className="uppercase mb-2 text-[10px] font-bold text-slate-500 tracking-[0.15em]">
           On This Page
         </p>
         {links.map((link) => {
@@ -372,12 +354,13 @@ function OLevelSidebar({ activeSection }) {
             <a
               key={link.href}
               href={`#${link.href}`}
-              className="block rounded-lg text-[12px] font-medium transition-all mb-0.5"
+              className={`block rounded-lg text-[12px] font-medium transition-all mb-0.5 ${
+                isActive 
+                  ? "text-brand-primary bg-brand-primary-soft font-semibold" 
+                  : isChild ? "text-slate-900 font-normal" : "text-slate-900 font-medium"
+              }`}
               style={{
                 padding: isChild ? "5px 12px 5px 20px" : "6px 12px",
-                color: isActive ? ORANGE : BODY,
-                background: isActive ? "rgba(249,115,22,0.1)" : "transparent",
-                fontWeight: isActive ? 600 : isChild ? 400 : 500,
               }}
             >
               {link.label}
@@ -393,16 +376,13 @@ function OLevelSidebar({ activeSection }) {
 }
 
 // ─── COURSE GROUP CARD ──────────────────────────────────────────────────────────
-function CourseGroupCard({ course, accentColor, accentBg }) {
+function CourseGroupCard({ course, accentColor, accentBg }: any) {
   const [open, setOpen] = useState(false);
   return (
     <div
-      className="rounded-2xl overflow-hidden transition-all duration-200"
-      style={{
-        border: `1.5px solid ${open ? accentColor : BORDER}`,
-        boxShadow: open ? "0 8px 28px rgba(0,0,0,0.08)" : "none",
-        background: "white",
-      }}
+      className={`rounded-2xl overflow-hidden transition-all duration-200 border-[1.5px] bg-white ${
+        open ? "border-brand-primary shadow-xl" : "border-slate-200 shadow-none"
+      }`}
     >
       {/* Header */}
       <div
@@ -411,107 +391,56 @@ function CourseGroupCard({ course, accentColor, accentBg }) {
       >
         <div className="flex-1 pr-4">
           <div className="flex items-center gap-3 mb-2">
-            <span
-              className="rounded-full px-3 py-0.5"
-              style={{
-                background: accentBg,
-                color: accentColor,
-                fontSize: "11px",
-                fontWeight: 700,
-              }}
-            >
+            <span className="rounded-full px-3 py-0.5 bg-brand-primary-soft text-brand-primary text-[11px] font-bold">
               {course.id}
             </span>
-            <span
-              className="rounded-full px-3 py-0.5"
-              style={{
-                background: "#eef6ff",
-                color: NAVY,
-                fontSize: "11px",
-                fontWeight: 600,
-              }}
-            >
+            <span className="rounded-full px-3 py-0.5 bg-brand-primary-soft text-brand-navy text-[11px] font-semibold">
               {course.tag}
             </span>
             {course.badge && (
-              <span
-                className="rounded-full px-3 py-0.5"
-                style={{
-                  background: course.pricePending ? "#eff6ff" : "#eef6ff",
-                  color: course.pricePending ? "#1e3a8a" : "#2366c9",
-                  fontSize: "11px",
-                  fontWeight: 700,
-                }}
-              >
+               <span className="rounded-full px-3 py-0.5 bg-brand-primary-soft text-brand-primary text-[11px] font-bold">
                 {course.badge}
               </span>
             )}
           </div>
-          <h3
-            style={{
-              fontFamily: "Sora, sans-serif",
-              fontWeight: 700,
-              fontSize: "17px",
-              color: NAVY,
-              marginBottom: "4px",
-            }}
-          >
+          <h3 className="font-bold text-[17px] text-brand-navy mb-1">
             {course.title}
           </h3>
-          {course.modules && (
-            <p style={{ fontSize: "12px", color: META }}>📦 {course.modules}</p>
-          )}
+            <p className="text-[12px] text-slate-500">📦 {course.modules}</p>
         </div>
         <span
-          className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-transform"
-          style={{
-            background: accentBg,
-            color: accentColor,
-            fontSize: "16px",
-            transform: open ? "rotate(180deg)" : "rotate(0deg)",
-          }}
+          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-transform bg-brand-primary-soft text-brand-primary text-[16px] ${
+            open ? "rotate-180" : "rotate-0"
+          }`}
         >
           ↓
         </span>
       </div>
-
-      {/* Expanded */}
       {open && (
-        <div
-          className="px-6 pb-6"
-          style={{ borderTop: `1px solid ${BORDER}` }}
-        >
-          <p style={{ fontSize: "14px", color: BODY, lineHeight: 1.7, marginTop: "16px", marginBottom: "16px" }}>
+        <div className="px-6 pb-6 border-t border-slate-200">
+          <p className="text-[14px] text-slate-900 leading-relaxed mt-4 mb-4">
             <strong>Key Feature:</strong> {course.feature}
           </p>
           {course.moduleList && (
             <div className="space-y-2">
-              <p
-                className="uppercase"
-                style={{ fontSize: "11px", fontWeight: 700, color: META, letterSpacing: "0.1em" }}
-              >
+              <p className="uppercase text-[11px] font-bold text-slate-500 tracking-[0.1em]">
                 Module Structure
               </p>
-              {course.moduleList.map((item, i) => (
+              {course.moduleList.map((item: string, i: number) => (
                 <div key={i} className="flex items-start gap-2">
-                  <span style={{ color: accentColor, fontWeight: 700, fontSize: "14px", marginTop: "1px" }}>
+                  <span className="text-brand-primary font-bold text-[14px] mt-px">
                     ✓
                   </span>
-                  <p style={{ fontSize: "13px", color: BODY, lineHeight: 1.6 }}>{item}</p>
+                  <p className="text-[13px] text-slate-900 leading-relaxed">{item}</p>
                 </div>
               ))}
             </div>
           )}
-          {course.includes && (
-            <div
-              className="mt-4 rounded-xl p-4"
-              style={{ background: accentBg, border: `1px solid ${accentColor}22` }}
-            >
-              <p style={{ fontSize: "12px", color: accentColor, fontWeight: 600 }}>
+             <div className="mt-4 rounded-xl p-4 bg-brand-primary-soft border border-brand-primary/10">
+              <p className="text-[12px] text-brand-primary font-semibold">
                 Included: {course.includes}
               </p>
             </div>
-          )}
         </div>
       )}
     </div>
@@ -537,7 +466,7 @@ export default function OLevelEnglish() {
       "composition-mastery", "f1-essay-types", "f2-bridge", "f3-mastery",
       "directed-writing", "dw1-non-letters", "dw2-letters", "pricing", "enrol",
     ];
-    const observers = [];
+     const observers: IntersectionObserver[] = [];
     sectionIds.forEach((id) => {
       const el = document.getElementById(id);
       if (!el) return;
@@ -554,10 +483,7 @@ export default function OLevelEnglish() {
   return (
     <Layout>
       {/* ── HERO ──────────────────────────────────────────────────────────────── */}
-      <section
-        className="relative overflow-hidden py-16 md:py-24"
-        style={{ background: `linear-gradient(135deg, ${INDIGO} 0%, #1e3a8a 60%, ${DARK_NAVY} 100%)` }}
-      >
+       <section className="relative overflow-hidden py-16 md:py-24 bg-gradient-to-br from-brand-primary via-brand-primary-dark to-brand-navy">
         <div className="absolute -top-20 -right-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" aria-hidden="true" />
         <div className="absolute -bottom-24 -left-24 h-80 w-80 rounded-full bg-blue-400/10 blur-3xl" aria-hidden="true" />
 
@@ -568,39 +494,16 @@ export default function OLevelEnglish() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.45 }}
             >
-              <p
-                className="uppercase mb-4"
-                style={{ fontSize: "11px", fontWeight: 700, color: "#93c5fd", letterSpacing: "0.28em" }}
-              >
+               <p className="uppercase mb-4 text-[11px] font-bold text-blue-300 tracking-[0.28em]">
                 O-Level English Language Courses — Cambridge Paper 1 (Reading) and Paper 2 (Writing)
               </p>
-              <h1
-                className="mb-5"
-                style={{
-                  fontFamily: "Sora, sans-serif",
-                  fontWeight: 700,
-                  fontSize: "clamp(2rem, 4.5vw, 3.2rem)",
-                  color: "white",
-                  lineHeight: 1.1,
-                }}
-              >
+               <h1 className="mb-5 font-bold text-[clamp(2rem,4.5vw,3.2rem)] text-white leading-[1.1]">
                 Built From Real Cambridge Past Papers.
               </h1>
-              <p
-                className="mb-4"
-                style={{
-                  fontFamily: "Sora, sans-serif",
-                  fontWeight: 700,
-                  fontSize: "clamp(1.1rem, 2.5vw, 1.5rem)",
-                  color: "#93c5fd",
-                }}
-              >
+               <p className="mb-4 font-bold text-[clamp(1.1rem,2.5vw,1.5rem)] text-blue-300">
                 Band 1 Standards. Every Course. Every Lesson.
               </p>
-              <p
-                className="mb-8 max-w-2xl"
-                style={{ fontSize: "16px", color: "rgba(255,255,255,0.8)", lineHeight: 1.7 }}
-              >
+               <p className="mb-8 max-w-2xl text-base text-white/80 leading-relaxed">
                 Ten courses covering every component of Cambridge O-Level English Language — Paper 1
                 Reading comprehension and Paper 2 Writing (directed writing and composition). Every
                 course is built from authentic Cambridge past papers, assessed against the official
@@ -608,34 +511,23 @@ export default function OLevelEnglish() {
               </p>
 
               <div className="flex flex-wrap gap-3 mb-6">
-                <a
+                 <a
                   href="#comprehension-mastery"
-                  className="inline-flex items-center gap-2 rounded-xl font-semibold transition"
-                  style={{ background: ORANGE, color: "white", fontSize: "14px", padding: "12px 24px" }}
+                  className="inline-flex items-center gap-2 rounded-xl font-semibold transition bg-brand-primary text-white text-[14px] px-6 py-3 hover:bg-brand-primary-dark"
                 >
                   Explore All 10 Courses →
                 </a>
                 <Link href="/programs/ai-diagnostic">
-                  <span
-                    className="inline-flex items-center gap-2 rounded-xl font-semibold"
-                    style={{
-                      background: "rgba(255,255,255,0.1)",
-                      color: "white",
-                      fontSize: "14px",
-                      padding: "12px 24px",
-                      border: "1px solid rgba(255,255,255,0.25)",
-                      cursor: "pointer",
-                    }}
-                  >
+                   <span className="inline-flex items-center gap-2 rounded-xl font-semibold bg-white/10 text-white text-[14px] px-6 py-3 border border-white/25 cursor-pointer hover:bg-white/20">
                     Take the Free Diagnostic First
                   </span>
                 </Link>
               </div>
 
-              <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.5)" }}>
+               <p className="text-[13px] text-white/50">
                 Not yet at O-Level English level?{" "}
                 <Link href="/courses/english">
-                  <span style={{ color: "#93c5fd", cursor: "pointer", textDecoration: "underline" }}>
+                  <span className="text-blue-300 cursor-pointer underline hover:text-blue-200">
                     Start with the complete English Pathway →
                   </span>
                 </Link>
@@ -643,16 +535,11 @@ export default function OLevelEnglish() {
             </motion.div>
 
             {/* Stats panel */}
-            <motion.div
+             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1, duration: 0.45 }}
-              className="rounded-[2rem] p-8"
-              style={{
-                background: "rgba(255,255,255,0.07)",
-                border: "1px solid rgba(255,255,255,0.15)",
-                backdropFilter: "blur(10px)",
-              }}
+              className="rounded-[2rem] p-8 bg-white/5 border border-white/10 backdrop-blur-md"
             >
               <div className="grid grid-cols-2 gap-4 mb-6">
                 {[
@@ -661,38 +548,26 @@ export default function OLevelEnglish() {
                   { stat: "2", label: "Papers", sub: "Paper 1 Reading + Paper 2 Writing" },
                   { stat: "Band 1", label: "Standard", sub: "Every course, every lesson" },
                 ].map((s) => (
-                  <div
+                   <div
                     key={s.stat}
-                    className="rounded-xl p-4"
-                    style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.1)" }}
+                    className="rounded-xl p-4 bg-white/5 border border-white/5"
                   >
-                    <p
-                      style={{
-                        fontFamily: "Sora, sans-serif",
-                        fontWeight: 800,
-                        fontSize: "22px",
-                        color: ORANGE,
-                        lineHeight: 1,
-                      }}
-                    >
+                     <p className="font-extrabold text-[22px] text-brand-primary leading-none">
                       {s.stat}
                     </p>
-                    <p style={{ fontSize: "12px", color: "white", fontWeight: 600 }}>{s.label}</p>
-                    <p style={{ fontSize: "11px", color: "rgba(255,255,255,0.5)", marginTop: "2px" }}>{s.sub}</p>
+                    <p className="text-[12px] text-white font-semibold">{s.label}</p>
+                    <p className="text-[11px] text-white/50 mt-0.5">{s.sub}</p>
                   </div>
                 ))}
               </div>
-              <div
-                className="rounded-xl p-4"
-                style={{ background: "rgba(249,115,22,0.15)", border: "1px solid rgba(249,115,22,0.3)" }}
-              >
-                <p style={{ fontSize: "12px", color: "#fdba74", fontWeight: 600, marginBottom: "4px" }}>
+               <div className="rounded-xl p-4 bg-brand-primary/10 border border-brand-primary/20">
+                <p className="text-[12px] text-blue-200 font-semibold mb-1">
                   REVISION NOTE
                 </p>
-                <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.75)", lineHeight: 1.6 }}>
-                  <strong style={{ color: "white" }}>Paper 1 = Reading</strong> · 2 hrs · 50 marks · 50%
+                 <p className="text-[12px] text-white/70 leading-relaxed">
+                  <strong className="text-white">Paper 1 = Reading</strong> · 2 hrs · 50 marks · 50%
                   <br />
-                  <strong style={{ color: "white" }}>Paper 2 = Writing</strong> · 2 hrs · 50 marks · 50%
+                  <strong className="text-white">Paper 2 = Writing</strong> · 2 hrs · 50 marks · 50%
                 </p>
               </div>
             </motion.div>
@@ -701,7 +576,7 @@ export default function OLevelEnglish() {
       </section>
 
       {/* ── MAIN LAYOUT: SIDEBAR + CONTENT ────────────────────────────────────── */}
-      <div className="flex" style={{ background: "#F8FAFC" }}>
+       <div className="flex bg-slate-50">
         <OLevelSidebar activeSection={activeSection} />
 
         <main className="flex-1 min-w-0">
@@ -709,28 +584,13 @@ export default function OLevelEnglish() {
           {/* ── SECTION 2: WHAT THE EXAMINER IS LOOKING FOR ─────────────────── */}
           <section id="the-standard" className="py-14 md:py-20 px-6 md:px-10 bg-white">
             <div className="max-w-4xl">
-              <p
-                className="uppercase mb-3"
-                style={{ color: INDIGO, fontSize: "11px", fontWeight: 700, letterSpacing: "0.28em" }}
-              >
+               <p className="uppercase mb-3 text-brand-primary text-[11px] font-bold tracking-[0.28em]">
                 What the Cambridge Examiner Is Looking For
               </p>
-              <h2
-                className="mb-6"
-                style={{
-                  fontFamily: "Sora, sans-serif",
-                  fontWeight: 700,
-                  fontSize: "clamp(1.5rem, 3vw, 2.2rem)",
-                  color: NAVY,
-                  lineHeight: 1.2,
-                }}
-              >
+               <h2 className="mb-6 font-bold text-[clamp(1.5rem,3vw,2.2rem)] text-brand-navy leading-snug">
                 Cambridge Examiners Are Not Reading for Enjoyment. They Are Marking Against a Rubric.
               </h2>
-              <p
-                className="mb-6"
-                style={{ fontSize: "15px", color: BODY, lineHeight: 1.8, maxWidth: "720px" }}
-              >
+               <p className="mb-6 text-[15px] text-slate-900 leading-relaxed max-w-[720px]">
                 Cambridge O-Level English Language examiners use two marking criteria:{" "}
                 <strong>Content</strong> (what the student communicates — relevance, completeness,
                 understanding) and <strong>Language</strong> (how they communicate it — accuracy,
@@ -738,7 +598,7 @@ export default function OLevelEnglish() {
                 excellent content and still score Band 3 because of limited vocabulary. A student can
                 write beautifully and still score Band 3 because they misunderstood the question.
               </p>
-              <p style={{ fontSize: "15px", color: BODY, lineHeight: 1.8, maxWidth: "720px" }}>
+               <p className="text-[15px] text-slate-900 leading-relaxed max-w-[720px]">
                 EduMeUp's O-Level English courses are built to close both gaps simultaneously. Every
                 lesson targets both Content and Language criteria as defined by the official Cambridge
                 Band 1 rubric.
@@ -746,10 +606,10 @@ export default function OLevelEnglish() {
             </div>
 
             {/* Cambridge Band Comparison Table */}
-            <div className="mt-10 overflow-x-auto rounded-2xl border border-[#dbe7f4] shadow-sm">
+             <div className="mt-10 overflow-x-auto rounded-2xl border border-slate-200 shadow-sm">
               <table className="w-full min-w-[640px]">
                 <thead>
-                  <tr style={{ background: INDIGO }}>
+                   <tr className="bg-brand-primary">
                     <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-white">
                       Cambridge Band
                     </th>
@@ -762,11 +622,11 @@ export default function OLevelEnglish() {
                   </tr>
                 </thead>
                 <tbody>
-                  {cambridgeBands.map((row, i) => (
-                    <tr
-                      key={row.band}
-                      style={{ borderTop: `1px solid ${BORDER}`, background: i % 2 === 0 ? "white" : "#FAFAFA" }}
-                    >
+                   {cambridgeBands.map((row: any, i: number) => (
+                       <tr
+                        key={row.band}
+                        className={`border-t border-slate-200 ${i % 2 === 0 ? "bg-white" : "bg-slate-50"}`}
+                      >
                       <td className="px-5 py-4">
                         <span
                           className="inline-block rounded-lg px-3 py-1 font-bold text-sm"
@@ -775,20 +635,14 @@ export default function OLevelEnglish() {
                           {row.band}
                         </span>
                       </td>
-                      <td
-                        className="px-5 py-4 text-sm"
-                        style={{ color: BODY, lineHeight: 1.6, maxWidth: "280px" }}
-                      >
+                       <td className="px-5 py-4 text-sm text-slate-900 leading-relaxed max-w-[280px]">
                         {row.examinerSees}
                       </td>
-                      <td
-                        className="px-5 py-4 text-sm"
-                        style={{ color: BODY, lineHeight: 1.6, maxWidth: "280px" }}
-                      >
+                       <td className="px-5 py-4 text-sm text-slate-900 leading-relaxed max-w-[280px]">
                         {row.edumeupDoes}
                       </td>
-                    </tr>
-                  ))}
+                     </tr>
+                   ))}
                 </tbody>
               </table>
             </div>
@@ -800,22 +654,14 @@ export default function OLevelEnglish() {
                 { stat: "9-Step", label: "Learning Mastery System applied to every Paper 1 course" },
                 { stat: "2 Papers", label: "All Cambridge O-Level English components covered" },
               ].map((s) => (
-                <div
+                 <div
                   key={s.stat}
-                  className="rounded-xl p-5 text-center"
-                  style={{ background: SOFT_BLUE, border: `1px solid #BFDBFE` }}
+                  className="rounded-xl p-5 text-center bg-brand-primary-soft border border-blue-200"
                 >
-                  <p
-                    style={{
-                      fontFamily: "Sora, sans-serif",
-                      fontWeight: 800,
-                      fontSize: "24px",
-                      color: INDIGO,
-                    }}
-                  >
+                    <p className="font-extrabold text-[24px] text-brand-primary">
                     {s.stat}
                   </p>
-                  <p style={{ fontSize: "12px", color: META, marginTop: "4px", lineHeight: 1.5 }}>
+                   <p className="text-[12px] text-slate-500 mt-1 leading-relaxed">
                     {s.label}
                   </p>
                 </div>
@@ -829,61 +675,39 @@ export default function OLevelEnglish() {
             className="py-14 md:py-20 px-6 md:px-10"
             style={{ background: "white" }}
           >
-            <p
-              className="uppercase mb-3"
-              style={{ color: INDIGO, fontSize: "11px", fontWeight: 700, letterSpacing: "0.28em" }}
-            >
-              Official Cambridge O-Level English Language Syllabus — Confirmed Structure
-            </p>
-            <h2
-              className="mb-8"
-              style={{
-                fontFamily: "Sora, sans-serif",
-                fontWeight: 700,
-                fontSize: "clamp(1.4rem, 2.5vw, 2rem)",
-                color: NAVY,
-              }}
-            >
-              Cambridge O-Level English Paper Structure — At a Glance
-            </h2>
+             <p className="uppercase mb-3 text-brand-primary text-[11px] font-bold tracking-[0.28em]">
+                Official Cambridge O-Level English Language Syllabus — Confirmed Structure
+              </p>
+               <h2 className="mb-8 font-bold text-[clamp(1.4rem,2.5vw,2rem)] text-brand-navy">
+                Cambridge O-Level English Paper Structure — At a Glance
+              </h2>
 
             <div className="grid md:grid-cols-2 gap-6 mb-8">
               {/* Paper 1 */}
-              <div
-                className="rounded-2xl p-7"
-                style={{ background: SOFT_BLUE, border: "2px solid #2563eb" }}
-              >
+               <div className="rounded-2xl p-7 bg-brand-primary-soft border-2 border-brand-primary">
                 <div className="flex items-center gap-3 mb-4">
-                  <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-lg"
-                    style={{ background: INDIGO }}
-                  >
+                   <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-lg bg-brand-primary">
                     P1
                   </div>
                   <div>
-                    <p
-                      style={{ fontFamily: "Sora, sans-serif", fontWeight: 700, fontSize: "18px", color: NAVY }}
-                    >
+                     <p className="font-bold text-[18px] text-brand-navy">
                       Paper 1 — Reading
                     </p>
-                    <p style={{ fontSize: "12px", color: META }}>2 hours · 50 marks · 50%</p>
+                     <p className="text-[12px] text-slate-500">2 hours · 50 marks · 50%</p>
                   </div>
                 </div>
-                <p style={{ fontSize: "14px", color: BODY, lineHeight: 1.7, marginBottom: "12px" }}>
+                 <p className="text-[14px] text-slate-900 leading-relaxed mb-3">
                   <strong>What the exam contains:</strong> Structured and extended writing questions
                   based on <strong>TWO reading texts</strong>. Questions test literal comprehension,
                   inference, evaluation, and summary skills across both texts.
                 </p>
-                <p style={{ fontSize: "14px", color: BODY, lineHeight: 1.7, marginBottom: "12px" }}>
+                 <p className="text-[14px] text-slate-900 leading-relaxed mb-3">
                   <strong>Key skill required:</strong> Reading two texts accurately and efficiently,
                   then producing structured written responses to comprehension questions at AO1
                   (literal), AO2 (inferential), and AO3 (evaluative) levels.
                 </p>
-                <div
-                  className="rounded-xl p-3"
-                  style={{ background: "#DBEAFE", border: "1px solid #93c5fd" }}
-                >
-                  <p style={{ fontSize: "12px", color: INDIGO, fontWeight: 600 }}>
+                 <div className="rounded-xl p-3 bg-blue-100 border border-blue-200">
+                   <p className="text-[12px] text-brand-primary font-semibold">
                     EduMeUp courses for Paper 1:
                     <br />→ Comprehension Mastery — 5 courses, one past paper per course, 9-Step
                     Learning Mastery System
@@ -892,42 +716,31 @@ export default function OLevelEnglish() {
               </div>
 
               {/* Paper 2 */}
-              <div
-                className="rounded-2xl p-7"
-                style={{ background: "#f8fbff", border: "2px solid #93c5fd" }}
-              >
+               <div className="rounded-2xl p-7 bg-slate-50 border-2 border-blue-200">
                 <div className="flex items-center gap-3 mb-4">
-                  <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-lg"
-                    style={{ background: DARK_NAVY }}
-                  >
+                   <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-lg bg-brand-primary-dark">
                     P2
                   </div>
                   <div>
-                    <p
-                      style={{ fontFamily: "Sora, sans-serif", fontWeight: 700, fontSize: "18px", color: NAVY }}
-                    >
+                     <p className="font-bold text-[18px] text-brand-navy">
                       Paper 2 — Writing
                     </p>
-                    <p style={{ fontSize: "12px", color: META }}>2 hours · 50 marks · 50%</p>
+                     <p className="text-[12px] text-slate-500">2 hours · 50 marks · 50%</p>
                   </div>
                 </div>
-                <p style={{ fontSize: "14px", color: BODY, lineHeight: 1.7, marginBottom: "12px" }}>
+                 <p className="text-[14px] text-slate-900 leading-relaxed mb-3">
                   <strong>What the exam contains:</strong> PART 1 — Directed Writing question
                   (speech, report, article, letter, email, etc. using provided stimulus material).
                   PART 2 — Composition task (narrative, descriptive, argumentative, or discursive
                   essay).
                 </p>
-                <p style={{ fontSize: "14px", color: BODY, lineHeight: 1.7, marginBottom: "12px" }}>
+                 <p className="text-[14px] text-slate-900 leading-relaxed mb-3">
                   <strong>Key skill required:</strong> Format accuracy, structural control, vocabulary
                   range and precision, sentence variety, and the ability to communicate at Cambridge
                   Band 1 standard under timed conditions.
                 </p>
-                <div
-                  className="rounded-xl p-3"
-                  style={{ background: "#dbeafe", border: "1px solid #93c5fd" }}
-                >
-                  <p style={{ fontSize: "12px", color: "#1e3a8a", fontWeight: 600 }}>
+                 <div className="rounded-xl p-3 bg-blue-100 border border-blue-200">
+                   <p className="text-[12px] text-blue-900 font-semibold">
                     EduMeUp courses for Paper 2:
                     <br />→ Composition Mastery — F1, F2, F3 ($145 bundle)
                     <br />→ Directed Writing — Parts 1 and 2
@@ -937,10 +750,7 @@ export default function OLevelEnglish() {
             </div>
 
             {/* Two-texts callout */}
-            <div
-              className="rounded-xl p-5"
-              style={{ background: "#eef6ff", border: "2px solid #93c5fd" }}
-            >
+             <div className="rounded-xl p-5 bg-brand-primary-soft border-2 border-blue-200">
               <p style={{ fontSize: "14px", color: "#166534", lineHeight: 1.7, fontWeight: 500 }}>
                 <strong>⚠ IMPORTANT — Paper 1 uses TWO reading texts:</strong> Every comprehension
                 question in Paper 1 is based on two reading texts provided in the exam. EduMeUp's 5
@@ -952,50 +762,35 @@ export default function OLevelEnglish() {
             </div>
           </section>
 
-          {/* ── SECTION 4: COMPREHENSION MASTERY ───────────────────────────── */}
-          <section
-            id="comprehension-mastery"
-            className="py-14 md:py-20 px-6 md:px-10"
-            style={{ background: SOFT_BLUE }}
-          >
+       <section
+        id="comprehension-mastery"
+        className="py-14 md:py-20 px-6 md:px-10 bg-brand-primary-soft"
+      >
             <div className="max-w-5xl">
-              <p
-                className="uppercase mb-2"
-                style={{ color: INDIGO, fontSize: "11px", fontWeight: 700, letterSpacing: "0.28em" }}
-              >
+               <p className="uppercase mb-2 text-brand-primary text-[11px] font-bold tracking-[0.28em]">
                 Cambridge O-Level English · Paper 1 — Reading
               </p>
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-2">
-                <h2
-                  style={{
-                    fontFamily: "Sora, sans-serif",
-                    fontWeight: 700,
-                    fontSize: "clamp(1.5rem, 3vw, 2rem)",
-                    color: NAVY,
-                  }}
-                >
+                 <h2 className="font-bold text-[clamp(1.5rem,3vw,2rem)] text-brand-navy">
                   Comprehension Mastery
                 </h2>
-                <span
-                  className="inline-flex items-center rounded-xl px-4 py-2 font-bold text-sm"
-                  style={{ background: INDIGO, color: "white" }}
-                >
+                 <span className="inline-flex items-center rounded-xl px-4 py-2 font-bold text-sm bg-brand-primary text-white">
                   Bundle: $110 (all 5 courses)
                 </span>
               </div>
-              <p style={{ fontSize: "14px", color: META, marginBottom: "24px" }}>
+               <p className="text-[14px] text-slate-500 mb-6">
                 Five courses · one complete Cambridge past paper per course · 9-Step Learning Mastery
                 System applied to every lesson · 5 courses · All Available
               </p>
 
               {/* Course cards */}
               <div className="space-y-4">
-                {comprehensionCourses.map((course) => (
+                 {comprehensionCourses.map((course: any) => (
                   <CourseGroupCard
                     key={course.id}
                     course={course}
-                    accentColor={INDIGO}
-                    accentBg={SOFT_BLUE}
+                    accentColor="#2366c9"
+                    accentBg="#eef6ff"
                   />
                 ))}
               </div>
@@ -1005,50 +800,28 @@ export default function OLevelEnglish() {
           {/* ── SECTION 5: 9-STEP SYSTEM ────────────────────────────────────── */}
           <section id="nine-step-system" className="py-14 md:py-20 px-6 md:px-10 bg-white">
             <div className="max-w-5xl">
-              <p
-                className="uppercase mb-2"
-                style={{ color: INDIGO, fontSize: "11px", fontWeight: 700, letterSpacing: "0.28em" }}
-              >
+               <p className="uppercase mb-2 text-brand-primary text-[11px] font-bold tracking-[0.28em]">
                 Applied to Every Paper 1 Comprehension Course
               </p>
-              <h2
-                className="mb-4"
-                style={{
-                  fontFamily: "Sora, sans-serif",
-                  fontWeight: 700,
-                  fontSize: "clamp(1.4rem, 2.5vw, 1.9rem)",
-                  color: NAVY,
-                }}
-              >
+               <h2 className="mb-4 font-bold text-[clamp(1.4rem,2.5vw,1.9rem)] text-brand-navy">
                 The 9-Step Learning Mastery System
               </h2>
-              <p style={{ fontSize: "14px", color: BODY, lineHeight: 1.7, marginBottom: "32px", maxWidth: "680px" }}>
+               <p className="text-[14px] text-slate-900 leading-relaxed mb-8 max-w-[680px]">
                 Every EduMeUp Comprehension Mastery course is built around one complete Cambridge
                 Paper 1 past paper — including both reading texts — taught through the 9-Step
                 Learning Mastery System applied consistently across all 5 courses.
               </p>
 
               <div className="space-y-3">
-                {nineSteps.map((step) => (
-                  <div
+                {nineSteps.map((step: any) => (
+                   <div
                     key={step.step}
-                    className="rounded-xl overflow-hidden"
-                    style={{ border: `1.5px solid ${BORDER}`, background: "white" }}
+                    className="rounded-xl overflow-hidden border-[1.5px] border-slate-200 bg-white"
                   >
                     <div className="flex items-stretch">
                       {/* Step number */}
-                      <div
-                        className="flex-shrink-0 flex items-center justify-center w-14"
-                        style={{ background: INDIGO }}
-                      >
-                        <span
-                          style={{
-                            fontFamily: "Sora, sans-serif",
-                            fontWeight: 800,
-                            fontSize: "20px",
-                            color: "white",
-                          }}
-                        >
+                       <div className="flex-shrink-0 flex items-center justify-center w-14 bg-brand-primary">
+                         <span className="font-extrabold text-[20px] text-white">
                           {step.step}
                         </span>
                       </div>
@@ -1056,39 +829,20 @@ export default function OLevelEnglish() {
                       <div className="flex-1 p-4">
                         <div className="flex items-start justify-between gap-4">
                           <div className="flex-1">
-                            <p
-                              style={{
-                                fontFamily: "Sora, sans-serif",
-                                fontWeight: 700,
-                                fontSize: "14px",
-                                color: NAVY,
-                                marginBottom: "4px",
-                              }}
-                            >
+                             <p className="font-bold text-[14px] text-brand-navy mb-1">
                               {step.title}
                             </p>
-                            <p style={{ fontSize: "13px", color: BODY, lineHeight: 1.6 }}>
+                             <p className="text-[13px] text-slate-900 leading-relaxed">
                               {step.what}
                             </p>
                           </div>
                           <div className="flex-shrink-0 text-right">
-                            <span
-                              className="inline-block rounded-full px-3 py-1"
-                              style={{
-                                background: SOFT_BLUE,
-                                color: INDIGO,
-                                fontSize: "11px",
-                                fontWeight: 700,
-                              }}
-                            >
+                             <span className="inline-block rounded-full px-3 py-1 bg-brand-primary-soft text-brand-primary text-[11px] font-bold">
                               {step.duration}
                             </span>
                           </div>
                         </div>
-                        <div
-                          className="mt-3 rounded-lg p-3"
-                          style={{ background: "#eef6ff", border: "1px solid #bfdbfe" }}
-                        >
+                         <div className="mt-3 rounded-lg p-3 bg-brand-primary-soft border border-blue-200">
                           <p style={{ fontSize: "12px", color: "#1E3A5F", lineHeight: 1.5 }}>
                             <strong>Cambridge Relevance:</strong> {step.relevance}
                           </p>
@@ -1101,59 +855,32 @@ export default function OLevelEnglish() {
             </div>
           </section>
 
-          {/* ── SECTION 6: COMPOSITION MASTERY ──────────────────────────────── */}
-          <section
-            id="composition-mastery"
-            className="py-14 md:py-20 px-6 md:px-10"
-            style={{ background: "#f8fbff" }}
-          >
+       <section
+        id="composition-mastery"
+        className="py-14 md:py-20 px-6 md:px-10 bg-slate-50"
+      >
             <div className="max-w-5xl">
-              <p
-                className="uppercase mb-2"
-                style={{ color: INDIGO, fontSize: "11px", fontWeight: 700, letterSpacing: "0.28em" }}
-              >
+               <p className="uppercase mb-2 text-brand-primary text-[11px] font-bold tracking-[0.28em]">
                 Cambridge O-Level English · Paper 2 — Writing · Composition task
               </p>
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-2">
-                <h2
-                  style={{
-                    fontFamily: "Sora, sans-serif",
-                    fontWeight: 700,
-                    fontSize: "clamp(1.5rem, 3vw, 2rem)",
-                    color: NAVY,
-                  }}
-                >
+                 <h2 className="font-bold text-[clamp(1.5rem,3vw,2rem)] text-brand-navy">
                   Composition Mastery
                 </h2>
-                <span
-                  className="inline-flex items-center rounded-xl px-4 py-2 font-bold text-sm"
-                  style={{ background: DARK_NAVY, color: "white" }}
-                >
+                 <span className="inline-flex items-center rounded-xl px-4 py-2 font-bold text-sm bg-brand-primary-dark text-white">
                   Bundle: $145 (all 3 courses)
                 </span>
               </div>
-              <p style={{ fontSize: "14px", color: META, marginBottom: "12px" }}>
+               <p className="text-[14px] text-slate-500 mb-3">
                 Three progressive courses · Band 3 → Band 1 transformation · Official Cambridge Band
                 1 rubric taught and applied throughout · 3 courses · All Available
               </p>
 
-              {/* Why three courses explainer */}
-              <div
-                className="rounded-xl p-5 mb-8"
-                style={{ background: "white", border: `1px solid #DDD6FE` }}
-              >
-                <p
-                  style={{
-                    fontFamily: "Sora, sans-serif",
-                    fontWeight: 700,
-                    fontSize: "14px",
-                    color: NAVY,
-                    marginBottom: "8px",
-                  }}
-                >
+               <div className="rounded-xl p-5 mb-8 bg-white border border-indigo-200">
+                 <p className="font-bold text-[14px] text-brand-navy mb-2">
                   Why Three Courses?
                 </p>
-                <p style={{ fontSize: "13px", color: BODY, lineHeight: 1.7 }}>
+                 <p className="text-[13px] text-slate-900 leading-relaxed">
                   Paper 2 Part 2 (the composition task) requires three distinct capabilities: (1)
                   knowing the architecture of each essay type — what goes where and how to structure
                   narrative, descriptive, argumentative, and discursive writing, (2) acquiring the
@@ -1167,12 +894,12 @@ export default function OLevelEnglish() {
 
               {/* F1, F2, F3 */}
               <div className="space-y-4" id="f1-essay-types">
-                {compositionCourses.map((course, i) => (
+                {compositionCourses.map((course: any, i: number) => (
                   <div key={course.id} id={i === 1 ? "f2-bridge" : i === 2 ? "f3-mastery" : undefined}>
                     <CourseGroupCard
                       course={course}
-                      accentColor={INDIGO}
-                      accentBg={SOFT_BLUE}
+                      accentColor="#2366c9"
+                      accentBg="#eef6ff"
                     />
                   </div>
                 ))}
@@ -1186,45 +913,22 @@ export default function OLevelEnglish() {
             className="py-14 md:py-20 px-6 md:px-10 bg-white"
           >
             <div className="max-w-5xl">
-              <p
-                className="uppercase mb-2"
-                style={{ color: INDIGO, fontSize: "11px", fontWeight: 700, letterSpacing: "0.28em" }}
-              >
+               <p className="uppercase mb-2 text-brand-primary text-[11px] font-bold tracking-[0.28em]">
                 Cambridge O-Level English · Paper 2 — Writing · Directed writing question
               </p>
-              <h2
-                className="mb-4"
-                style={{
-                  fontFamily: "Sora, sans-serif",
-                  fontWeight: 700,
-                  fontSize: "clamp(1.5rem, 3vw, 2rem)",
-                  color: NAVY,
-                }}
-              >
+               <h2 className="mb-4 font-bold text-[clamp(1.5rem,3vw,2rem)] text-brand-navy">
                 Directed Writing Mastery
               </h2>
-              <p style={{ fontSize: "14px", color: META, marginBottom: "12px" }}>
+               <p className="text-[14px] text-slate-500 mb-3">
                 Two courses · all Cambridge directed writing formats · current syllabus Cambridge past
                 papers (2021–2024) · 2 courses · All Available
               </p>
 
-              {/* Why format matters */}
-              <div
-                className="rounded-xl p-5 mb-8"
-                style={{ background: "#eef6ff", border: "1px solid #bfdbfe" }}
-              >
-                <p
-                  style={{
-                    fontFamily: "Sora, sans-serif",
-                    fontWeight: 700,
-                    fontSize: "14px",
-                    color: "#1E3A5F",
-                    marginBottom: "8px",
-                  }}
-                >
+               <div className="rounded-xl p-5 mb-8 bg-brand-primary-soft border border-blue-200">
+                 <p className="font-bold text-[14px] text-brand-navy mb-2">
                   Why Directed Writing Is the Most Format-Dependent Component
                 </p>
-                <p style={{ fontSize: "13px", color: "#1E3A5F", lineHeight: 1.7 }}>
+                 <p className="text-[13px] text-brand-navy leading-relaxed">
                   In Cambridge Paper 2, the directed writing question awards marks in two dimensions:{" "}
                   <strong>Format</strong> (does the writing look and sound like the type it claims to
                   be?) and <strong>Content/Language</strong>. A student can write well and still score
@@ -1236,12 +940,8 @@ export default function OLevelEnglish() {
                 </p>
               </div>
 
-              {/* Stimulus material notice */}
-              <div
-                className="rounded-xl p-4 mb-8"
-                style={{ background: "#eef6ff", border: "1px solid #bfdbfe" }}
-              >
-                <p style={{ fontSize: "13px", color: "#1E3A5F", lineHeight: 1.7 }}>
+               <div className="rounded-xl p-4 mb-8 bg-brand-primary-soft border border-blue-200">
+                 <p className="text-[13px] text-brand-navy leading-relaxed">
                   <strong>STIMULUS MATERIAL IN PAPER 2 DIRECTED WRITING:</strong> Cambridge Paper 2
                   directed writing questions often provide stimulus material — a scenario, a brief
                   text, or contextual information — that the student must incorporate into their
@@ -1253,12 +953,12 @@ export default function OLevelEnglish() {
 
               {/* DW1 and DW2 */}
               <div className="space-y-4" id="dw1-non-letters">
-                {directedCourses.map((course, i) => (
+                {directedCourses.map((course: any, i: number) => (
                   <div key={course.id} id={i === 1 ? "dw2-letters" : undefined}>
                     <CourseGroupCard
                       course={course}
-                      accentColor={INDIGO}
-                      accentBg={SOFT_BLUE}
+                      accentColor="#2366c9"
+                      accentBg="#eef6ff"
                     />
                   </div>
                 ))}
@@ -1266,40 +966,27 @@ export default function OLevelEnglish() {
             </div>
           </section>
 
-          {/* ── SECTION 8: PRICING TABLE ─────────────────────────────────────── */}
-          <section
-            id="pricing"
-            className="py-14 md:py-20 px-6 md:px-10"
-            style={{ background: SOFT_BLUE }}
-          >
+       <section
+        id="pricing"
+        className="py-14 md:py-20 px-6 md:px-10 bg-brand-primary-soft"
+      >
             <div className="max-w-5xl">
-              <p
-                className="uppercase mb-2"
-                style={{ color: INDIGO, fontSize: "11px", fontWeight: 700, letterSpacing: "0.28em" }}
-              >
+               <p className="uppercase mb-2 text-brand-primary text-[11px] font-bold tracking-[0.28em]">
                 All Prices in USD Only
               </p>
-              <h2
-                className="mb-3"
-                style={{
-                  fontFamily: "Sora, sans-serif",
-                  fontWeight: 700,
-                  fontSize: "clamp(1.5rem, 3vw, 2rem)",
-                  color: NAVY,
-                }}
-              >
-                Pricing Summary — All 10 O-Level English Courses
-              </h2>
-              <p style={{ fontSize: "13px", color: META, marginBottom: "24px" }}>
+                 <h2 className="font-bold text-[clamp(1.5rem,3vw,2rem)] text-brand-navy mb-3">
+                  Pricing Summary — All 10 O-Level English Courses
+                </h2>
+               <p className="text-[13px] text-slate-500 mb-6">
                 Three prices are pending CA confirmation before page launch: Directed Writing Part 1,
                 Directed Writing Part 2, and the full-programme bundle. Confirmed prices are shown
                 prominently.
               </p>
 
-              <div className="overflow-x-auto rounded-2xl border border-[#dbe7f4] shadow-sm">
+               <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm">
                 <table className="w-full min-w-[700px]">
                   <thead>
-                    <tr style={{ background: INDIGO }}>
+                     <tr className="bg-brand-primary">
                       {["Course", "Paper", "Modules", "Includes", "Price (USD)"].map((h) => (
                         <th
                           key={h}
@@ -1311,26 +998,12 @@ export default function OLevelEnglish() {
                     </tr>
                   </thead>
                   <tbody>
-                    {pricingRows.map((row, i) => (
-                      <tr
+                    {pricingRows.map((row: any, i: number) => (
+                       <tr
                         key={row.course}
-                        style={{
-                          borderTop: `1px solid ${BORDER}`,
-                          background: row.isBundle
-                            ? SOFT_BLUE
-                            : i % 2 === 0
-                            ? "white"
-                            : "#FAFAFA",
-                        }}
+                        className={`border-t border-slate-200 ${row.isBundle ? "bg-brand-primary-soft" : i % 2 === 0 ? "bg-white" : "bg-slate-50"}`}
                       >
-                        <td
-                          className="px-4 py-3 text-sm"
-                          style={{
-                            color: BODY,
-                            fontWeight: row.isBundle ? 700 : 500,
-                            maxWidth: "220px",
-                          }}
-                        >
+                         <td className={`px-4 py-3 text-sm text-slate-900 max-w-[220px] ${row.isBundle ? "font-bold" : "font-medium"}`}>
                           {row.course}
                         </td>
                         <td className="px-4 py-3">
@@ -1338,67 +1011,52 @@ export default function OLevelEnglish() {
                             className="inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold"
                             style={{
                               background: row.paper.includes("P1+P2")
-                                ? "#dbeafe"
+                                 ? "#dbeafe"
                                 : row.paper === "Paper 1"
-                                ? SOFT_BLUE
+                                ? "#eef6ff"
                                 : "#eef6ff",
-                              color: row.paper.includes("P1+P2")
+                               color: row.paper.includes("P1+P2")
                                 ? "#1e3a8a"
                                 : row.paper === "Paper 1"
-                                ? INDIGO
+                                ? "#2366c9"
                                 : "#1e3a8a",
                             }}
                           >
                             {row.paper}
                           </span>
                         </td>
-                        <td
-                          className="px-4 py-3 text-xs"
-                          style={{ color: META, maxWidth: "140px" }}
-                        >
+                         <td className="px-4 py-3 text-xs text-slate-500 max-w-[140px]">
                           {row.modules}
                         </td>
-                        <td
-                          className="px-4 py-3 text-xs"
-                          style={{ color: META, maxWidth: "220px", lineHeight: 1.5 }}
-                        >
+                         <td className="px-4 py-3 text-xs text-slate-500 max-w-[220px] leading-relaxed">
                           {row.includes}
                         </td>
                         <td className="px-4 py-3">
-                          <span
-                            style={{
-                              fontFamily: "Sora, sans-serif",
-                              fontWeight: 800,
-                              fontSize: "16px",
-                              color: row.confirmed ? INDIGO : META,
-                            }}
-                          >
-                            {row.price}
-                          </span>
+                             <span className={`font-extrabold text-[16px] ${row.confirmed ? "text-brand-primary" : "text-slate-500"}`}>
+                              {row.price}
+                            </span>
                           {!row.confirmed && (
                             <p style={{ fontSize: "10px", color: "#2563eb", marginTop: "2px" }}>
                               Pending CA confirmation
                             </p>
                           )}
                         </td>
-                      </tr>
+                        </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
 
-              <p style={{ fontSize: "12px", color: META, marginTop: "12px" }}>
+               <p className="text-[12px] text-slate-500 mt-3">
                 Prices shown in USD only. Never display PKR or local currency on this page.
               </p>
             </div>
           </section>
 
-          {/* ── SECTION 9: FINAL CTA ─────────────────────────────────────────── */}
-          <section
-            id="enrol"
-            className="py-16 md:py-24 px-6 md:px-10 relative overflow-hidden"
-            style={{ background: `linear-gradient(135deg, ${NAVY} 0%, ${INDIGO} 100%)` }}
-          >
+       <section
+        id="enrol"
+        className="py-16 md:py-24 px-6 md:px-10 relative overflow-hidden bg-gradient-to-br from-brand-navy to-brand-primary"
+      >
             <div
               className="absolute -top-16 -left-16 h-64 w-64 rounded-full opacity-20 blur-3xl"
               style={{ background: "#3B82F6" }}
@@ -1417,24 +1075,11 @@ export default function OLevelEnglish() {
               >
                 Cambridge O-Level English Is Learnable. Every Mark Is Earnable.
               </p>
-              <h2
-                className="mb-4"
-                style={{
-                  fontFamily: "Sora, sans-serif",
-                  fontWeight: 700,
-                  fontSize: "clamp(1.5rem, 3vw, 2.2rem)",
-                  color: "white",
-                  maxWidth: "640px",
-                  lineHeight: 1.2,
-                }}
-              >
+               <h2 className="mb-4 font-bold text-[clamp(1.5rem,3vw,2.2rem)] text-white leading-snug max-w-[640px]">
                 Cambridge Band 1 Is Not a Gift. It Is the Outcome of Knowing Exactly What the
                 Examiner Is Looking For.
               </h2>
-              <p
-                className="mb-10 max-w-2xl"
-                style={{ fontSize: "15px", color: "rgba(255,255,255,0.75)", lineHeight: 1.7 }}
-              >
+               <p className="mb-10 max-w-2xl text-[15px] text-white/75 leading-relaxed">
                 These 10 courses teach the standard. The practice is built in. Choose the step that is
                 right for you right now.
               </p>
@@ -1442,88 +1087,43 @@ export default function OLevelEnglish() {
               {/* Three CTA Cards */}
               <div className="grid md:grid-cols-3 gap-6 mb-10">
                 {/* Primary */}
-                <div
-                  className="rounded-[2rem] p-7 flex flex-col"
-                  style={{
-                    background: INDIGO,
-                    border: "4px solid rgba(255,255,255,0.2)",
-                    boxShadow: "0 16px 48px rgba(0,0,0,0.3)",
-                    transform: "scale(1.02)",
-                  }}
-                >
-                  <h3
-                    style={{
-                      fontFamily: "Sora, sans-serif",
-                      fontWeight: 700,
-                      fontSize: "20px",
-                      color: "white",
-                      marginBottom: "8px",
-                    }}
-                  >
+                 <div className="rounded-[2rem] p-7 flex flex-col bg-brand-primary border-4 border-white/20 shadow-2xl scale-[1.02]">
+                   <h3 className="font-bold text-[20px] text-white mb-2">
                     Enrol in the Full Programme
                   </h3>
                   <p style={{ fontSize: "13px", color: "#93c5fd", fontWeight: 600, marginBottom: "12px" }}>
                     All 10 courses — Paper 1 (Reading) and Paper 2 (Writing) — complete preparation.
                   </p>
-                  <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.75)", lineHeight: 1.6, flex: 1, marginBottom: "16px" }}>
+                   <p className="text-[13px] text-white/75 leading-relaxed flex-1 mb-4">
                     Paper 1: 5 Comprehension Mastery courses. Paper 2: 3 Composition courses + 2
                     Directed Writing courses. Everything Cambridge can set. Everything the mark scheme
                     rewards.
                   </p>
                   <Link href="/programs/o-level-english/enrol">
-                    <span
-                      className="flex items-center justify-center gap-2 rounded-xl font-bold"
-                      style={{
-                        background: "white",
-                        color: INDIGO,
-                        fontSize: "14px",
-                        padding: "12px",
-                        cursor: "pointer",
-                      }}
-                    >
-                      Enrol in All 10 Courses →
-                    </span>
+                   <span className="flex items-center justify-center gap-2 rounded-xl font-bold bg-white text-brand-primary text-[14px] p-3 cursor-pointer">
+                    Enrol in All 10 Courses →
+                  </span>
                   </Link>
                 </div>
 
                 {/* Secondary */}
-                <div
-                  className="rounded-[2rem] p-7 flex flex-col bg-white"
-                  style={{ border: `4px solid ${INDIGO}`, boxShadow: "0 8px 32px rgba(0,0,0,0.15)" }}
-                >
-                  <h3
-                    style={{
-                      fontFamily: "Sora, sans-serif",
-                      fontWeight: 700,
-                      fontSize: "18px",
-                      color: NAVY,
-                      marginBottom: "8px",
-                    }}
-                  >
+                 <div className="rounded-[2rem] p-7 flex flex-col bg-white border-4 border-brand-primary shadow-xl">
+                   <h3 className="font-bold text-[18px] text-brand-navy mb-2">
                     Take the Free Diagnostic First
                   </h3>
-                  <p style={{ fontSize: "13px", color: INDIGO, fontWeight: 600, marginBottom: "12px" }}>
+                   <p className="text-[13px] text-brand-primary font-bold mb-3">
                     Already strong in Paper 1? Only need Paper 2? The diagnostic tells you which
                     courses to prioritise.
                   </p>
-                  <p style={{ fontSize: "13px", color: BODY, lineHeight: 1.6, flex: 1, marginBottom: "16px" }}>
+                   <p className="text-[13px] text-slate-900 leading-relaxed flex-1 mb-4">
                     The 30-minute diagnostic assesses your Paper 1 reading comprehension level and
                     Paper 2 writing ability — and recommends exactly which of the 10 courses to
                     prioritise.
                   </p>
                   <Link href="/programs/ai-diagnostic">
-                    <span
-                      className="flex items-center justify-center gap-2 rounded-xl font-bold"
-                      style={{
-                        background: INDIGO,
-                        color: "white",
-                        fontSize: "14px",
-                        padding: "12px",
-                        cursor: "pointer",
-                      }}
-                    >
-                      Take the Free Diagnostic →
-                    </span>
+                   <span className="flex items-center justify-center gap-2 rounded-xl font-bold bg-brand-primary text-white text-[14px] p-3 cursor-pointer">
+                    Take the Free Diagnostic →
+                  </span>
                   </Link>
                 </div>
 
@@ -1532,39 +1132,21 @@ export default function OLevelEnglish() {
                   className="rounded-[2rem] p-7 flex flex-col"
                   style={{ background: "#F1F5F9", border: "4px solid white" }}
                 >
-                  <h3
-                    style={{
-                      fontFamily: "Sora, sans-serif",
-                      fontWeight: 700,
-                      fontSize: "18px",
-                      color: NAVY,
-                      marginBottom: "8px",
-                    }}
-                  >
+                   <h3 className="font-bold text-[18px] text-brand-navy mb-2">
                     Not Yet at O-Level English Level?
                   </h3>
-                  <p style={{ fontSize: "13px", color: META, fontWeight: 600, marginBottom: "12px" }}>
+                   <p className="text-[13px] text-slate-500 font-bold mb-3">
                     Start with the English Language Pathway first — then return here.
                   </p>
-                  <p style={{ fontSize: "13px", color: META, lineHeight: 1.6, flex: 1, marginBottom: "16px" }}>
+                   <p className="text-[13px] text-slate-500 leading-relaxed flex-1 mb-4">
                     If your diagnostic result is below B2, the complete English pathway (Vocabulary →
                     RC68 → ESL1 → ESL2 → Bridge) takes you to O-Level ready standard before these
                     courses begin.
                   </p>
                   <Link href="/courses/english">
-                    <span
-                      className="flex items-center justify-center gap-2 rounded-xl font-bold"
-                      style={{
-                        background: "white",
-                        color: NAVY,
-                        fontSize: "14px",
-                        padding: "12px",
-                        border: `2px solid ${BORDER}`,
-                        cursor: "pointer",
-                      }}
-                    >
-                      View the Full English Pathway →
-                    </span>
+                   <span className="flex items-center justify-center gap-2 rounded-xl font-bold bg-white text-brand-navy text-[14px] p-3 border-2 border-slate-200 cursor-pointer">
+                    View the Full English Pathway →
+                  </span>
                   </Link>
                 </div>
               </div>

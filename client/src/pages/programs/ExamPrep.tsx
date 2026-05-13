@@ -1,4 +1,4 @@
-﻿import { useEffect } from "react";
+import { useEffect } from "react";
 import { Link } from "wouter";
 import {
   ArrowRight,
@@ -202,7 +202,7 @@ export default function ExamPrep() {
             transition={{ duration: 0.45 }}
             className="mx-auto max-w-5xl text-center"
           >
-            <span className="inline-block rounded-full border border-blue-200 bg-white px-4 py-1 text-xs font-semibold uppercase tracking-widest text-[#2366c9]">
+             <span className="inline-block rounded-full border border-blue-200 bg-white px-4 py-1 text-xs font-bold uppercase tracking-widest text-brand-primary">
               Cambridge O-Level / IGCSE | Final Term Exam Preparation | 7 Subjects
             </span>
 
@@ -219,24 +219,24 @@ export default function ExamPrep() {
 
             {/* Trust stats */}
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
-              {trustStats.map((s) => (
+               {trustStats.map((s) => (
                 <div key={s.stat} className="rounded-2xl border border-blue-100 bg-white p-4 shadow-sm">
-                  <p className="text-base font-semibold text-[#2366c9]">{s.stat}</p>
-                  <p className="mt-1 text-xs text-slate-600">{s.label}</p>
+                  <p className="text-base font-bold text-brand-primary">{s.stat}</p>
+                  <p className="mt-1 text-xs text-slate-500 font-medium">{s.label}</p>
                 </div>
               ))}
             </div>
 
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <button
+               <button
                 onClick={() => scrollTo("subjects")}
-                className="inline-flex items-center gap-2 rounded-lg bg-[#2366c9] px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700"
+                className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-6 py-3 text-sm font-bold text-white hover:bg-brand-primary-dark transition-colors"
               >
                 Enrol in Exam Preparation — Choose Your Subject
                 <ArrowRight className="h-4 w-4" />
               </button>
               <Link href="/programs/ai-diagnostic">
-                <span className="inline-flex items-center gap-2 rounded-lg border border-[#2366c9] bg-white px-6 py-3 text-sm font-semibold text-[#2366c9] hover:bg-blue-50">
+                <span className="inline-flex items-center gap-2 rounded-lg border border-brand-primary bg-white px-6 py-3 text-sm font-bold text-brand-primary hover:bg-brand-primary-soft transition-colors cursor-pointer">
                   Take Free Diagnostic — Check Your Readiness First
                 </span>
               </Link>
@@ -248,14 +248,14 @@ export default function ExamPrep() {
       {/* ── DISTINCTION NOTICE ──────────────────────────────────────────────── */}
       <section className="border-y border-blue-100 bg-blue-50/40 py-6">
         <div className="container-custom">
-          <div className="mx-auto max-w-4xl rounded-xl border-l-4 border-[#2366c9] bg-white p-5 shadow-sm">
-            <p className="text-sm font-semibold text-slate-900">
+           <div className="mx-auto max-w-4xl rounded-xl border-l-4 border-brand-primary bg-white p-5 shadow-sm">
+            <p className="text-sm font-bold text-brand-navy">
               This is a preparation programme — multiple sessions of structured practice.
             </p>
             <p className="mt-1 text-sm text-slate-700">
               Looking for a single timed mock paper instead?{" "}
               <Link href="/programs/mock-exams">
-                <span className="font-semibold text-[#2366c9] underline cursor-pointer">
+                <span className="font-bold text-brand-primary underline cursor-pointer hover:text-brand-primary-dark">
                   → Final Mock Exams with Detailed Reports
                 </span>
               </Link>
@@ -268,11 +268,11 @@ export default function ExamPrep() {
       <div className="sticky top-16 z-40 border-b border-blue-100 bg-white shadow-sm">
         <div className="container-custom">
           <div className="flex gap-1 overflow-x-auto py-3">
-            {subjects.map((s) => (
+             {subjects.map((s) => (
               <button
                 key={s.anchor}
                 onClick={() => scrollTo(s.anchor)}
-                className="shrink-0 rounded-full border border-[#2366c9] px-4 py-1.5 text-sm font-medium text-[#2366c9] transition-colors hover:bg-[#2366c9] hover:text-white"
+                className="shrink-0 rounded-full border border-brand-primary px-4 py-1.5 text-sm font-bold text-brand-primary transition-all hover:bg-brand-primary hover:text-white"
               >
                 {s.code.replace("EX-", "")}
               </button>
@@ -317,9 +317,9 @@ export default function ExamPrep() {
                   What the Course Includes ({subject.code})
                 </h3>
                 <div className="grid gap-2 sm:grid-cols-2">
-                  {subject.includes.map((item, j) => (
-                    <p key={j} className="flex items-start gap-2 text-sm text-slate-700">
-                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#2366c9]" />
+                   {subject.includes.map((item, j) => (
+                    <p key={j} className="flex items-start gap-2 text-sm text-slate-900 font-medium">
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-primary" />
                       <span>{item}</span>
                     </p>
                   ))}
@@ -358,8 +358,8 @@ export default function ExamPrep() {
                 Complete Online Exam Preparation first, then sit the Final Mock Exam.
               </p>
             </div>
-            <Link href="/programs/mock-exams">
-              <span className="inline-flex items-center gap-2 rounded-lg border border-[#2366c9] bg-white px-5 py-2.5 text-sm font-semibold text-[#2366c9] hover:bg-blue-50">
+             <Link href="/programs/mock-exams">
+              <span className="inline-flex items-center gap-2 rounded-lg border border-brand-primary bg-white px-5 py-2.5 text-sm font-bold text-brand-primary hover:bg-brand-primary-soft transition-colors cursor-pointer">
                 Final Mock Exams with Detailed Reports <ArrowRight className="h-4 w-4" />
               </span>
             </Link>
@@ -378,15 +378,15 @@ export default function ExamPrep() {
             examination technique, time management, and the specific errors examiners see year after year. Enrol in
             any subject and begin immediately.
           </p>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <button
               onClick={() => scrollTo("subjects")}
-              className="inline-flex items-center gap-2 rounded-lg bg-[#2366c9] px-7 py-3.5 text-sm font-semibold text-white hover:bg-blue-700"
+              className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-7 py-3.5 text-sm font-bold text-white hover:bg-brand-primary-dark transition-all"
             >
               Choose Your Subject — Enrol Now <ArrowRight className="h-4 w-4" />
             </button>
             <Link href="/programs/mock-exams">
-              <span className="inline-flex items-center gap-2 rounded-lg border border-blue-400 bg-transparent px-7 py-3.5 text-sm font-semibold text-blue-200 hover:border-white hover:text-white">
+              <span className="inline-flex items-center gap-2 rounded-lg border border-blue-400 bg-transparent px-7 py-3.5 text-sm font-bold text-blue-200 hover:border-white hover:text-white transition-all cursor-pointer">
                 View Final Mock Exams — Timed Simulation <ArrowRight className="h-4 w-4" />
               </span>
             </Link>

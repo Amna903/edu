@@ -27,11 +27,10 @@ const learnColumns: MegaColumn[] = [
   {
     heading: "Diagnostics & Assessment",
     items: [
-      { label: "Diagnostic Services", href: "/diagnostics", eyebrow: "Assessment" },
+      { label: "Diagnostic Services", href: "/diagnostics" },
       { label: "O-Level Bridge Diagnostic", href: "/diagnostics/start?type=1" },
-      { label: "O-Level Readiness Forecast", href: "/olevel-readiness-forecast", eyebrow: "Forecast" },
       { label: "English Level Check", href: "/programs/english-mastery" },
-      { label: "O-Level Subject Diagnostic", href: "/programs/complete-o-level" },
+      { label: "O-Level Subject Diagnostic", href: "/diagnostics" },
       { label: "ATP Diagnostic", href: "/programs/atp-courses" },
       { label: "Teacher Subject Knowledge Diagnostic", href: "/teacher-courses#t1" },
       { label: "School Class-Level Diagnostic", href: "/diagnostics#school-class" },
@@ -40,17 +39,13 @@ const learnColumns: MegaColumn[] = [
   {
     heading: "Student Programmes",
     items: [
-      { label: "Lower Secondary", href: "/programs", eyebrow: "Gr 6-8" },
+      { label: "Lower Secondary Grade 6–8", href: "/programs" },
       { label: "Pre-O-Level", href: "/programs/pre-o-level-victory" },
       { label: "Must-Have Courses", href: "/programs/must-have-courses" },
-      { label: "O-Level English", href: "/programs/english-mastery", eyebrow: "10 courses" },
-      { label: "O-Level Subjects", href: "/programs/complete-o-level", eyebrow: "10 subjects" },
+      { label: "O-Level English", href: "/programs/english-mastery" },
+      { label: "O-Level Subjects", href: "/programs/complete-o-level" },
       { label: "ATP Courses", href: "/programs/atp-courses" },
-          { label: "Bridge Courses", href: "/programs/bridge-courses" },
-          { label: "Pakistan Curriculum", href: "/programs/pakistan-curriculum", eyebrow: "Matric · FSc · ECAT" },
-          { label: "English Pathway", href: "/programs/english-pathway", eyebrow: "Complete pathway" },
-      { label: "Bridge English", href: "/programs/bridge-english" },
-      { label: "Bridge Sciences & Economics", href: "/programs/bridge-sciences-economics" },
+      { label: "Bridge Courses", href: "/programs/bridge-courses" },
     ],
   },
   {
@@ -58,10 +53,13 @@ const learnColumns: MegaColumn[] = [
     items: [
       { label: "Exam Prep", href: "/programs/exam-prep" },
       { label: "Mock Exams", href: "/programs/exam-prep" },
-      { label: "Exam Preparation Workbooks", href: "/exam-prep-workbooks", eyebrow: "paid" },
-      { label: "Teacher Courses", href: "/teacher-courses", eyebrow: "T1-T6" },
+      { label: "Mock Exam Resources", href: "/programs/exam-prep" },
+      { label: "Exam Preparation Workbooks", href: "/exam-prep-workbooks" },
+      { label: "Topical Workbooks", href: "/resources/topical-workbooks" },
+      { label: "Past Paper Collections", href: "/resources/exam-papers" },
+      { label: "Teacher Courses T1–T6", href: "/teacher-courses" },
       { label: "Teacher Certification", href: "/teacher-training" },
-      { label: "Free Resources", href: "/free-resources", eyebrow: "samples only" },
+      { label: "Free Resources", href: "/free-resources" },
     ],
   },
 ];
@@ -81,7 +79,6 @@ const consultancyItems: SimpleDropdownItem[] = [
   { type: "separator" },
   { label: "About EduMeUp", description: "Mission, team, and learning philosophy", href: "/about" },
   { label: "How EduMeUp Works", description: "Our model from diagnosis to mastery", href: "/how-it-works" },
-  { label: "How EduMeUp Is Different", description: "What sets the platform apart", href: "/how-edumeup-is-different" },
   { label: "Research & Development", description: "Learning science and product research", href: "/research" },
   { label: "Blog", description: "Insights for students, parents, and schools", href: "/blog" },
   { type: "separator" },
@@ -117,15 +114,15 @@ export function Navbar() {
   const navLinkClass = (path?: string, activeOverride?: boolean) => {
     const active = activeOverride ?? Boolean(path && isActive(path));
 
-    return `relative flex h-12 items-center whitespace-nowrap px-0 pt-0.5 font-[Arial] text-[12px] font-semibold uppercase tracking-normal transition-colors after:absolute after:bottom-[8px] after:left-0 after:h-[2px] after:bg-[#93c5fd] after:transition-all xl:h-14 xl:text-[13px] ${
+    return `relative flex h-12 items-center whitespace-nowrap px-0 pt-0.5 font-[Arial] text-[12px] font-semibold uppercase tracking-normal transition-colors after:absolute after:bottom-[8px] after:left-0 after:h-[2px] after:bg-brand-primary after:transition-all xl:h-14 xl:text-[13px] ${
       active
-        ? "text-white after:w-full"
-        : "text-white/85 after:w-0 hover:text-white hover:after:w-full"
+        ? "text-brand-navy after:w-full"
+        : "text-slate-600 after:w-0 hover:text-brand-primary hover:after:w-full"
     }`;
   };
 
   return (
-    <nav className="sticky top-0 z-[1000] w-full border-b border-white/20 bg-gradient-to-r from-[#1a4fa0] via-[#2366c9] to-[#1a4fa0] shadow-[0_2px_16px_rgba(0,0,0,0.25)]">
+    <nav className="sticky top-0 z-[1000] w-full border-b border-slate-200 bg-white shadow-sm">
       <div className="relative flex h-14 w-full items-center gap-4 px-4 md:px-5 xl:h-16 xl:px-7 2xl:px-10">
         <Link href="/" className="flex shrink-0 items-center lg:w-[160px] 2xl:w-[200px]">
           <img
@@ -159,15 +156,15 @@ export function Navbar() {
               <span>Learn</span>
               <ChevronDown className="ml-1 h-4 w-4" />
             </button>
-            <div className="invisible absolute left-0 top-full w-screen translate-y-1 border-t border-[#2366c9]/30 bg-[#F8FAFC] opacity-0 shadow-[0_24px_50px_rgba(15,23,42,0.22)] transition-all duration-150 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
-              <div className="h-1 w-full bg-gradient-to-r from-[#2366c9] via-[#4f86e0] to-[#2366c9]" />
+            <div className="invisible absolute left-0 top-full w-screen translate-y-1 border-t border-slate-200 bg-[#F8FAFC] opacity-0 shadow-[0_24px_50px_rgba(15,23,42,0.12)] transition-all duration-150 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+              <div className="h-1 w-full bg-brand-primary" />
               <div className="mx-auto grid max-w-7xl grid-cols-3 gap-4 px-6 py-5 xl:px-8 xl:py-6">
                 {learnColumns.map((column) => (
                   <div
                     key={column.heading}
                     className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm xl:p-5"
                   >
-                    <p className="mb-3 border-b border-slate-100 pb-2 font-[Arial] text-[11px] font-bold uppercase tracking-[0.1em] text-[#1E3A5F]">
+                    <p className="mb-3 border-b border-slate-100 pb-2 font-[Arial] text-[11px] font-bold uppercase tracking-[0.1em] text-brand-navy">
                       {column.heading}
                     </p>
                     <div className="space-y-0.5">
@@ -175,7 +172,7 @@ export function Navbar() {
                         <Link
                           key={`${item.label}-${item.href}`}
                           href={item.href}
-                          className="block rounded-md border-l-2 border-transparent px-2.5 py-1.5 transition hover:border-[#2366c9] hover:bg-[#eef6ff]"
+                          className="block rounded-md border-l-2 border-transparent px-2.5 py-1.5 transition hover:border-brand-primary hover:bg-[#eef6ff]"
                         >
                           <span className="block font-[Arial] text-[12px] font-bold uppercase leading-4 text-slate-800">
                             {item.label}
@@ -193,7 +190,7 @@ export function Navbar() {
               </div>
               <Link
                 href="/all-programs"
-                className="block border-t border-slate-200 bg-white px-8 py-3 text-center font-[Arial] text-[13px] font-bold uppercase tracking-[0.06em] text-[#1E3A5F] transition hover:bg-[#2366c9] hover:text-white"
+                className="block border-t border-slate-200 bg-white px-8 py-3 text-center font-[Arial] text-[13px] font-bold uppercase tracking-[0.06em] text-brand-navy transition hover:bg-brand-primary hover:text-white"
               >
                 All Courses - View the complete EduMeUp programme catalogue &gt;
               </Link>
@@ -228,14 +225,14 @@ export function Navbar() {
         <div className="shrink-0 items-center justify-end gap-2 lg:flex lg:w-[330px] 2xl:w-[390px] 2xl:gap-3 hidden">
           <Link
             href="/free-resources"
-            className="whitespace-nowrap rounded-md border border-white/70 px-4 py-2.5 font-[Arial] text-[12px] font-semibold leading-none text-white transition hover:bg-white hover:text-[#2366c9] xl:px-5 xl:py-3 xl:text-[13px]"
+            className="whitespace-nowrap rounded-md border border-slate-200 px-4 py-2.5 font-[Arial] text-[12px] font-semibold leading-none text-slate-700 transition hover:bg-slate-50 hover:text-brand-primary xl:px-5 xl:py-3 xl:text-[13px]"
           >
             Free Resources
           </Link>
 
           <Link
             href={dashboardHref}
-            className="whitespace-nowrap rounded-md bg-[#2E75B6] px-4 py-2.5 font-[Arial] text-[12px] font-semibold leading-none text-white transition hover:bg-[#163052] xl:px-5 xl:py-3 xl:text-[13px]"
+            className="whitespace-nowrap rounded-md bg-brand-primary px-4 py-2.5 font-[Arial] text-[12px] font-semibold leading-none text-white transition hover:bg-brand-navy xl:px-5 xl:py-3 xl:text-[13px]"
           >
             My Dashboard
           </Link>
@@ -244,13 +241,13 @@ export function Navbar() {
             <div className="group relative">
               <button
                 type="button"
-                className="flex items-center whitespace-nowrap rounded-md bg-white px-4 py-2.5 font-[Arial] text-[12px] font-semibold leading-none text-[#2366c9] transition hover:bg-[#eef6ff] xl:px-5 xl:py-3 xl:text-[13px]"
+                className="flex items-center whitespace-nowrap rounded-md border border-slate-200 bg-white px-4 py-2.5 font-[Arial] text-[12px] font-semibold leading-none text-brand-primary transition hover:bg-slate-50 xl:px-5 xl:py-3 xl:text-[13px]"
               >
                 {firstName}
                 <ChevronDown className="ml-1 h-4 w-4" />
               </button>
               <div className="invisible absolute right-0 top-full w-40 translate-y-1 overflow-hidden rounded-b-lg border border-slate-200 bg-white py-2 opacity-0 shadow-[0_18px_36px_rgba(15,23,42,0.18)] transition-all duration-150 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
-                <div className="mb-1 h-1 bg-gradient-to-r from-[#2366c9] to-[#4f86e0]" />
+                <div className="mb-1 h-1 bg-brand-primary" />
                 <Link href={dashboardPath} className="mx-2 block rounded-md px-3 py-2 font-[Arial] text-[12px] font-semibold text-slate-700 transition hover:bg-[#eef6ff] hover:text-[#1E3A5F]">
                   Dashboard
                 </Link>
@@ -270,7 +267,7 @@ export function Navbar() {
           ) : (
             <Link
               href="/login"
-              className="whitespace-nowrap rounded-md bg-white px-4 py-2.5 font-[Arial] text-[12px] font-semibold leading-none text-[#2366c9] transition hover:bg-[#eef6ff] xl:px-5 xl:py-3 xl:text-[13px]"
+              className="whitespace-nowrap rounded-md border border-slate-200 bg-white px-4 py-2.5 font-[Arial] text-[12px] font-semibold leading-none text-brand-primary transition hover:bg-slate-50 xl:px-5 xl:py-3 xl:text-[13px]"
             >
               Login
             </Link>
@@ -303,7 +300,7 @@ function SimpleDropdown({
       <div
         className={`invisible absolute right-0 top-full ${widthClass} translate-y-1 overflow-hidden rounded-b-lg border border-slate-200 bg-white pb-2 opacity-0 shadow-[0_18px_36px_rgba(15,23,42,0.18)] transition-all duration-150 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100`}
       >
-        <div className="h-1 bg-gradient-to-r from-[#2366c9] to-[#4f86e0]" />
+        <div className="h-1 bg-brand-primary" />
         {items.map((item, index) =>
           item.type === "separator" ? (
             <div key={`separator-${index}`} className="my-2 h-px bg-slate-200" />
@@ -311,9 +308,9 @@ function SimpleDropdown({
             <Link
               key={item.href}
               href={item.href}
-              className="mx-2 mt-1 block rounded-md border-l-2 border-transparent px-3 py-2 transition hover:border-[#2366c9] hover:bg-[#eef6ff]"
+              className="mx-2 mt-1 block rounded-md border-l-2 border-transparent px-3 py-2 transition hover:border-brand-primary hover:bg-[#eef6ff]"
             >
-              <span className="block font-[Arial] text-[12px] font-bold leading-4 text-slate-800">
+              <span className="block font-[Arial] text-[12px] font-bold uppercase leading-4 text-slate-800">
                 {item.label}
               </span>
               <span className="mt-0.5 block font-[Arial] text-[11px] italic leading-4 text-slate-500">

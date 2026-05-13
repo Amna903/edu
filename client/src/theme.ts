@@ -14,6 +14,13 @@ export const theme = {
       border: "#dbe7f4",
       text: "#0f172a",
       muted: "#64748b",
+      textMuted: "#475569",
+      textLight: "#64748b",
+      textDark: "#1E3A5F",
+      white: "#ffffff",
+      black: "#000000",
+      slateGray: "#4b5563",
+      slateLight: "#334155",
     },
     status: {
       success: "#22c55e",
@@ -21,12 +28,69 @@ export const theme = {
       danger: "#ef4444",
       info: "#3b82f6",
     },
+    backgrounds: {
+      white: "#ffffff",
+      softBlue: "#eef6ff",
+      navy: "#1e3a5f",
+      primary: "#2366c9",
+      lightBlue: "#f8fbff",
+    },
+  },
+  text: {
+    headings: {
+      color: "#1E3A5F",
+      colorInverse: "#ffffff",
+    },
+    body: {
+      color: "#4b5563",
+      colorDark: "#1E3A5F",
+      colorLight: "#64748b",
+      colorInverse: "#ffffff",
+    },
+    caption: {
+      color: "#64748b",
+      colorInverse: "#dbeafe",
+    },
   },
   typography: {
     fontFamily: {
-      sans: "'Aeonik', 'Inter', sans-serif",
+      sans: "'Geist', 'Aeonik', 'Inter', sans-serif",
       display: "'Aeonik', 'Inter', sans-serif",
       mono: "'IBM Plex Mono', monospace",
+    },
+    fontSize: {
+      // Headings
+      h1: "48px",
+      h2: "32px",
+      h3: "24px",
+      h4: "20px",
+      h5: "18px",
+      // Body text
+      bodyText: "16px",
+      bodyTextLarge: "18px",
+      // Cards and tables
+      cardText: "18px",
+      tableText: "18px",
+      // UI elements
+      button: "16px",
+      label: "12px",
+      caption: "12px",
+      sm: "14px",
+    },
+    lineHeight: {
+      tight: "1.1",
+      snug: "1.375",
+      normal: "1.5",
+      relaxed: "1.625",
+      loose: "2",
+    },
+    fontWeight: {
+      light: "300",
+      normal: "400",
+      medium: "500",
+      semibold: "600",
+      bold: "700",
+      black: "900",
     },
     scale: {
       xs: "12px / 16px",
@@ -40,6 +104,31 @@ export const theme = {
       "5xl": "48px / 56px",
       "6xl": "56px / 64px",
     },
+  },
+  spacing: {
+    xs: "4px",
+    sm: "8px",
+    md: "12px",
+    lg: "16px",
+    xl: "24px",
+    "2xl": "32px",
+    "3xl": "48px",
+    "4xl": "64px",
+  },
+  borderRadius: {
+    sm: "4px",
+    md: "8px",
+    lg: "12px",
+    xl: "16px",
+    "2xl": "24px",
+    full: "9999px",
+  },
+  shadows: {
+    sm: "0 1px 2px rgba(0, 0, 0, 0.05)",
+    md: "0 4px 6px rgba(0, 0, 0, 0.1)",
+    lg: "0 10px 15px rgba(0, 0, 0, 0.1)",
+    xl: "0 20px 25px rgba(0, 0, 0, 0.1)",
+    "2xl": "0 25px 50px rgba(0, 0, 0, 0.15)",
   },
   surfaces: {
     card: "rounded-[2rem] border border-[#dbe7f4] bg-white shadow-sm",
@@ -55,12 +144,20 @@ export const theme = {
     softBlue: "bg-[#eef6ff] text-slate-900",
     blue: "bg-[#2366c9] text-white",
     navy: "bg-[#0b3c5d] text-white",
+    lightBlue: "bg-[#f8fbff] text-slate-900",
   },
   components: {
     buttonPrimary: "bg-[#2366c9] text-white hover:bg-[#1a4fa0]",
     buttonSecondary: "border border-[#dbe7f4] bg-white text-[#0b3c5d] hover:bg-[#eef6ff]",
     tableHeaderText: "text-xs font-black uppercase tracking-[0.18em] text-[#0b3c5d]",
     label: "text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9]",
+  },
+  pageDefaults: {
+    padding: "56px 60px",
+    paddingMobile: "24px",
+    maxWidth: "7xl",
+    textColor: "#4b5563",
+    backgroundColor: "#ffffff",
   },
 } as const;
 

@@ -94,7 +94,7 @@ function TopicCardRow({
             <p className="mt-2 text-xs leading-relaxed text-slate-700 font-medium line-clamp-2">{t.outcome}</p>
             <div className="mt-3 flex items-center justify-between">
               <div className="flex items-center gap-1 text-xs text-slate-400"><Clock className="h-3 w-3" />{t.duration}</div>
-              <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-xs font-semibold text-[#2366c9]"><CheckCircle2 className="h-3 w-3" /> Available</span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-xs font-semibold text-brand-primary"><CheckCircle2 className="h-3 w-3" /> Available</span>
             </div>
           </div>
         ))}
@@ -174,11 +174,11 @@ export default function BridgeSciencesEconomics() {
         <div className="container-custom relative">
           <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-              <p className="mb-4 inline-flex rounded-full border border-white/20 px-4 py-1 text-[11px] font-bold uppercase tracking-[0.28em] text-white/70">Bridge Courses & Pre-O-Level Preparation</p>
+              <p className="mb-4 inline-flex rounded-full border border-white/20 px-4 py-1 text-sm-small font-bold uppercase tracking-[0.28em] text-white/70">Bridge Courses & Pre-O-Level Preparation</p>
               <h1 className="text-4xl font-semibold leading-tight text-white md:text-5xl">Enter O-Level With <span className="text-[#93c5fd]">20-30% Already Mastered.</span></h1>
               <p className="mt-5 text-base text-white/70">Bridge and pre-O-Level pathways close foundational gaps before they cost marks.</p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <Link href="/diagnostics"><span className="inline-flex items-center gap-2 rounded-xl bg-[#2366c9] px-6 py-3 text-sm font-semibold text-white hover:bg-[#1a4fa0]">Take the Free Diagnostic<ArrowRight className="h-4 w-4" /></span></Link>
+                <Link href="/diagnostics"><span className="inline-flex items-center gap-2 rounded-xl bg-brand-primary px-6 py-3 text-sm font-semibold text-white hover:bg-brand-primary-dark">Take the Free Diagnostic<ArrowRight className="h-4 w-4" /></span></Link>
                 <a href="#pre-olevel" className="inline-flex items-center gap-2 rounded-xl border border-white/30 px-6 py-3 text-sm font-semibold text-white hover:border-white/60">Jump to Pre-O-Level Victory</a>
               </div>
             </motion.div>
@@ -193,13 +193,13 @@ export default function BridgeSciencesEconomics() {
               <div className="rounded-xl border border-[#dbe7f4] bg-white p-4 shadow-sm">
                 <h3 className="text-sm font-semibold text-slate-900">Not sure where to start?</h3>
                 <p className="mt-2 text-sm text-slate-600">Take the free AI Diagnostic to identify exact subject gaps.</p>
-                <Link href="/diagnostics"><span className="mt-3 block rounded-lg bg-[#2366c9] px-3 py-2 text-center text-sm font-semibold text-white">TAKE FREE DIAGNOSTIC</span></Link>
+                <Link href="/diagnostics"><span className="mt-3 block rounded-lg bg-brand-primary px-3 py-2 text-center text-sm font-semibold text-white">TAKE FREE DIAGNOSTIC</span></Link>
               </div>
               <div className="rounded-xl border border-[#dbe7f4] bg-white p-4 shadow-sm">
                 <h3 className="text-sm font-semibold text-slate-900">Page Navigation</h3>
                 <div className="mt-3 space-y-1.5">
                   {sidebarLinks.map((l) => (
-                    <a key={l.href} href={l.href} className={`block text-sm hover:underline ${l.label.startsWith("-") ? "pl-3 text-slate-500" : "text-[#2366c9]"}`}>{l.label}</a>
+                    <a key={l.href} href={l.href} className={`block text-sm hover:underline ${l.label.startsWith("-") ? "pl-3 text-slate-500" : "text-brand-primary"}`}>{l.label}</a>
                   ))}
                 </div>
               </div>
@@ -207,18 +207,18 @@ export default function BridgeSciencesEconomics() {
 
             <main className="space-y-10">
               <section id="why-bridge" className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm md:p-8">
-                <p className="mb-3 inline-flex rounded-full bg-[#2366c9] px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">Why Bridge Courses Matter</p>
+                <p className="mb-3 inline-flex rounded-full bg-brand-primary px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">Why Bridge Courses Matter</p>
                 <h2 className="text-xl font-semibold text-slate-900 md:text-2xl">Most O-Level failures begin with unresolved foundational gaps.</h2>
                 <p className="mt-3 text-sm leading-relaxed text-slate-700">Bridge pathways remove those gaps before full O-Level progression.</p>
               </section>
 
               <section id="two-types">
-                <p className="mb-3 inline-flex rounded-full bg-[#2366c9] px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">Two Programme Types</p>
+                <p className="mb-3 inline-flex rounded-full bg-brand-primary px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">Two Programme Types</p>
                 <h2 className="mb-2 text-xl font-semibold text-slate-900 md:text-2xl">Two Programmes. One Goal: O-Level readiness.</h2>
                 <div className="grid gap-5 sm:grid-cols-2">
-                  <div className="rounded-2xl border-2 border-[#2366c9] bg-white p-6 shadow-sm" style={{ borderTopWidth: "4px" }}>
-                    <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-[#2366c9]"><Award className="h-5 w-5" /></div>
-                    <h3 className="text-base font-semibold text-[#2366c9]">PRE-O-LEVEL VICTORY PROGRAMME</h3>
+                  <div className="rounded-2xl border-2 border-brand-primary bg-white p-6 shadow-sm" style={{ borderTopWidth: "4px" }}>
+                    <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-brand-primary"><Award className="h-5 w-5" /></div>
+                    <h3 className="text-base font-semibold text-brand-primary">PRE-O-LEVEL VICTORY PROGRAMME</h3>
                     <p className="mt-3 text-sm text-slate-700">Structured sequence with certification at completion.</p>
                   </div>
                   <div className="rounded-2xl border-2 border-[#1a4fa0] bg-white p-6 shadow-sm" style={{ borderTopWidth: "4px" }}>
@@ -230,7 +230,7 @@ export default function BridgeSciencesEconomics() {
               </section>
 
               <section id="pre-olevel">
-                <div className="mb-6 rounded-2xl bg-[#2366c9] p-6">
+                <div className="mb-6 rounded-2xl bg-brand-primary p-6">
                   <p className="text-xs font-bold uppercase tracking-widest text-blue-100 mb-2">Pre-O-Level Victory Programme</p>
                   <h2 className="text-xl font-semibold text-white md:text-2xl">4 Subjects. 20-30% of O-Level covered before start.</h2>
                   <p className="mt-3 text-sm text-blue-100">Pre-O-Level pathways are available for Mathematics, Physics, Chemistry, and Biology.</p>
@@ -387,7 +387,7 @@ export default function BridgeSciencesEconomics() {
                   ].map((card) => (
                     <div key={card.title} className="rounded-2xl border border-white/10 bg-white/5 p-5">
                       <h3 className="text-sm font-semibold text-white">{card.title}</h3>
-                      <a href={card.href} className={`mt-4 inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-semibold ${card.primary ? "bg-[#2366c9] text-white hover:bg-[#1a4fa0]" : "border border-white/30 text-white hover:border-white/60"}`}>
+                      <a href={card.href} className={`mt-4 inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-semibold ${card.primary ? "bg-brand-primary text-white hover:bg-brand-primary-dark" : "border border-white/30 text-white hover:border-white/60"}`}>
                         {card.btn}
                         <ArrowRight className="h-3.5 w-3.5" />
                       </a>

@@ -1,4 +1,4 @@
-﻿import { useEffect } from "react";
+import { useEffect } from "react";
 import { Link } from "wouter";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -106,17 +106,17 @@ export default function FscIcs() {
 
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Link href="/programs">
-                <span className="inline-flex items-center rounded-full border border-blue-200 bg-white px-4 py-2 text-sm font-medium text-slate-900 hover:border-blue-300 hover:text-[#2366c9]">
+                <span className="inline-flex items-center rounded-full border border-blue-200 bg-white px-4 py-2 text-sm font-medium text-slate-900 hover:border-blue-300 hover:text-brand-primary">
                   All Programmes
                 </span>
               </Link>
               <Link href="/programs/matric">
-                <span className="inline-flex items-center rounded-full border border-blue-200 bg-white px-4 py-2 text-sm font-medium text-slate-900 hover:border-blue-300 hover:text-[#2366c9]">
+                <span className="inline-flex items-center rounded-full border border-blue-200 bg-white px-4 py-2 text-sm font-medium text-slate-900 hover:border-blue-300 hover:text-brand-primary">
                   Matric Prep
                 </span>
               </Link>
               <Link href="/programs/ecat">
-                <span className="inline-flex items-center rounded-full border border-blue-200 bg-white px-4 py-2 text-sm font-medium text-slate-900 hover:border-blue-300 hover:text-[#2366c9]">
+                <span className="inline-flex items-center rounded-full border border-blue-200 bg-white px-4 py-2 text-sm font-medium text-slate-900 hover:border-blue-300 hover:text-brand-primary">
                   ECAT Entry Test
                 </span>
               </Link>
@@ -124,7 +124,7 @@ export default function FscIcs() {
 
             <div className="mt-10">
               <Link href="/programs/ai-diagnostic">
-                <span className="inline-flex items-center gap-2 rounded-lg bg-[#2366c9] px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700">
+                <span className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700">
                   Start Free Diagnostic
                   <ArrowRight className="h-4 w-4" />
                 </span>
@@ -161,7 +161,7 @@ export default function FscIcs() {
                 key={item.title}
                 className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm"
               >
-                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100 text-[#2366c9]">
+                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100 text-brand-primary">
                   <item.icon className="h-5 w-5" />
                 </div>
                 <h3 className="text-xl font-semibold text-slate-900">{item.title}</h3>
@@ -187,7 +187,7 @@ export default function FscIcs() {
                 key={item.title}
                 className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm"
               >
-                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100 text-[#2366c9]">
+                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100 text-brand-primary">
                   <item.icon className="h-5 w-5" />
                 </div>
                 <h3 className="text-xl font-semibold text-slate-900">{item.title}</h3>
@@ -222,7 +222,7 @@ export default function FscIcs() {
               <div className="mt-5 space-y-3">
                 {fscIcsSubjectsIncluded.map((item) => (
                   <p key={item} className="flex items-start gap-2 text-sm text-slate-700">
-                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#2366c9]" />
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-primary" />
                     <span>{item}</span>
                   </p>
                 ))}
@@ -240,7 +240,7 @@ export default function FscIcs() {
             <div className="mt-6 overflow-x-auto rounded-2xl border border-slate-200 shadow-md">
               <table className="w-full min-w-[640px]">
                 <thead>
-                  <tr className="bg-[#2366c9] text-white text-left">
+                  <tr className="bg-brand-primary text-white text-left">
                     <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide">
                       Plan
                     </th>
@@ -270,13 +270,13 @@ export default function FscIcs() {
 
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
               <Link href="/programs">
-                <span className="flex items-center justify-between rounded-xl border border-blue-200 bg-white px-5 py-4 text-sm font-semibold text-slate-900 hover:border-blue-300 hover:text-[#2366c9]">
+                <span className="flex items-center justify-between rounded-xl border border-blue-200 bg-white px-5 py-4 text-sm font-semibold text-slate-900 hover:border-blue-300 hover:text-brand-primary">
                   Browse All Programmes
                   <ArrowRight className="h-4 w-4" />
                 </span>
               </Link>
               <Link href="/programs/ai-diagnostic">
-                <span className="flex items-center justify-between rounded-xl bg-[#2366c9] px-5 py-4 text-sm font-semibold text-white hover:bg-blue-700">
+                <span className="flex items-center justify-between rounded-xl bg-brand-primary px-5 py-4 text-sm font-semibold text-white hover:bg-blue-700">
                   Start Free Diagnostic First
                   <ArrowRight className="h-4 w-4" />
                 </span>

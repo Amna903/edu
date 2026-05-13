@@ -5,7 +5,7 @@ import jsPDF from "jspdf";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TeacherMonthlyReportForm } from "@/components/dashboard/TeacherMonthlyReportForm";
-import { ui } from "@/theme";
+
 
 type ReportSectionProps = {
   role: string;
@@ -27,7 +27,7 @@ type SummaryTile = {
   link: string;
 };
 
-function buildSparkline(values: number[], stroke = "#2366c9") {
+function buildSparkline(values: number[], stroke = "currentColor") {
   const width = 260;
   const height = 72;
   const safeValues = values.length > 1 ? values : [values[0] ?? 0, values[0] ?? 0, values[0] ?? 0];
@@ -45,7 +45,7 @@ function buildSparkline(values: number[], stroke = "#2366c9") {
 
 function downloadPdf(role: string, fullname: string, tile: SummaryTile) {
   const doc = new jsPDF();
-  doc.setFillColor(35, 102, 201);
+  doc.setFillColor(35, 102, 201); // brand-primary RGB approx
   doc.rect(0, 0, 210, 42, "F");
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(20);
@@ -141,7 +141,7 @@ export function DashboardReportsSection({
 
   return (
     <div className="space-y-6">
-      <Card className={ui.sections.brand + " overflow-hidden border-0 shadow-2xl"}>
+      <Card className="relative overflow-hidden border-0 bg-brand-primary text-white shadow-2xl">
         <CardContent className="grid gap-6 p-8 md:grid-cols-[1.15fr_0.85fr] md:items-center">
           <div className="space-y-4">
             <p className="text-[11px] font-black uppercase tracking-[0.28em] text-blue-100">Performance Reports</p>
@@ -150,7 +150,7 @@ export function DashboardReportsSection({
               A role-aware reporting console with clickable summary cards, mastery bars, a quarterly archive, and frontend-only PDF export.
             </p>
             <div className="flex flex-wrap gap-3">
-              <Button className="bg-white text-[#2366c9] hover:bg-[#eef6ff]" onClick={() => downloadPdf(role, fullname, selectedTile)}>
+               <Button className="bg-white text-brand-primary hover:bg-brand-primary-soft" onClick={() => downloadPdf(role, fullname, selectedTile)}>
                 <Download className="mr-2 h-4 w-4" /> Download PDF
               </Button>
               <Button asChild variant="outline" className="border-white/30 text-white hover:bg-white/10">
@@ -192,11 +192,11 @@ export function DashboardReportsSection({
               key={tile.id}
               type="button"
               onClick={() => setSelectedTileId(tile.id)}
-              className={`rounded-[1.75rem] border p-5 text-left shadow-sm transition ${selected ? "border-[#2366c9] bg-white shadow-xl shadow-blue-100" : "border-slate-200 bg-white hover:border-blue-200 hover:shadow-lg"}`}
+               className={`rounded-[1.75rem] border p-5 text-left shadow-sm transition ${selected ? "border-brand-primary bg-white shadow-xl shadow-blue-100" : "border-slate-200 bg-white hover:border-blue-200 hover:shadow-lg"}`}
             >
               <div className={`rounded-2xl bg-gradient-to-r ${tile.accent} p-0.5`}>
                 <div className="rounded-[1.3rem] bg-white p-4">
-                  <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#2366c9]">{tile.title}</p>
+                   <p className="text-[10px] font-black uppercase tracking-[0.24em] text-brand-primary">{tile.title}</p>
                   <p className="mt-2 text-3xl font-black text-slate-900">{tile.value}</p>
                   <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">{tile.delta}</p>
                 </div>
@@ -223,7 +223,7 @@ export function DashboardReportsSection({
             <div className="grid gap-3 md:grid-cols-2">
               {summaries.map((tile) => (
                 <div key={`${tile.id}-detail`} className={`rounded-2xl border p-4 ${tile.id === selectedTile.id ? "border-blue-200 bg-blue-50/60" : "border-slate-200 bg-white"}`}>
-                  <p className="text-xs font-black uppercase tracking-[0.22em] text-[#2366c9]">{tile.title}</p>
+                   <p className="text-xs font-black uppercase tracking-[0.22em] text-brand-primary">{tile.title}</p>
                   <p className="mt-2 text-lg font-bold text-slate-900">{tile.value}</p>
                   <p className="mt-1 text-sm text-slate-600">{tile.description}</p>
                 </div>
@@ -233,7 +233,7 @@ export function DashboardReportsSection({
             <div className="space-y-3 rounded-3xl border border-slate-200 p-5">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <p className="text-[11px] font-black uppercase tracking-[0.24em] text-[#2366c9]">Animated mastery bars</p>
+                   <p className="text-[11px] font-black uppercase tracking-[0.24em] text-brand-primary">Animated mastery bars</p>
                   <h3 className="mt-2 text-lg font-semibold text-slate-900">Progress snapshot</h3>
                 </div>
                 <LayoutGrid className="h-5 w-5 text-slate-400" />
@@ -253,7 +253,7 @@ export function DashboardReportsSection({
                       <span className="text-slate-500">{item.helper}</span>
                     </div>
                     <div className="h-2.5 overflow-hidden rounded-full bg-slate-100">
-                      <div className="h-full rounded-full bg-gradient-to-r from-[#2366c9] to-[#4f86e0] transition-all duration-700" style={{ width: `${Math.min(100, Math.max(0, item.value))}%` }} />
+                       <div className="h-full rounded-full bg-gradient-to-r from-brand-primary to-indigo-400 transition-all duration-700" style={{ width: `${Math.min(100, Math.max(0, item.value))}%` }} />
                     </div>
                   </div>
                 ))}
@@ -264,8 +264,8 @@ export function DashboardReportsSection({
           <div className="space-y-4">
             <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
               <div className="flex items-center gap-2">
-                <CalendarDays className="h-5 w-5 text-[#2366c9]" />
-                <p className="text-sm font-black uppercase tracking-[0.22em] text-[#2366c9]">Report archive</p>
+                 <CalendarDays className="h-5 w-5 text-brand-primary" />
+                 <p className="text-sm font-black uppercase tracking-[0.22em] text-brand-primary">Report archive</p>
               </div>
               <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
                 {Array.from({ length: 24 }, (_, index) => {
@@ -283,7 +283,7 @@ export function DashboardReportsSection({
                     >
                       <p className="text-sm font-semibold text-slate-900">{label}</p>
                       <p className="mt-1 text-xs text-slate-500">{archiveTile.title}</p>
-                      <p className="mt-2 text-[11px] font-bold uppercase tracking-[0.18em] text-[#2366c9]">24 months accessible</p>
+                       <p className="mt-2 text-[11px] font-bold uppercase tracking-[0.18em] text-brand-primary">24 months accessible</p>
                     </button>
                   );
                 })}
@@ -291,7 +291,7 @@ export function DashboardReportsSection({
             </div>
 
             <div className="rounded-3xl border border-blue-100 bg-blue-50/50 p-5">
-              <p className="text-[11px] font-black uppercase tracking-[0.22em] text-[#2366c9]">Next steps</p>
+               <p className="text-[11px] font-black uppercase tracking-[0.22em] text-brand-primary">Next steps</p>
               <div className="mt-4 space-y-3">
                 {[
                   { label: "Open the main dashboard", href: "/dashboard" },
@@ -299,7 +299,7 @@ export function DashboardReportsSection({
                   { label: "Browse resources", href: "/free-resources" },
                   { label: "Contact support", href: "/dashboard/support" },
                 ].map((link) => (
-                  <Link key={link.href} href={link.href} className="flex items-center justify-between rounded-2xl border border-blue-100 bg-white px-4 py-3 text-sm font-semibold text-slate-900 transition hover:border-[#2366c9] hover:text-[#2366c9]">
+                   <Link key={link.href} href={link.href} className="flex items-center justify-between rounded-2xl border border-blue-100 bg-white px-4 py-3 text-sm font-semibold text-slate-900 transition hover:border-brand-primary hover:text-brand-primary">
                     <span>{link.label}</span>
                     <ArrowRight className="h-4 w-4" />
                   </Link>
@@ -317,7 +317,7 @@ export function DashboardReportsSection({
       <Card className="border-blue-100 shadow-sm">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <BookOpen className="h-5 w-5 text-[#2366c9]" />
+             <BookOpen className="h-5 w-5 text-brand-primary" />
             <CardTitle>Clickable Summary Notes</CardTitle>
           </div>
         </CardHeader>

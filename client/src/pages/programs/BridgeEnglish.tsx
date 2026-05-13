@@ -111,14 +111,14 @@ function CardRow<T extends { code?: string; num?: string; title: string; focus?:
               {item.focus ?? item.learns}
             </p>
             {item.relevance && (
-              <p className="mt-2 text-xs italic text-[#2366c9] line-clamp-2">{item.relevance}</p>
+              <p className="mt-2 text-xs italic text-brand-primary line-clamp-2">{item.relevance}</p>
             )}
             <div className="mt-3 flex items-center gap-1 text-xs text-slate-400">
               <Clock className="h-3 w-3" />
               {item.duration ?? item.modules}
             </div>
             <div className="mt-2">
-              <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-xs font-semibold text-[#2366c9]">
+              <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-xs font-semibold text-brand-primary">
                 <CheckCircle2 className="h-3 w-3" /> Available
               </span>
             </div>
@@ -203,12 +203,12 @@ function CourseSection({
 
 function DiagnosticStrip({ headline, sub }: { headline: string; sub: string }) {
   return (
-    <section className="bg-[#2366c9] py-10">
+    <section className="bg-brand-primary py-10">
       <div className="container-custom text-center">
         <h3 className="text-lg font-semibold text-white">{headline}</h3>
         <p className="mx-auto mt-2 max-w-2xl text-sm text-white/75">{sub}</p>
         <Link href="/diagnostics">
-          <span className="mt-5 inline-flex items-center gap-2 rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-[#2366c9] hover:bg-[#eef6ff]">
+          <span className="mt-5 inline-flex items-center gap-2 rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-brand-primary hover:bg-[#eef6ff]">
             Take the Free English Diagnostic
             <ArrowRight className="h-4 w-4" />
           </span>
@@ -242,7 +242,7 @@ export default function BridgeEnglishPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <p className="mb-4 inline-flex rounded-full border border-white/20 px-4 py-1 text-[11px] font-bold uppercase tracking-[0.28em] text-white/70">
+              <p className="mb-4 inline-flex rounded-full border border-white/20 px-4 py-1 text-sm-small font-bold uppercase tracking-[0.28em] text-white/70">
                 All English Courses - The Complete Learning Pathway
               </p>
               <h1 className="text-4xl font-semibold leading-tight text-white md:text-5xl">
@@ -255,7 +255,7 @@ export default function BridgeEnglishPage() {
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link href="/diagnostics">
-                  <span className="inline-flex flex-col items-center rounded-xl bg-[#2366c9] px-6 py-3 text-sm font-semibold text-white hover:bg-[#1a4fa0]">
+                  <span className="inline-flex flex-col items-center rounded-xl bg-brand-primary px-6 py-3 text-sm font-semibold text-white hover:bg-brand-primary-dark">
                     Take the Free Diagnostic - Find Your English Level
                     <span className="mt-0.5 text-xs font-normal text-white/70">Free | 30 minutes | Personalised recommendation</span>
                   </span>
@@ -300,7 +300,7 @@ export default function BridgeEnglishPage() {
                 <h3 className="text-sm font-semibold text-slate-900">Page Navigation</h3>
                 <div className="mt-3 space-y-2">
                   {sidebarLinks.map((l) => (
-                    <a key={l.href} href={l.href} className="block text-sm text-[#2366c9] hover:underline">{l.label}</a>
+                    <a key={l.href} href={l.href} className="block text-sm text-brand-primary hover:underline">{l.label}</a>
                   ))}
                 </div>
               </div>
@@ -308,20 +308,20 @@ export default function BridgeEnglishPage() {
                 <h3 className="text-sm font-semibold text-slate-900">Not sure where to start?</h3>
                 <p className="mt-2 text-sm text-slate-600">Take the free diagnostic to get your course start point.</p>
                 <Link href="/diagnostics">
-                  <span className="mt-3 block rounded-lg bg-[#2366c9] px-3 py-2 text-center text-sm font-semibold text-white hover:bg-[#1a4fa0]">TAKE FREE DIAGNOSTIC</span>
+                  <span className="mt-3 block rounded-lg bg-brand-primary px-3 py-2 text-center text-sm font-semibold text-white hover:bg-brand-primary-dark">TAKE FREE DIAGNOSTIC</span>
                 </Link>
               </div>
             </aside>
 
             <main className="space-y-10">
               <section id="why-english" className="rounded-2xl border border-blue-200 bg-white p-6 shadow-sm md:p-8">
-                <p className="mb-3 inline-flex rounded-full bg-[#2366c9] px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">Why English Proficiency Affects Every Subject</p>
+                <p className="mb-3 inline-flex rounded-full bg-brand-primary px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">Why English Proficiency Affects Every Subject</p>
                 <h2 className="text-xl font-semibold text-slate-900 md:text-2xl">English is the medium of every O-Level subject.</h2>
                 <p className="mt-3 text-sm leading-relaxed text-slate-700">Cambridge O-Level exams are in English across subjects. Strong English proficiency improves performance in every paper.</p>
               </section>
 
               <section id="cefr-pathway">
-                <p className="mb-3 inline-flex rounded-full bg-[#2366c9] px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">The EduMeUp English Learning Pathway</p>
+                <p className="mb-3 inline-flex rounded-full bg-brand-primary px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">The EduMeUp English Learning Pathway</p>
                 <h2 className="mb-2 text-xl font-semibold text-slate-900 md:text-2xl">Eight Courses. One Continuous Pathway.</h2>
                 <div className="overflow-x-auto pb-2">
                   <div className="flex min-w-[600px] items-stretch gap-1">
@@ -425,7 +425,7 @@ export default function BridgeEnglishPage() {
       <section id="skill-booster" className="bg-[#eef6ff] py-12">
         <div className="container-custom">
           <div className="mx-auto max-w-4xl">
-            <span className="rounded-full bg-[#2366c9] px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">Skill Booster</span>
+            <span className="rounded-full bg-brand-primary px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">Skill Booster</span>
             <h2 className="mt-4 text-xl font-semibold text-slate-900 md:text-2xl">Classroom English Communication (Student Edition)</h2>
             <p className="mt-3 text-sm leading-relaxed text-slate-700">Academic communication skills for classroom participation and exam readiness.</p>
           </div>
@@ -502,7 +502,7 @@ export default function BridgeEnglishPage() {
                 <p className="mt-3 text-sm leading-relaxed text-white/70">{card.body}</p>
                 <a
                   href={card.href}
-                  className={`mt-4 inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold ${card.primary ? "bg-[#2366c9] text-white hover:bg-[#1a4fa0]" : "border border-white/30 text-white hover:border-white/60"}`}
+                  className={`mt-4 inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold ${card.primary ? "bg-brand-primary text-white hover:bg-brand-primary-dark" : "border border-white/30 text-white hover:border-white/60"}`}
                 >
                   {card.btn}
                   <ArrowRight className="h-4 w-4" />

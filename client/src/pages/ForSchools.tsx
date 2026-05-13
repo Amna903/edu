@@ -308,12 +308,12 @@ export default function ForSchools() {
           <section id="hero" className="scroll-mt-20 pb-12 md:pb-16 pt-0">
             <div className="bg-white p-8 md:p-16 relative overflow-hidden group">
               <div className="relative z-10">
-                <span className="inline-block rounded-full bg-blue-50 border border-blue-100 px-4 py-1.5 text-[12px] font-bold tracking-widest text-[#2366c9] uppercase mb-8">
+                <span className="inline-block rounded-full bg-blue-50 border border-blue-100 px-4 py-1.5 text-[12px] font-bold tracking-widest text-brand-primary uppercase mb-8">
                   EduMeUp School Partnerships — The Complete Cambridge EdTech Ecosystem
                 </span>
                 <h1 className="text-4xl md:text-5xl lg:text-7xl font-semibold leading-[1.1] tracking-tight text-slate-900 mb-6">
                   Complete Cambridge <br />
-                  <span className="text-[#2366c9]">Mastery</span>, Delivered.
+                  <span className="text-brand-primary">Mastery</span>, Delivered.
                 </h1>
                 <p className="text-2xl md:text-3xl font-semibold text-slate-700 mb-6 leading-tight max-w-3xl">
                   From Teacher Training to Student Mastery — Everything in One Partnership.
@@ -324,7 +324,7 @@ export default function ForSchools() {
                 
                 <div className="flex flex-wrap gap-4 mt-12">
                   <Link href="/contact?type=school_partnership">
-                    <Button className="bg-[#2366c9] hover:bg-blue-700 text-white font-black text-[13px] sm:text-[15px] py-4 sm:py-6 px-4 sm:px-8 rounded-2xl shadow-lg shadow-blue-500/20 transition-all hover:scale-105 active:scale-95 h-auto min-h-[3.5rem] whitespace-normal leading-tight">
+                    <Button className="bg-brand-primary hover:bg-blue-700 text-white font-black text-[13px] sm:text-[15px] py-4 sm:py-6 px-4 sm:px-8 rounded-2xl shadow-lg shadow-blue-500/20 transition-all hover:scale-105 active:scale-95 h-auto min-h-[3.5rem] whitespace-normal leading-tight">
                       Book Your Strategy Session <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 inline" />
                     </Button>
                   </Link>
@@ -341,19 +341,19 @@ export default function ForSchools() {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 pt-8 border-t border-slate-100">
                   <div className="space-y-1">
                     <p className="text-3xl font-black text-slate-900">10+</p>
-                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">O-Level Subjects</p>
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">O-Level Subjects</p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-3xl font-black text-slate-900">7</p>
-                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Training Programmes</p>
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Training Programmes</p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-3xl font-black text-slate-900">24+</p>
-                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">School Services</p>
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">School Services</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-3xl font-black text-[#2366c9]">80%</p>
-                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Mastery Gate</p>
+                    <p className="text-3xl font-black text-brand-primary">80%</p>
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Mastery Gate</p>
                   </div>
                 </div>
               </div>
@@ -375,7 +375,7 @@ export default function ForSchools() {
                     Most Cambridge school teachers have deep subject knowledge but limited Cambridge examiner-level insight — they know what to teach but not precisely how Cambridge examiners mark it, where students lose marks, and how to close those gaps systematically.
                   </p>
                   <div className="mt-4 pt-4 border-t border-slate-50">
-                    <p className="text-[11px] font-bold text-amber-600 uppercase tracking-wider mb-1">Evidence-Based Research</p>
+                    <p className="text-xs font-bold text-amber-600 uppercase tracking-wider mb-1">Evidence-Based Research</p>
                     <p className="text-xs text-slate-500 italic">Hattie (2009): teacher expertise effect size d=0.62 — the single highest-impact school-level variable.</p>
                   </div>
                 </div>
@@ -387,7 +387,7 @@ export default function ForSchools() {
                     Students enter O-Level study without the prerequisite knowledge the syllabus assumes — in Mathematics, Sciences, and English language proficiency. They spend Year 1 catching up rather than advancing. An unresolved gap in Grade 7 makes every subsequent related concept harder to master.
                   </p>
                   <div className="mt-4 pt-4 border-t border-slate-50">
-                    <p className="text-[11px] font-bold text-amber-600 uppercase tracking-wider mb-1">Evidence-Based Research</p>
+                    <p className="text-xs font-bold text-amber-600 uppercase tracking-wider mb-1">Evidence-Based Research</p>
                     <p className="text-xs text-slate-500 italic">Bloom (1984): mastery learning at prerequisite level produces effect size d=2.0 — the highest documented in educational research.</p>
                   </div>
                 </div>
@@ -399,7 +399,7 @@ export default function ForSchools() {
                     Schools receive Cambridge examination results as final grades — not as diagnostic data. They know who passed and who failed but not which specific sub-skills caused the failure, which teaching approaches need to change, or which students needed earlier intervention.
                   </p>
                   <div className="mt-4 pt-4 border-t border-slate-50">
-                    <p className="text-[11px] font-bold text-amber-600 uppercase tracking-wider mb-1">Evidence-Based Research</p>
+                    <p className="text-xs font-bold text-amber-600 uppercase tracking-wider mb-1">Evidence-Based Research</p>
                     <p className="text-xs text-slate-500 italic">Black & Wiliam (1998): formative assessment implemented well raises achievement by 0.4-0.7 standard deviations.</p>
                   </div>
                 </div>
@@ -411,7 +411,7 @@ export default function ForSchools() {
                     Students learn content in class and forget it before the examination. Without systematic retrieval practice and spaced repetition, the forgetting curve eliminates most learning within days. EduMeUp's spaced retrieval system is built into every course as a core feature — not an add-on.
                   </p>
                   <div className="mt-4 pt-4 border-t border-slate-50">
-                    <p className="text-[11px] font-bold text-amber-600 uppercase tracking-wider mb-1">Evidence-Based Research</p>
+                    <p className="text-xs font-bold text-amber-600 uppercase tracking-wider mb-1">Evidence-Based Research</p>
                     <p className="text-xs text-slate-500 italic">Cepeda et al. (2006): spaced repetition produces 200% better long-term retention than massed practice.</p>
                   </div>
                 </div>
@@ -435,12 +435,12 @@ export default function ForSchools() {
             
             <div className="grid md:grid-cols-4 gap-6">
               <div className="bg-blue-50/50 p-6 rounded-3xl text-center border border-blue-100 hover:shadow-lg transition-all duration-300">
-                <span className="font-black text-[#2366c9] block text-3xl mb-2">A</span>
+                <span className="font-black text-brand-primary block text-3xl mb-2">A</span>
                 <span className="text-base font-bold text-slate-800 block mb-2">Capacity Building of Teachers</span>
                 <p className="text-xs text-slate-500 leading-relaxed">6 services. Transforms any teacher into a Cambridge-ready specialist.</p>
               </div>
               <div className="bg-blue-50/50 p-6 rounded-3xl text-center border border-blue-100 hover:shadow-lg transition-all duration-300">
-                <span className="font-black text-[#2366c9] block text-3xl mb-2">B</span>
+                <span className="font-black text-brand-primary block text-3xl mb-2">B</span>
                 <span className="text-base font-bold text-slate-800 block mb-2">Empowering Teachers in Classroom</span>
                 <p className="text-xs text-slate-500 leading-relaxed">5 services. AI tools, curriculum resources, and assessment infrastructure.</p>
               </div>
@@ -460,7 +460,7 @@ export default function ForSchools() {
           {/* SECTION A */}
           <section id="section-a" className="scroll-mt-20 py-12">
             <div className="flex items-center gap-3 mb-6">
-              <div className="bg-[#2366c9] text-white w-10 h-10 rounded-full flex items-center justify-center font-black shrink-0">A</div>
+              <div className="bg-brand-primary text-white w-10 h-10 rounded-full flex items-center justify-center font-black shrink-0">A</div>
               <h2 className="text-3xl md:text-4xl font-semibold text-slate-900 leading-tight">Capacity Building of Teachers</h2>
             </div>
             <p className="text-slate-600 mb-10 text-lg leading-relaxed max-w-4xl">
@@ -470,19 +470,19 @@ export default function ForSchools() {
               {sectionAServices.map(service => (
                 <div key={service.code} className="bg-white border border-blue-100 rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 group">
                   <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-                    <span className="text-sm font-black bg-blue-100 text-[#2366c9] px-4 py-1.5 rounded-full">{service.code}</span>
+                    <span className="text-sm font-black bg-blue-100 text-brand-primary px-4 py-1.5 rounded-full">{service.code}</span>
                     <h3 className="text-2xl font-bold text-slate-900 flex-1">{service.title}</h3>
                   </div>
                   <div className="grid lg:grid-cols-2 gap-8">
                     <div className="space-y-4">
-                      <p className="text-[14px] text-slate-500 font-medium pb-4 border-b border-slate-50">{service.description}</p>
+                      <p className="text-base text-slate-500 font-medium pb-4 border-b border-slate-50">{service.description}</p>
                       <div className="space-y-2">
-                        <p className="text-[11px] font-black text-[#2366c9] uppercase tracking-widest">The Advantage</p>
+                        <p className="text-xs font-black text-brand-primary uppercase tracking-widest">The Advantage</p>
                         <p className="text-[15px] text-slate-700 leading-relaxed font-medium">{service.advantage}</p>
                       </div>
                     </div>
                     <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 self-start">
-                      <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3">Evidence-Based Research</p>
+                      <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Evidence-Based Research</p>
                       <p className="text-sm text-slate-600 leading-relaxed italic">"{service.research}"</p>
                     </div>
                   </div>
@@ -509,14 +509,14 @@ export default function ForSchools() {
                   </div>
                   <div className="grid lg:grid-cols-2 gap-8">
                     <div className="space-y-4">
-                      <p className="text-[14px] text-slate-500 font-medium pb-4 border-b border-slate-50">{service.description}</p>
+                      <p className="text-base text-slate-500 font-medium pb-4 border-b border-slate-50">{service.description}</p>
                       <div className="space-y-2">
-                        <p className="text-[11px] font-black text-blue-600 uppercase tracking-widest">The Advantage</p>
+                        <p className="text-xs font-black text-blue-600 uppercase tracking-widest">The Advantage</p>
                         <p className="text-[15px] text-slate-700 leading-relaxed font-medium">{service.advantage}</p>
                       </div>
                     </div>
                     <div className="bg-blue-50/30 p-6 rounded-2xl border border-blue-100 self-start">
-                      <p className="text-[11px] font-black text-blue-400 uppercase tracking-widest mb-3">Evidence-Based Research</p>
+                      <p className="text-xs font-black text-blue-400 uppercase tracking-widest mb-3">Evidence-Based Research</p>
                       <p className="text-sm text-slate-600 leading-relaxed italic">"{service.research}"</p>
                     </div>
                   </div>
@@ -543,14 +543,14 @@ export default function ForSchools() {
                   </div>
                   <div className="grid lg:grid-cols-2 gap-8">
                     <div className="space-y-4">
-                      <p className="text-[14px] text-slate-500 font-medium pb-4 border-b border-slate-50">{service.description}</p>
+                      <p className="text-base text-slate-500 font-medium pb-4 border-b border-slate-50">{service.description}</p>
                       <div className="space-y-2">
-                        <p className="text-[11px] font-black text-purple-600 uppercase tracking-widest">The Advantage</p>
+                        <p className="text-xs font-black text-purple-600 uppercase tracking-widest">The Advantage</p>
                         <p className="text-[15px] text-slate-700 leading-relaxed font-medium">{service.advantage}</p>
                       </div>
                     </div>
                     <div className="bg-purple-50/30 p-6 rounded-2xl border border-purple-100 self-start">
-                      <p className="text-[11px] font-black text-purple-400 uppercase tracking-widest mb-3">Evidence-Based Research</p>
+                      <p className="text-xs font-black text-purple-400 uppercase tracking-widest mb-3">Evidence-Based Research</p>
                       <p className="text-sm text-slate-600 leading-relaxed italic">"{service.research}"</p>
                     </div>
                   </div>
@@ -580,8 +580,8 @@ export default function ForSchools() {
                   <div className="space-y-3">
                     <p className="text-[13px] text-slate-500">{service.description}</p>
                     <div className="bg-slate-50/50 p-4 rounded-xl space-y-2">
-                       <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">The Advantage</p>
-                       <p className="text-[14px] text-slate-700 leading-relaxed">{service.advantage}</p>
+                       <p className="text-xs font-black text-slate-400 uppercase tracking-widest">The Advantage</p>
+                       <p className="text-base text-slate-700 leading-relaxed">{service.advantage}</p>
                     </div>
                     <p className="text-[12px] text-slate-400 italic">Research: {service.research}</p>
                   </div>
@@ -594,27 +594,27 @@ export default function ForSchools() {
           <section id="services-table" className="scroll-mt-20 py-12">
             <div className="flex justify-between items-center flex-wrap gap-4 mb-8">
               <h2 className="text-3xl md:text-4xl font-semibold text-slate-900 mb-6">Complete Services Table — All 24 Services</h2>
-              <Button variant="outline" className="border-blue-200 bg-white hover:bg-blue-50 text-[#2366c9] font-bold" onClick={() => alert("PDF download of services table")}>
+              <Button variant="outline" className="border-blue-200 bg-white hover:bg-blue-50 text-brand-primary font-bold" onClick={() => alert("PDF download of services table")}>
                 Download Table as PDF <FileText className="ml-2 h-4 w-4" />
               </Button>
             </div>
             <div className="overflow-x-auto rounded-3xl border border-blue-100 shadow-sm">
               <table className="min-w-full text-sm">
                 <thead>
-                  <tr className="bg-[#2366c9] text-white">
-                    <th className="px-6 py-4 text-left font-black uppercase tracking-widest text-[11px]">#</th>
-                    <th className="px-6 py-4 text-left font-black uppercase tracking-widest text-[11px]">What Schools Receive</th>
-                    <th className="px-6 py-4 text-left font-black uppercase tracking-widest text-[11px]">The Advantage</th>
-                    <th className="px-6 py-4 text-left font-black uppercase tracking-widest text-[11px]">Research Reference</th>
+                  <tr className="bg-brand-primary text-white">
+                    <th className="px-6 py-4 text-left font-black uppercase tracking-widest text-xs">#</th>
+                    <th className="px-6 py-4 text-left font-black uppercase tracking-widest text-xs">What Schools Receive</th>
+                    <th className="px-6 py-4 text-left font-black uppercase tracking-widest text-xs">The Advantage</th>
+                    <th className="px-6 py-4 text-left font-black uppercase tracking-widest text-xs">Research Reference</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-blue-50">
                   {allServices.map((svc) => (
                     <tr key={svc.code} className="hover:bg-blue-50/30 transition-colors">
-                      <td className="px-6 py-4 font-mono font-black text-[#2366c9]">{svc.code}</td>
+                      <td className="px-6 py-4 font-mono font-black text-brand-primary">{svc.code}</td>
                       <td className="px-6 py-4 font-bold text-slate-900">{svc.title}</td>
                       <td className="px-6 py-4 text-slate-600 leading-relaxed text-xs">{svc.advantage}</td>
-                      <td className="px-6 py-4 text-slate-400 italic text-[11px]">{svc.research}</td>
+                      <td className="px-6 py-4 text-slate-400 italic text-xs">{svc.research}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -625,7 +625,7 @@ export default function ForSchools() {
           {/* CAMBRIDGE 360 HUB */}
           <section id="c360" className="scroll-mt-20 py-16 bg-blue-50/30 rounded-[3rem] my-12 p-8 md:p-12 relative overflow-hidden">
             <div className="absolute top-0 right-0 p-8">
-              <span className="bg-blue-600 text-white text-[10px] font-black uppercase tracking-[0.3em] px-4 py-2 rounded-full shadow-lg shadow-blue-500/20">Consultancy Add-on</span>
+              <span className="bg-blue-600 text-white text-xs font-black uppercase tracking-[0.3em] px-4 py-2 rounded-full shadow-lg shadow-blue-500/20">Consultancy Add-on</span>
             </div>
             
             <div className="max-w-3xl mb-12">
@@ -675,7 +675,7 @@ export default function ForSchools() {
             
             <div className="mt-12 flex justify-center">
               <Link href="/cambridge-360">
-                <Button className="bg-[#2366c9] hover:bg-blue-700 text-white font-black py-4 px-10 rounded-2xl shadow-xl shadow-blue-500/20 transition-all hover:scale-105 active:scale-95">
+                <Button className="bg-brand-primary hover:bg-blue-700 text-white font-black py-4 px-10 rounded-2xl shadow-xl shadow-blue-500/20 transition-all hover:scale-105 active:scale-95">
                   Explore Cambridge 360° Empowerment Hub →
                 </Button>
               </Link>
@@ -687,7 +687,7 @@ export default function ForSchools() {
             <h2 className="text-3xl md:text-4xl font-semibold text-slate-900 text-center mb-6">From First Contact to Fully Active — Most Schools Launch Within 14 Days.</h2>
             <div className="relative mt-20">
               {/* Desktop Connecting Line */}
-              <div className="hidden md:block absolute top-10 left-0 w-full h-[2px] bg-teal-200 -z-10"></div>
+              <div className="hidden md:block absolute top-10 left-0 w-full h-[2px] bg-brand-primary/20 -z-10"></div>
               
               <div className="grid md:grid-cols-5 gap-8">
                 {[ 
@@ -698,10 +698,10 @@ export default function ForSchools() {
                   {step:"5", title:"Students Live", desc:"Student accounts activated. Diagnostic assessments assigned. Courses live. Parent dashboards linked. School analytics active.", timeframe: "Days 13-14" } 
                 ].map(s => (
                   <div key={s.step} className="text-center group">
-                    <div className="w-20 h-20 rounded-full bg-[#1e3a8a] text-white flex items-center justify-center font-black mx-auto mb-3 shadow-xl group-hover:scale-110 transition-transform border-4 border-white">
+                    <div className="w-20 h-20 rounded-full bg-brand-navy text-white flex items-center justify-center font-black mx-auto mb-3 shadow-xl group-hover:scale-110 transition-transform border-4 border-white">
                       <span className="text-3xl">{s.step}</span>
                     </div>
-                    <p className="text-[11px] font-black uppercase tracking-[0.15em] text-blue-600 mb-4">{s.timeframe}</p>
+                    <p className="text-xs font-black uppercase tracking-[0.15em] text-blue-600 mb-4">{s.timeframe}</p>
                     <h3 className="font-bold text-lg text-slate-900 mb-3 leading-tight">{s.title}</h3>
                     <p className="text-sm text-slate-500 leading-relaxed">{s.desc}</p>
                   </div>
@@ -723,11 +723,11 @@ export default function ForSchools() {
                 {/* Strategy Session Card */}
                 <div className="bg-blue-50/50 p-8 rounded-3xl border border-blue-100 flex flex-col hover:shadow-lg transition-all duration-300">
                   <h3 className="font-bold text-xl text-slate-900 mb-3">Book a Free 30-Minute Strategy Session</h3>
-                  <p className="text-[14px] text-slate-600 leading-relaxed mb-8 flex-1">
+                  <p className="text-base text-slate-600 leading-relaxed mb-8 flex-1">
                     With EduMeUp's Chief Adviser — no obligation, no sales pitch.
                   </p>
                   <Link href="/contact?type=school_partnership">
-                    <Button className="w-full bg-[#2366c9] text-white hover:bg-blue-700 font-bold h-auto min-h-[3rem] py-3 px-4 rounded-xl text-[13px] sm:text-sm leading-tight whitespace-normal">
+                    <Button className="w-full bg-brand-primary text-white hover:bg-blue-700 font-bold h-auto min-h-[3rem] py-3 px-4 rounded-xl text-[13px] sm:text-sm leading-tight whitespace-normal">
                       Book Your Strategy Session →
                     </Button>
                   </Link>
@@ -736,11 +736,11 @@ export default function ForSchools() {
                 {/* PDF Download Card */}
                 <div className="bg-blue-50/50 p-8 rounded-3xl border border-blue-100 flex flex-col hover:shadow-lg transition-all duration-300">
                   <h3 className="font-bold text-xl text-slate-900 mb-3">Download the School Partnership Overview</h3>
-                  <p className="text-[14px] text-slate-600 leading-relaxed mb-8 flex-1">
+                  <p className="text-base text-slate-600 leading-relaxed mb-8 flex-1">
                     A 2-page PDF for principals, boards, and academic directors.
                   </p>
                   <Button 
-                    className="w-full bg-[#2366c9] text-white hover:bg-blue-700 font-bold h-auto min-h-[3rem] py-3 px-4 rounded-xl text-[13px] sm:text-sm leading-tight whitespace-normal"
+                    className="w-full bg-brand-primary text-white hover:bg-blue-700 font-bold h-auto min-h-[3rem] py-3 px-4 rounded-xl text-[13px] sm:text-sm leading-tight whitespace-normal"
                     onClick={() => alert("PDF download")}
                   >
                     Download PDF →
@@ -750,12 +750,12 @@ export default function ForSchools() {
                 {/* C360 Hub Card */}
                 <div className="bg-blue-50/50 p-8 rounded-3xl border border-blue-100 flex flex-col hover:shadow-lg transition-all duration-300">
                   <h3 className="font-bold text-xl text-slate-900 mb-3">Explore Cambridge 360° Hub</h3>
-                  <p className="text-[14px] text-slate-600 leading-relaxed mb-8 flex-1">
+                  <p className="text-base text-slate-600 leading-relaxed mb-8 flex-1">
                     Add AI-guided consultancy to your school partnership.
                   </p>
                   <Link href="/cambridge-360">
                     <Button 
-                      className="w-full bg-[#2366c9] text-white hover:bg-blue-700 font-bold h-auto min-h-[3rem] py-3 px-4 rounded-xl text-[13px] sm:text-sm leading-tight whitespace-normal"
+                      className="w-full bg-brand-primary text-white hover:bg-blue-700 font-bold h-auto min-h-[3rem] py-3 px-4 rounded-xl text-[13px] sm:text-sm leading-tight whitespace-normal"
                     >
                       View C360 Hub →
                     </Button>
@@ -763,12 +763,12 @@ export default function ForSchools() {
                 </div>
               </div>
               <div className="flex flex-wrap justify-center gap-y-4 gap-x-8 mt-10 text-xs text-slate-500">
-                <span className="flex items-center gap-2"><Globe className="w-4 h-4 text-[#2366c9]" /> Available Worldwide</span>
-                <span className="flex items-center gap-2"><Award className="w-4 h-4 text-[#2366c9]" /> CCTE Certificate for T2 Completers</span>
-                <span className="flex items-center gap-2"><BarChart3 className="w-4 h-4 text-[#2366c9]" /> Real-Time Analytics from Day 1</span>
-                <span className="flex items-center gap-2"><Lock className="w-4 h-4 text-[#2366c9]" /> 80% Mastery Gate — Quality Guaranteed</span>
-                <span className="flex items-center gap-2"><User className="w-4 h-4 text-[#2366c9]" /> Dedicated Partnership Contact</span>
-                <span className="flex items-center gap-2"><Zap className="w-4 h-4 text-[#2366c9]" /> Active Within 14 Days</span>
+                <span className="flex items-center gap-2"><Globe className="w-4 h-4 text-brand-primary" /> Available Worldwide</span>
+                <span className="flex items-center gap-2"><Award className="w-4 h-4 text-brand-primary" /> CCTE Certificate for T2 Completers</span>
+                <span className="flex items-center gap-2"><BarChart3 className="w-4 h-4 text-brand-primary" /> Real-Time Analytics from Day 1</span>
+                <span className="flex items-center gap-2"><Lock className="w-4 h-4 text-brand-primary" /> 80% Mastery Gate — Quality Guaranteed</span>
+                <span className="flex items-center gap-2"><User className="w-4 h-4 text-brand-primary" /> Dedicated Partnership Contact</span>
+                <span className="flex items-center gap-2"><Zap className="w-4 h-4 text-brand-primary" /> Active Within 14 Days</span>
               </div>
               {/* <div className="mt-8 text-center text-blue-300 text-xs italic">Testimonials will appear here when available (Phase 2).</div> */}
             </div>

@@ -1,4 +1,4 @@
-﻿import { useEffect } from "react";
+import { useEffect } from "react";
 import { Link } from "wouter";
 import {
   ArrowRight,
@@ -177,13 +177,12 @@ function SubjectSection({
   enrollHref: string;
 }) {
   return (
-    <section id={id} className="py-14 md:py-20" style={{ background: bg }}>
+    <section id={id} className="py-14 md:py-20 bg-white">
       <div className="container-custom">
         <div className="mx-auto max-w-5xl">
           {/* Header */}
           <div
-            className="mb-8 rounded-2xl p-6 md:p-8"
-            style={{ background: accent }}
+            className="mb-8 rounded-2xl p-6 md:p-8 bg-brand-primary"
           >
             <div className="flex items-center gap-3 mb-2">
               <Icon className="h-7 w-7 text-white" />
@@ -217,7 +216,7 @@ function SubjectSection({
                   i % 2 === 0 ? "bg-white" : "bg-slate-50"
                 }`}
               >
-                <div className="p-3 font-bold" style={{ color: accent }}>
+                <div className="p-3 font-bold text-brand-primary">
                   {skill.num}
                 </div>
                 <div className="p-3 font-medium text-slate-900">{skill.title}</div>
@@ -240,8 +239,7 @@ function SubjectSection({
               <p className="text-sm text-slate-800">From $6/skill (1yr). Volume discounts — see /pricing.</p>
             </div>
             <div
-              className="rounded-xl p-4 text-white"
-              style={{ background: accent }}
+              className="rounded-xl p-4 text-white bg-brand-primary"
             >
               <p className="text-xs font-semibold uppercase tracking-wide text-white/70 mb-1">
                 Full {label} ATP Course
@@ -249,7 +247,7 @@ function SubjectSection({
               <p className="text-sm text-white font-medium">$120/year (1yr) · $90/yr (2yr) · $72/yr (3yr)</p>
             </div>
             <div className="rounded-xl border border-blue-200 bg-blue-50 p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-[#2366c9] mb-1">
+              <p className="text-xs font-semibold uppercase tracking-wide text-brand-primary mb-1">
                 Scholarship Available
               </p>
               <p className="text-sm text-slate-700">
@@ -265,8 +263,7 @@ function SubjectSection({
           <div className="mt-6">
             <a
               href={enrollHref}
-              className="inline-flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold text-white"
-              style={{ background: accent }}
+              className="inline-flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold text-white bg-brand-primary"
             >
               Enrol in ATP {label}
               <ArrowRight className="h-4 w-4" />
@@ -310,7 +307,7 @@ export default function ATPCoursesPage() {
             </p>
             <h1 className="text-4xl font-semibold leading-tight text-white md:text-6xl">
               Cambridge Paper 4. Alternative to Practical.{" "}
-              <span className="text-[#38bdf8]">Fully Prepared — With or Without a Laboratory.</span>
+              <span className="text-brand-sky">Fully Prepared — With or Without a Laboratory.</span>
             </h1>
             <p className="mx-auto mt-6 max-w-3xl text-base text-white/75 md:text-lg">
               Cambridge Paper 4 tests practical skills without requiring a live experiment. EduMeUp's ATP courses teach every
@@ -322,7 +319,7 @@ export default function ATPCoursesPage() {
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Link href="/diagnostic">
-                <span className="inline-flex items-center gap-2 rounded-xl bg-[#0ea5e9] px-6 py-3 text-sm font-semibold text-white hover:bg-[#0284c7]">
+                <span className="inline-flex items-center gap-2 rounded-xl bg-brand-sky px-6 py-3 text-sm font-semibold text-white hover:bg-brand-sky-dark">
                   Take the Free ATP Diagnostic
                   <ArrowRight className="h-4 w-4" />
                 </span>
@@ -345,33 +342,33 @@ export default function ATPCoursesPage() {
 
             {/* ── LEFT STICKY SIDEBAR ── */}
             <aside className="space-y-4 lg:sticky lg:top-20 lg:self-start">
-              <div className="rounded-xl border border-[#dbe7f4] bg-white p-4 shadow-sm">
+              <div className="rounded-xl border border-neutral-border-soft bg-white p-4 shadow-sm">
                 <h3 className="text-sm font-semibold text-slate-900">Page Navigation</h3>
                 <div className="mt-3 space-y-2">
                   {sidebarLinks.map((l) => (
-                    <a key={l.href} href={l.href} className="block text-sm text-[#2366c9] hover:underline">
+                    <a key={l.href} href={l.href} className="block text-sm text-brand-primary hover:underline">
                       {l.label}
                     </a>
                   ))}
                 </div>
               </div>
 
-              <div className="rounded-xl border border-[#dbe7f4] bg-white p-4 shadow-sm">
+              <div className="rounded-xl border border-neutral-border-soft bg-white p-4 shadow-sm">
                 <h3 className="text-sm font-semibold text-slate-900">Not sure which subject?</h3>
                 <p className="mt-2 text-sm text-slate-600">
                   Take the free ATP Diagnostic for each science subject separately and decide based on the results.
                 </p>
                 <a
                   href="/diagnostic"
-                  className="mt-3 block rounded-lg bg-[#2366c9] px-3 py-2 text-center text-sm font-semibold text-white hover:bg-blue-700"
+                  className="mt-3 block rounded-lg bg-brand-primary px-3 py-2 text-center text-sm font-semibold text-white hover:bg-brand-primary-dark"
                 >
                   Free ATP Diagnostic
                 </a>
               </div>
 
-              <div className="rounded-xl border border-[#dbe7f4] bg-white p-4 shadow-sm text-sm text-slate-700">
+              <div className="rounded-xl border border-neutral-border-soft bg-white p-4 shadow-sm text-sm text-slate-700">
                 View all prices?{" "}
-                <a href="/pricing" className="font-semibold text-[#2366c9]">
+                <a href="/pricing" className="font-semibold text-brand-primary">
                   View Pricing Page
                 </a>
               </div>
@@ -382,7 +379,7 @@ export default function ATPCoursesPage() {
 
               {/* SECTION: What Is ATP */}
               <section id="what-is-atp" className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm md:p-8 mb-8">
-                <p className="mb-3 inline-flex rounded-full bg-[#2366c9] px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">
+                <p className="mb-3 inline-flex rounded-full bg-brand-primary px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">
                   What Is Cambridge Paper 4?
                 </p>
                 <h2 className="text-2xl font-semibold text-slate-900 md:text-3xl">
@@ -413,7 +410,7 @@ export default function ATPCoursesPage() {
                     },
                   ].map((item) => (
                     <div key={item.q} className="rounded-xl border border-blue-100 bg-blue-50/50 p-4">
-                      <p className="text-xs font-bold uppercase tracking-wide text-[#2366c9] mb-2">{item.q}</p>
+                      <p className="text-xs font-bold uppercase tracking-wide text-brand-primary mb-2">{item.q}</p>
                       <p className="text-sm leading-relaxed text-slate-700">{item.a}</p>
                     </div>
                   ))}
@@ -428,7 +425,7 @@ export default function ATPCoursesPage() {
               {/* SECTION: 4-Step Structure */}
               <section id="structure" className="mb-8">
                 <div className="mb-6 text-center">
-                  <p className="mb-2 inline-flex rounded-full bg-[#2366c9] px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">
+                  <p className="mb-2 inline-flex rounded-full bg-brand-primary px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">
                     Course Structure
                   </p>
                   <h2 className="text-2xl font-semibold text-slate-900 md:text-3xl">
@@ -444,20 +441,19 @@ export default function ATPCoursesPage() {
                   {steps.map((s, i) => (
                     <div
                       key={s.step}
-                      className="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm"
-                      style={{ borderTopWidth: "4px", borderTopColor: "#2366c9" }}
+                      className="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm border-t-4 border-t-brand-primary"
                     >
-                      <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-blue-100 text-[#2366c9]">
+                      <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-blue-100 text-brand-primary">
                         <s.icon className="h-4 w-4" />
                       </div>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-[#2366c9]">{s.step}</p>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-brand-primary">{s.step}</p>
                       <h3 className="mt-1 text-base font-semibold text-slate-900">{s.title}</h3>
                       <p className="mt-2 text-xs leading-relaxed text-slate-600">{s.description}</p>
                     </div>
                   ))}
                 </div>
                 <div className="mt-5 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm leading-relaxed text-slate-700">
-                  <strong className="text-[#2366c9]">The 4-step structure</strong> is what distinguishes EduMeUp's ATP
+                  <strong className="text-brand-primary">The 4-step structure</strong> is what distinguishes EduMeUp's ATP
                   preparation from textbook-based study. A student who completes all skill units for their subject has: seen
                   every Cambridge ATP skill type, worked through the latest 5 years of Cambridge past papers for that skill, and
                   received immediate feedback on their practice responses.
@@ -471,7 +467,7 @@ export default function ATPCoursesPage() {
       {/* ── PHYSICS ── */}
       <SubjectSection
         id="section-physics"
-        accent="#2366c9" // Brand blue
+        accent="brand-primary" // Brand blue
         bg="#fff"        // White background
         label="Physics"
         icon={Zap}
@@ -485,7 +481,7 @@ export default function ATPCoursesPage() {
       {/* ── CHEMISTRY ── */}
       <SubjectSection
         id="section-chemistry"
-        accent="#2366c9" // Brand blue
+        accent="brand-primary" // Brand blue
         bg="#fff"        // White background
         label="Chemistry"
         icon={FlaskConical}
@@ -499,7 +495,7 @@ export default function ATPCoursesPage() {
       {/* ── BIOLOGY ── */}
       <SubjectSection
         id="section-biology"
-        accent="#2366c9" // Brand blue
+        accent="brand-primary" // Brand blue
         bg="#fff"        // White background
         label="Biology"
         icon={Dna}
@@ -514,7 +510,7 @@ export default function ATPCoursesPage() {
       <section id="includes" className="bg-gradient-to-b from-[#eef6ff]/80 to-white py-14 md:py-20">
         <div className="container-custom">
           <div className="mb-8 text-center">
-            <p className="mb-2 inline-flex rounded-full bg-[#2366c9] px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">
+            <p className="mb-2 inline-flex rounded-full bg-brand-primary px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">
               What's Included
             </p>
             <h2 className="text-2xl font-semibold text-slate-900 md:text-3xl">
@@ -525,10 +521,9 @@ export default function ATPCoursesPage() {
             {courseIncludes.map((item) => (
               <div
                 key={item.title}
-                className="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm"
-                style={{ borderTopWidth: "4px", borderTopColor: "#2366c9" }}
+                className="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm border-t-4 border-t-brand-primary"
               >
-                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-[#2366c9]">
+                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-brand-primary">
                   <item.icon className="h-5 w-5" />
                 </div>
                 <h3 className="text-base font-semibold text-slate-900">{item.title}</h3>
@@ -540,10 +535,10 @@ export default function ATPCoursesPage() {
       </section>
 
       {/* ── DIAGNOSTIC CTA ── */}
-      <section id="diagnostic" className="border-y border-[#2366c9]/10 bg-gradient-to-b from-[#eef6ff]/80 to-white py-14 md:py-20">
+      <section id="diagnostic" className="border-y border-brand-primary/10 bg-gradient-to-b from-[#eef6ff]/80 to-white py-14 md:py-20">
         <div className="container-custom">
           <div className="mx-auto max-w-3xl text-center">
-            <p className="mb-3 inline-flex rounded-full bg-[#2366c9] px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">
+            <p className="mb-3 inline-flex rounded-full bg-brand-primary px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">
               ATP Diagnostic — Free
             </p>
             <h2 className="text-2xl font-semibold text-slate-900 md:text-3xl">
@@ -562,7 +557,7 @@ export default function ATPCoursesPage() {
             </p>
             <div className="mt-6">
               <Link href="/diagnostic">
-                <span className="inline-flex items-center gap-2 rounded-xl bg-[#2366c9] px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700">
+                <span className="inline-flex items-center gap-2 rounded-xl bg-brand-primary px-6 py-3 text-sm font-semibold text-white hover:bg-brand-primary-dark">
                   Take the Free ATP Diagnostic
                   <ArrowRight className="h-4 w-4" />
                 </span>
@@ -573,7 +568,7 @@ export default function ATPCoursesPage() {
       </section>
 
       {/* ── FINAL CTA ── */}
-      <section id="cta" className="bg-gradient-to-br from-[#1e1b4b] via-[#2366c9] to-[#4f86e0] py-16 md:py-24">
+      <section id="cta" className="bg-gradient-to-br from-[#1e1b4b] via-brand-primary to-[#4f86e0] py-16 md:py-24">
         <div className="container-custom">
           <div className="mb-8 text-center">
             <h2 className="text-2xl font-semibold text-white md:text-3xl">
@@ -598,7 +593,7 @@ export default function ATPCoursesPage() {
                 <p className="mt-1 text-sm text-white/70">{s.count}</p>
                 <a
                   href={s.href}
-                  className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#2366c9] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#174a8b]"
+                  className="mt-4 inline-flex items-center gap-2 rounded-xl bg-brand-primary px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-primary-dark"
                 >
                   Enrol in {s.label}
                   <ArrowRight className="h-4 w-4" />
@@ -608,7 +603,7 @@ export default function ATPCoursesPage() {
           </div>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <Link href="/diagnostic">
-              <span className="inline-flex items-center gap-2 rounded-xl bg-[#2366c9] px-6 py-3 text-sm font-semibold text-white hover:bg-[#174a8b]">
+              <span className="inline-flex items-center gap-2 rounded-xl bg-brand-primary px-6 py-3 text-sm font-semibold text-white hover:bg-brand-primary-dark">
                 Start ATP Diagnostic
                 <ArrowRight className="h-4 w-4" />
               </span>

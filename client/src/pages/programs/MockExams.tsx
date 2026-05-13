@@ -4,7 +4,6 @@ import { ArrowRight, CheckCircle2, BookOpen, Users } from "lucide-react";
 import { motion } from "framer-motion";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-import { ui } from "@/theme";
 
 const reportElements = [
   "Total score and predicted Cambridge grade (A* to G equivalent)",
@@ -155,7 +154,7 @@ export default function MockExams() {
   return (
     <Layout>
       {/* HERO */}
-      <section className={ui.sections.hero + " py-16 md:py-24"}>
+      <section className="relative overflow-hidden bg-gradient-to-b from-[#eef6ff]/80 to-white py-16 md:py-24">
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -163,7 +162,7 @@ export default function MockExams() {
             transition={{ duration: 0.8 }}
             className="max-w-5xl mx-auto text-center"
           >
-            <p className={ui.pills.brand + " mb-6 justify-center"}>
+            <p className="inline-flex rounded-full border border-slate-200 bg-brand-primary px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-6 justify-center">
               Cambridge O-Level / IGCSE | Full Timed Simulation | 7 Subjects
             </p>
             <h1 className="text-5xl md:text-7xl font-semibold text-slate-900 mb-6 tracking-tight leading-tight">
@@ -175,29 +174,29 @@ export default function MockExams() {
 
             {/* Hero Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto mb-8">
-              <div className="rounded-lg bg-white/50 border border-white/80 p-5">
-                <p className="text-2xl font-semibold text-[#2366c9]">Full Cambridge Paper Format</p>
+              <div className="rounded-lg bg-white/50 border border-slate-100 p-5 shadow-sm">
+                <p className="text-2xl font-semibold text-brand-primary">Full Cambridge Paper Format</p>
                 <p className="text-[14px] text-slate-600 mt-2">exact durations, exact mark allocations</p>
               </div>
-              <div className="rounded-lg bg-white/50 border border-white/80 p-5">
-                <p className="text-2xl font-semibold text-[#2366c9]">AI Detailed Report</p>
+              <div className="rounded-lg bg-white/50 border border-slate-100 p-5 shadow-sm">
+                <p className="text-2xl font-semibold text-brand-primary">AI Detailed Report</p>
                 <p className="text-[14px] text-slate-600 mt-2">score, predicted grade, AO breakdown, error analysis, revision priorities</p>
               </div>
-              <div className="rounded-lg bg-white/50 border border-white/80 p-5">
-                <p className="text-2xl font-semibold text-[#2366c9]">Parents Receive the Report</p>
+              <div className="rounded-lg bg-white/50 border border-slate-100 p-5 shadow-sm">
+                <p className="text-2xl font-semibold text-brand-primary">Parents Receive the Report</p>
                 <p className="text-[14px] text-slate-600 mt-2">complete visibility, weeks before the actual examination</p>
               </div>
             </div>
 
             <div className="flex flex-col md:flex-row gap-4 justify-center">
               <Link href="/contact">
-                <span className={`inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[14px] font-semibold ${ui.buttons.brand}`}>
+                <span className="inline-flex items-center gap-2 rounded-full bg-brand-primary px-7 py-3.5 text-[14px] font-semibold text-white hover:bg-brand-navy transition-colors">
                   Book Your Mock Exam — Choose Your Subject
                   <ArrowRight className="h-4 w-4" />
                 </span>
               </Link>
               <Link href="/programs/exam-prep">
-                <span className={`inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[14px] font-semibold ${ui.buttons.brandOutlineDark}`}>
+                <span className="inline-flex items-center gap-2 rounded-full bg-white border border-brand-primary px-7 py-3.5 text-[14px] font-semibold text-brand-primary hover:bg-brand-primary hover:text-white transition-colors">
                   Take Free Diagnostic First — Check Your Readiness
                 </span>
               </Link>
@@ -209,9 +208,9 @@ export default function MockExams() {
       {/* CRITICAL DISTINCTION */}
       <section className="py-14 md:py-20 bg-white">
         <div className="container-custom">
-          <div className={`${ui.cards.soft} mx-auto max-w-5xl p-8 md:p-10 border-l-4 border-orange-500`}>
+          <div className="rounded-2xl border border-slate-200 bg-[#f8fbff] shadow-sm mx-auto max-w-5xl p-8 md:p-10 border-l-4 border-orange-500">
             <h2 className="text-2xl md:text-3xl font-semibold text-slate-900 mb-6">Critical Distinction — Mock Exam (P5) vs Exam Prep (P4)</h2>
-            <div className="space-y-4 text-base text-black">
+            <div className="space-y-4 text-base text-slate-800">
               <p>
                 <strong>Final Mock Exam (this page — /programs/mock-exams):</strong> One complete sitting in full Cambridge format. Timed to exact Cambridge paper durations. No pause, no retry, no feedback during the exam. Simulates the actual examination experience. When the sitting ends, an AI-generated detailed report is produced covering scores, predicted grade, AO performance, error analysis and final revision priorities.
               </p>
@@ -227,11 +226,11 @@ export default function MockExams() {
       </section>
 
       {/* WHAT IS IN THE REPORT */}
-      <section className={ui.sections.softBlue + " py-14 md:py-20"}>
+      <section className="bg-[#eef6ff]/40 py-14 md:py-20">
         <div className="container-custom">
           <div className="mx-auto max-w-5xl">
             <div className="text-center mb-10">
-              <h2 className="text-3xl md:text-4xl font-semibold text-slate-900 tracking-tight">
+              <h2 className="text-3xl md:text-4xl font-semibold text-brand-navy tracking-tight">
                 What Is In The Report
               </h2>
               <p className="text-base text-slate-600 mt-4">Every EduMeUp Mock Exam Report includes these six elements as standard, for all subjects:</p>
@@ -239,14 +238,14 @@ export default function MockExams() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {reportElements.map((element, idx) => (
                 <div key={idx} className="flex gap-4">
-                  <CheckCircle2 className="h-5 w-5 shrink-0 text-[#2366c9] mt-0.5" />
-                  <p className="text-[14px] text-black">{element}</p>
+                  <CheckCircle2 className="h-5 w-5 shrink-0 text-brand-primary mt-0.5" />
+                  <p className="text-[14px] text-slate-700 leading-relaxed">{element}</p>
                 </div>
               ))}
             </div>
-            <div className={`${ui.cards.standard} p-6 md:p-8 mt-8`}>
-              <p className="text-sm font-semibold text-[#2366c9] mb-3">Plus subject-specific elements:</p>
-              <p className="text-[14px] text-black">Each subject's report includes additional analysis specific to that subject's question types — AO breakdown, diagram quality, evaluation quality, language precision etc. Full details are in each subject section below.</p>
+            <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 md:p-8 mt-8">
+              <p className="text-sm font-semibold text-brand-primary mb-3">Plus subject-specific elements:</p>
+              <p className="text-[14px] text-slate-700 leading-relaxed">Each subject's report includes additional analysis specific to that subject's question types — AO breakdown, diagram quality, evaluation quality, language precision etc. Full details are in each subject section below.</p>
             </div>
           </div>
         </div>
@@ -255,22 +254,22 @@ export default function MockExams() {
       {/* PARENT BENEFIT CALLOUT */}
       <section className="py-14 md:py-20 bg-white">
         <div className="container-custom">
-          <div className={`rounded-2xl border-2 border-green-200 bg-green-50 p-8 md:p-10 max-w-4xl mx-auto`}>
-            <h2 className="text-3xl font-semibold text-slate-900 mb-5">For Parents — Real Information, Not Reassurance</h2>
-            <p className="text-base text-black leading-relaxed mb-5">
+          <div className={`rounded-2xl border-2 border-emerald-100 bg-emerald-50/50 p-8 md:p-10 max-w-4xl mx-auto`}>
+            <h2 className="text-3xl font-semibold text-brand-navy mb-5">For Parents — Real Information, Not Reassurance</h2>
+            <p className="text-base text-slate-800 leading-relaxed mb-5">
               When your child sits an EduMeUp Mock Exam, you receive the same detailed report they do. The report tells you, in plain language: what grade your child is currently predicted, which specific topics are costing the most marks, and what the recommended revision priorities are for the remaining weeks before the examination.
             </p>
-            <p className="text-base text-black leading-relaxed">
+            <p className="text-base text-slate-800 leading-relaxed">
               If the report identifies a serious gap — in any topic or skill area — there is still time to address it. The report links directly to the relevant Online Exam Preparation course for that subject, so the next step is clear immediately.
             </p>
             <div className="flex flex-col md:flex-row gap-4 mt-8">
               <Link href="/contact">
-                <span className={`inline-flex items-center gap-2 px-6 py-2.5 text-[14px] font-semibold rounded-lg ${ui.buttons.brand}`}>
+                <span className="inline-flex items-center gap-2 px-6 py-2.5 text-[14px] font-semibold rounded-lg bg-brand-primary text-white hover:bg-brand-navy transition-colors">
                   View Pricing — Mock Exams
                 </span>
               </Link>
               <Link href="/contact">
-                <span className={`inline-flex items-center gap-2 px-6 py-2.5 text-[14px] font-semibold rounded-lg border-2 border-[#2366c9] text-[#2366c9] hover:bg-[#2366c9] hover:text-white transition-colors`}>
+                <span className="inline-flex items-center gap-2 px-6 py-2.5 text-[14px] font-semibold rounded-lg border-2 border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white transition-colors">
                   Contact Us — School Group Booking
                 </span>
               </Link>
@@ -284,10 +283,10 @@ export default function MockExams() {
         <div className="container-custom">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
-              <p className={ui.pills.brand + " mb-5 justify-center"}>
+              <p className="inline-flex rounded-full border border-slate-200 bg-brand-primary px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5 justify-center">
                 Choose Your Subject
               </p>
-              <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 tracking-tight">
+              <h2 className="text-4xl md:text-5xl font-semibold text-brand-navy tracking-tight">
                 7 Subjects — 7 Full Cambridge Papers
               </h2>
             </div>
@@ -300,7 +299,7 @@ export default function MockExams() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: idx * 0.1 }}
-                  className={`${ui.cards.standard} overflow-hidden hover:shadow-lg transition-shadow`}
+                  className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden hover:shadow-lg transition-all"
                 >
                   {/* Header */}
                   <div className={`${subject.color} text-white p-6 md:p-8 flex items-center justify-between`}>
@@ -315,30 +314,30 @@ export default function MockExams() {
                   {/* Body */}
                   <div className="p-6 md:p-8">
                     <div className="mb-6">
-                      <p className="text-xs font-semibold uppercase tracking-wider text-[#2366c9] mb-2">Paper Format</p>
-                      <p className="text-[14px] text-black">{subject.paperFormat}</p>
+                      <p className="text-xs font-bold uppercase tracking-wider text-brand-primary mb-2">Paper Format</p>
+                      <p className="text-[14px] text-slate-800 leading-relaxed">{subject.paperFormat}</p>
                     </div>
 
                     <div>
-                      <p className="text-xs font-semibold uppercase tracking-wider text-[#2366c9] mb-3">What The Report Includes</p>
+                      <p className="text-xs font-bold uppercase tracking-wider text-brand-primary mb-3">What The Report Includes</p>
                       <ul className="space-y-2">
                         {subject.reportIncludes.map((item, i) => (
-                          <li key={i} className="flex gap-3 text-[14px] text-black">
-                            <CheckCircle2 className="h-4 w-4 shrink-0 text-[#2366c9] mt-0.5" />
+                          <li key={i} className="flex gap-3 text-[14px] text-slate-700">
+                            <CheckCircle2 className="h-4 w-4 shrink-0 text-brand-primary mt-0.5" />
                             <span>{item}</span>
                           </li>
                         ))}
                       </ul>
                     </div>
 
-                    <div className="mt-6 pt-6 border-t border-[#dbe7f4]">
-                      <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Resit Included</p>
-                      <p className="text-[14px] text-black">If you are not satisfied with your performance on the first sitting, you may book the resit from your student dashboard after a 7-day waiting period. No additional charge — included in the mock exam fee.</p>
+                    <div className="mt-6 pt-6 border-t border-slate-100">
+                      <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">Resit Included</p>
+                      <p className="text-[14px] text-slate-600 leading-relaxed">If you are not satisfied with your performance on the first sitting, you may book the resit from your student dashboard after a 7-day waiting period. No additional charge — included in the mock exam fee.</p>
                     </div>
 
                     <div className="mt-6">
                       <Link href="/contact">
-                        <button className={`w-full py-3 rounded-lg font-semibold text-[14px] ${ui.buttons.brand}`}>
+                        <button className="w-full py-3 rounded-lg font-semibold text-[14px] bg-brand-primary text-white hover:bg-brand-navy transition-colors">
                           Enrol in {subject.name} Mock Exam
                         </button>
                       </Link>
@@ -352,11 +351,11 @@ export default function MockExams() {
       </section>
 
       {/* RESIT POLICY */}
-      <section className={ui.sections.softBlue + " py-14 md:py-20"}>
+      <section className="bg-[#eef6ff]/40 py-14 md:py-20">
         <div className="container-custom">
           <div className="mx-auto max-w-4xl">
-            <h2 className="text-3xl font-semibold text-slate-900 mb-6">Resit Policy</h2>
-            <div className="space-y-4 text-base text-black">
+            <h2 className="text-3xl font-semibold text-brand-navy mb-6">Resit Policy</h2>
+            <div className="space-y-4 text-base text-slate-800 leading-relaxed">
               <p>
                 <strong>Resit included:</strong> Every mock exam purchase includes one resit. If you are not satisfied with your performance on the first sitting, you may book the resit from your student dashboard after a 7-day waiting period.
               </p>
@@ -375,24 +374,24 @@ export default function MockExams() {
       </section>
 
       {/* FINAL CTA */}
-      <section className={ui.sections.brand + " py-20 md:py-32"}>
-        <div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
-        <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
+      <section className="bg-brand-primary text-white relative overflow-hidden py-20 md:py-32">
+        <div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-brand-navy/30 blur-3xl" aria-hidden="true" />
+        <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-brand-navy/30 blur-3xl" aria-hidden="true" />
         <div className="container-custom text-center relative z-10">
           <h2 className="text-4xl md:text-6xl text-white font-semibold leading-[1.05] mb-5 tracking-tight">
             The Grade on Your Mock Report Is the Grade You Are Currently Heading For
           </h2>
-          <p className="text-base text-blue-200 mb-12 max-w-3xl mx-auto">
+          <p className="text-base text-blue-100 mb-12 max-w-3xl mx-auto">
             That grade may already be where you want it. Or it may tell you exactly what needs to change in the next few weeks. Either way — knowing is better than guessing. Book your mock exam and get the truth.
           </p>
           <div className="flex flex-col md:flex-row justify-center gap-6">
             <Link href="/contact">
-              <Button size="lg" className={`w-full md:w-auto min-w-[280px] font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2 ${ui.buttons.brandLight}`}>
+              <Button size="lg" className="w-full md:w-auto min-w-[280px] font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2 bg-white text-brand-primary hover:bg-[#eef6ff]">
                 Book Mock Exam — Choose Your Subject <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
             <Link href="/programs/exam-prep">
-              <Button size="lg" variant="outline" className={`w-full md:w-auto min-w-[280px] font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2 ${ui.buttons.brandOutline}`}>
+              <Button size="lg" variant="outline" className="w-full md:w-auto min-w-[280px] font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2 border-white/30 text-white hover:bg-white/10">
                 View Online Exam Preparation — Structured Practice
               </Button>
             </Link>

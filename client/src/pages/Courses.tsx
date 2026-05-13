@@ -1,3 +1,4 @@
+
 import { useMemo, useState } from "react";
 import { Search, BookOpen, GraduationCap, CreditCard } from "lucide-react";
 import { Layout } from "@/components/Layout";
@@ -38,7 +39,7 @@ export default function Courses() {
       <section className="overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(35,102,201,0.18),_transparent_45%),linear-gradient(180deg,#f8fbff,#ffffff)] py-16 md:py-24">
         <div className="container-custom">
           <div className="mx-auto max-w-4xl text-center">
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-blue-600">Moodle Course Catalog</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-primary">Moodle Course Catalog</p>
             <h1 className="mt-4 text-4xl font-black tracking-tight text-slate-900 md:text-6xl">
               Explore Live Courses From Edu&apos;s Connected Moodle
             </h1>
@@ -65,7 +66,7 @@ export default function Courses() {
                   onClick={() => setSelectedCategory(category)}
                   className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
                     selectedCategory === category
-                      ? "bg-[#2366c9] text-white"
+                      ? "bg-brand-primary text-white"
                       : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                   }`}
                 >
@@ -138,3 +139,4 @@ export default function Courses() {
     </Layout>
   );
 }
+

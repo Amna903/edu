@@ -4,7 +4,6 @@ import { Search, ArrowRight, ChevronRight, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
 import { Link } from "wouter";
-import { ui } from "@/theme";
 
 // ─── CATEGORIES (8 from B21 PDF) ─────────────────────────────────────────────
 const categories = [
@@ -121,11 +120,11 @@ export default function Blog() {
   return (
     <Layout>
       {/* ══ SECTION 1: HERO BANNER ══════════════════════════════════════════════ */}
-      <section className={ui.sections.brand + " relative overflow-hidden py-16 md:py-24"}>
+      <section className="bg-brand-primary text-white relative overflow-hidden py-16 md:py-24">
         <div className="absolute -top-20 -right-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" aria-hidden="true" />
         <div className="container-custom relative z-10 text-center max-w-4xl">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-            <p className="text-[11px] font-black uppercase tracking-[0.28em] text-blue-300 mb-4">
+            <p className="text-sm-small font-black uppercase tracking-[0.28em] text-blue-300 mb-4">
               EduMeUp Blog · Research-Backed Study Guides for O-Level Students
             </p>
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold leading-[1.05] tracking-tight text-white mb-5">
@@ -142,7 +141,7 @@ export default function Blog() {
                 placeholder="Search articles — topic, subject, or keyword"
                 className="flex-1 px-5 py-4 outline-none text-sm text-slate-800 bg-transparent"
               />
-              <button className="px-5 py-4 text-[#2366c9]" aria-label="Search">
+              <button className="px-5 py-4 text-brand-primary" aria-label="Search">
                 <Search className="h-4 w-4" />
               </button>
             </div>
@@ -165,7 +164,7 @@ export default function Blog() {
                 style={
                   activeSlug === cat.slug
                     ? { background: cat.hex, color: "#fff", borderColor: cat.hex }
-                    : { background: "#fff", color: "#1E3A5F", borderColor: "#1E3A5F40" }
+                    : { background: "#fff", color: "#0B3C5D", borderColor: "#cbd5e1" }
                 }
               >
                 {cat.label}
@@ -180,10 +179,10 @@ export default function Blog() {
         <section className="py-12 bg-white">
           <div className="container-custom max-w-6xl">
             <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-              <div className={ui.cards.standard + " grid lg:grid-cols-[55%_45%] rounded-[2rem] overflow-hidden shadow-xl"}>
+              <div className="bg-white border border-neutral-border shadow-sm grid lg:grid-cols-[55%_45%] rounded-[2rem] overflow-hidden shadow-xl">
                 <div className="relative min-h-[260px] lg:min-h-[380px]">
                   <img src={featured.image} alt={featured.title} className="w-full h-full object-cover" />
-                  <span className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-white bg-[#2366c9]">
+                  <span className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-white bg-brand-primary">
                     Featured
                   </span>
                 </div>
@@ -196,7 +195,7 @@ export default function Blog() {
                   <h2 className="text-2xl md:text-3xl font-semibold text-slate-900 leading-tight mb-3 line-clamp-2">{featured.title}</h2>
                   <p className="text-sm text-slate-700 leading-relaxed mb-4 line-clamp-3">{featured.excerpt}</p>
                   <p className="text-xs text-slate-500 mb-5">{featured.author} · {featured.date} · {featured.readTime} read</p>
-                  <Button className={ui.buttons.brand + " font-semibold rounded-xl w-fit"}>
+                  <Button className="bg-brand-primary text-white hover:bg-brand-primary-dark font-semibold rounded-xl w-fit">
                     Read Article <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </div>
@@ -207,7 +206,7 @@ export default function Blog() {
       )}
 
       {/* ══ ARTICLE GRID + INLINE CTA ════════════════════════════════════════════ */}
-      <section className={ui.sections.softBlue + " py-8 pb-20"}>
+      <section className="bg-brand-primary-soft py-8 pb-20">
         <div className="container-custom max-w-6xl">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {visibleCards.slice(0, 6).map((article, i) => (
@@ -216,15 +215,15 @@ export default function Blog() {
           </div>
 
           {/* INLINE CTA BLOCK */}
-          <div className={ui.sections.brand + " rounded-[2rem] p-8 md:p-10 mb-8"}>
+          <div className="bg-brand-primary text-white rounded-[2rem] p-8 md:p-10 mb-8">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
               <div>
-                <p className="text-[11px] font-black uppercase tracking-[0.28em] text-blue-300 mb-2">{cta.eyebrow}</p>
+                <p className="text-sm-small font-black uppercase tracking-[0.28em] text-blue-300 mb-2">{cta.eyebrow}</p>
                 <h3 className="text-2xl font-semibold text-white mb-2">{cta.heading}</h3>
                 <p className="text-sm text-blue-200 font-medium">{cta.sub}</p>
               </div>
               <div className="flex flex-col items-start md:items-end gap-3 min-w-[220px]">
-                <Button className={ui.buttons.brandLight + " font-semibold"}>
+                <Button className="bg-white text-brand-primary hover:bg-blue-50 font-semibold">
                   TAKE FREE AI DIAGNOSTIC <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
                 <Link href="/resources">
@@ -247,7 +246,7 @@ export default function Blog() {
 
           <div className="text-center mt-6">
             {hasMore ? (
-              <Button variant="outline" onClick={() => setVisibleCount((p) => p + 3)} className={ui.buttons.brandOutline + " font-semibold"}>
+              <Button variant="outline" onClick={() => setVisibleCount((p) => p + 3)} className="border border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white font-semibold">
                 Load More Articles
               </Button>
             ) : (
@@ -260,19 +259,19 @@ export default function Blog() {
       {/* ══ FOOTER CTA STRIP ════════════════════════════════════════════════════ */}
       <section className="py-12 bg-white">
         <div className="container-custom max-w-6xl">
-          <div className={ui.sections.softBlue + " rounded-[2rem] p-8 md:p-10 border-l-4 border-[#2366c9] grid md:grid-cols-3 gap-8"}>
+          <div className="bg-brand-primary-soft rounded-[2rem] p-8 md:p-10 border-l-4 border-brand-primary grid md:grid-cols-3 gap-8">
             {[
               { label: "Not sure where to start?", title: "Find Your Starting Point", desc: "Sample lessons, essay frameworks, and diagnostic pathways in one place.", cta: "Take Diagnostic", href: "/for-parents", outline: false },
               { label: "Free resources, no login", title: "Explore Free Learning Materials", desc: "No account needed to browse core samples and frameworks.", cta: "Visit Library", href: "/resources", outline: true },
               { label: "Talk to a real person", title: "Speak With Our Education Team", desc: "9AM–9PM PKT. Guidance call, not a pressure sales call.", cta: "WhatsApp Us", href: "#", outline: true, icon: true },
             ].map((item) => (
               <div key={item.title} className="space-y-3">
-                <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9]">{item.label}</p>
+                <p className="text-sm-small font-black uppercase tracking-[0.28em] text-brand-primary">{item.label}</p>
                 <h3 className="text-xl font-semibold text-slate-900">{item.title}</h3>
                 <p className="text-sm text-slate-600 leading-relaxed">{item.desc}</p>
                 <Link href={item.href}>
                   <Button variant={item.outline ? "outline" : "default"}
-                    className={(item.outline ? ui.buttons.brandOutline : ui.buttons.brand) + " font-semibold rounded-xl inline-flex items-center gap-2"}>
+                    className={(item.outline ? "border border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white" : "bg-brand-primary text-white hover:bg-brand-primary-dark") + " font-semibold rounded-xl inline-flex items-center gap-2"}>
                     {item.icon && <MessageCircle className="h-4 w-4" />}
                     {item.cta}
                   </Button>
@@ -294,18 +293,18 @@ function ArticleCard({ article, catColor, index }: { article: (typeof articles)[
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: (index % 3) * 0.08 }}
-      className={ui.cards.standard + " rounded-[1.5rem] overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all"}
+      className="bg-white border border-neutral-border shadow-sm rounded-[1.5rem] overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all"
       style={{ borderTop: `4px solid ${color}` }}
     >
       <img src={article.image} alt={article.title} className="w-full h-[180px] object-cover" />
       <div className="p-5 flex flex-col min-h-[220px]">
-        <span className="inline-flex w-fit px-2.5 py-1 rounded-full text-[11px] font-bold" style={{ background: `${color}15`, color }}>
+        <span className="inline-flex w-fit px-2.5 py-1 rounded-full text-sm-small font-bold" style={{ background: `${color}15`, color }}>
           {article.category}
         </span>
         <h3 className="text-[16px] font-semibold text-slate-900 leading-snug mt-2 mb-2 line-clamp-3">{article.title}</h3>
         <p className="text-[13px] text-slate-600 line-clamp-2 mb-3 leading-relaxed">{article.excerpt}</p>
         <p className="text-xs text-slate-400 mt-auto mb-3">{article.author} · {article.date} · {article.readTime} read</p>
-        <button className="text-[13px] font-semibold flex items-center gap-1 text-[#1E3A5F] hover:text-[#2366c9] transition-colors">
+        <button className="text-[13px] font-semibold flex items-center gap-1 text-[#0B3C5D] hover:text-brand-primary transition-colors">
           READ MORE <ChevronRight className="h-3.5 w-3.5" />
         </button>
       </div>

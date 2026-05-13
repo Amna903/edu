@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Layout } from "@/components/Layout";
 import { useCart } from "@/context/CartContext";
@@ -131,7 +132,7 @@ export default function Cart() {
             </div>
 
             <div className="lg:col-span-1">
-              <Card className="border-[#2366c9]  border-2 sticky top-24">
+              <Card className="border-brand-primary border-2 sticky top-24">
                 <CardHeader>
                   <CardTitle>Order Summary</CardTitle>
                 </CardHeader>
@@ -159,7 +160,7 @@ export default function Cart() {
                   {!user && (
                     <div className="w-full space-y-3">
                       <Link href="/login">
-                        <Button className="w-full bg-[#2366c9] hover:bg-blue-700 h-12 text-lg">
+                        <Button className="w-full bg-brand-primary hover:bg-brand-primary-dark h-12 text-lg">
                           Login To Checkout
                         </Button>
                       </Link>
@@ -183,3 +184,4 @@ export default function Cart() {
     </Layout>
   );
 }
+

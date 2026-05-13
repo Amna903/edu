@@ -97,7 +97,7 @@ export default function BridgeCourses() {
               Cover 20–30% of the Cambridge syllabus before O-Level even begins.
             </p>
             <Link href="/programs/ai-diagnostic">
-              <span className="inline-flex items-center gap-2 rounded-full bg-[#2366c9] px-7 py-3.5 text-[14px] font-semibold text-white hover:bg-blue-700">
+              <span className="inline-flex items-center gap-2 rounded-full bg-brand-primary px-7 py-3.5 text-sm font-semibold text-white hover:bg-brand-primary-dark">
                 Start Your Free Diagnostic First
                 <ArrowRight className="h-4 w-4" />
               </span>
@@ -110,7 +110,7 @@ export default function BridgeCourses() {
       <section className="py-14 md:py-20 bg-white">
         <div className="container-custom">
           <div className="mx-auto max-w-4xl">
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
+            <p className="inline-flex rounded-full border border-blue-200 bg-brand-primary px-4 py-1 text-sm font-semibold uppercase tracking-[0.14em] text-white mb-5">
               The Problem
             </p>
             <h2 className="text-4xl md:text-6xl font-semibold text-slate-900 tracking-tight mb-5">
@@ -131,7 +131,7 @@ export default function BridgeCourses() {
         <div className="container-custom">
           <div className="mx-auto max-w-5xl">
             <div className="text-center mb-10">
-              <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
+              <p className="inline-flex rounded-full border border-blue-200 bg-brand-primary px-4 py-1 text-sm font-semibold uppercase tracking-[0.14em] text-white mb-5">
                 What It Is
               </p>
               <h2 className="text-4xl md:text-6xl font-semibold text-slate-900 tracking-tight">
@@ -139,7 +139,7 @@ export default function BridgeCourses() {
               </h2>
             </div>
             {/* Header */}
-            <div className="grid grid-cols-2 bg-[#2366c9] text-white text-xs uppercase tracking-wider font-semibold rounded-t-xl overflow-hidden">
+            <div className="grid grid-cols-2 bg-brand-primary text-white text-xs uppercase tracking-wider font-semibold rounded-t-xl overflow-hidden">
               <div className="p-4">It is NOT</div>
               <div className="p-4 border-l border-blue-400/30">It IS</div>
             </div>
@@ -149,11 +149,11 @@ export default function BridgeCourses() {
                 key={i}
                 className={`grid grid-cols-2 border-b border-blue-50 ${i % 2 === 0 ? "bg-white" : "bg-slate-50"} hover:bg-blue-50/40 transition-colors`}
               >
-                <div className="p-4 text-[14px] text-black flex items-start gap-2">
+                <div className="p-4 text-sm text-black flex items-start gap-2">
                   <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-400" />
                   {row.isNot}
                 </div>
-                <div className="p-4 border-l border-slate-200 text-[14px] text-black font-medium flex items-start gap-2">
+                <div className="p-4 border-l border-slate-200 text-sm text-black font-medium flex items-start gap-2">
                   <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-green-500" />
                   {row.is}
                 </div>
@@ -168,7 +168,7 @@ export default function BridgeCourses() {
         <div className="container-custom">
           <div className="mx-auto max-w-5xl">
             <div className="text-center mb-12">
-              <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
+              <p className="inline-flex rounded-full border border-blue-200 bg-brand-primary px-4 py-1 text-sm font-semibold uppercase tracking-[0.14em] text-white mb-5">
                 Five Subjects
               </p>
               <h2 className="text-4xl md:text-6xl font-semibold text-slate-900 tracking-tight">
@@ -177,25 +177,25 @@ export default function BridgeCourses() {
             </div>
             <div className="grid md:grid-cols-2 gap-6">
               {subjects.map((sub) => (
-                <div key={sub.title} className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-[#2366c9] transition-all duration-300 group">
+                <div key={sub.title} className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-brand-primary transition-all duration-300 group">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-[#2366c9] shrink-0">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-brand-primary shrink-0">
                       <sub.icon className="h-6 w-6" />
                     </div>
-                    <h3 className="text-2xl font-semibold text-[#2366c9]">{sub.title}</h3>
+                    <h3 className="text-2xl font-semibold text-brand-primary">{sub.title}</h3>
                   </div>
                   <div className="space-y-3">
                     <div>
                       <span className="text-xs font-semibold uppercase tracking-wide text-red-500">The gap: </span>
-                      <span className="text-[14px] text-black leading-relaxed">{sub.gap}</span>
+                      <span className="text-sm text-black leading-relaxed">{sub.gap}</span>
                     </div>
                     <div>
-                      <span className="text-xs font-semibold uppercase tracking-wide text-[#2366c9]">What the bridge covers: </span>
-                      <span className="text-[14px] text-black leading-relaxed">{sub.covers}</span>
+                      <span className="text-xs font-semibold uppercase tracking-wide text-brand-primary">What the bridge covers: </span>
+                      <span className="text-sm text-black leading-relaxed">{sub.covers}</span>
                     </div>
                     <div>
                       <span className="text-xs font-semibold uppercase tracking-wide text-green-600">Outcome: </span>
-                      <span className="text-[14px] text-black leading-relaxed">{sub.outcome}</span>
+                      <span className="text-sm text-black leading-relaxed">{sub.outcome}</span>
                     </div>
                   </div>
                 </div>
@@ -209,7 +209,7 @@ export default function BridgeCourses() {
       <section className="py-14 md:py-20 bg-blue-50/50">
         <div className="container-custom">
           <div className="mx-auto max-w-4xl bg-white border border-blue-200 rounded-xl p-8 md:p-10 shadow-sm">
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
+            <p className="inline-flex rounded-full border border-blue-200 bg-brand-primary px-4 py-1 text-sm font-semibold uppercase tracking-[0.14em] text-white mb-5">
               Research Engine
             </p>
             <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 tracking-tight mb-5">
@@ -227,13 +227,13 @@ export default function BridgeCourses() {
         <div className="container-custom">
           <div className="mx-auto max-w-4xl">
             <div className="text-center mb-10">
-              <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
+              <p className="inline-flex rounded-full border border-blue-200 bg-brand-primary px-4 py-1 text-sm font-semibold uppercase tracking-[0.14em] text-white mb-5">
                 Pricing
               </p>
               <h2 className="text-4xl md:text-6xl font-semibold text-slate-900 tracking-tight">Pricing</h2>
             </div>
             {/* Header */}
-            <div className="grid grid-cols-2 bg-[#2366c9] text-white text-xs uppercase tracking-wider font-semibold rounded-t-xl overflow-hidden">
+            <div className="grid grid-cols-2 bg-brand-primary text-white text-xs uppercase tracking-wider font-semibold rounded-t-xl overflow-hidden">
               <div className="p-4">Option</div>
               <div className="p-4 border-l border-blue-400/30">Price</div>
             </div>
@@ -243,13 +243,13 @@ export default function BridgeCourses() {
                 key={i}
                 className={`grid grid-cols-2 border-b border-blue-50 ${row.highlight ? "bg-blue-50" : i % 2 === 0 ? "bg-white" : "bg-slate-50"} hover:bg-blue-50/60 transition-colors`}
               >
-                <div className={`p-4 text-[14px] text-black ${row.highlight ? "font-semibold" : ""}`}>
+                <div className={`p-4 text-sm text-black ${row.highlight ? "font-semibold" : ""}`}>
                   {row.option}
                   {row.highlight && (
-                    <span className="ml-2 rounded-full bg-[#2366c9] px-2 py-0.5 text-[10px] font-bold text-white">BEST VALUE</span>
+                    <span className="ml-2 rounded-full bg-brand-primary px-2 py-0.5 text-[10px] font-bold text-white">BEST VALUE</span>
                   )}
                 </div>
-                <div className={`p-4 border-l border-slate-200 text-[14px] font-semibold ${row.highlight ? "text-[#2366c9] text-base" : "text-black"}`}>
+                <div className={`p-4 border-l border-slate-200 text-sm font-semibold ${row.highlight ? "text-brand-primary text-base" : "text-black"}`}>
                   {row.price}
                 </div>
               </div>
@@ -259,17 +259,17 @@ export default function BridgeCourses() {
       </section>
 
       {/* CTA STRIP */}
-      <section className="bg-[#2366c9] py-12">
+      <section className="bg-brand-primary py-12">
         <div className="container-custom">
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
             <Link href="/programs/ai-diagnostic">
-              <span className="inline-flex items-center gap-2 rounded-full bg-[#2366c9] px-7 py-3.5 text-[14px] font-semibold text-white hover:bg-blue-600">
+              <span className="inline-flex items-center gap-2 rounded-full bg-brand-primary px-7 py-3.5 text-sm font-semibold text-white hover:bg-brand-primary-dark">
                 Take the Free Diagnostic First
                 <ArrowRight className="h-4 w-4" />
               </span>
             </Link>
             <Link href="/contact">
-              <span className="inline-flex items-center gap-2 rounded-full border border-blue-400 px-7 py-3.5 text-[14px] font-semibold text-white hover:border-blue-300">
+              <span className="inline-flex items-center gap-2 rounded-full border border-blue-400 px-7 py-3.5 text-sm font-semibold text-white hover:border-blue-300">
                 Enrol in a Bridge Course
                 <ArrowRight className="h-4 w-4" />
               </span>

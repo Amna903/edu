@@ -1,6 +1,7 @@
 import { Link } from "wouter";
 import { LegalList, LegalPageShell, LegalSection, LegalTable } from "@/components/legal/LegalPageShell";
 
+
 export default function Privacy() {
   return (
     <LegalPageShell

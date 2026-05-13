@@ -9,7 +9,6 @@ import Home from "@/pages/Home";
 import Pricing from "@/pages/Pricing";
 import Research from "@/pages/Research";
 import ForParents from "@/pages/ForParents";
-import ForParentsMain from "@/pages/ForParentsMain";
 import ForStudents from "@/pages/ForStudents";
 import ForTeachers from "@/pages/ForTeachers";
 import Blog from "@/pages/Blog";
@@ -83,7 +82,6 @@ function Router() {
       <Route path="/impact-partnerships" component={ForSchoolsPartnership} />
       <Route path="/portals" component={Portals} />
       <Route path="/for-parents" component={ForParents} />
-      <Route path="/for-parents/main" component={ForParentsMain} />
       <Route path="/for-students" component={ForStudents} />
       <Route path="/for-teachers" component={ForTeachers} />
       <Route path="/portals/parents" component={ForParents} />

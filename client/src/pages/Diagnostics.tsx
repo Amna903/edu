@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { Link } from "wouter";
 import { CheckCircle2, ClipboardList, GraduationCap, School, UserCheck } from "lucide-react";
@@ -128,26 +129,12 @@ export default function Diagnostics() {
 
   return (
     <Layout>
-      <section className="border-b border-[#dbe4ef] bg-white">
-        <div className="container-custom flex flex-wrap items-center gap-3 py-3 text-sm">
-          <Link href="/" className="font-semibold text-[#2366c9] hover:underline">
-            Home
-          </Link>
-          <span className="text-slate-400">/</span>
-          <Link href="/diagnostics" className="font-semibold text-[#2366c9] hover:underline">
-            Diagnostic Services
-          </Link>
-          <span className="text-slate-400">/</span>
-          <Link href="/diagnostics/start" className="font-semibold text-[#2366c9] hover:underline">
-            Start Flow
-          </Link>
-        </div>
-      </section>
+      
 
       <section className="bg-white py-16">
         <div className="container-custom">
           <div className="mx-auto max-w-5xl text-center">
-            <h1 className="text-4xl font-bold text-[#2366c9] md:text-5xl">Find Your Exact Starting Point.</h1>
+            <h1 className="text-4xl font-bold text-brand-primary md:text-5xl">Find Your Exact Starting Point.</h1>
             <p className="mx-auto mt-4 max-w-3xl text-base text-slate-600">
               EduMeUp diagnostics identify precisely which topics and subjects you need to focus on - so you study smarter, not harder. One free full diagnostic included. No registration required.
             </p>
@@ -155,21 +142,21 @@ export default function Diagnostics() {
         </div>
       </section>
 
-      <section className="border-y border-[#dbe4ef] bg-[#eef6ff] py-8">
+      <section className=" py-8">
         <div className="container-custom">
           <div className="rounded-2xl border border-[#dbe4ef] bg-white p-6 md:p-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#2366c9]">One Free Full Diagnostic - No Registration Required</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-brand-primary">One Free Full Diagnostic - No Registration Required</p>
             <p className="mt-3 text-slate-700">
               Your free diagnostic is a full 40-60 minute subject assessment with a complete detailed report - the same quality report every EduMeUp student receives. Not a brief summary. Not a teaser. The real thing.
             </p>
             <div className="mt-5 flex flex-wrap gap-3 text-sm text-slate-700">
-              <span className="rounded-full bg-[#eef6ff] px-3 py-1">One free per student</span>
-              <span className="rounded-full bg-[#eef6ff] px-3 py-1">40-60 minutes</span>
-              <span className="rounded-full bg-[#eef6ff] px-3 py-1">Full detailed report</span>
-              <span className="rounded-full bg-[#eef6ff] px-3 py-1">Immediate results</span>
-              <span className="rounded-full bg-[#eef6ff] px-3 py-1">Grade 6 minimum</span>
+              <span className="rounded-full bg-blue-50 px-3 py-1">One free per student</span>
+              <span className="rounded-full bg-blue-50 px-3 py-1">40-60 minutes</span>
+              <span className="rounded-full bg-blue-50 px-3 py-1">Full detailed report</span>
+              <span className="rounded-full bg-blue-50 px-3 py-1">Immediate results</span>
+              <span className="rounded-full bg-blue-50 px-3 py-1">Grade 6 minimum</span>
             </div>
-            <Link href="/diagnostics/start" className="mt-6 inline-flex items-center rounded-lg bg-[#2366c9] px-6 py-3 text-sm font-semibold text-white hover:bg-[#1d57aa]">
+            <Link href="/diagnostics/start" className="mt-6 inline-flex items-center rounded-lg bg-brand-primary px-6 py-3 text-sm font-semibold text-white hover:bg-brand-primary-dark">
               Start My Free Diagnostic
             </Link>
           </div>
@@ -181,8 +168,8 @@ export default function Diagnostics() {
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {diagnosticCards.map((card) => (
               <article key={card.id} className="flex h-full flex-col rounded-2xl border border-[#dbe4ef] bg-white p-6 shadow-sm">
-                <div className="mb-4 inline-flex w-fit rounded-full bg-[#2366c9]/12 px-3 py-1 text-xs font-semibold text-[#2366c9]">Type {card.id}</div>
-                <h2 className="text-xl font-semibold text-[#2366c9]">{card.title}</h2>
+                <div className="mb-4 inline-flex w-fit rounded-full bg-brand-primary/10 px-3 py-1 text-xs font-semibold text-brand-primary">Type {card.id}</div>
+                <h2 className="text-xl font-semibold text-brand-primary">{card.title}</h2>
                 <p className="mt-3 flex-1 text-sm text-slate-600">{card.description}</p>
                 <div className="mt-4 space-y-1 text-sm text-slate-700">
                   <p>
@@ -192,7 +179,7 @@ export default function Diagnostics() {
                     <strong>For:</strong> {card.audience}
                   </p>
                 </div>
-                <Link href={card.href} className="mt-5 inline-flex items-center justify-center rounded-lg border border-[#2366c9] px-4 py-2 text-sm font-semibold text-[#2366c9] hover:bg-[#2366c9] hover:text-white">
+                <Link href={card.href} className="mt-5 inline-flex items-center justify-center rounded-lg border border-brand-primary px-4 py-2 text-sm font-semibold text-brand-primary hover:bg-brand-primary hover:text-white">
                   {card.cta}
                 </Link>
               </article>
@@ -205,13 +192,13 @@ export default function Diagnostics() {
         <div className="container-custom">
           <div className="grid gap-4 rounded-xl border border-slate-200 bg-white p-6 md:grid-cols-2">
             <div>
-              <h3 className="text-base font-semibold text-[#2366c9]">Free Diagnostic</h3>
+              <h3 className="text-base font-semibold text-brand-primary">Free Diagnostic</h3>
               <p className="mt-2 text-sm text-slate-700">
                 Your first diagnostic is completely free. Full detailed report. 40-60 minutes. One free diagnostic per student. Grade 6 minimum.
               </p>
             </div>
             <div>
-              <h3 className="text-base font-semibold text-[#2366c9]">Additional Diagnostics</h3>
+              <h3 className="text-base font-semibold text-brand-primary">Additional Diagnostics</h3>
               <p className="mt-2 text-sm text-slate-700">
                 After your free diagnostic: $18 per additional subject diagnostic. $30 for up to 3 subjects in one session (save $24). Teacher T1 resit: $20.
               </p>
@@ -222,12 +209,12 @@ export default function Diagnostics() {
 
       <section className="bg-white py-14">
         <div className="container-custom">
-          <h2 className="text-center text-3xl font-bold text-[#2366c9]">How the Diagnostic Works</h2>
+          <h2 className="text-center text-3xl font-bold text-brand-primary">How the Diagnostic Works</h2>
           <div className="mx-auto mt-8 grid max-w-5xl gap-4 md:grid-cols-5">
             {howItWorks.map((step, index) => (
               <div key={step.title} className="rounded-xl border border-[#dbe4ef] bg-white p-4">
-                <div className="mb-3 inline-flex h-7 w-7 items-center justify-center rounded-full bg-[#2366c9] text-xs font-semibold text-white">{index + 1}</div>
-                <h3 className="text-sm font-semibold text-[#2366c9]">{step.title}</h3>
+                <div className="mb-3 inline-flex h-7 w-7 items-center justify-center rounded-full bg-brand-primary text-xs font-semibold text-white">{index + 1}</div>
+                <h3 className="text-sm font-semibold text-brand-primary">{step.title}</h3>
                 <p className="mt-2 text-sm text-slate-600">{step.description}</p>
               </div>
             ))}
@@ -235,21 +222,21 @@ export default function Diagnostics() {
         </div>
       </section>
 
-      <section className="bg-[#eef6ff] py-14">
+      <section className="bg-brand-primary-soft py-14">
         <div className="container-custom">
           <div className="rounded-2xl border border-[#dbe4ef] bg-white p-7 md:p-10">
             <div className="flex items-start gap-3">
-              <School className="mt-1 h-6 w-6 text-[#2366c9]" />
+              <School className="mt-1 h-6 w-6 text-brand-primary" />
               <div>
-                <h2 className="text-2xl font-bold text-[#2366c9]">Arranging a Diagnostic for an Entire Class?</h2>
+                <h2 className="text-2xl font-bold text-brand-primary">Arranging a Diagnostic for an Entire Class?</h2>
                 <p className="mt-3 max-w-4xl text-sm text-slate-700">
                   The EduMeUp School Class-Level Diagnostic runs simultaneously for all students in a class - generating a class-wide gap report for the teacher and individual student reports for each student. Available for EduMeUp partner schools.
                 </p>
                 <div className="mt-5 flex flex-wrap gap-3">
-                  <Link href="/contact" className="inline-flex items-center rounded-lg bg-[#2366c9] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#1d57aa]">
+                  <Link href="/contact" className="inline-flex items-center rounded-lg bg-brand-primary px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-primary-dark">
                     Contact Us to Arrange
                   </Link>
-                  <a href="https://wa.me/" className="inline-flex items-center rounded-lg border border-[#2366c9] px-5 py-2.5 text-sm font-semibold text-[#2366c9] hover:bg-[#2366c9] hover:text-white">
+                  <a href="https://wa.me/" className="inline-flex items-center rounded-lg border border-brand-primary px-5 py-2.5 text-sm font-semibold text-brand-primary hover:bg-brand-primary hover:text-white">
                     WhatsApp
                   </a>
                 </div>
@@ -263,21 +250,21 @@ export default function Diagnostics() {
         <div className="container-custom">
           <div className="grid gap-4 md:grid-cols-3">
             <div className="rounded-xl border border-[#dbe4ef] p-4">
-              <div className="mb-2 flex items-center gap-2 text-[#2366c9]">
+              <div className="mb-2 flex items-center gap-2 text-brand-primary">
                 <ClipboardList className="h-4 w-4" />
                 <p className="text-sm font-semibold">Policy 1</p>
               </div>
               <p className="text-sm text-slate-600">One free diagnostic per student, with a full detailed report at the same quality standard as paid diagnostics.</p>
             </div>
             <div className="rounded-xl border border-[#dbe4ef] p-4">
-              <div className="mb-2 flex items-center gap-2 text-[#2366c9]">
+              <div className="mb-2 flex items-center gap-2 text-brand-primary">
                 <UserCheck className="h-4 w-4" />
                 <p className="text-sm font-semibold">Policy 2</p>
               </div>
               <p className="text-sm text-slate-600">Free limit enforcement: one free per IP for guests or one free per account for logged-in users.</p>
             </div>
             <div className="rounded-xl border border-[#dbe4ef] p-4">
-              <div className="mb-2 flex items-center gap-2 text-[#2366c9]">
+              <div className="mb-2 flex items-center gap-2 text-brand-primary">
                 <GraduationCap className="h-4 w-4" />
                 <p className="text-sm font-semibold">Policy 3</p>
               </div>
@@ -285,7 +272,7 @@ export default function Diagnostics() {
             </div>
           </div>
           <div className="mt-5 flex items-center gap-2 text-sm text-slate-600">
-            <CheckCircle2 className="h-4 w-4 text-[#2366c9]" />
+            <CheckCircle2 className="h-4 w-4 text-brand-primary" />
             This page follows the new diagnostics policy specification and replaces the previous diagnostics landing experience.
           </div>
         </div>
@@ -293,16 +280,16 @@ export default function Diagnostics() {
 
       <section className="bg-white py-12">
         <div className="container-custom">
-          <div className="rounded-2xl border border-[#dbe4ef] bg-[#1E3A5F] p-6 text-white md:p-8">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#17A589]">Related Product</p>
+          <div className="rounded-2xl border border-blue-100 bg-brand-navy p-6 text-white md:p-8">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand-sky">Related Product</p>
             <div className="mt-3 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div>
-                <h2 className="text-2xl font-bold">Need a grade forecast instead of a gap diagnostic?</h2>
+                <h2 className="text-2xl font-bold text-white">Need a grade forecast instead of a gap diagnostic?</h2>
                 <p className="mt-2 max-w-3xl text-sm leading-7 text-white/80">
                   The Cambridge O-Level Readiness Forecast predicts your likely grade band before you start O-Level. It is a separate product for a different stage.
                 </p>
               </div>
-              <Link href="/olevel-readiness-forecast" className="inline-flex items-center rounded-lg bg-[#17A589] px-5 py-3 text-sm font-semibold text-white">
+              <Link href="/olevel-readiness-forecast" className="inline-flex items-center rounded-lg bg-brand-primary px-5 py-3 text-sm font-semibold text-white hover:bg-brand-primary-dark">
                 View Readiness Forecast
               </Link>
             </div>
@@ -312,3 +299,4 @@ export default function Diagnostics() {
     </Layout>
   );
 }
+

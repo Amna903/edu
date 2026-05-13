@@ -279,7 +279,7 @@ export default function Resources() {
 
   return (
     <Layout>
-      <section className="bg-[#2366c9] text-white">
+      <section className="bg-brand-primary text-white">
         <div className="container-custom py-16 md:py-24">
           <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
             <div>
@@ -298,7 +298,7 @@ export default function Resources() {
               <div className="rounded-lg border border-white/15 bg-white/10 p-5 shadow-xl backdrop-blur">
                 <div className="mb-5 flex items-center justify-between">
                   <div className="text-sm font-semibold text-white">Resource preview</div>
-                  <div className="flex h-9 w-9 items-center justify-center rounded-md bg-white text-[#2366c9]">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-md bg-white text-brand-primary">
                     <Library className="h-5 w-5" />
                   </div>
                 </div>
@@ -416,14 +416,14 @@ export default function Resources() {
                   <Card key={`${resource.type}-${resource.title}`} className="rounded-lg border-slate-200 shadow-sm">
                     <CardContent className="flex h-full flex-col p-6">
                       <div className="mb-5 flex items-start justify-between gap-4">
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-blue-50 text-[#2366c9]">
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-blue-50 text-brand-primary">
                           <Icon className="h-5 w-5" />
                         </div>
                         <Badge variant="outline" className="rounded-full border-emerald-200 bg-emerald-50 text-emerald-700">
                           Ready
                         </Badge>
                       </div>
-                      <div className="mb-3 text-xs font-semibold uppercase text-[#2366c9]">{resource.type}</div>
+                      <div className="mb-3 text-xs font-semibold uppercase text-brand-primary">{resource.type}</div>
                       <h3 className="text-lg font-semibold leading-snug text-slate-950">{resource.title}</h3>
                       <p className="mt-3 text-sm text-slate-600">{resource.subject}</p>
                       <div className="mt-5 flex flex-wrap gap-2">
@@ -434,7 +434,7 @@ export default function Resources() {
                           {slugify(resource.type)}
                         </Badge>
                       </div>
-                      <Button className="mt-6 h-11 rounded-md bg-[#2366c9] hover:bg-blue-700" asChild>
+                      <Button className="mt-6 h-11 rounded-md bg-brand-primary hover:bg-blue-700" asChild>
                         <a href={resource.fileLink} target="_blank" rel="noreferrer">
                           <Download className="mr-2 h-4 w-4" />
                           Open resource
@@ -474,7 +474,7 @@ export default function Resources() {
                 key={category.type}
                 type="button"
                 onClick={() => setActiveType(category.type)}
-                className="rounded-lg border border-slate-200 bg-white p-5 text-left transition hover:border-[#2366c9] hover:shadow-sm"
+                className="rounded-lg border border-slate-200 bg-white p-5 text-left transition hover:border-brand-primary hover:shadow-sm"
               >
                 <div className="flex items-center justify-between gap-4">
                   <h3 className="font-semibold text-slate-950">{category.type}</h3>
@@ -493,3 +493,4 @@ export default function Resources() {
     </Layout>
   );
 }
+

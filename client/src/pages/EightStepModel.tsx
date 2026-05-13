@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { Layout } from "@/components/Layout";
 import { motion } from "framer-motion";
@@ -137,7 +138,7 @@ export default function EightStepModel() {
               Why the sequence is the product — not the content.
             </p>
             <Link href="/programs/ai-diagnostic">
-              <span className="inline-flex items-center gap-2 rounded-full bg-[#2366c9] px-7 py-3.5 text-[14px] font-semibold text-white hover:bg-blue-700">
+              <span className="inline-flex items-center gap-2 rounded-full bg-brand-primary px-7 py-3.5 text-base font-semibold text-white hover:bg-brand-primary-dark">
                 Start With Step 1 — Free Diagnostic
                 <ArrowRight className="h-4 w-4" />
               </span>
@@ -150,7 +151,7 @@ export default function EightStepModel() {
       <section className="py-14 md:py-20 bg-white">
         <div className="container-custom">
           <div className="mx-auto max-w-4xl">
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
+            <p className="inline-flex rounded-full border border-blue-200 bg-brand-primary px-4 py-1 text-base font-semibold uppercase tracking-[0.14em] text-white mb-5">
               The Problem
             </p>
             <h2 className="text-4xl md:text-6xl font-semibold text-slate-900 tracking-tight mb-5">
@@ -171,7 +172,7 @@ export default function EightStepModel() {
         <div className="container-custom">
           <div className="mx-auto max-w-5xl">
             <div className="text-center mb-10">
-              <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
+              <p className="inline-flex rounded-full border border-blue-200 bg-brand-primary px-4 py-1 text-base font-semibold uppercase tracking-[0.14em] text-white mb-5">
                 Two Models
               </p>
               <h2 className="text-4xl md:text-6xl font-semibold text-slate-900 tracking-tight">
@@ -179,7 +180,7 @@ export default function EightStepModel() {
               </h2>
             </div>
             {/* Header */}
-            <div className="grid grid-cols-2 bg-[#2366c9] text-white text-xs uppercase tracking-wider font-semibold rounded-t-xl overflow-hidden">
+            <div className="grid grid-cols-2 bg-brand-primary text-white text-xs uppercase tracking-wider font-semibold rounded-t-xl overflow-hidden">
               <div className="p-4">Typical EdTech Loop → 5–10% retention</div>
               <div className="p-4 border-l border-blue-400/30">EduMeUp Mastery Cycle → 50–75%+ retention</div>
             </div>
@@ -189,8 +190,8 @@ export default function EightStepModel() {
                 key={i}
                 className={`grid grid-cols-2 border-b border-blue-50 ${i % 2 === 0 ? "bg-white" : "bg-slate-50"} hover:bg-blue-50/40 transition-colors`}
               >
-                <div className="p-4 text-[14px] text-black line-through decoration-red-300 decoration-2">{row.typical}</div>
-                <div className="p-4 border-l border-slate-200 text-[14px] text-black font-semibold">{row.edumeup}</div>
+                <div className="p-4 text-base text-black line-through decoration-red-300 decoration-2">{row.typical}</div>
+                <div className="p-4 border-l border-slate-200 text-base text-black font-semibold">{row.edumeup}</div>
               </div>
             ))}
           </div>
@@ -202,7 +203,7 @@ export default function EightStepModel() {
         <div className="container-custom">
           <div className="mx-auto max-w-5xl">
             <div className="text-center mb-12">
-              <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
+              <p className="inline-flex rounded-full border border-blue-200 bg-brand-primary px-4 py-1 text-base font-semibold uppercase tracking-[0.14em] text-white mb-5">
                 Step by Step
               </p>
               <h2 className="text-4xl md:text-6xl font-semibold text-slate-900 tracking-tight">
@@ -217,18 +218,18 @@ export default function EightStepModel() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: idx * 0.05 }}
-                  className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-[#2366c9] transition-all duration-300 group"
+                  className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-brand-primary transition-all duration-300 group"
                 >
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="h-10 w-10 flex items-center justify-center rounded-full bg-[#2366c9] text-white text-xs font-bold shrink-0">
+                    <div className="h-10 w-10 flex items-center justify-center rounded-full bg-brand-primary text-white text-xs font-bold shrink-0">
                       {step.number}
                     </div>
-                    <step.icon className="h-5 w-5 text-[#2366c9]" />
+                    <step.icon className="h-5 w-5 text-brand-primary" />
                   </div>
-                  <h3 className="text-2xl font-semibold text-[#2366c9] mb-4">{step.title}</h3>
-                  <p className="text-[14px] text-black leading-relaxed mb-4">{step.desc}</p>
+                  <h3 className="text-2xl font-semibold text-brand-primary mb-4">{step.title}</h3>
+                  <p className="text-base text-black leading-relaxed mb-4">{step.desc}</p>
                   <div className="rounded-lg bg-blue-50 px-4 py-3 border border-blue-100">
-                    <span className="text-xs font-semibold uppercase tracking-wide text-[#2366c9]">Research basis: </span>
+                    <span className="text-xs font-semibold uppercase tracking-wide text-brand-primary">Research basis: </span>
                     <span className="text-xs text-black">{step.research}</span>
                   </div>
                 </motion.div>
@@ -239,14 +240,14 @@ export default function EightStepModel() {
       </section>
 
       {/* CYCLE AT A GLANCE */}
-      <section className="py-12 bg-[#2366c9]">
+      <section className="py-12 bg-brand-primary">
         <div className="container-custom">
           <div className="mx-auto max-w-4xl text-center">
             <h2 className="text-4xl md:text-5xl font-semibold text-white mb-4 tracking-tight">The Cycle at a Glance</h2>
             <p className="text-blue-200 text-base font-medium">
               Diagnose → Repair → Learn → Practise → Retrieve → Assess → Correct → Simulate → <span className="text-blue-400 font-bold">Mastery</span>
             </p>
-            <p className="mt-3 text-[14px] text-blue-300/70">Each step creates the conditions for the next. The sequence is the product.</p>
+            <p className="mt-3 text-base text-blue-300/70">Each step creates the conditions for the next. The sequence is the product.</p>
           </div>
         </div>
       </section>
@@ -256,7 +257,7 @@ export default function EightStepModel() {
         <div className="container-custom">
           <div className="mx-auto max-w-5xl">
             <div className="text-center mb-10">
-              <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
+              <p className="inline-flex rounded-full border border-blue-200 bg-brand-primary px-4 py-1 text-base font-semibold uppercase tracking-[0.14em] text-white mb-5">
                 THE SCIENCE BEHIND THE SYSTEM
               </p>
               <h2 className="text-4xl md:text-6xl font-semibold text-slate-900 tracking-tight">
@@ -264,7 +265,7 @@ export default function EightStepModel() {
               </h2>
             </div>
             {/* Header */}
-            <div className="grid grid-cols-[minmax(0,_1.5fr)_minmax(0,_2fr)_minmax(0,_3fr)] bg-[#2366c9] text-white text-xs uppercase tracking-wider font-semibold rounded-t-xl overflow-hidden">
+            <div className="grid grid-cols-[minmax(0,_1.5fr)_minmax(0,_2fr)_minmax(0,_3fr)] bg-brand-primary text-white text-xs uppercase tracking-wider font-semibold rounded-t-xl overflow-hidden">
               <div className="p-4">#</div>
               <div className="p-4 border-l border-blue-400/30">Research Reference</div>
               <div className="p-4 border-l border-blue-400/30">Finding</div>
@@ -275,9 +276,9 @@ export default function EightStepModel() {
                 key={i}
                 className={`grid grid-cols-[minmax(0,_1.5fr)_minmax(0,_2fr)_minmax(0,_3fr)] border-b border-blue-50 ${i % 2 === 0 ? "bg-white" : "bg-slate-50"} hover:bg-blue-50/40 transition-colors`}
               >
-                <div className="p-4 text-[14px] font-semibold text-slate-900">{row.step}</div>
-                <div className="p-4 border-l border-slate-200 text-[14px] text-[#2366c9]">{row.ref}</div>
-                <div className="p-4 border-l border-slate-200 text-[14px] text-black">{row.finding}</div>
+                <div className="p-4 text-base font-semibold text-slate-900">{row.step}</div>
+                <div className="p-4 border-l border-slate-200 text-base text-brand-primary">{row.ref}</div>
+                <div className="p-4 border-l border-slate-200 text-base text-black">{row.finding}</div>
               </div>
             ))}
           </div>
@@ -285,7 +286,7 @@ export default function EightStepModel() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 md:py-32 bg-[#2366c9] text-white relative overflow-hidden">
+      <section className="py-20 md:py-32 bg-brand-primary text-white relative overflow-hidden">
         <div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
         <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
         <div className="container-custom text-center relative z-10">
@@ -299,12 +300,12 @@ export default function EightStepModel() {
           </p>
           <div className="flex flex-col md:flex-row justify-center gap-6 max-w-5xl mx-auto">
             <Link href="/programs/ai-diagnostic">
-              <Button size="lg" className="w-full md:w-auto min-w-[260px] bg-white text-[#2366c9] hover:bg-blue-50 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+              <Button size="lg" className="w-full md:w-auto min-w-[260px] bg-white text-brand-primary hover:bg-blue-50 font-semibold py-3 px-6 rounded-xl text-base shadow-md flex items-center justify-center gap-2">
                 Start With Step 1 — Free Diagnostic <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
             <Link href="/research">
-              <Button size="lg" variant="outline" className="w-full md:w-auto min-w-[260px] border border-white/30 text-white hover:bg-white/10 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+              <Button size="lg" variant="outline" className="w-full md:w-auto min-w-[260px] border border-white/30 text-white hover:bg-white/10 font-semibold py-3 px-6 rounded-xl text-base shadow-md flex items-center justify-center gap-2">
                 Read the Full Research Basis <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
@@ -332,3 +333,4 @@ export default function EightStepModel() {
     </Layout>
   );
 }
+

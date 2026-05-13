@@ -1,4 +1,4 @@
-﻿import { useEffect } from "react";
+import { useEffect } from "react";
 import { Link } from "wouter";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
@@ -52,7 +52,7 @@ export default function ConceptualWorkbooks() {
             </p>
             <div className="mt-8">
               <Link href="/resources/workbooks">
-                <span className="inline-flex items-center gap-2 rounded-lg bg-[#2366c9] px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700">
+                <span className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-6 py-3 text-sm font-semibold text-white hover:bg-brand-primary-dark">
                   Explore Now
                   <ArrowRight className="h-4 w-4" />
                 </span>
@@ -92,7 +92,7 @@ export default function ConceptualWorkbooks() {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {conceptualFeatures.map((feature) => (
               <div key={feature.title} className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
-                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100 text-[#2366c9]">
+                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100 text-brand-primary">
                   <feature.icon className="h-5 w-5" />
                 </div>
                 <h3 className="text-xl font-semibold text-slate-900">{feature.title}</h3>
@@ -124,13 +124,13 @@ export default function ConceptualWorkbooks() {
             <h2 className="text-3xl font-semibold text-slate-900 md:text-4xl">Next Step</h2>
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
               <Link href="/resources/workbooks">
-                <span className="flex items-center justify-between rounded-xl border border-blue-200 bg-white px-5 py-4 text-sm font-semibold text-slate-900 hover:border-blue-300 hover:text-[#2366c9]">
+                <span className="flex items-center justify-between rounded-xl border border-blue-200 bg-white px-5 py-4 text-sm font-semibold text-slate-900 hover:border-blue-300 hover:text-brand-primary">
                   Browse Workbooks
                   <ArrowRight className="h-4 w-4" />
                 </span>
               </Link>
               <Link href="/programs/ai-diagnostic">
-                <span className="flex items-center justify-between rounded-xl bg-[#2366c9] px-5 py-4 text-sm font-semibold text-white hover:bg-blue-700">
+                <span className="flex items-center justify-between rounded-xl bg-brand-primary px-5 py-4 text-sm font-semibold text-white hover:bg-brand-primary-dark">
                   Start Free Diagnostic First
                   <ArrowRight className="h-4 w-4" />
                 </span>

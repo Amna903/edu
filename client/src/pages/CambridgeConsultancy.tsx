@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Layout } from "@/components/Layout";
@@ -29,19 +30,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 
-// ─── THEME (matches About page exactly) ──────────────────────────────────────
-const ui = {
-  sections: {
-    brand: "relative bg-gradient-to-br from-[#1e1b4b] via-[#2366c9] to-[#4f86e0]",
-    softBlue: "bg-gradient-to-br from-blue-50/80 via-slate-50 to-blue-50/40",
-  },
-  cards: {
-    standard: "relative bg-white/90 backdrop-blur-sm border border-blue-50",
-  },
-  buttons: {
-    brandLight: "bg-white text-[#2366c9] hover:bg-blue-50",
-  },
-};
+
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
 
@@ -49,7 +38,7 @@ const gaps = [
   {
     title: "The Information Gap",
     icon: BookOpen,
-    color: "border-l-[#2366c9]",
+    color: "border-l-brand-primary",
     desc: "Students and parents in developing countries lack access to accurate, current Cambridge information — how the system works, what grades mean, which subjects to choose, how registration works. Generic information is available, but personalised guidance for individual situations is not.",
   },
   {
@@ -149,7 +138,7 @@ const plans = [
     annual: "$130/year",
     tag: "",
     color: "border-slate-200",
-    btnClass: "border-2 border-[#2366c9] text-[#2366c9] hover:bg-[#2366c9] hover:text-white",
+    btnClass: "border-2 border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white",
     for: "Students wanting Cambridge guidance. Parents researching. Teachers starting CPD. Schools exploring.",
     ai: ["Unlimited AI Cambridge advisor (all 8 domains)", "Cambridge Information Q&A", "Diagnostic report interpretation (basic)", "EduMeUp navigation guide", "Template preview (5 templates)"],
     human: ["Expert Review: 2 questions/month", "48-hour written response", "No live sessions"],
@@ -161,8 +150,8 @@ const plans = [
     period: "/month",
     annual: "$340/year",
     tag: "MOST POPULAR",
-    color: "border-[#2366c9] shadow-2xl",
-    btnClass: "bg-[#2366c9] text-white hover:bg-blue-700",
+    color: "border-brand-primary shadow-2xl",
+    btnClass: "bg-brand-primary text-white hover:bg-brand-primary-dark",
     scale: true,
     for: "Students who have taken the diagnostic. Parents supporting Cambridge prep. Teachers developing CPD pathway.",
     ai: ["All Plan 1 AI features", "Personalised AI study plan from diagnostic results", "Full diagnostic interpretation (per topic, per AO)", "Skill development coaching per AO gap", "Template download access (all 5 templates)"],
@@ -201,8 +190,8 @@ const stakeholderPortals = [
   {
     icon: "🎓",
     role: "Students",
-    color: "border-l-[#2366c9]",
-    tagColor: "bg-[#2366c9]",
+    color: "border-l-brand-primary",
+    tagColor: "bg-brand-primary",
     desc: "Understand where you stand, where you need to go, and exactly how to get there — with a personalised AI guide that knows your diagnostic results.",
     questions: [
       "Which subjects should I take for medicine?",
@@ -289,11 +278,11 @@ function FaqItem({ q, a }: { q: string; a: string }) {
     >
       <div className="flex items-center justify-between p-6">
         <p className="text-[15px] font-semibold text-slate-900 pr-4">{q}</p>
-        {open ? <ChevronUp className="h-5 w-5 text-[#2366c9] flex-shrink-0" /> : <ChevronDown className="h-5 w-5 text-slate-400 flex-shrink-0" />}
+        {open ? <ChevronUp className="h-5 w-5 text-brand-primary flex-shrink-0" /> : <ChevronDown className="h-5 w-5 text-slate-400 flex-shrink-0" />}
       </div>
       {open && (
         <div className="px-6 pb-6 border-t border-blue-50 pt-4">
-          <p className="text-[14px] text-slate-700 leading-relaxed">{a}</p>
+          <p className="text-base text-slate-700 leading-relaxed">{a}</p>
         </div>
       )}
     </div>
@@ -312,7 +301,7 @@ function PlanCard({ plan, index }: { plan: any; index: number }) {
     >
       {plan.tag && (
         <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-          <span className={`px-4 py-1.5 rounded-full text-white text-[11px] font-black uppercase tracking-[0.2em] ${plan.name.includes("Navigator") ? "bg-[#2366c9]" : "bg-amber-500"}`}>
+          <span className={`px-4 py-1.5 rounded-full text-white text-sm-small font-black uppercase tracking-[0.2em] ${plan.name.includes("Navigator") ? "bg-brand-primary" : "bg-amber-500"}`}>
             {plan.tag}
           </span>
         </div>
@@ -321,7 +310,7 @@ function PlanCard({ plan, index }: { plan: any; index: number }) {
       <div className="mb-6 pt-2">
         <h3 className="text-xl font-semibold text-slate-900 mb-1">{plan.name}</h3>
         <div className="flex items-baseline gap-1 mb-1">
-          <span className="text-4xl font-bold text-[#2366c9]">{plan.price}</span>
+          <span className="text-4xl font-bold text-brand-primary">{plan.price}</span>
           <span className="text-slate-500 text-sm">{plan.period}</span>
         </div>
         <p className="text-[12px] text-slate-500">{plan.annual} · save ~15% annually</p>
@@ -330,18 +319,18 @@ function PlanCard({ plan, index }: { plan: any; index: number }) {
 
       <div className="space-y-5 flex-1">
         <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-[#2366c9] mb-3">AI Services</p>
+          <p className="text-xs font-black uppercase tracking-[0.25em] text-brand-primary mb-3">AI Services</p>
           <ul className="space-y-2">
             {plan.ai.map((item: any, i: number) => (
               <li key={i} className="flex items-start gap-2 text-[13px] text-slate-700">
-                <CheckCircle2 className="h-3.5 w-3.5 text-[#2366c9] mt-0.5 flex-shrink-0" />
+                <CheckCircle2 className="h-3.5 w-3.5 text-brand-primary mt-0.5 flex-shrink-0" />
                 {item}
               </li>
             ))}
           </ul>
         </div>
         <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-[#1e1b4b] mb-3">Human Expert Support</p>
+          <p className="text-xs font-black uppercase tracking-[0.25em] text-[#1e1b4b] mb-3">Human Expert Support</p>
           <ul className="space-y-2">
             {plan.human.map((item: any, i: number) => (
               <li key={i} className="flex items-start gap-2 text-[13px] text-slate-700">
@@ -352,7 +341,7 @@ function PlanCard({ plan, index }: { plan: any; index: number }) {
           </ul>
         </div>
         <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-3">Platform Access</p>
+          <p className="text-xs font-black uppercase tracking-[0.25em] text-slate-400 mb-3">Platform Access</p>
           <ul className="space-y-2">
             {plan.platform.map((item: any, i: number) => (
               <li key={i} className="flex items-start gap-2 text-[13px] text-slate-600">
@@ -364,7 +353,7 @@ function PlanCard({ plan, index }: { plan: any; index: number }) {
         </div>
       </div>
 
-      <button className={`mt-8 w-full py-3 px-4 rounded-xl text-[14px] font-semibold transition-all flex items-center justify-center gap-2 ${plan.btnClass}`}>
+      <button className={`mt-8 w-full py-3 px-4 rounded-xl text-base font-semibold transition-all flex items-center justify-center gap-2 ${plan.btnClass}`}>
         Get Started — {plan.name.split(" ")[1]} <ArrowRight className="h-4 w-4" />
       </button>
     </motion.div>
@@ -398,7 +387,7 @@ export default function CambridgeConsultancy() {
           <section id="why" className="py-16 md:py-24 bg-[#FFF8EC] -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
             <div className="w-full max-w-6xl mx-auto">
               <div className="text-center mb-10">
-                <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">The Problem We Solve</p>
+                <p className="text-sm-small font-black uppercase tracking-[0.28em] text-brand-primary mb-3">The Problem We Solve</p>
                 <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-6">
                   Cambridge Success Is Available — But the Right Guidance Has Never Been Accessible.
                 </h2>
@@ -419,16 +408,16 @@ export default function CambridgeConsultancy() {
                   >
                     <div className="flex items-center gap-3 mb-4">
                       <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center">
-                        <gap.icon className="h-5 w-5 text-[#2366c9]" />
+                        <gap.icon className="h-5 w-5 text-brand-primary" />
                       </div>
                       <h3 className="text-lg font-semibold text-slate-900">{gap.title}</h3>
                     </div>
-                    <p className="text-[14px] text-slate-700 leading-relaxed">{gap.desc}</p>
+                    <p className="text-base text-slate-700 leading-relaxed">{gap.desc}</p>
                   </motion.div>
                 ))}
               </div>
 
-              <div className="mt-8 relative bg-gradient-to-br from-[#1e1b4b] via-[#2366c9] to-[#4f86e0] p-6 rounded-[1.5rem] text-center">
+              <div className="mt-8 relative bg-gradient-to-br from-[#1e1b4b] via-brand-primary to-[#4f86e0] p-6 rounded-[1.5rem] text-center">
                 <p className="text-white font-semibold text-lg">
                   The Cambridge 360° Empowerment Hub addresses all four gaps — simultaneously.
                 </p>
@@ -441,7 +430,7 @@ export default function CambridgeConsultancy() {
           <section id="cambridge" className="bg-gradient-to-br from-blue-50/80 via-slate-50 to-blue-50/40 py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
             <div className="w-full max-w-6xl mx-auto">
               <div className="text-center mb-10">
-                <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">The Case That Needs to Be Made</p>
+                <p className="text-sm-small font-black uppercase tracking-[0.28em] text-brand-primary mb-3">The Case That Needs to Be Made</p>
                 <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-4">
                   Why Cambridge? A Research-Backed Answer.
                 </h2>
@@ -456,7 +445,7 @@ export default function CambridgeConsultancy() {
                     <tr>
                       <th className="p-4 text-left text-[13px] font-bold bg-slate-700 text-white">Aspect</th>
                       <th className="p-4 text-left text-[13px] font-bold bg-red-500/90 text-white">Rote-Based National Board Systems</th>
-                      <th className="p-4 text-left text-[13px] font-bold bg-[#2366c9] text-white rounded-tr-[1rem]">Cambridge O-Level / IGCSE</th>
+                      <th className="p-4 text-left text-[13px] font-bold bg-brand-primary text-white rounded-tr-[1rem]">Cambridge O-Level / IGCSE</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -471,8 +460,8 @@ export default function CambridgeConsultancy() {
                 </table>
               </div>
 
-              <div className="border-l-4 border-[#2366c9] bg-white p-6 rounded-r-[1.5rem] shadow-sm">
-                <p className="text-[14px] text-slate-700 leading-relaxed font-medium">
+              <div className="border-l-4 border-brand-primary bg-white p-6 rounded-r-[1.5rem] shadow-sm">
+                <p className="text-base text-slate-700 leading-relaxed font-medium">
                   <strong>Important note:</strong> This comparison is not a criticism of national education systems. It is a factual comparison of what each system tests and what each develops. Cambridge O-Level can coexist with national board qualifications — and EduMeUp's platform is designed to serve students in both systems simultaneously.
                 </p>
               </div>
@@ -483,7 +472,7 @@ export default function CambridgeConsultancy() {
           <section id="platform" className="py-16 md:py-24 bg-white -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
             <div className="w-full max-w-6xl mx-auto">
               <div className="text-center mb-10">
-                <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">Not All Cambridge Platforms Are Equal</p>
+                <p className="text-sm-small font-black uppercase tracking-[0.28em] text-brand-primary mb-3">Not All Cambridge Platforms Are Equal</p>
                 <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-4">
                   The Quality of the Consultancy Is Only as Good as the Platform Behind It.
                 </h2>
@@ -502,15 +491,15 @@ export default function CambridgeConsultancy() {
                     transition={{ delay: i * 0.07 }}
                     className="bg-white rounded-[1.5rem] p-6 border border-blue-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all"
                   >
-                    <div className="h-1 bg-[#2366c9] rounded-full w-12 mb-4" />
-                    <h3 className="text-[15px] font-bold text-[#2366c9] mb-3">{comp.title}</h3>
+                    <div className="h-1 bg-brand-primary rounded-full w-12 mb-4" />
+                    <h3 className="text-[15px] font-bold text-brand-primary mb-3">{comp.title}</h3>
                     <p className="text-[13px] text-slate-600 leading-relaxed">{comp.desc}</p>
                   </motion.div>
                 ))}
               </div>
 
               {/* Moodle advantage */}
-              <div className="bg-gradient-to-br from-[#1e1b4b] via-[#2366c9] to-[#4f86e0] rounded-[2rem] p-8 text-white">
+              <div className="bg-gradient-to-br from-[#1e1b4b] via-brand-primary to-[#4f86e0] rounded-[2rem] p-8 text-white">
                 <h3 className="text-xl font-semibold mb-2">The Moodle 5.2 Advantage</h3>
                 <p className="text-blue-200 text-sm mb-6">Most schools in developing countries have never used Moodle — or use it only for basic file sharing. EduMeUp uses Moodle 5.2 to its full capability.</p>
                 <div className="grid md:grid-cols-2 gap-4">
@@ -522,7 +511,7 @@ export default function CambridgeConsultancy() {
                   ))}
                 </div>
                 <div className="mt-6 border-t border-white/20 pt-6">
-                  <p className="text-[14px] text-blue-200 font-medium">
+                  <p className="text-base text-blue-200 font-medium">
                     <strong className="text-white">Bottom line for schools:</strong> Most schools manage teaching through WhatsApp groups and printed notes. EduMeUp provides enterprise-grade LMS infrastructure — fully configured, fully populated with Cambridge content — at a fraction of the cost of building it independently.
                   </p>
                 </div>
@@ -531,7 +520,7 @@ export default function CambridgeConsultancy() {
               {/* Competitor table */}
               <div className="mt-12">
                 <h3 className="text-xl font-semibold text-slate-900 mb-2 text-center">Comprehensive Competitor Comparison</h3>
-                <p className="text-[14px] text-slate-500 text-center mb-6">EduMeUp vs. Every Alternative</p>
+                <p className="text-base text-slate-500 text-center mb-6">EduMeUp vs. Every Alternative</p>
                 <div className="overflow-x-auto rounded-[1.5rem] shadow-sm">
                   <table className="w-full min-w-[800px]">
                     <thead>
@@ -568,7 +557,7 @@ export default function CambridgeConsultancy() {
           <section id="how" className="py-16 md:py-24 bg-[#FFF8EC] -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
             <div className="w-full max-w-6xl mx-auto">
               <div className="text-center mb-10">
-                <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">Simple to Start</p>
+                <p className="text-sm-small font-black uppercase tracking-[0.28em] text-brand-primary mb-3">Simple to Start</p>
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-slate-900 mb-4">
                   Get Started in 3 Steps. Your AI Advisor Is Ready in Minutes.
                 </h2>
@@ -580,15 +569,15 @@ export default function CambridgeConsultancy() {
                   { num: "3", icon: Calendar, title: "Get Resources, Book Sessions If Needed", desc: "Your AI response includes links to EduMeUp courses, templates, checklists, and diagnostic tools. If your question needs a human expert — book a live session (Plans 2, 3, 4) or send it to Expert Review (all plans)." },
                 ].map((step, i) => (
                   <div key={i} className="bg-white rounded-[1.5rem] p-8 shadow-sm hover:shadow-lg transition-all text-center">
-                    <div className="w-14 h-14 bg-[#2366c9] rounded-full flex items-center justify-center text-white text-xl font-bold mx-auto mb-4">{step.num}</div>
-                    <step.icon className="h-6 w-6 text-[#2366c9] mx-auto mb-4" />
+                    <div className="w-14 h-14 bg-brand-primary rounded-full flex items-center justify-center text-white text-xl font-bold mx-auto mb-4">{step.num}</div>
+                    <step.icon className="h-6 w-6 text-brand-primary mx-auto mb-4" />
                     <h3 className="text-lg font-semibold text-slate-900 mb-3">{step.title}</h3>
-                    <p className="text-[14px] text-slate-600 leading-relaxed">{step.desc}</p>
+                    <p className="text-base text-slate-600 leading-relaxed">{step.desc}</p>
                   </div>
                 ))}
               </div>
-              <div className="mt-6 border-l-4 border-[#2366c9] bg-white p-5 rounded-r-[1.5rem] shadow-sm">
-                <p className="text-[14px] text-slate-700 leading-relaxed">
+              <div className="mt-6 border-l-4 border-brand-primary bg-white p-5 rounded-r-[1.5rem] shadow-sm">
+                <p className="text-base text-slate-700 leading-relaxed">
                   <strong>If the AI cannot answer satisfactorily:</strong> Mark the answer 'Not Helpful'. The system will offer Expert Review (written response, included in all plans with limits) or a live session booking (Plans 2, 3, 4). Unanswered questions are stored and reviewed weekly — adding to the AI knowledge base continuously.
                 </p>
               </div>
@@ -599,7 +588,7 @@ export default function CambridgeConsultancy() {
           <section id="portals" className="bg-gradient-to-br from-blue-50/80 via-slate-50 to-blue-50/40 py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
             <div className="w-full max-w-6xl mx-auto">
               <div className="text-center mb-10">
-                <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">Built Specifically for You</p>
+                <p className="text-sm-small font-black uppercase tracking-[0.28em] text-brand-primary mb-3">Built Specifically for You</p>
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-slate-900 mb-4">
                   The Hub Is Specifically Designed for You — Whichever Role You Are In.
                 </h2>
@@ -617,22 +606,22 @@ export default function CambridgeConsultancy() {
                     <div className="flex items-center gap-3 mb-4">
                       <span className="text-3xl">{portal.icon}</span>
                       <div>
-                        <span className={`text-[10px] font-black uppercase tracking-[0.2em] text-white px-3 py-1 rounded-full ${portal.tagColor}`}>For {portal.role}</span>
+                        <span className={`text-xs font-black uppercase tracking-[0.2em] text-white px-3 py-1 rounded-full ${portal.tagColor}`}>For {portal.role}</span>
                       </div>
                     </div>
-                    <p className="text-[14px] text-slate-700 leading-relaxed mb-5">{portal.desc}</p>
+                    <p className="text-base text-slate-700 leading-relaxed mb-5">{portal.desc}</p>
                     <div>
-                      <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#2366c9] mb-3">Sample questions the AI answers:</p>
+                      <p className="text-sm-small font-black uppercase tracking-[0.2em] text-brand-primary mb-3">Sample questions the AI answers:</p>
                       <ul className="space-y-2">
                         {portal.questions.map((q, j) => (
                           <li key={j} className="flex items-start gap-2 text-[13px] text-slate-600 italic">
-                            <MessageCircle className="h-3.5 w-3.5 text-[#2366c9] mt-0.5 flex-shrink-0" />
+                            <MessageCircle className="h-3.5 w-3.5 text-brand-primary mt-0.5 flex-shrink-0" />
                             "{q}"
                           </li>
                         ))}
                       </ul>
                     </div>
-                    <button className="mt-6 flex items-center gap-2 text-[13px] font-semibold text-[#2366c9] hover:text-blue-700 transition-colors">
+                    <button className="mt-6 flex items-center gap-2 text-[13px] font-semibold text-brand-primary hover:text-blue-700 transition-colors">
                       Start Your {portal.role.slice(0,-1)} Journey <ArrowRight className="h-4 w-4" />
                     </button>
                   </motion.div>
@@ -645,7 +634,7 @@ export default function CambridgeConsultancy() {
           <section id="roadmap" className="py-16 md:py-24 bg-white -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
             <div className="w-full max-w-6xl mx-auto">
               <div className="text-center mb-10">
-                <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">Research-Backed Pathways</p>
+                <p className="text-sm-small font-black uppercase tracking-[0.28em] text-brand-primary mb-3">Research-Backed Pathways</p>
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-slate-900 mb-4">
                   The EduMeUp O-Level Mastery Pathway
                 </h2>
@@ -655,7 +644,7 @@ export default function CambridgeConsultancy() {
               <div className="grid lg:grid-cols-2 gap-8">
                 {/* Variant A */}
                 <div>
-                  <div className="bg-[#2366c9] text-white rounded-2xl px-6 py-4 mb-6 inline-block">
+                  <div className="bg-brand-primary text-white rounded-2xl px-6 py-4 mb-6 inline-block">
                     <h3 className="text-lg font-semibold text-white">Variant A — The Early Advantage Pathway</h3>
                     <p className="text-blue-200 text-sm">Grade 7–8 or first 5 months of O-Level Year 1</p>
                   </div>
@@ -669,9 +658,9 @@ export default function CambridgeConsultancy() {
                       { step: 6, title: "Diagnostic Retesting — Every 3 Months", desc: "Retake the relevant diagnostic every 3 months to measure improvement and update the study plan. Progress tracked in dashboard — visible to student, parent, and teacher simultaneously." },
                     ].map((item, i) => (
                       <div key={i} className="flex gap-4">
-                        <div className="w-8 h-8 bg-[#2366c9] rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 mt-1">{item.step}</div>
+                        <div className="w-8 h-8 bg-brand-primary rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 mt-1">{item.step}</div>
                         <div className="bg-blue-50/60 rounded-[1rem] p-4 flex-1 border border-blue-100">
-                          <h4 className="text-[14px] font-semibold text-slate-900 mb-1">{item.title}</h4>
+                          <h4 className="text-base font-semibold text-slate-900 mb-1">{item.title}</h4>
                           <p className="text-[13px] text-slate-600 leading-relaxed">{item.desc}</p>
                         </div>
                       </div>
@@ -696,7 +685,7 @@ export default function CambridgeConsultancy() {
                       <div key={i} className="flex gap-4">
                         <div className="w-8 h-8 bg-[#1e1b4b] rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 mt-1">{item.step}</div>
                         <div className="bg-slate-50 rounded-[1rem] p-4 flex-1 border border-slate-100">
-                          <h4 className="text-[14px] font-semibold text-slate-900 mb-1">{item.title}</h4>
+                          <h4 className="text-base font-semibold text-slate-900 mb-1">{item.title}</h4>
                           <p className="text-[13px] text-slate-600 leading-relaxed">{item.desc}</p>
                         </div>
                       </div>
@@ -705,8 +694,8 @@ export default function CambridgeConsultancy() {
                 </div>
               </div>
 
-              <div className="mt-8 border-l-4 border-[#2366c9] bg-blue-50 p-6 rounded-r-[1.5rem]">
-                <p className="text-[14px] text-slate-700 leading-relaxed">
+              <div className="mt-8 border-l-4 border-brand-primary bg-blue-50 p-6 rounded-r-[1.5rem]">
+                <p className="text-base text-slate-700 leading-relaxed">
                   The AI C360 Hub advisor can help you identify which variant applies to you and walk you through each step. Ask: <em>"Which O-Level roadmap should I follow?"</em> — and the AI will ask you 3 questions to determine your variant.
                 </p>
               </div>
@@ -717,7 +706,7 @@ export default function CambridgeConsultancy() {
           <section id="plans" className="py-16 md:py-24 bg-[#FFF8EC] -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
             <div className="w-full max-w-6xl mx-auto">
               <div className="text-center mb-10">
-                <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">Choose Your Level</p>
+                <p className="text-sm-small font-black uppercase tracking-[0.28em] text-brand-primary mb-3">Choose Your Level</p>
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-slate-900 mb-4">
                   Four Plans. One for Every Need and Every Budget.
                 </h2>
@@ -734,7 +723,7 @@ export default function CambridgeConsultancy() {
               <div className="mt-12 overflow-x-auto rounded-[1.5rem] shadow-sm">
                 <table className="w-full min-w-[700px]">
                   <thead>
-                    <tr className="bg-[#2366c9] text-white text-xs uppercase tracking-wider">
+                    <tr className="bg-brand-primary text-white text-xs uppercase tracking-wider">
                       <th className="p-4 text-left font-semibold">Feature</th>
                       <th className="p-4 text-center font-semibold">Essentials $15/mo</th>
                       <th className="p-4 text-center font-semibold">Navigator $39/mo</th>
@@ -778,7 +767,7 @@ export default function CambridgeConsultancy() {
           <section id="faq" className="bg-gradient-to-br from-blue-50/80 via-slate-50 to-blue-50/40 py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
             <div className="w-full max-w-4xl mx-auto">
               <div className="text-center mb-10">
-                <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">Common Questions</p>
+                <p className="text-sm-small font-black uppercase tracking-[0.28em] text-brand-primary mb-3">Common Questions</p>
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-slate-900 mb-4">Frequently Asked Questions</h2>
               </div>
               <div className="space-y-4">
@@ -788,7 +777,7 @@ export default function CambridgeConsultancy() {
           </section>
 
           {/* ════════════════════ FINAL CTA ══ */}
-          <section id="cta" className="relative bg-gradient-to-br from-[#1e1b4b] via-[#2366c9] to-[#4f86e0] py-20 md:py-32 overflow-hidden">
+          <section id="cta" className="relative bg-gradient-to-br from-[#1e1b4b] via-brand-primary to-[#4f86e0] py-20 md:py-32 overflow-hidden">
             <div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-blue-600 opacity-30 blur-3xl" />
             <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-blue-600 opacity-30 blur-3xl" />
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
@@ -800,27 +789,27 @@ export default function CambridgeConsultancy() {
               </p>
 
               <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-12">
-                <div className="bg-[#2366c9] border-4 border-white/20 rounded-[2rem] p-8 text-left flex flex-col shadow-2xl md:scale-105">
+                <div className="bg-brand-primary border-4 border-white/20 rounded-[2rem] p-8 text-left flex flex-col shadow-2xl md:scale-105">
                   <h3 className="text-xl font-semibold text-white mb-2">Get Started with Your Plan</h3>
                   <p className="text-blue-200 text-sm font-semibold mb-4">Choose your level. AI advisor active within minutes.</p>
-                  <p className="text-white/80 text-[14px] leading-relaxed mb-6 flex-1">
+                  <p className="text-white/80 text-base leading-relaxed mb-6 flex-1">
                     Select the plan that fits your role and budget. Your AI advisor will be configured for your specific stakeholder profile immediately upon signup.
                   </p>
                   <a href="#plans">
-                    <button className="w-full bg-white text-[#2366c9] hover:bg-blue-50 font-semibold py-3 rounded-xl text-[14px] flex items-center justify-center gap-2 transition-all">
+                    <button className="w-full bg-white text-brand-primary hover:bg-brand-primary-soft font-semibold py-3 rounded-xl text-base flex items-center justify-center gap-2 transition-all">
                       See All Plans <ArrowRight className="h-4 w-4" />
                     </button>
                   </a>
                 </div>
 
-                <div className="bg-white border-4 border-[#2366c9] rounded-[2rem] p-8 text-left flex flex-col shadow-xl">
+                <div className="bg-white border-4 border-brand-primary rounded-[2rem] p-8 text-left flex flex-col shadow-xl">
                   <h3 className="text-xl font-semibold text-slate-900 mb-2">Start with the Free Diagnostic</h3>
-                  <p className="text-[#2366c9] text-sm font-semibold mb-4">Not sure which plan? Know your gaps first — free, 30 minutes.</p>
-                  <p className="text-slate-700 text-[14px] leading-relaxed mb-6 flex-1">
+                  <p className="text-brand-primary text-sm font-semibold mb-4">Not sure which plan? Know your gaps first — free, 30 minutes.</p>
+                  <p className="text-slate-700 text-base leading-relaxed mb-6 flex-1">
                     Our AI identifies your exact sub-skill gaps before you spend a single dollar. Know precisely what to focus on from day one.
                   </p>
                   <a href="/diagnostic">
-                    <button className="w-full border-2 border-[#2366c9] text-[#2366c9] hover:bg-[#2366c9] hover:text-white font-semibold py-3 rounded-xl text-[14px] flex items-center justify-center gap-2 transition-all">
+                    <button className="w-full border-2 border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white font-semibold py-3 rounded-xl text-base flex items-center justify-center gap-2 transition-all">
                       Take Free Diagnostic <ArrowRight className="h-4 w-4" />
                     </button>
                   </a>
@@ -829,11 +818,11 @@ export default function CambridgeConsultancy() {
                 <div className="bg-slate-100 rounded-[2rem] p-8 text-left flex flex-col shadow-sm">
                   <h3 className="text-xl font-semibold text-slate-900 mb-2">Schools — Book a Strategy Session</h3>
                   <p className="text-slate-500 text-sm font-semibold mb-4">Understand exactly how EduMeUp would work for your school. 30 minutes. No obligation.</p>
-                  <p className="text-slate-600 text-[14px] leading-relaxed mb-6 flex-1">
+                  <p className="text-slate-600 text-base leading-relaxed mb-6 flex-1">
                     For principals, academic directors, and school leaders exploring the Cambridge partnership model.
                   </p>
                   <a href="/contact">
-                    <button className="w-full border-2 border-slate-300 text-slate-700 hover:bg-slate-200 font-semibold py-3 rounded-xl text-[14px] flex items-center justify-center gap-2 transition-all">
+                    <button className="w-full border-2 border-slate-300 text-slate-700 hover:bg-slate-200 font-semibold py-3 rounded-xl text-base flex items-center justify-center gap-2 transition-all">
                       Book School Session <ArrowRight className="h-4 w-4" />
                     </button>
                   </a>

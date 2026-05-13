@@ -115,7 +115,7 @@ export default function AIDiagnostic() {
                 trigger={
                   <button
                     data-testid="button-start-diagnostic"
-                    className="inline-flex items-center gap-2 rounded-full bg-[#2366c9] px-7 py-3.5 text-[14px] font-semibold text-white hover:bg-blue-700"
+                    className="inline-flex items-center gap-2 rounded-full bg-brand-primary px-7 py-3.5 text-sm font-semibold text-white hover:bg-brand-primary-dark"
                   >
                     Start Free Diagnostic Now
                     <ArrowRight className="h-4 w-4" />
@@ -131,7 +131,7 @@ export default function AIDiagnostic() {
       <section className="py-14 md:py-20 bg-white">
         <div className="container-custom">
           <div className="mx-auto max-w-4xl">
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
+            <p className="inline-flex rounded-full border border-blue-200 bg-brand-primary px-4 py-1 text-sm font-semibold uppercase tracking-[0.14em] text-white mb-5">
               The Problem
             </p>
             <h2 className="text-4xl md:text-6xl font-semibold text-slate-900 tracking-tight mb-5">
@@ -152,7 +152,7 @@ export default function AIDiagnostic() {
         <div className="container-custom">
           <div className="mx-auto max-w-5xl">
             <div className="text-center mb-12">
-              <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
+              <p className="inline-flex rounded-full border border-blue-200 bg-brand-primary px-4 py-1 text-sm font-semibold uppercase tracking-[0.14em] text-white mb-5">
                 What It Finds
               </p>
               <h2 className="text-4xl md:text-6xl font-semibold text-slate-900 tracking-tight">
@@ -161,12 +161,12 @@ export default function AIDiagnostic() {
             </div>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {whatItFinds.map((item) => (
-                <div key={item.title} className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-[#2366c9] transition-all duration-300 group">
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-[#2366c9]">
+                <div key={item.title} className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-brand-primary transition-all duration-300 group">
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-brand-primary">
                     <item.icon className="h-6 w-6" />
                   </div>
-                  <h3 className="text-2xl font-semibold text-[#2366c9] mb-4">{item.title}</h3>
-                  <p className="text-[14px] text-black leading-relaxed">{item.desc}</p>
+                  <h3 className="text-2xl font-semibold text-brand-primary mb-4">{item.title}</h3>
+                  <p className="text-sm text-black leading-relaxed">{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -179,7 +179,7 @@ export default function AIDiagnostic() {
         <div className="container-custom">
           <div className="mx-auto max-w-4xl">
             <div className="text-center mb-12">
-              <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
+              <p className="inline-flex rounded-full border border-blue-200 bg-brand-primary px-4 py-1 text-sm font-semibold uppercase tracking-[0.14em] text-white mb-5">
                 How It Works
               </p>
               <h2 className="text-4xl md:text-6xl font-semibold text-slate-900 tracking-tight">
@@ -188,13 +188,13 @@ export default function AIDiagnostic() {
             </div>
             <div className="space-y-4">
               {threeSteps.map((s, i) => (
-                <div key={i} className="flex gap-5 bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-[#2366c9] transition-all duration-300">
-                  <div className="h-10 w-10 flex items-center justify-center rounded-full bg-[#2366c9] text-white text-xs font-bold shrink-0">
+                <div key={i} className="flex gap-5 bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-brand-primary transition-all duration-300">
+                  <div className="h-10 w-10 flex items-center justify-center rounded-full bg-brand-primary text-white text-xs font-bold shrink-0">
                     {i + 1}
                   </div>
                   <div>
-                    <h3 className="text-2xl font-semibold text-[#2366c9] mb-3">{s.title}</h3>
-                    <p className="text-[14px] text-black leading-relaxed">{s.desc}</p>
+                    <h3 className="text-2xl font-semibold text-brand-primary mb-3">{s.title}</h3>
+                    <p className="text-sm text-black leading-relaxed">{s.desc}</p>
                   </div>
                 </div>
               ))}
@@ -208,26 +208,26 @@ export default function AIDiagnostic() {
         <div className="container-custom">
           <div className="mx-auto max-w-5xl">
             <div className="text-center mb-10">
-              <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
+              <p className="inline-flex rounded-full border border-blue-200 bg-brand-primary px-4 py-1 text-sm font-semibold uppercase tracking-[0.14em] text-white mb-5">
                 After The Diagnostic
               </p>
               <h2 className="text-4xl md:text-6xl font-semibold text-slate-900 tracking-tight mb-3">
                 What Happens After the Diagnostic
               </h2>
-              <p className="text-[14px] text-black max-w-2xl mx-auto">
+              <p className="text-sm text-black max-w-2xl mx-auto">
                 The diagnostic is Step 1 of EduMeUp's{" "}
                 <Link href="/why-edumeup/8-step-model">
-                  <span className="text-[#2366c9] underline cursor-pointer font-semibold">8-step mastery cycle</span>
+                  <span className="text-brand-primary underline cursor-pointer font-semibold">8-step mastery cycle</span>
                 </Link>
                 . The moment results are generated, the system activates:
               </p>
             </div>
             <div className="grid gap-6 md:grid-cols-3">
               {afterDiagnostic.map((item) => (
-                <div key={item.title} className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-[#2366c9] transition-all duration-300 text-center">
+                <div key={item.title} className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-brand-primary transition-all duration-300 text-center">
                   <CheckCircle2 className="mx-auto mb-4 h-8 w-8 text-green-500" />
-                  <h3 className="text-2xl font-semibold text-[#2366c9] mb-4">{item.title}</h3>
-                  <p className="text-[14px] text-black leading-relaxed">{item.desc}</p>
+                  <h3 className="text-2xl font-semibold text-brand-primary mb-4">{item.title}</h3>
+                  <p className="text-sm text-black leading-relaxed">{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -239,7 +239,7 @@ export default function AIDiagnostic() {
       <section className="py-14 md:py-20 bg-white">
         <div className="container-custom">
           <div className="mx-auto max-w-4xl bg-blue-50/50 border border-blue-200 rounded-xl p-8 md:p-10">
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
+            <p className="inline-flex rounded-full border border-blue-200 bg-brand-primary px-4 py-1 text-sm font-semibold uppercase tracking-[0.14em] text-white mb-5">
               Research Engine
             </p>
             <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 tracking-tight mb-5">
@@ -257,7 +257,7 @@ export default function AIDiagnostic() {
         <div className="container-custom">
           <div className="mx-auto max-w-5xl">
             <div className="text-center mb-12">
-              <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
+              <p className="inline-flex rounded-full border border-blue-200 bg-brand-primary px-4 py-1 text-sm font-semibold uppercase tracking-[0.14em] text-white mb-5">
                 Who This Is For
               </p>
               <h2 className="text-4xl md:text-6xl font-semibold text-slate-900 tracking-tight">
@@ -265,8 +265,8 @@ export default function AIDiagnostic() {
               </h2>
             </div>
             <div className="grid gap-6 md:grid-cols-2">
-              <div className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-[#2366c9] transition-all duration-300">
-                <h3 className="text-2xl font-semibold text-[#2366c9] mb-4">Students who:</h3>
+              <div className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-brand-primary transition-all duration-300">
+                <h3 className="text-2xl font-semibold text-brand-primary mb-4">Students who:</h3>
                 <ul className="space-y-3">
                   {[
                     "Are in Grade 7–10 preparing for O-Level / IGCSE",
@@ -275,15 +275,15 @@ export default function AIDiagnostic() {
                     "Are switching from a national to Cambridge curriculum",
                     "Want a structured starting point, not guesswork",
                   ].map((item) => (
-                    <li key={item} className="flex items-start gap-2 text-[14px] text-black">
+                    <li key={item} className="flex items-start gap-2 text-sm text-black">
                       <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-green-500" />
                       {item}
                     </li>
                   ))}
                 </ul>
               </div>
-              <div className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-[#2366c9] transition-all duration-300">
-                <h3 className="text-2xl font-semibold text-[#2366c9] mb-4">Parents who:</h3>
+              <div className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-brand-primary transition-all duration-300">
+                <h3 className="text-2xl font-semibold text-brand-primary mb-4">Parents who:</h3>
                 <ul className="space-y-3">
                   {[
                     "Want to know exactly where their child's gaps are",
@@ -292,7 +292,7 @@ export default function AIDiagnostic() {
                     "Want an evidence-based starting point for preparation",
                     "Want real-time visibility after the diagnostic is complete",
                   ].map((item) => (
-                    <li key={item} className="flex items-start gap-2 text-[14px] text-black">
+                    <li key={item} className="flex items-start gap-2 text-sm text-black">
                       <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-green-500" />
                       {item}
                     </li>
@@ -305,21 +305,21 @@ export default function AIDiagnostic() {
       </section>
 
       {/* CTA STRIP */}
-      <section className="bg-[#2366c9] py-12">
+      <section className="bg-brand-primary py-12">
         <div className="container-custom">
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
             <InquiryDialog
               defaultType="diagnostic"
               title="Book Free AI Diagnostic"
               trigger={
-                <button className="inline-flex items-center gap-2 rounded-full bg-[#2366c9] px-7 py-3.5 text-[14px] font-semibold text-white hover:bg-blue-600">
+                <button className="inline-flex items-center gap-2 rounded-full bg-brand-primary px-7 py-3.5 text-sm font-semibold text-white hover:bg-brand-primary-dark">
                   Start Free Diagnostic — No Credit Card
                   <ArrowRight className="h-4 w-4" />
                 </button>
               }
             />
             <Link href="/why-edumeup/how-it-works">
-              <span className="inline-flex items-center gap-2 rounded-full border border-blue-400 px-7 py-3.5 text-[14px] font-semibold text-white hover:border-blue-300">
+              <span className="inline-flex items-center gap-2 rounded-full border border-blue-400 px-7 py-3.5 text-sm font-semibold text-white hover:border-blue-300">
                 See What Happens Next
                 <ArrowRight className="h-4 w-4" />
               </span>

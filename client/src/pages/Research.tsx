@@ -3,7 +3,6 @@ import { PageSidebar } from "@/components/PageSidebar";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ui } from "@/theme";
 import {
   ArrowRight,
   Download,
@@ -36,7 +35,7 @@ const researchSections = [
   {
     number: 2,
     icon: BarChart3,
-    color: "bg-[#2366c9]",
+    color: "bg-brand-primary",
     title: "The Forgetting Curve",
     subtitle: "Ebbinghaus, H. (1885)",
     effectSize: "75–80% of new information lost within one week without reinforcement",
@@ -146,7 +145,7 @@ const researchSections = [
   {
     number: 7,
     icon: Brain,
-    color: "bg-[#2366c9]",
+    color: "bg-brand-primary",
     title: "Worked Examples and Cognitive Load Theory",
     subtitle: "Sweller (1988) | Mayer (2009)",
     effectSize: "Effect size 0.57 for worked examples vs problem-solving alone (Sweller, 2006)",
@@ -258,7 +257,7 @@ const modelPhases = [
     name: "Diagnose",
     what: "AI Diagnostic identifies knowledge gaps before instruction begins",
     research: "Mastery Learning (Bloom, 1984); Formative Assessment (Black & Wiliam, 1998)",
-    color: "bg-[#2366c9]",
+    color: "bg-brand-primary",
   },
   {
     phase: 2,
@@ -344,7 +343,7 @@ function ResearchCard({ section }: { section: any }) {
           <div className="flex items-center gap-2">
             <h3 className="text-xl font-semibold text-white">{section.title}</h3>
             {section.isNew && (
-              <span className="bg-yellow-400 text-yellow-900 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span className="bg-yellow-400 text-yellow-900 text-[12px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
                 New in v2
               </span>
             )}
@@ -356,19 +355,19 @@ function ResearchCard({ section }: { section: any }) {
       {/* Body */}
       <div className="bg-blue-50/60 rounded-b-[2rem] p-8 border-4 border-white hover:shadow-2xl transition-all duration-300">
         {/* Effect size callout */}
-        <div className="border-l-4 border-[#2366c9] bg-white rounded-r-xl p-4 mb-6">
-          <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#2366c9] mb-1">Effect Size / Key Statistic</p>
-          <p className="text-[14px] font-bold text-slate-900">{section.effectSize}</p>
+        <div className="border-l-4 border-brand-primary bg-white rounded-r-xl p-4 mb-6">
+          <p className="text-[11px] font-black uppercase tracking-[0.2em] text-brand-primary mb-1">Effect Size / Key Statistic</p>
+          <p className="text-base font-bold text-slate-900">{section.effectSize}</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 mb-6">
           {/* What research found */}
           <div>
-            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#2366c9] mb-3">What the Research Found</p>
+            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-brand-primary mb-3">What the Research Found</p>
             <ul className="space-y-2">
               {section.findings.map((f: any, i: number) => (
                 <li key={i} className="flex items-start gap-2 text-[13px] text-slate-700 leading-relaxed">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#2366c9] mt-1.5 flex-shrink-0" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-[theme.colors.primary] mt-1.5 flex-shrink-0" />
                   {f}
                 </li>
               ))}
@@ -377,11 +376,11 @@ function ResearchCard({ section }: { section: any }) {
 
           {/* How EduMeUp applies */}
           <div>
-            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#2366c9] mb-3">How EduMeUp Applies This</p>
+            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-brand-primary mb-3">How EduMeUp Applies This</p>
             <ul className="space-y-2">
               {section.implementation.map((impl: any, i: number) => (
                 <li key={i} className="flex items-start gap-2 text-[13px] text-slate-700 leading-relaxed">
-                  <CheckCircle2 className="h-4 w-4 text-[#2366c9] mt-0.5 flex-shrink-0" />
+                  <CheckCircle2 className="h-4 w-4 text-brand-primary mt-0.5 flex-shrink-0" />
                   {impl}
                 </li>
               ))}
@@ -443,7 +442,7 @@ export default function Research() {
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className={ui.sections.brand + " rounded-[2rem] md:rounded-[3rem] p-8 md:p-12 shadow-2xl"}
+                    className="bg-brand-primary text-white relative overflow-hidden rounded-[2rem] md:rounded-[3rem] p-8 md:p-12 shadow-2xl"
                   >
                     <div className="absolute -top-20 -right-16 h-56 w-56 rounded-full bg-white/10 blur-3xl" />
                     <div className="relative z-10 max-w-2xl space-y-6">
@@ -465,12 +464,12 @@ export default function Research() {
                       </div>
                       <div className="flex flex-col sm:flex-row gap-4 pt-2">
                         <a href="#research-principles">
-                          <Button className={`${ui.buttons.brandLight} font-semibold px-6 py-3 rounded-xl text-[14px] shadow-md flex items-center gap-2`}>
+                          <Button className="bg-white text-brand-primary hover:bg-blue-50 font-semibold px-6 py-3 rounded-xl text-base shadow-md flex items-center gap-2">
                             Explore the Research <ArrowRight className="h-4 w-4" />
                           </Button>
                         </a>
                         <a href="/downloads/learning-science-whitepaper-v1.pdf">
-                          <Button variant="outline" className="border border-white/35 text-white hover:bg-white/10 font-semibold px-6 py-3 rounded-xl text-[14px] flex items-center gap-2">
+                          <Button variant="outline" className="border border-white/35 text-white hover:bg-white/10 font-semibold px-6 py-3 rounded-xl text-base flex items-center gap-2">
                             <Download className="h-4 w-4" /> Download Whitepaper
                           </Button>
                         </a>
@@ -483,16 +482,16 @@ export default function Research() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
-                    className={ui.cards.standard + " rounded-[2rem] md:rounded-[3rem] p-8 md:p-10 shadow-lg"}
+                    className="rounded-2xl border border-blue-100 bg-white shadow-sm rounded-[2rem] md:rounded-[3rem] p-8 md:p-10 shadow-lg"
                   >
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(35,102,201,0.18),transparent_40%),radial-gradient(circle_at_bottom_left,rgba(79,134,224,0.16),transparent_35%)]" />
                     <div className="relative z-10 flex h-full flex-col justify-between gap-6">
                       <div>
-                        <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-4">By the Numbers</p>
+                        <p className="text-[11px] font-black uppercase tracking-[0.28em] text-brand-primary mb-4">By the Numbers</p>
                         <div className="space-y-3">
                           {trustStrip.map(([val, label]) => (
-                            <div key={val} className={ui.cards.standard + " rounded-2xl p-4 flex items-center gap-4 shadow-sm"}>
-                              <p className="text-2xl font-semibold text-[#2366c9] min-w-[70px]">{val}</p>
+                            <div key={val} className="rounded-2xl border border-blue-100 bg-white shadow-sm rounded-2xl p-4 flex items-center gap-4 shadow-sm">
+                              <p className="text-2xl font-semibold text-brand-primary min-w-[70px]">{val}</p>
                               <p className="text-[12px] font-medium text-slate-600">{label}</p>
                             </div>
                           ))}
@@ -515,13 +514,13 @@ export default function Research() {
                 <section id="core-problem" className="py-16 md:py-24 bg-[#FFF8EC] -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
                   <div className="w-full max-w-6xl mx-auto">
                     <div className="mb-10">
-                      <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">The Problem We Set Out to Solve</p>
+                      <p className="text-[11px] font-black uppercase tracking-[0.28em] text-brand-primary mb-3">The Problem We Set Out to Solve</p>
                       <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-6">
                         Why Most Students Forget Almost Everything — Even After Studying Hard
                       </h2>
                     </div>
 
-                    <div className="border-l-4 border-[#2366c9] bg-white p-6 rounded-r-[1.5rem] mb-10">
+                    <div className="border-l-4 border-brand-primary bg-white p-6 rounded-r-[1.5rem] mb-10">
                       <p className="text-base text-slate-700 leading-relaxed mb-4">
                         More than a century of research in cognitive science has established three findings that most educational systems still ignore:
                       </p>
@@ -531,8 +530,8 @@ export default function Research() {
                           "Retention depends almost entirely on how learning is structured — not on how much time is spent",
                           "Passive exposure to information produces minimal durable memory, regardless of how many hours it lasts",
                         ].map((item, i) => (
-                          <li key={i} className="flex items-start gap-3 text-[14px] font-medium text-slate-700">
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#2366c9] mt-1.5 flex-shrink-0" />
+                          <li key={i} className="flex items-start gap-3 text-base font-medium text-slate-700">
+                            <div className="w-1.5 h-1.5 rounded-full bg-brand-primary mt-1.5 flex-shrink-0" />
                             {item}
                           </li>
                         ))}
@@ -547,14 +546,14 @@ export default function Research() {
                       ].map((item) => (
                         <div key={item.stat} className="bg-white rounded-[1.5rem] p-8 shadow-sm text-center hover:-translate-y-1 transition-all">
                           <p className={`text-4xl font-semibold ${item.color} mb-3`}>{item.stat}</p>
-                          <p className="text-[14px] text-slate-600 font-medium">{item.label}</p>
+                          <p className="text-base text-slate-600 font-medium">{item.label}</p>
                         </div>
                       ))}
                     </div>
 
-                    <div className={ui.sections.brand + " p-6 rounded-[1.5rem]"}>
+                    <div className="bg-brand-primary text-white relative overflow-hidden p-6 rounded-[1.5rem]">
                       <p className="text-white font-semibold mb-1">The conclusion is clear</p>
-                      <p className="text-blue-100 text-[14px] leading-relaxed">
+                      <p className="text-blue-100 text-base leading-relaxed">
                         The problem is not student effort. It is instructional design. Students who study for hours using ineffective methods will consistently underperform students who study for less time using methods that align with how memory actually works. This is the problem EduMeUp was built to solve.
                       </p>
                     </div>
@@ -562,10 +561,10 @@ export default function Research() {
                 </section>
 
                 {/* ════════════════════════ SECTION 2–11: RESEARCH PRINCIPLES ══ */}
-                <section id="research-principles" className={ui.sections.softBlue + " py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0"}>
+                <section id="research-principles" className="bg-blue-50/40 py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
                   <div className="w-full max-w-6xl mx-auto">
                     <div className="text-center mb-10 md:mb-16">
-                      <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">The Evidence</p>
+                      <p className="text-[11px] font-black uppercase tracking-[0.28em] text-brand-primary mb-3">The Evidence</p>
                       <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-4">
                         11 Evidence-Based Principles — Implemented, Not Just Cited.
                       </h2>
@@ -585,7 +584,7 @@ export default function Research() {
                 </section>
 
                 {/* ════════════════════════════ SECTION 12: 10X MODEL ══ */}
-                <section id="10x-model" className={ui.sections.brand + " py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0"}>
+                <section id="10x-model" className="bg-brand-primary text-white relative overflow-hidden py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
                   <div className="w-full max-w-6xl mx-auto">
                     <div className="text-center mb-10 md:mb-16">
                       <p className="text-[11px] font-black uppercase tracking-[0.28em] text-blue-300 mb-3">Our Pedagogical Framework</p>
@@ -616,7 +615,7 @@ export default function Research() {
                               <td className="p-4 border-t border-white/10">
                                 <span className={`inline-block text-white text-xs font-bold px-3 py-1 rounded-lg ${row.color}`}>{row.phase}</span>
                               </td>
-                              <td className="p-4 border-t border-white/10 text-white font-bold text-[14px]">{row.name}</td>
+                              <td className="p-4 border-t border-white/10 text-white font-bold theme.typography.fontSize.base">{row.name}</td>
                               <td className="p-4 border-t border-white/10 text-blue-100 text-[13px] leading-relaxed">{row.what}</td>
                               <td className="p-4 border-t border-white/10 text-blue-300 text-[12px] italic leading-relaxed">{row.research}</td>
                             </tr>
@@ -626,7 +625,7 @@ export default function Research() {
                     </div>
 
                     <div className="text-center">
-                      <a href="/how-it-works" className="inline-flex items-center gap-2 bg-white text-[#2366c9] font-semibold px-6 py-3 rounded-xl text-[14px] hover:bg-blue-50 transition-colors">
+                      <a href="/how-it-works" className="inline-flex items-center gap-2 bg-white text-brand-primary font-semibold px-6 py-3 rounded-xl text-base hover:bg-blue-50 transition-colors">
                         Read the Full 8-Step Methodology <ArrowRight className="h-4 w-4" />
                       </a>
                     </div>
@@ -637,7 +636,7 @@ export default function Research() {
                 <section id="rd-process" className="py-16 md:py-24 bg-[#FAFAF8] -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
                   <div className="w-full max-w-6xl mx-auto">
                     <div className="text-center mb-10 md:mb-16">
-                      <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">Continuous R&amp;D at EduMeUp</p>
+                      <p className="text-[11px] font-black uppercase tracking-[0.28em] text-brand-primary mb-3">Continuous R&amp;D at EduMeUp</p>
                       <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-4">
                         Research Does Not End at Publication — Neither Does Ours.
                       </h2>
@@ -648,23 +647,23 @@ export default function Research() {
 
                     <div className="grid md:grid-cols-2 gap-8 mb-12">
                       {rdInitiatives.map((initiative, i) => (
-                        <Card key={i} className={ui.cards.standard + " rounded-[1.5rem] hover:shadow-xl hover:-translate-y-1 transition-all duration-300"}>
+                        <Card key={i} className="rounded-2xl border border-blue-100 bg-white shadow-sm rounded-[1.5rem] hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                           <CardHeader>
                             <CardTitle className="text-xl text-slate-900 flex items-center gap-2">
-                              <Beaker className="h-5 w-5 text-[#2366c9]" />
+                              <Beaker className="h-5 w-5 text-brand-primary" />
                               {initiative.title}
                             </CardTitle>
                           </CardHeader>
                           <CardContent>
-                            <p className="text-[14px] text-slate-700 leading-relaxed font-medium">{initiative.detail}</p>
+                            <p className="text-base text-slate-700 leading-relaxed font-medium">{initiative.detail}</p>
                           </CardContent>
                         </Card>
                       ))}
                     </div>
 
-                    <div className={ui.sections.brand + " p-8 rounded-[2rem] text-center"}>
+                    <div className="bg-brand-primary text-white relative overflow-hidden p-8 rounded-[2rem] text-center">
                       <p className="text-white font-semibold text-lg mb-2">Our Promise on Intellectual Honesty</p>
-                      <p className="text-blue-100 text-[14px] leading-relaxed max-w-3xl mx-auto">
+                      <p className="text-blue-100 text-base leading-relaxed max-w-3xl mx-auto">
                         We do not promise outcomes that our research does not support. We do not cite studies we have not read. And we do not publish percentages that were never in the original research. EduMeUp does not promise magic. It applies science — systematically.
                       </p>
                     </div>
@@ -672,10 +671,10 @@ export default function Research() {
                 </section>
 
                 {/* ══════════════════════════ SECTION 14: QUICK REFERENCE ══ */}
-                <section id="summary" className={ui.sections.softBlue + " py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0"}>
+                <section id="summary" className="bg-blue-50/40 py-16 md:py-24 -mx-4 sm:-mx-6 lg:px-0">
                   <div className="w-full max-w-6xl mx-auto">
                     <div className="text-center mb-10 md:mb-16">
-                      <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">Research Summary</p>
+                      <p className="text-[11px] font-black uppercase tracking-[0.28em] text-brand-primary mb-3">Research Summary</p>
                       <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-slate-900 mb-4">
                         Quick Reference — 11 Principles at a Glance
                       </h2>
@@ -684,7 +683,7 @@ export default function Research() {
                     <div className="overflow-x-auto rounded-[1.5rem] shadow-sm">
                       <table className="w-full min-w-[500px]">
                         <thead>
-                          <tr className="bg-[#2366c9] text-white text-xs uppercase tracking-wider">
+                          <tr className="bg-brand-primary text-white text-xs uppercase tracking-wider">
                             <th className="p-4 text-left font-semibold w-8">#</th>
                             <th className="p-4 text-left font-semibold">Research Principle</th>
                             <th className="p-4 text-left font-semibold">Key Statistic / Effect Size</th>
@@ -693,9 +692,9 @@ export default function Research() {
                         <tbody>
                           {referenceSummary.map((row, i) => (
                             <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-blue-50/40"}>
-                              <td className="p-4 border-t border-blue-100 text-[#2366c9] font-bold text-[14px]">{row.num}</td>
-                              <td className="p-4 border-t border-blue-100 text-slate-900 font-medium text-[14px]">{row.principle}</td>
-                              <td className="p-4 border-t border-blue-100 text-slate-700 font-medium text-[14px]">{row.stat}</td>
+                              <td className="p-4 border-t border-blue-100 text-brand-primary font-bold text-base">{row.num}</td>
+                              <td className="p-4 border-t border-blue-100 text-slate-900 font-medium text-base">{row.principle}</td>
+                              <td className="p-4 border-t border-blue-100 text-slate-700 font-medium text-base">{row.stat}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -704,7 +703,7 @@ export default function Research() {
 
                     <div className="text-center mt-8">
                       <a href="/downloads/learning-science-whitepaper-v1.pdf">
-                        <Button className="bg-[#2366c9] hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl text-[14px] flex items-center gap-2 mx-auto">
+                        <Button className="bg-brand-primary hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl text-base flex items-center gap-2 mx-auto">
                           <Download className="h-4 w-4" /> Download Full Reference List (60+ Citations)
                         </Button>
                       </a>
@@ -715,7 +714,7 @@ export default function Research() {
               </main>
 
       {/* ═══════════════════════════════════════════ FINAL CTA SECTION ══ */}
-      <section id="cta" className={ui.sections.brand + " py-20 md:py-32 relative overflow-hidden"}>
+      <section id="cta" className="bg-brand-primary text-white relative overflow-hidden py-20 md:py-32 relative overflow-hidden">
         <div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-blue-600 opacity-30 blur-3xl" />
         <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-blue-600 opacity-30 blur-3xl" />
         <div className="container-custom max-w-6xl mx-auto text-center relative z-10">
@@ -728,17 +727,17 @@ export default function Research() {
 
           <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-12">
             {/* Primary */}
-            <div className="bg-[#2366c9] border-4 border-white/20 rounded-[2rem] p-8 text-left flex flex-col shadow-2xl md:scale-105">
+            <div className="bg-brand-primary border-4 border-white/20 rounded-[2rem] p-8 text-left flex flex-col shadow-2xl md:scale-105">
               <h3 className="text-xl font-semibold text-white mb-2">Take Free AI Diagnostic</h3>
               <p className="text-blue-200 text-sm font-semibold mb-4">See where you stand. No credit card.</p>
-              <p className="text-white/80 text-[14px] leading-relaxed mb-6 flex-1">
+              <p className="text-white/80 text-base leading-relaxed mb-6 flex-1">
                 Our AI identifies your exact sub-skill gaps and produces a personalised learning plan — the first step of the 8-step system.
               </p>
               <InquiryDialog
                 defaultType="diagnostic"
                 title="Free Diagnostic Assessment"
                 trigger={
-                  <Button className="w-full bg-white text-[#2366c9] hover:bg-blue-50 font-semibold py-3 rounded-xl text-[14px] flex items-center justify-center gap-2">
+                  <Button className="w-full bg-white text-brand-primary hover:bg-blue-50 font-semibold py-3 rounded-xl text-base flex items-center justify-center gap-2">
                     Start Free Diagnostic <ArrowRight className="h-4 w-4" />
                   </Button>
                 }
@@ -746,14 +745,14 @@ export default function Research() {
             </div>
 
             {/* Secondary */}
-            <div className="bg-white border-4 border-[#2366c9] rounded-[2rem] p-8 text-left flex flex-col shadow-xl">
+            <div className="bg-white border-4 border-brand-primary rounded-[2rem] p-8 text-left flex flex-col shadow-xl">
               <h3 className="text-xl font-semibold text-slate-900 mb-2">Explore Free Resources</h3>
-              <p className="text-[#2366c9] text-sm font-semibold mb-4">Experience the method firsthand.</p>
-              <p className="text-slate-700 text-[14px] leading-relaxed mb-6 flex-1">
+              <p className="text-brand-primary text-sm font-semibold mb-4">Experience the method firsthand.</p>
+              <p className="text-slate-700 text-base leading-relaxed mb-6 flex-1">
                 Try a free interactive demo — sample H5P lessons, spaced retrieval in action, and AI tutor guidance. No login required.
               </p>
               <Link href="/programs">
-                <Button variant="outline" className="w-full border-2 border-[#2366c9] text-[#2366c9] hover:bg-[#2366c9] hover:text-white font-semibold py-3 rounded-xl text-[14px] flex items-center justify-center gap-2">
+                <Button variant="outline" className="w-full border-2 border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white font-semibold py-3 rounded-xl text-base flex items-center justify-center gap-2">
                   Explore Our Platform <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
@@ -763,11 +762,11 @@ export default function Research() {
             <div className="bg-slate-100 rounded-[2rem] p-8 text-left flex flex-col shadow-sm">
               <h3 className="text-xl font-semibold text-slate-900 mb-2">Download Research Reference PDF</h3>
               <p className="text-slate-500 text-sm font-semibold mb-4">40-page PDF. 15+ peer-reviewed studies. Full citations.</p>
-              <p className="text-slate-600 text-[14px] leading-relaxed mb-6 flex-1">
+              <p className="text-slate-600 text-base leading-relaxed mb-6 flex-1">
                 For educators, school leaders, and parents who want to go deeper — the full research foundation behind the 10X Learning Leap Model™.
               </p>
               <a href="/downloads/learning-science-whitepaper-v1.pdf">
-                <Button variant="outline" className="w-full border-2 border-slate-300 text-slate-700 hover:bg-slate-200 font-semibold py-3 rounded-xl text-[14px] flex items-center justify-center gap-2">
+                <Button variant="outline" className="w-full border-2 border-slate-300 text-slate-700 hover:bg-slate-200 font-semibold py-3 rounded-xl text-base flex items-center justify-center gap-2">
                   <Download className="h-4 w-4" /> Download Free PDF
                 </Button>
               </a>

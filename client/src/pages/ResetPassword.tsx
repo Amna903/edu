@@ -32,14 +32,15 @@ export default function ResetPassword() {
   const passwordsMatch = confirmPassword.length > 0 && password === confirmPassword;
 
   return (
-    <div className="min-h-screen bg-white font-[Arial]">
-      <div className="mx-auto grid min-h-screen w-full md:grid-cols-[40%_60%]">
-        <aside className="hidden bg-[#1E3A5F] md:flex md:items-center md:justify-center md:p-12">
+    <div className="min-h-screen bg-white">
+      <div className="mx-auto grid min-h-screen w-full md:h-screen md:grid-cols-[40%_60%] md:overflow-hidden">
+        <aside className="hidden bg-brand-primary md:flex md:items-center md:justify-center md:p-12">
           <img src={logoImage} alt="EduMeUp" className="h-auto w-[140px] rounded-md bg-white p-2" />
         </aside>
-        <main className="flex items-center px-6 py-10 md:px-10 lg:px-12">
-          <div className="mx-auto w-full max-w-[440px]">
-            <h1 className="text-[28px] font-bold text-[#1E3A5F]">Reset password</h1>
+        <main className="flex justify-center px-6 md:h-full md:overflow-y-auto md:px-10 lg:px-12">
+          <div className="flex min-h-full w-full max-w-[440px] flex-col py-12">
+            <div className="my-auto w-full">
+            <h1 className="text-3xl font-bold tracking-tight text-brand-primary">Reset password</h1>
             <p className="mt-2 text-sm text-slate-500">Set a new password for your EduMeUp account.</p>
             {!hasValidToken ? (
               <div className="mt-6 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
@@ -93,9 +94,11 @@ export default function ResetPassword() {
             <button type="button" onClick={() => navigate(submitted ? "/login" : "/forgot-password")} className="mt-5 text-sm font-semibold text-[#2E75B6] hover:text-[#17A589]">
               {submitted ? "Sign In" : "Request a new reset link"}
             </button>
+            </div>
           </div>
         </main>
       </div>
     </div>
   );
 }
+

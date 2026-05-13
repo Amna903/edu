@@ -98,13 +98,13 @@ export default function OLevelReadinessForecastStart() {
 
   return (
     <Layout>
-      <section className="border-b border-[#dbe4ef] bg-white">
+      <section className="border-b border-slate-200 bg-white">
         <div className="container-custom flex flex-wrap items-center gap-3 py-3 text-sm">
-          <Link href="/" className="font-semibold text-[#2366c9] hover:underline">
+          <Link href="/" className="font-semibold text-brand-primary hover:underline">
             Home
           </Link>
           <span className="text-slate-400">/</span>
-          <Link href="/olevel-readiness-forecast" className="font-semibold text-[#2366c9] hover:underline">
+          <Link href="/olevel-readiness-forecast" className="font-semibold text-brand-primary hover:underline">
             Readiness Forecast
           </Link>
           <span className="text-slate-400">/</span>
@@ -112,11 +112,11 @@ export default function OLevelReadinessForecastStart() {
         </div>
       </section>
 
-      <section className="bg-gradient-to-r from-[#2366c9] via-[#4f86e0] to-[#2366c9] py-12 text-white">
-        <div className="container-custom grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+      <section className="bg-brand-primary py-12 text-white relative overflow-hidden">
+        <div className="container-custom grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-center relative z-10">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.22em] text-white/85">Start Flow</p>
-            <h1 className="mt-3 text-3xl font-bold md:text-5xl">Choose Your Subjects. Confirm Your Session. Launch the Forecast.</h1>
+            <h1 className="mt-3 text-3xl font-bold md:text-5xl tracking-tight leading-tight">Choose Your Subjects. Confirm Your Session. Launch the Forecast.</h1>
             <p className="mt-4 max-w-2xl text-sm leading-7 text-white/80 md:text-base">
               The Forecast is a certification assessment, not a course. Subject selection and payment processing happen before the assessment begins.
             </p>
@@ -126,17 +126,17 @@ export default function OLevelReadinessForecastStart() {
               <div className="rounded-full border border-white/15 bg-white/10 px-4 py-2">Result delivered to dashboard</div>
             </div>
           </div>
-          <div className="rounded-2xl border border-white/15 bg-white p-6 text-[#2366c9] shadow-lg">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#2366c9]">Forecast Preview</p>
+          <div className="rounded-2xl border-2 border-white/10 bg-white p-6 shadow-xl">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-primary">Forecast Preview</p>
             <div className={`mt-4 rounded-xl border p-4 ${forecastPreview.colorClass}`}>
               <p className="text-sm font-semibold">Readiness score preview</p>
-              <p className="mt-1 text-3xl font-bold">{forecastPreview.readinessScore}%</p>
-              <p className="mt-2 text-sm">{forecastPreview.gradeBand}</p>
+              <p className="mt-1 text-3xl font-bold text-brand-navy">{forecastPreview.readinessScore}%</p>
+              <p className="mt-2 text-sm font-medium">{forecastPreview.gradeBand}</p>
             </div>
             <p className="mt-4 text-sm leading-7 text-slate-600">{forecastPreview.recommendedAction}</p>
             <div className="mt-5 grid gap-3 text-sm">
-              <div className="flex items-start gap-2 rounded-lg bg-[#eef6ff] p-3"><ShieldCheck className="mt-0.5 h-4 w-4 text-[#2366c9]" />Your report is reviewed by the EduMeUp Academic Team.</div>
-              <div className="flex items-start gap-2 rounded-lg bg-[#eef6ff] p-3"><CreditCard className="mt-0.5 h-4 w-4 text-[#2366c9]" />Pricing is confirmed before checkout.</div>
+              <div className="flex items-start gap-2 rounded-lg bg-[#f8fbff] p-3 border border-slate-100"><ShieldCheck className="mt-0.5 h-4 w-4 text-brand-primary" />Your report is reviewed by the EduMeUp Academic Team.</div>
+              <div className="flex items-start gap-2 rounded-lg bg-[#f8fbff] p-3 border border-slate-100"><CreditCard className="mt-0.5 h-4 w-4 text-brand-primary" />Pricing is confirmed before checkout.</div>
             </div>
           </div>
         </div>
@@ -144,9 +144,9 @@ export default function OLevelReadinessForecastStart() {
 
       <section className="bg-white py-14">
         <div className="container-custom grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="rounded-2xl border border-[#dbe4ef] p-6">
-            <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#2366c9]">1. Choose Subjects</p>
-            <h2 className="mt-3 text-2xl font-bold text-[#2366c9]">Select up to 3 subjects</h2>
+          <div className="rounded-2xl border border-slate-200 p-6 bg-white shadow-sm">
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-brand-primary">1. Choose Subjects</p>
+            <h2 className="mt-3 text-2xl font-bold text-brand-navy">Select up to 3 subjects</h2>
             <p className="mt-2 text-sm leading-7 text-slate-600">Choose the subject or subjects you want forecasted. The system is designed for one subject or a 3-subject session.</p>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
               {SUBJECTS.map((subject) => {
@@ -156,25 +156,25 @@ export default function OLevelReadinessForecastStart() {
                     key={subject}
                     type="button"
                     onClick={() => toggleSubject(subject)}
-                    className={`rounded-xl border p-4 text-left transition ${active ? "border-[#2366c9] bg-[#eef6ff]" : "border-slate-200 hover:border-[#2366c9]"}`}
+                    className={`rounded-xl border p-4 text-left transition shadow-sm ${active ? "border-brand-primary bg-[#f8fbff]" : "border-slate-200 hover:border-brand-primary"}`}
                   >
                     <div className="flex items-center justify-between gap-3">
-                      <span className="font-semibold text-[#2366c9]">{subject}</span>
-                      {active && <CheckCircle2 className="h-4 w-4 text-[#2366c9]" />}
+                      <span className="font-semibold text-brand-navy">{subject}</span>
+                      {active && <CheckCircle2 className="h-4 w-4 text-brand-primary" />}
                     </div>
                     <p className="mt-2 text-xs text-slate-500">Predictive grade band issued on completion.</p>
                   </button>
                 );
               })}
             </div>
-            <div className="mt-5 rounded-xl bg-[#eef6ff] p-4 text-sm leading-7 text-slate-700">
-              You have selected {activeCount} subject{activeCount === 1 ? "" : "s"}. If you do not choose a subject, the first subject in the list is used as the default.
+            <div className="mt-5 rounded-xl bg-[#f8fbff] border border-slate-100 p-4 text-sm leading-7 text-slate-700">
+              You have selected <span className="font-bold text-brand-primary">{activeCount}</span> subject{activeCount === 1 ? "" : "s"}. If you do not choose a subject, the first subject in the list is used as the default.
             </div>
           </div>
 
           <div className="space-y-6">
-            <div className="rounded-2xl border border-[#dbe4ef] p-6">
-              <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#2366c9]">2. Payment Mode</p>
+            <div className="rounded-2xl border border-slate-200 p-6 bg-white shadow-sm">
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-brand-primary">2. Payment Mode</p>
               <div className="mt-4 grid gap-3">
                 <button
                   type="button"
@@ -182,11 +182,11 @@ export default function OLevelReadinessForecastStart() {
                     setPaymentMode("single");
                     setDuration("60-90");
                   }}
-                  className={`rounded-xl border p-4 text-left ${paymentMode === "single" ? "border-[#2366c9] bg-[#eef6ff]" : "border-slate-200"}`}
+                  className={`rounded-xl border p-4 text-left transition shadow-sm ${paymentMode === "single" ? "border-brand-primary bg-[#f8fbff]" : "border-slate-200"}`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-[#2366c9]">Single Subject Forecast</span>
-                    <span className="font-bold text-[#2366c9]">${forecastPricing.singleSubject}</span>
+                    <span className="font-semibold text-brand-navy">Single Subject Forecast</span>
+                    <span className="font-bold text-brand-primary">${forecastPricing.singleSubject}</span>
                   </div>
                   <p className="mt-2 text-sm text-slate-600">One subject. Complete grade forecast. Best for students who want a precise starting point.</p>
                 </button>
@@ -197,31 +197,31 @@ export default function OLevelReadinessForecastStart() {
                     setDuration("180-270");
                     setSelectedSubjects((current) => (current.length > 0 ? current.slice(0, 3) : SUBJECTS.slice(0, 3)));
                   }}
-                  className={`rounded-xl border p-4 text-left ${paymentMode === "bundle" ? "border-[#2366c9] bg-[#eef6ff]" : "border-slate-200"}`}
+                  className={`rounded-xl border p-4 text-left transition shadow-sm ${paymentMode === "bundle" ? "border-brand-primary bg-[#f8fbff]" : "border-slate-200"}`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-[#2366c9]">3-Subject Session</span>
-                    <span className="font-bold text-[#2366c9]">${forecastPricing.threeSubjects}</span>
+                    <span className="font-semibold text-brand-navy">3-Subject Session</span>
+                    <span className="font-bold text-brand-primary">${forecastPricing.threeSubjects}</span>
                   </div>
                   <p className="mt-2 text-sm text-slate-600">Best value. Three subjects in one session. Save ${forecastPricing.savings}.</p>
                 </button>
               </div>
             </div>
 
-            <div className="rounded-2xl border border-[#dbe4ef] p-6">
-              <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#2366c9]">3. Before You Start</p>
+            <div className="rounded-2xl border border-slate-200 p-6 bg-[#f8fbff] shadow-sm">
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-brand-primary">3. Before You Start</p>
               <ul className="mt-4 space-y-3 text-sm leading-7 text-slate-700">
-                <li className="flex items-start gap-2"><ListChecks className="mt-1 h-4 w-4 shrink-0 text-[#2366c9]" />The Forecast runs for 60-90 minutes per subject.</li>
-                <li className="flex items-start gap-2"><ListChecks className="mt-1 h-4 w-4 shrink-0 text-[#2366c9]" />Results appear immediately after completion.</li>
-                <li className="flex items-start gap-2"><ListChecks className="mt-1 h-4 w-4 shrink-0 text-[#2366c9]" />The Academic Team review follows within 24 hours.</li>
-                <li className="flex items-start gap-2"><ListChecks className="mt-1 h-4 w-4 shrink-0 text-[#2366c9]" />A dashboard copy of the report stays available for 24 months.</li>
+                <li className="flex items-start gap-2"><ListChecks className="mt-1 h-4 w-4 shrink-0 text-brand-primary" />The Forecast runs for 60-90 minutes per subject.</li>
+                <li className="flex items-start gap-2"><ListChecks className="mt-1 h-4 w-4 shrink-0 text-brand-primary" />Results appear immediately after completion.</li>
+                <li className="flex items-start gap-2"><ListChecks className="mt-1 h-4 w-4 shrink-0 text-brand-primary" />The Academic Team review follows within 24 hours.</li>
+                <li className="flex items-start gap-2"><ListChecks className="mt-1 h-4 w-4 shrink-0 text-brand-primary" />A dashboard copy of the report stays available for 24 months.</li>
               </ul>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="bg-[#eef6ff] py-14">
+      <section className="bg-[#f8fbff]/50 py-14">
         <div className="container-custom grid gap-6 md:grid-cols-5">
           {[
             ["1", "Choose", "Select 1 or 3 subjects."],
@@ -230,9 +230,9 @@ export default function OLevelReadinessForecastStart() {
             ["4", "Review", "Academic Team reviews your forecast."],
             ["5", "Report", "Receive your roadmap in dashboard and email."],
           ].map(([step, title, body]) => (
-            <div key={step} className="rounded-2xl border border-[#dbe4ef] bg-white p-5 shadow-sm">
-              <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-[#2366c9] text-white font-bold">{step}</div>
-              <h3 className="mt-4 text-center font-semibold text-[#2366c9]">{title}</h3>
+            <div key={step} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-brand-primary text-white font-bold">{step}</div>
+              <h3 className="mt-4 text-center font-semibold text-brand-navy">{title}</h3>
               <p className="mt-2 text-center text-sm leading-7 text-slate-600">{body}</p>
             </div>
           ))}
@@ -241,26 +241,26 @@ export default function OLevelReadinessForecastStart() {
 
       <section className="bg-white py-14">
         <div className="container-custom grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-          <div className="rounded-2xl border border-[#dbe4ef] p-6">
-            <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#2366c9]">Forecast Thresholds</p>
+          <div className="rounded-2xl border border-slate-200 p-6 bg-slate-50/50">
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-brand-primary">Forecast Thresholds</p>
             <div className="mt-4 space-y-3">
               {forecastThresholds.map((band) => (
-                <div key={band.gradeBand} className={`rounded-xl border p-4 ${band.colorClass}`}>
+                <div key={band.gradeBand} className={`rounded-xl border shadow-sm p-4 ${band.colorClass}`}>
                   <p className="text-sm font-semibold">{band.gradeBand}</p>
                   <p className="text-xs opacity-80">{band.label}</p>
                 </div>
               ))}
             </div>
           </div>
-          <div className="rounded-2xl border border-[#dbe4ef] p-6">
-            <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#2366c9]">Start Now</p>
-            <h2 className="mt-3 text-2xl font-bold text-[#2366c9]">You are one decision away from seeing your trajectory.</h2>
+          <div className="rounded-2xl border border-slate-200 p-6 bg-white shadow-sm">
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-brand-primary">Start Now</p>
+            <h2 className="mt-3 text-2xl font-bold text-brand-navy">You are one decision away from seeing your trajectory.</h2>
             <p className="mt-3 text-sm leading-7 text-slate-600">The Forecast is waiting. The next step is straightforward.</p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Button type="button" onClick={beginForecast} className="bg-[#2366c9] px-6 py-3 text-white hover:bg-[#1a4fa0]">
+              <Button type="button" onClick={beginForecast} className="bg-brand-primary px-6 py-3 text-white hover:bg-brand-navy">
                 Begin Forecast <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
-              <Link href="/diagnostics" className="inline-flex items-center rounded-lg border border-[#2366c9] px-6 py-3 text-sm font-semibold text-[#2366c9]">
+              <Link href="/diagnostics" className="inline-flex items-center rounded-lg border border-brand-primary px-6 py-3 text-sm font-semibold text-brand-primary hover:bg-brand-primary hover:text-white transition-colors">
                 Take Free Diagnostic First
               </Link>
             </div>
@@ -271,3 +271,4 @@ export default function OLevelReadinessForecastStart() {
     </Layout>
   );
 }
+

@@ -18,7 +18,6 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { InquiryDialog } from "@/components/InquiryDialog";
-import { ui } from "@/theme";
 
 export default function About() {
   return (
@@ -48,11 +47,11 @@ export default function About() {
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className={ui.sections.brand + " rounded-[2rem] md:rounded-[3rem] p-8 md:p-12 shadow-2xl"}
+                  className="bg-brand-primary text-white relative overflow-hidden rounded-[2rem] md:rounded-[3rem] p-8 md:p-12 shadow-2xl"
                 >
                   <div className="absolute -top-20 -right-16 h-56 w-56 rounded-full bg-white/10 blur-3xl" aria-hidden="true" />
                   <div className="relative z-10 max-w-2xl space-y-6">
-                    <p className="text-[11px] font-black uppercase tracking-[0.28em] text-blue-100">Our Mission &amp; Philosophy</p>
+                    <p className="text-sm-small font-black uppercase tracking-[0.28em] text-blue-100">Our Mission &amp; Philosophy</p>
                     <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold leading-[1.05] tracking-tight text-white">
                       Education Should Work the Way the Brain Works.
                     </h1>
@@ -70,10 +69,10 @@ export default function About() {
                       </p>
                     </div>
                     <div className="flex flex-col sm:flex-row gap-4 pt-2">
-                      <Button className={`${ui.buttons.brandLight} font-semibold px-6 py-3 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2`}>
+                      <Button className="bg-white text-brand-primary hover:bg-brand-primary-soft font-semibold px-6 py-3 rounded-xl text-base shadow-md flex items-center justify-center gap-2">
                         Explore Our 10X Model <ArrowRight className="h-4 w-4" />
                       </Button>
-                      <Button variant="outline" className="border border-white/35 text-white hover:bg-white/10 font-semibold px-6 py-3 rounded-xl text-[14px] flex items-center justify-center gap-2">
+                      <Button variant="outline" className="border border-white/35 text-white hover:bg-white/10 font-semibold px-6 py-3 rounded-xl text-base flex items-center justify-center gap-2">
                         See the Research <ArrowRight className="h-4 w-4" />
                       </Button>
                     </div>
@@ -84,14 +83,14 @@ export default function About() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
-                  className={ui.cards.standard + " rounded-[2rem] md:rounded-[3rem] p-8 md:p-10 shadow-lg"}
+                  className="rounded-2xl border border-neutral-border bg-white shadow-sm rounded-[2rem] md:rounded-[3rem] p-8 md:p-10 shadow-lg"
                 >
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(35,102,201,0.18),transparent_40%),radial-gradient(circle_at_bottom_left,rgba(79,134,224,0.16),transparent_35%)]" aria-hidden="true" />
                   <div className="relative z-10 flex h-full flex-col justify-between gap-8">
                     <div>
-                      <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-4">Editorial Graphic</p>
-                      <div className={ui.cards.standard + " rounded-[2rem] p-6 shadow-sm"}>
-                        <div className="flex items-center justify-center rounded-[1.5rem] bg-gradient-to-br from-[#2366c9] via-[#4f86e0] to-[#eef6ff] p-10 text-white">
+                      <p className="text-sm-small font-black uppercase tracking-[0.28em] text-brand-primary mb-4">Editorial Graphic</p>
+                      <div className="rounded-2xl border border-neutral-border bg-white shadow-sm rounded-[2rem] p-6 shadow-sm">
+                        <div className="flex items-center justify-center rounded-[1.5rem] bg-gradient-to-br from-brand-primary via-brand-sky to-neutral-surface p-10 text-white">
                           <div className="text-center space-y-4">
                             <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
                               <Sparkles className="h-10 w-10 text-white" />
@@ -105,17 +104,17 @@ export default function About() {
                       </div>
                     </div>
                     <div className="grid grid-cols-3 gap-3">
-                      <div className={ui.cards.standard + " rounded-2xl p-4 text-center shadow-sm"}>
-                        <p className="text-2xl font-semibold text-[#2366c9]">91%</p>
-                        <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 mt-1">Pass rate</p>
+                      <div className="rounded-2xl border border-neutral-border bg-white shadow-sm rounded-2xl p-4 text-center shadow-sm">
+                        <p className="text-2xl font-semibold text-brand-primary">91%</p>
+                        <p className="text-sm-small font-semibold uppercase tracking-widest text-slate-500 mt-1">Pass rate</p>
                       </div>
-                      <div className={ui.cards.standard + " rounded-2xl p-4 text-center shadow-sm"}>
-                        <p className="text-2xl font-semibold text-[#2366c9]">85%+</p>
-                        <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 mt-1">Retention</p>
+                      <div className="rounded-2xl border border-neutral-border bg-white shadow-sm p-4 text-center">
+                        <p className="text-2xl font-semibold text-brand-primary">85%+</p>
+                        <p className="text-sm-small font-semibold uppercase tracking-widest text-slate-500 mt-1">Retention</p>
                       </div>
-                      <div className={ui.cards.standard + " rounded-2xl p-4 text-center shadow-sm"}>
-                        <p className="text-2xl font-semibold text-[#2366c9]">271%</p>
-                        <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 mt-1">ROI</p>
+                      <div className="rounded-2xl border border-neutral-border bg-white shadow-sm p-4 text-center">
+                        <p className="text-2xl font-semibold text-brand-primary">271%</p>
+                        <p className="text-sm-small font-semibold uppercase tracking-widest text-slate-500 mt-1">ROI</p>
                       </div>
                     </div>
                   </div>
@@ -130,7 +129,7 @@ export default function About() {
           <section id="learning-crisis" className="py-16 md:py-24 bg-[#FFF8EC] -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
             <div className="w-full max-w-6xl mx-auto lg:px-0">
               <div className="text-center mb-16">
-                <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">The Problem We Set Out to Solve</p>
+                <p className="text-sm-small font-black uppercase tracking-[0.28em] text-brand-primary mb-3">The Problem We Set Out to Solve</p>
                 <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-6">
                   The Traditional Model Has a Hidden Failure Rate.
                 </h2>
@@ -149,13 +148,13 @@ export default function About() {
                 ].map((item, i) => (
                   <div key={i} className="bg-white rounded-[1.5rem] p-8 shadow-sm text-center hover:-translate-y-1 transition-all">
                     <p className="text-4xl font-semibold text-red-500 mb-3">{item.stat}</p>
-                    <p className="text-[14px] text-slate-600 font-medium">{item.label}</p>
+                    <p className="text-base text-slate-600 font-medium">{item.label}</p>
                   </div>
                 ))}
               </div>
 
               {/* Research callout */}
-              <div className="border-l-4 border-[#2366c9] bg-blue-50 p-6 rounded-r-[1.5rem] mb-16">
+              <div className="border-l-4 border-brand-primary bg-blue-50 p-6 rounded-r-[1.5rem] mb-16">
                 <p className="text-base md:text-lg italic text-slate-800 leading-relaxed">
                   According to the Learning Pyramid (NTL Institute), traditional teaching methods — lectures, textbooks, and assigned readings — yield only 5%
                   knowledge retention after 24 hours. Most tutoring centers and EdTech platforms are built on exactly this model.
@@ -190,7 +189,7 @@ export default function About() {
                       <card.icon className="h-7 w-7 text-red-500" />
                     </div>
                     <h3 className="text-lg font-semibold text-red-500 mb-3">{card.title}</h3>
-                    <p className="text-[14px] text-slate-700 leading-relaxed">{card.desc}</p>
+                    <p className="text-base text-slate-700 leading-relaxed">{card.desc}</p>
                     {/* Hover popup */}
                     <div className="absolute inset-0 bg-white rounded-[1.5rem] p-8 shadow-2xl opacity-0 group-hover:opacity-100 transition-all duration-200 z-10 flex flex-col justify-center">
                       <p className="text-[13px] text-slate-700 leading-relaxed">{card.popup}</p>
@@ -215,10 +214,10 @@ export default function About() {
           </section>
 
           {/* ================= SECTION 3: THE 10X LEARNING LEAP MODEL™ ================= */}
-          <section id="methodology" className={ui.sections.softBlue + " py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0"}>
+          <section id="methodology" className="bg-brand-primary-soft/40 py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
             <div className="w-full max-w-6xl mx-auto lg:px-0">
               <div className="text-center mb-10 md:mb-20">
-                <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">Our Proprietary Methodology</p>
+                <p className="text-sm-small font-black uppercase tracking-[0.28em] text-brand-primary mb-3">Our Proprietary Methodology</p>
                 <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-4">
                   The 10X Learning Leap Model™
                 </h2>
@@ -232,7 +231,7 @@ export default function About() {
 
               <div className="grid lg:grid-cols-2 gap-12">
                 <div className="space-y-6">
-                  <div className="bg-[#2366c9] text-white rounded-2xl px-6 py-3 inline-block">
+                  <div className="bg-brand-primary text-white rounded-2xl px-6 py-3 inline-block">
                     <h3 className="text-lg text-white font-semibold">Phase 1: Diagnostic &amp; Remedial</h3>
                     <p className="text-blue-200 text-sm">Steps 1–3 | Know exactly what to fix before teaching</p>
                   </div>
@@ -243,17 +242,17 @@ export default function About() {
                   ].map((item, i) => (
                     <Card key={i} className="border border-white rounded-xl shadow-sm hover:shadow-xl transition-all">
                       <CardContent className="p-6">
-                        <span className="text-[14px] font-semibold text-[#2366c9]">Step {item.step}</span>
+                        <span className="text-base font-semibold text-brand-primary">Step {item.step}</span>
                         <h4 className="text-xl font-semibold text-slate-900 mt-1 mb-2" dangerouslySetInnerHTML={{ __html: item.title }} />
                         <p className="text-slate-900/70 font-medium mb-4">{item.desc}</p>
-                        <p className="text-[14px] text-slate-900/30 font-medium">Research: {item.res}</p>
+                        <p className="text-base text-slate-900/30 font-medium">Research: {item.res}</p>
                       </CardContent>
                     </Card>
                   ))}
                 </div>
 
                 <div className="space-y-6">
-                  <div className="bg-[#2366c9] text-white rounded-2xl px-6 py-3 inline-block">
+                  <div className="bg-brand-primary text-white rounded-2xl px-6 py-3 inline-block">
                     <h3 className="text-lg text-white font-semibold">Phase 2: Systematic Learning &amp; Mastery</h3>
                     <p className="text-blue-200 text-sm">Steps 4–8 | Durable mastery, exam readiness, independent learning</p>
                   </div>
@@ -266,10 +265,10 @@ export default function About() {
                   ].map((item, i) => (
                     <Card key={i} className="border border-white rounded-xl shadow-sm hover:shadow-xl transition-all">
                       <CardContent className="p-6">
-                        <span className="text-[14px] font-semibold text-[#2366c9]">Step {item.step}</span>
+                        <span className="text-base font-semibold text-brand-primary">Step {item.step}</span>
                         <h4 className="text-xl font-semibold text-slate-900 mt-1 mb-2" dangerouslySetInnerHTML={{ __html: item.title }} />
                         <p className="text-slate-900/70 font-medium mb-4">{item.desc}</p>
-                        <p className="text-[14px] text-slate-900/30 font-medium">Research: {item.res}</p>
+                        <p className="text-base text-slate-900/30 font-medium">Research: {item.res}</p>
                       </CardContent>
                     </Card>
                   ))}
@@ -277,7 +276,7 @@ export default function About() {
               </div>
 
               {/* Guaranteed Outcomes strip */}
-              <div className={ui.sections.brand + " mt-20 p-12 rounded-[3rem]"}>
+              <div className="bg-brand-primary text-white relative overflow-hidden mt-20 p-12 rounded-[3rem]">
                 <div className="grid md:grid-cols-3 gap-8 text-center">
                   <div>
                     <h4 className="text-3xl font-semibold text-blue-400 mb-2">91%</h4>
@@ -296,7 +295,7 @@ export default function About() {
               </div>
 
               <div className="mt-8 text-center">
-                <a href="/how-it-works" className="inline-flex items-center gap-2 text-[14px] font-semibold text-[#2366c9] hover:text-blue-700">
+                <a href="/how-it-works" className="inline-flex items-center gap-2 text-base font-semibold text-brand-primary hover:text-blue-700">
                   Read the Full Methodology <ArrowRight className="h-4 w-4" />
                 </a>
               </div>
@@ -307,7 +306,7 @@ export default function About() {
           <section id="pillars" className="py-16 md:py-24 bg-white -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
             <div className="w-full max-w-6xl mx-auto lg:px-0">
               <div className="text-center mb-10 md:mb-20">
-                <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">What Everything Is Built On</p>
+                <p className="text-sm-small font-black uppercase tracking-[0.28em] text-brand-primary mb-3">What Everything Is Built On</p>
                 <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-4">
                   Three Pillars. Every Feature Traces Back to One of Them.
                 </h2>
@@ -357,7 +356,7 @@ export default function About() {
                 ].map((pillar, i) => (
                   <div key={i} className="group relative">
                     {/* Header band */}
-                    <div className={`${i === 0 ? "bg-[#2366c9]" : i === 1 ? "bg-[#1e1b4b]" : "bg-slate-700"} text-white rounded-t-[2rem] px-8 py-5 flex items-center gap-4`}>
+                    <div className={`${i === 0 ? "bg-brand-primary" : i === 1 ? "bg-[#1e1b4b]" : "bg-slate-700"} text-white rounded-t-[2rem] px-8 py-5 flex items-center gap-4`}>
                       <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0">
                         <pillar.icon className="h-6 w-6 text-white" />
                       </div>
@@ -367,17 +366,17 @@ export default function About() {
                       </div>
                     </div>
                     {/* Content */}
-                    <div className={ui.sections.softBlue + " rounded-b-[2rem] p-8 hover:shadow-2xl transition-all border-4 border-white"}>
+                    <div className="bg-brand-primary-soft/40 rounded-b-[2rem] p-8 hover:shadow-2xl transition-all border-4 border-white">
                       <ul className="space-y-3 mb-6">
                         {pillar.bullets.map((b, j) => (
-                          <li key={j} className="flex items-start gap-3 text-[14px] font-medium text-slate-700">
-                            <CheckCircle2 className="h-4 w-4 text-[#2366c9] mt-0.5 flex-shrink-0" />
+                          <li key={j} className="flex items-start gap-3 text-base font-medium text-slate-700">
+                            <CheckCircle2 className="h-4 w-4 text-brand-primary mt-0.5 flex-shrink-0" />
                             {b}
                           </li>
                         ))}
                       </ul>
                       <p className="text-[13px] text-slate-500 font-medium border-t border-blue-100 pt-4">Research: {pillar.res}</p>
-                      <a href="#" className="text-[13px] text-[#2366c9] font-semibold mt-2 inline-block hover:text-blue-800">Research behind this →</a>
+                      <a href="#" className="text-[13px] text-brand-primary font-semibold mt-2 inline-block hover:text-blue-800">Research behind this →</a>
                     </div>
                   </div>
                 ))}
@@ -386,10 +385,10 @@ export default function About() {
           </section>
 
           {/* ================= SECTION 5: COMPETITOR COMPARISON TABLE ================= */}
-          <section id="comparison" className={ui.sections.softBlue + " py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0"}>
+          <section id="comparison" className="bg-brand-primary-soft/40 py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
             <div className="w-full max-w-6xl mx-auto lg:px-0">
               <div className="text-center mb-10 md:mb-16">
-                <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">How We Compare — Honestly</p>
+                <p className="text-sm-small font-black uppercase tracking-[0.28em] text-brand-primary mb-3">How We Compare — Honestly</p>
                 <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-4">
                   Every Claim We Make, We Can Substantiate.
                 </h2>
@@ -401,7 +400,7 @@ export default function About() {
               <div className="overflow-x-auto rounded-[1.5rem] shadow-sm">
                 <table className="w-full min-w-[700px]">
                   <thead>
-                    <tr className="bg-[#2366c9] text-white text-xs uppercase tracking-wider">
+                    <tr className="bg-brand-primary text-white text-xs uppercase tracking-wider">
                       <th className="p-4 text-left font-semibold">Feature / Capability</th>
                       <th className="p-4 text-center font-semibold bg-green-600/20">EduMeUp ★</th>
                       <th className="p-4 text-center font-semibold">Khan Academy</th>
@@ -426,7 +425,7 @@ export default function About() {
                       ["University-validated outcomes (3-year study)", "✔", "✘", "✘", "✘"],
                     ].map((row, i) => (
                       <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-slate-50"}>
-                        <td className="p-4 text-[14px] text-slate-700 font-medium">{row[0]}</td>
+                        <td className="p-4 text-base text-slate-700 font-medium">{row[0]}</td>
                         {row.slice(1).map((val, j) => (
                           <td key={j} className={`p-4 text-center text-lg font-bold ${j === 0 ? "bg-green-50" : ""} ${val === "✔" ? "text-green-600" : val === "✘" ? "text-red-400" : "text-amber-500"}`}>
                             {val}
@@ -440,8 +439,8 @@ export default function About() {
               <p className="text-[12px] text-slate-500 mt-4">Legend: ✔ = Yes, fully available | ~ = Partial or limited | ✘ = Not available</p>
 
               {/* Verdict */}
-              <div className="mt-8 border-l-4 border-[#2366c9] bg-blue-50 p-6 rounded-r-[1.5rem]">
-                <p className="text-[14px] text-slate-700 leading-relaxed font-medium">
+              <div className="mt-8 border-l-4 border-brand-primary bg-blue-50 p-6 rounded-r-[1.5rem]">
+                <p className="text-base text-slate-700 leading-relaxed font-medium">
                   <strong>Verdict:</strong> EduMeUp combines the breadth and accessibility of Khan Academy + the Cambridge curriculum depth of Kognity + the AI power of modern LLMs — and adds what none of them provide: a systematic, research-validated retention methodology, Cambridge examiner-calibrated AI tutoring, automated spaced retrieval, and a complete four-stakeholder ecosystem. This combination is unique in the global EdTech market.
                 </p>
               </div>
@@ -452,7 +451,7 @@ export default function About() {
           <section id="ecosystem" className="py-16 md:py-24 bg-white -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
             <div className="w-full max-w-6xl mx-auto lg:px-0">
               <div className="text-center mb-20">
-                <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">Everyone Empowered</p>
+                <p className="text-sm-small font-black uppercase tracking-[0.28em] text-brand-primary mb-3">Everyone Empowered</p>
                 <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-4">
                   Most Platforms Serve One Group. We Built for Four.
                 </h2>
@@ -518,7 +517,7 @@ export default function About() {
                     result: "Guesswork → Excellence"
                   }
                 ].map((box, i) => (
-                  <div key={i} className={`group relative ${ui.sections.softBlue} p-6 rounded-xl border border-white hover:border-blue-100 hover:shadow-xl transition-all`}>
+                  <div key={i} className={`group relative bg-brand-primary-soft/40 p-6 rounded-xl border border-white hover:border-blue-100 hover:shadow-xl transition-all`}>
                     <div className="text-3xl mb-3">{box.icon}</div>
                     <h3 className="text-xl font-semibold text-slate-900 mb-4">{box.title}</h3>
                     <ul className="space-y-3 mb-6">
@@ -530,10 +529,10 @@ export default function About() {
                       ))}
                     </ul>
                     <div className="pt-4 border-t border-blue-100">
-                      <p className="text-[14px] font-medium text-[#2366c9]">Result: {box.result}</p>
+                      <p className="text-base font-medium text-brand-primary">Result: {box.result}</p>
                     </div>
                     {/* Hover popup */}
-                    <div className="absolute inset-0 bg-white rounded-xl p-6 shadow-2xl opacity-0 group-hover:opacity-100 transition-all duration-200 z-10 flex flex-col justify-center border-2 border-[#2366c9]">
+                    <div className="absolute inset-0 bg-white rounded-xl p-6 shadow-2xl opacity-0 group-hover:opacity-100 transition-all duration-200 z-10 flex flex-col justify-center border-2 border-brand-primary">
                       <p className="text-[13px] text-slate-700 leading-relaxed">{box.popup}</p>
                     </div>
                   </div>
@@ -547,9 +546,9 @@ export default function About() {
                   { stat: "24/7", label: "Platform availability" },
                   { stat: "1000+", label: "Interactive H5P activities" },
                 ].map((item, i) => (
-                  <div key={i} className={ui.sections.softBlue + " p-8 rounded-[1.5rem] text-center"}>
-                    <p className="text-4xl font-semibold text-[#2366c9] mb-2">{item.stat}</p>
-                    <p className="text-[14px] text-slate-600 font-medium">{item.label}</p>
+                  <div key={i} className="bg-brand-primary-soft/40 p-8 rounded-[1.5rem] text-center">
+                    <p className="text-4xl font-semibold text-brand-primary mb-2">{item.stat}</p>
+                    <p className="text-base text-slate-600 font-medium">{item.label}</p>
                   </div>
                 ))}
               </div>
@@ -557,10 +556,10 @@ export default function About() {
           </section>
 
           {/* ================= SECTION 7: RESEARCH FOUNDATION (Timeline) ================= */}
-          <section className={ui.sections.brand + " py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0"}>
+          <section className="bg-brand-primary text-white relative overflow-hidden py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
             <div className="w-full max-w-6xl mx-auto lg:px-0">
               <div className="text-center mb-10 md:mb-20">
-                <p className="text-[11px] font-black uppercase tracking-[0.28em] text-blue-300 mb-3">The Evidence Behind Everything</p>
+                <p className="text-sm-small font-black uppercase tracking-[0.28em] text-blue-300 mb-3">The Evidence Behind Everything</p>
                 <h2 className="text-4xl md:text-5xl font-semibold text-white mb-4">
                   Not Marketing — Science. 50 Years of Research, Implemented.
                 </h2>
@@ -586,11 +585,11 @@ export default function About() {
                 ].map((row, i) => (
                   <div key={i} className={`grid grid-cols-[120px_1fr] gap-6 p-5 border-b border-white/10 ${i % 2 === 0 ? "bg-white/10" : "bg-white/5"} hover:bg-white/20 transition-colors cursor-default`}>
                     <div>
-                      <span className="inline-block bg-[#2366c9] text-white text-xs font-bold px-3 py-1 rounded-lg">{row.year}</span>
+                      <span className="inline-block bg-brand-primary text-white text-xs font-bold px-3 py-1 rounded-lg">{row.year}</span>
                     </div>
                     <div>
                       <span className="text-white/70 font-bold text-[13px] uppercase mr-3">{row.author}</span>
-                      <span className="text-white font-semibold text-[14px]">{row.topic}</span>
+                      <span className="text-white font-semibold text-base">{row.topic}</span>
                       <p className="text-blue-300 text-[13px] mt-1">→ IMPLEMENTED: {row.impl}</p>
                     </div>
                   </div>
@@ -599,7 +598,7 @@ export default function About() {
 
               <p className="text-blue-300 text-xs italic mt-6">⭐ Star marks the study EduMeUp considers most directly transformative for student outcomes. Full research bibliography available on request.</p>
               <div className="mt-6">
-                <a href="/research-bibliography" className="inline-flex items-center gap-2 bg-[#2366c9] text-white font-semibold px-6 py-3 rounded-xl text-[14px] hover:bg-blue-700 transition-colors">
+                <a href="/research-bibliography" className="inline-flex items-center gap-2 bg-brand-primary text-white font-semibold px-6 py-3 rounded-xl text-base hover:bg-blue-700 transition-colors">
                   <Download className="h-4 w-4" /> Download the Full Research Bibliography →
                 </a>
               </div>
@@ -610,7 +609,7 @@ export default function About() {
           <section id="story" className="py-16 md:py-24 bg-[#FAFAF8] -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
             <div className="w-full max-w-4xl mx-auto lg:px-0">
               <div className="text-center mb-10 md:mb-16">
-                <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9] mb-3">How It Began</p>
+                <p className="text-sm-small font-black uppercase tracking-[0.28em] text-brand-primary mb-3">How It Began</p>
                 <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-4">
                   Founded by Educators Who Saw the System Failing Students.
                 </h2>
@@ -619,7 +618,7 @@ export default function About() {
               {/* Milestone timeline */}
               <div className="relative mb-16">
                 {/* Desktop: horizontal line */}
-                <div className="hidden md:block absolute top-5 left-0 right-0 h-0.5 bg-[#2366c9]/20" />
+                <div className="hidden md:block absolute top-5 left-0 right-0 h-0.5 bg-brand-primary/20" />
                 <div className="grid md:grid-cols-4 gap-6">
                   {[
                     { year: "2019–20", title: "The Realisation", desc: "An educator and institution leader observes a repeating crisis: passive teaching, rapid forgetting, tutor dependency, exam failure. The research points clearly to a better system." },
@@ -628,8 +627,8 @@ export default function About() {
                     { year: "2026+", title: "Global Expansion", desc: "2,000+ students across 25+ countries. A-Level development in progress. Charter Programme expansion. Continued R&D with partner institutions." },
                   ].map((m, i) => (
                     <div key={i} className="relative text-center">
-                      <div className="inline-flex w-10 h-10 rounded-full bg-[#2366c9] text-white items-center justify-center text-sm font-bold mb-3 mx-auto">{i + 1}</div>
-                      <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#2366c9] mb-1">{m.year}</p>
+                      <div className="inline-flex w-10 h-10 rounded-full bg-brand-primary text-white items-center justify-center text-sm font-bold mb-3 mx-auto">{i + 1}</div>
+                      <p className="text-sm-small font-black uppercase tracking-[0.2em] text-brand-primary mb-1">{m.year}</p>
                       <p className="font-semibold text-slate-900 mb-2 text-sm">{m.title}</p>
                       <p className="text-[13px] text-slate-600">{m.desc}</p>
                     </div>
@@ -638,15 +637,15 @@ export default function About() {
               </div>
 
               {/* Founder card */}
-              <div className="border border-blue-100 border-l-4 border-l-[#2366c9] rounded-[1.5rem] p-8 bg-white shadow-sm mb-12">
+              <div className="border border-blue-100 border-l-4 border-l-brand-primary rounded-[1.5rem] p-8 bg-white shadow-sm mb-12">
                 <div className="flex flex-col sm:flex-row gap-6 items-start">
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#2366c9] to-[#4f86e0] flex items-center justify-center flex-shrink-0">
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-brand-primary to-brand-sky flex items-center justify-center flex-shrink-0">
                     <span className="text-2xl font-bold text-white">MB</span>
                   </div>
                   <div>
                     <h4 className="text-xl font-semibold text-slate-900">Muhammad Benyameen</h4>
-                    <p className="text-[#2366c9] font-semibold text-sm mb-3">Founder &amp; Chief Adviser</p>
-                    <p className="text-slate-700 leading-relaxed text-[14px]">
+                    <p className="text-brand-primary font-semibold text-sm mb-3">Founder &amp; Chief Adviser</p>
+                    <p className="text-slate-700 leading-relaxed text-base">
                       With over 15 years of experience across educational leadership, institutional development, and cognitive science application — including roles as Principal and Deputy Director at leading institutions — Muhammad built EduMeUp because he had seen, firsthand, what the passive instruction model costs students. His M.Phil in Educational Planning &amp; Management and M.Sc. in Physics are the academic foundation. The 10X Learning Leap Model™ is the result.
                     </p>
                     <p className="mt-4 italic text-slate-600 font-medium">"The research has always shown us a better way to teach. We simply chose to build it."</p>
@@ -663,18 +662,18 @@ export default function About() {
                   { title: "Continuous Improvement", desc: "Cognitive science continues to advance. So does EduMeUp. Our R&D team continuously evaluates new research and integrates validated findings into the platform." },
                 ].map((v, i) => (
                   <div key={i} className="bg-white p-6 rounded-[1.5rem] border border-slate-100">
-                    <h4 className="font-semibold text-[#2366c9] mb-2">{v.title}</h4>
-                    <p className="text-[14px] text-slate-600">{v.desc}</p>
+                    <h4 className="font-semibold text-brand-primary mb-2">{v.title}</h4>
+                    <p className="text-base text-slate-600">{v.desc}</p>
                   </div>
                 ))}
               </div>
 
               <div className="grid md:grid-cols-2 gap-8">
-                <div className={ui.sections.softBlue + " p-10 rounded-[2.5rem]"}>
+                <div className="bg-brand-primary-soft/40 p-10 rounded-[2.5rem]">
                   <h4 className="text-3xl text-slate-900 mb-2">2,000+</h4>
                   <p className="text-xs font-black uppercase text-blue-600 tracking-widest">Students Globally</p>
                 </div>
-                <div className={ui.sections.softBlue + " p-10 rounded-[2.5rem]"}>
+                <div className="bg-brand-primary-soft/40 p-10 rounded-[2.5rem]">
                   <h4 className="text-3xl text-slate-900 mb-2">25+</h4>
                   <p className="text-xs font-black uppercase text-blue-600 tracking-widest">Countries Reached</p>
                 </div>
@@ -683,7 +682,7 @@ export default function About() {
           </section>
 
           {/* ================= WHO THIS IS FOR ================= */}
-          <section id="fit" className={ui.sections.softBlue + " py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0"}>
+          <section id="fit" className="bg-brand-primary-soft/40 py-16 md:py-24 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
             <div className="w-full max-w-6xl mx-auto lg:px-0">
               <div className="text-center mb-10 md:mb-20">
                 <h2 className="text-4xl md:text-5xl font-semibold font-black text-slate-900 mb-4">
@@ -703,7 +702,7 @@ export default function About() {
                       <h4 className="text-xs font-black uppercase text-slate-900/40 mb-4 tracking-widest">Students Who</h4>
                       <ul className="space-y-4">
                         {["Are serious about O-Level prep", "Want to reduce tutor dependency", "Struggle with retention", "Have foundation gaps"].map((item, i) => (
-                          <li key={i} className="flex items-center gap-3 text-[14px] font-medium text-slate-900">
+                          <li key={i} className="flex items-center gap-3 text-base font-medium text-slate-900">
                             <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
                             {item}
                           </li>
@@ -714,7 +713,7 @@ export default function About() {
                       <h4 className="text-xs font-black uppercase text-slate-900/40 mb-4 tracking-widest">Parents Who</h4>
                       <ul className="space-y-4">
                         {["Value research-backed approaches", "Want real-time visibility", "Seek cost-effective alternatives"].map((item, i) => (
-                          <li key={i} className="flex items-center gap-3 text-[14px] font-medium text-slate-900">
+                          <li key={i} className="flex items-center gap-3 text-base font-medium text-slate-900">
                             <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
                             {item}
                           </li>
@@ -734,7 +733,7 @@ export default function About() {
                       <h4 className="text-xs font-black uppercase text-slate-900/40 mb-4 tracking-widest">Students Who</h4>
                       <ul className="space-y-4">
                         {["Expect instant results without effort", "Won't commit min 3 hours/week", "Want shortcuts to success"].map((item, i) => (
-                          <li key={i} className="flex items-center gap-3 text-[14px] font-medium text-slate-900/60">
+                          <li key={i} className="flex items-center gap-3 text-base font-medium text-slate-900/60">
                             <div className="w-1.5 h-1.5 rounded-full bg-red-400" />
                             {item}
                           </li>
@@ -745,7 +744,7 @@ export default function About() {
                       <h4 className="text-xs font-black uppercase text-slate-900/40 mb-4 tracking-widest">Schools That</h4>
                       <ul className="space-y-4">
                         {["Won't implement systematically", "Expect tech to replace teachers", "Avoid data-driven decisions"].map((item, i) => (
-                          <li key={i} className="flex items-center gap-3 text-[14px] font-medium text-slate-900/60">
+                          <li key={i} className="flex items-center gap-3 text-base font-medium text-slate-900/60">
                             <div className="w-1.5 h-1.5 rounded-full bg-red-400" />
                             {item}
                           </li>
@@ -761,14 +760,14 @@ export default function About() {
           {/* ================= LIMITATIONS & HONESTY ================= */}
           <section id="honesty" className="py-16 md:py-24 bg-white -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
             <div className="w-full max-w-4xl mx-auto lg:px-0">
-              <div className={ui.sections.brand + " p-6 sm:p-10 md:p-16 rounded-[2rem] sm:rounded-[3rem] md:rounded-[4rem]"}>
+              <div className="bg-brand-primary text-white relative overflow-hidden p-6 sm:p-10 md:p-16 rounded-[2rem] sm:rounded-[3rem] md:rounded-[4rem]">
                 <h2 className="text-4xl md:text-5xl font-semibold text-white mb-4">Transparency Builds Trust</h2>
                 <div className="grid md:grid-cols-2 gap-12">
                   <div className="space-y-6">
-                    <h4 className="text-blue-400 font-black uppercase text-[14px] tracking-widest">What We Are</h4>
+                    <h4 className="text-blue-400 font-black uppercase text-base tracking-widest">What We Are</h4>
                     <ul className="space-y-3">
                       {["Systematic & research-validated", "Stakeholder support system", "Data-proven results", "Cost-effective"].map((item, i) => (
-                        <li key={i} className="text-[14px] font-medium text-white/80 flex items-center gap-3">
+                        <li key={i} className="text-base font-medium text-white/80 flex items-center gap-3">
                           <div className="w-1 h-1 rounded-full bg-blue-400" />
                           {item}
                         </li>
@@ -776,10 +775,10 @@ export default function About() {
                     </ul>
                   </div>
                   <div className="space-y-6">
-                    <h4 className="text-red-400 font-black uppercase text-[14px] tracking-widest">What We Are Not</h4>
+                    <h4 className="text-red-400 font-black uppercase text-base tracking-widest">What We Are Not</h4>
                     <ul className="space-y-3">
                       {["Not a teacher replacement", "Not an instant miracle", "Not a shortcut provider", "Not yet for every curriculum"].map((item, i) => (
-                        <li key={i} className="text-[14px] font-medium text-white/60 flex items-center gap-3">
+                        <li key={i} className="text-base font-medium text-white/60 flex items-center gap-3">
                           <div className="w-1 h-1 rounded-full bg-red-400" />
                           {item}
                         </li>
@@ -797,7 +796,7 @@ export default function About() {
       </main>
 
       {/* ================= SECTION 9: FINAL CTA — THREE OPTIONS ================= */}
-      <section id="get-started" className={ui.sections.brand + " py-20 md:py-32 relative overflow-hidden -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0"}>
+      <section id="get-started" className="bg-brand-primary text-white relative overflow-hidden py-20 md:py-32 relative overflow-hidden -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
         <div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
         <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
         <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
@@ -811,17 +810,17 @@ export default function About() {
           {/* Three CTA Cards */}
           <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-12">
             {/* Primary CTA Card */}
-            <div className="bg-[#2366c9] border-4 border-white/20 rounded-[2rem] p-8 text-left flex flex-col shadow-2xl md:scale-105">
+            <div className="bg-brand-primary border-4 border-white/20 rounded-[2rem] p-8 text-left flex flex-col shadow-2xl md:scale-105">
               <h3 className="text-2xl font-semibold text-white mb-2">Take the Free Diagnostic</h3>
               <p className="text-blue-200 text-sm font-semibold mb-4">Approx. 90 minutes. No credit card required.</p>
-              <p className="text-white/80 text-[14px] leading-relaxed mb-6 flex-1">
+              <p className="text-white/80 text-base leading-relaxed mb-6 flex-1">
                 Our AI identifies your exact sub-skill gaps and produces a personalised learning plan. You will know precisely what to focus on — before spending a single dollar on courses.
               </p>
               <InquiryDialog
                 defaultType="diagnostic"
                 title="Free Diagnostic Assessment"
                 trigger={
-                  <Button className="w-full bg-white text-[#2366c9] hover:bg-blue-50 font-semibold py-3 rounded-xl text-[14px] flex items-center justify-center gap-2">
+                  <Button className="w-full bg-white text-brand-primary hover:bg-blue-50 font-semibold py-3 rounded-xl text-base flex items-center justify-center gap-2">
                     Start Free Diagnostic <ArrowRight className="h-4 w-4" />
                   </Button>
                 }
@@ -829,13 +828,13 @@ export default function About() {
             </div>
 
             {/* Secondary CTA Card */}
-            <div className="bg-white border-4 border-[#2366c9] rounded-[2rem] p-8 text-left flex flex-col shadow-xl">
+            <div className="bg-white border-4 border-brand-primary rounded-[2rem] p-8 text-left flex flex-col shadow-xl">
               <h3 className="text-xl font-semibold text-slate-900 mb-2">Try a Free Interactive Demo</h3>
-              <p className="text-[#2366c9] text-sm font-semibold mb-4">Experience an H5P interactive lesson + spaced retrieval in action.</p>
-              <p className="text-slate-700 text-[14px] leading-relaxed mb-6 flex-1">
+              <p className="text-brand-primary text-sm font-semibold mb-4">Experience an H5P interactive lesson + spaced retrieval in action.</p>
+              <p className="text-slate-700 text-base leading-relaxed mb-6 flex-1">
                 See exactly what active learning feels like on EduMeUp — before committing to any course. No login required for the demo.
               </p>
-              <Button variant="outline" className="w-full border-2 border-[#2366c9] text-[#2366c9] hover:bg-[#2366c9] hover:text-white font-semibold py-3 rounded-xl text-[14px] flex items-center justify-center gap-2">
+              <Button variant="outline" className="w-full border-2 border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white font-semibold py-3 rounded-xl text-base flex items-center justify-center gap-2">
                 <Play className="h-4 w-4" /> Try the Demo
               </Button>
             </div>
@@ -844,10 +843,10 @@ export default function About() {
             <div className="bg-slate-100 rounded-[2rem] p-8 text-left flex flex-col shadow-sm">
               <h3 className="text-xl font-semibold text-slate-900 mb-2">Download the Research Bibliography</h3>
               <p className="text-slate-500 text-sm font-semibold mb-4">40-page PDF. 15+ peer-reviewed studies. Full citations.</p>
-              <p className="text-slate-600 text-[14px] leading-relaxed mb-6 flex-1">
+              <p className="text-slate-600 text-base leading-relaxed mb-6 flex-1">
                 For educators, school leaders, and parents who want to go deeper — the full research foundation behind the 10X Learning Leap Model™, with implementation notes for each study.
               </p>
-              <Button variant="outline" className="w-full border-2 border-slate-300 text-slate-700 hover:bg-slate-200 font-semibold py-3 rounded-xl text-[14px] flex items-center justify-center gap-2">
+              <Button variant="outline" className="w-full border-2 border-slate-300 text-slate-700 hover:bg-slate-200 font-semibold py-3 rounded-xl text-base flex items-center justify-center gap-2">
                 <Download className="h-4 w-4" /> Download Free PDF
               </Button>
             </div>
@@ -868,7 +867,7 @@ export default function About() {
           </div>
 
           {/* Secondary contact options */}
-          <div className="mt-8 flex flex-wrap justify-center gap-6 text-[14px]">
+          <div className="mt-8 flex flex-wrap justify-center gap-6 text-base">
             <a href="/consultation" className="text-blue-300 hover:text-white transition-colors">Free 30-minute consultation with a Cambridge expert</a>
             <a href="/support" className="text-blue-300 hover:text-white transition-colors">24/7 AI chat support</a>
             <a href="mailto:support@edumeup.com" className="text-blue-300 hover:text-white transition-colors">support@edumeup.com</a>

@@ -7,7 +7,7 @@ import {
   examPapersFeatures,
   examPapersReferences,
 } from "@/components/resources/exam-papers-content";
-import { ui } from "@/theme";
+
 
 export default function ExamPapers() {
   useEffect(() => {
@@ -33,7 +33,7 @@ export default function ExamPapers() {
 
   return (
     <Layout>
-      <section className={ui.sections.hero + " py-16 md:py-24"}>
+       <section className="bg-slate-50 py-16 md:py-24">
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 18 }}
@@ -53,26 +53,26 @@ export default function ExamPapers() {
             </p>
 
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Link href="/programs/ai-diagnostic">
-                <span className="inline-flex items-center rounded-full border border-blue-200 bg-white px-4 py-2 text-sm font-medium text-slate-900 hover:border-blue-300 hover:text-[#2366c9]">
+               <Link href="/programs/ai-diagnostic">
+                <span className="inline-flex items-center rounded-full border border-blue-200 bg-white px-4 py-2 text-sm font-bold text-slate-900 hover:border-brand-primary hover:text-brand-primary transition-colors cursor-pointer">
                   AI Diagnostic
                 </span>
               </Link>
               <Link href="/resources/all">
-                <span className="inline-flex items-center rounded-full border border-blue-200 bg-white px-4 py-2 text-sm font-medium text-slate-900 hover:border-blue-300 hover:text-[#2366c9]">
+                <span className="inline-flex items-center rounded-full border border-blue-200 bg-white px-4 py-2 text-sm font-bold text-slate-900 hover:border-brand-primary hover:text-brand-primary transition-colors cursor-pointer">
                   All Resources
                 </span>
               </Link>
               <Link href="/programs/complete-o-level">
-                <span className="inline-flex items-center rounded-full border border-blue-200 bg-white px-4 py-2 text-sm font-medium text-slate-900 hover:border-blue-300 hover:text-[#2366c9]">
+                <span className="inline-flex items-center rounded-full border border-blue-200 bg-white px-4 py-2 text-sm font-bold text-slate-900 hover:border-brand-primary hover:text-brand-primary transition-colors cursor-pointer">
                   Complete O-Level
                 </span>
               </Link>
             </div>
 
             <div className="mt-10">
-              <Link href="/resources/exam-papers">
-                <span className={`inline-flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold ${ui.buttons.brand}`}> 
+               <Link href="/resources/exam-papers">
+                <span className="inline-flex items-center gap-2 rounded-xl px-7 py-3.5 text-sm font-bold bg-brand-primary text-white hover:bg-brand-primary-dark transition-all cursor-pointer"> 
                   Explore Now
                   <ArrowRight className="h-4 w-4" />
                 </span>
@@ -82,9 +82,9 @@ export default function ExamPapers() {
         </div>
       </section>
 
-      <section className="py-14 md:py-20">
+       <section className="py-14 md:py-20">
         <div className="container-custom">
-          <div className={`${ui.cards.standard} mx-auto max-w-5xl p-6 md:p-8`}>
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-sm mx-auto max-w-5xl p-6 md:p-8">
             <h2 className="text-3xl font-semibold text-slate-900 md:text-4xl">What This Resource Provides</h2>
             <p className="mt-4 text-sm leading-relaxed text-slate-700 md:text-base">
               Cambridge O-Level exams test students differently by paper type.
@@ -104,8 +104,8 @@ export default function ExamPapers() {
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
-            <div className={`${ui.cards.standard} p-6`}>
-              <h3 className="text-xl font-semibold text-slate-900">Format A - Paper 1: Multiple Choice (Online, Time-Bound)</h3>
+           <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-6">
+              <h3 className="text-xl font-bold text-brand-navy">Format A - Paper 1: Multiple Choice (Online, Time-Bound)</h3>
               <p className="mt-3 text-sm leading-relaxed text-slate-700">
                 Paper 1 MCQ exams run directly on the platform with Cambridge-matched
                 timing and countdown control. On submission, enhanced solutions are
@@ -118,8 +118,8 @@ export default function ExamPapers() {
               </p>
             </div>
 
-            <div className={`${ui.cards.standard} p-6`}>
-              <h3 className="text-xl font-semibold text-slate-900">Format B - Paper 2: Essay/Structured Response (Download + Simulation)</h3>
+             <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-6">
+              <h3 className="text-xl font-bold text-brand-navy">Format B - Paper 2: Essay/Structured Response (Download + Simulation)</h3>
               <p className="mt-3 text-sm leading-relaxed text-slate-700">
                 Paper 2 practice is completed by hand using downloadable PDFs. Students
                 can do standard self-timed practice, or use real-time simulation:
@@ -146,8 +146,8 @@ export default function ExamPapers() {
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {examPapersFeatures.map((feature) => (
-              <div key={feature.title} className={ui.cards.standard + " p-6"}>
-                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-[#eef6ff] text-[#2366c9]">
+               <div key={feature.title} className="bg-white border border-slate-200 rounded-2xl shadow-sm p-6">
+                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-brand-primary-soft text-brand-primary">
                   <feature.icon className="h-5 w-5" />
                 </div>
                 <h3 className="text-xl font-semibold text-slate-900">{feature.title}</h3>
@@ -174,9 +174,9 @@ export default function ExamPapers() {
         </div>
       </section>
 
-      <section className={ui.sections.softBlue + " border-y border-blue-100 py-14 md:py-20"}>
+       <section className="bg-brand-primary-soft border-y border-slate-200 py-14 md:py-20">
         <div className="container-custom">
-          <div className={`${ui.cards.standard} mx-auto max-w-5xl p-6 md:p-8`}>
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-sm mx-auto max-w-5xl p-6 md:p-8">
             <h2 className="text-2xl font-semibold text-slate-900">Research References</h2>
             <div className="mt-4 space-y-3">
               {examPapersReferences.map((reference) => (
@@ -189,20 +189,20 @@ export default function ExamPapers() {
         </div>
       </section>
 
-      <section className="py-14 md:py-20">
+       <section className="py-14 md:py-20">
         <div className="container-custom">
-          <div className={`${ui.cards.standard} mx-auto max-w-5xl p-6 md:p-8`}>
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-sm mx-auto max-w-5xl p-6 md:p-8">
             <h2 className="text-3xl font-semibold text-slate-900 md:text-4xl">Pricing</h2>
             <p className="mt-3 text-sm text-slate-700">Confirm pricing from the owner.</p>
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              <Link href="/resources/exam-papers">
-                <span className="flex items-center justify-between rounded-xl border border-blue-200 bg-white px-5 py-4 text-sm font-semibold text-slate-900 hover:border-blue-300 hover:text-[#2366c9]">
+               <Link href="/resources/exam-papers">
+                <span className="flex items-center justify-between rounded-xl border border-blue-200 bg-white px-5 py-4 text-sm font-bold text-slate-900 hover:border-brand-primary hover:text-brand-primary transition-all cursor-pointer">
                   Start Exam Preparation
                   <ArrowRight className="h-4 w-4" />
                 </span>
               </Link>
-              <Link href="/resources/exam-papers">
-                <span className={`flex items-center justify-between rounded-xl px-5 py-4 text-sm font-semibold ${ui.buttons.brand}`}>
+               <Link href="/resources/exam-papers">
+                <span className="flex items-center justify-between rounded-xl px-5 py-4 text-sm font-bold bg-brand-primary text-white hover:bg-brand-primary-dark transition-all cursor-pointer">
                   View Sample Paper
                   <ArrowRight className="h-4 w-4" />
                 </span>

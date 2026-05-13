@@ -4,7 +4,6 @@ import { ArrowRight, CheckCircle2, Award, BookOpen } from "lucide-react";
 import { motion } from "framer-motion";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-import { ui } from "@/theme";
 
 const pathwaySteps = [
   { code: "CC", name: "Classroom English", duration: "Self-paced", cert: "Certificate of Completion" },
@@ -119,40 +118,41 @@ export default function TeacherCourses() {
   return (
     <Layout>
       {/* HERO */}
-      <section className={ui.sections.hero + " py-16 md:py-24"}>
-        <div className="container-custom">
+      <section className="py-20 md:py-32 bg-gradient-to-b from-brand-primary-soft to-white relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-64 h-64 bg-brand-primary opacity-5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
+        <div className="container-custom relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             className="max-w-5xl mx-auto text-center"
           >
-            <p className={ui.pills.brand + " mb-6 justify-center"}>
+            <span className="inline-flex items-center rounded-full bg-brand-primary/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand-primary mb-8">
               Cambridge Teacher Excellence
-            </p>
-            <h1 className="text-5xl md:text-7xl font-semibold text-slate-900 mb-6 tracking-tight leading-tight">
-              Seven Programmes. One Pathway. Examiner-Level Mastery.
+            </span>
+            <h1 className="text-5xl md:text-7xl font-bold text-neutral-text mb-8 tracking-tight leading-tight">
+              Seven Programmes. One Pathway. <br/><span className="text-brand-primary">Examiner-Level Mastery.</span>
             </h1>
-            <p className="text-base text-slate-700 max-w-3xl mx-auto leading-relaxed mb-8">
-              EduMeUp's teacher development pathway transforms any Cambridge teacher — regardless of starting point — into a specialist with examiner-level subject knowledge, evidence-based Cambridge pedagogy, and the confidence to produce consistent Band 1 student responses. The pathway begins with a diagnostic and ends with certification. Every programme is built on what research shows actually changes classroom teaching.
+            <p className="text-lg text-neutral-muted max-w-3xl mx-auto leading-relaxed mb-12 font-medium">
+              EduMeUp's teacher development pathway transforms any Cambridge teacher into a specialist with examiner-level subject knowledge, evidence-based pedagogy, and the confidence to produce consistent Band 1 student responses.
             </p>
 
-            <div className="flex flex-col md:flex-row gap-4 justify-center">
+            <div className="flex flex-col md:flex-row gap-6 justify-center items-center">
               <Link href="/diagnostic?role=teacher">
-                <span className={`inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[14px] font-semibold ${ui.buttons.brand}`}>
+                <Button className="h-14 px-10 rounded-2xl bg-brand-primary text-white font-bold text-lg hover:bg-brand-primary-dark shadow-xl transition-all hover:scale-105">
                   Start with the T1 Diagnostic
-                  <ArrowRight className="h-4 w-4" />
-                </span>
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
               </Link>
               <Link href="#programmes">
-                <span className={`inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[14px] font-semibold border-2 border-[#2366c9] text-[#2366c9] hover:bg-[#2366c9] hover:text-white transition-colors`}>
+                <Button variant="outline" className="h-14 px-10 rounded-2xl border-2 border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white font-bold text-lg transition-all">
                   View All Programmes
-                </span>
+                </Button>
               </Link>
             </div>
-            <p className="text-sm text-slate-600 mt-6">
+            <p className="text-sm text-neutral-muted mt-8 font-medium">
               <Link href="/for-schools">
-                <span className="text-[#2366c9] underline cursor-pointer">Are you a school? See the full teacher training offering for schools</span>
+                <span className="text-brand-primary font-bold hover:underline cursor-pointer">Are you a school? See the full teacher training offering for schools</span>
               </Link>
             </p>
           </motion.div>
@@ -160,360 +160,304 @@ export default function TeacherCourses() {
       </section>
 
       {/* TEACHER DEVELOPMENT PATHWAY */}
-      <section className={ui.sections.softBlue + " py-14 md:py-20"}>
+      <section className="py-20 md:py-32 bg-white">
         <div className="container-custom">
           <div className="mx-auto max-w-5xl">
-            <div className="text-center mb-10">
-              <h2 className="text-3xl md:text-4xl font-semibold text-slate-900 tracking-tight mb-6">
-                Every Teacher Has a Starting Point. The T1 Diagnostic Finds Yours.
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-5xl font-bold text-neutral-text tracking-tight mb-8">
+                Every Teacher Has a Starting Point. <br/><span className="text-brand-primary">The T1 Diagnostic Finds Yours.</span>
               </h2>
-              <p className="text-base text-black leading-relaxed">
-                The EduMeUp teacher pathway is not a fixed sequence every teacher completes in full. It is a diagnostic-driven, personalised development journey — you begin at the point your T1 results indicate, take the programmes that address your specific gaps, and earn certifications that verify your development at each stage.
+              <p className="text-lg text-neutral-muted leading-relaxed max-w-4xl mx-auto font-medium">
+                The EduMeUp teacher pathway is not a fixed sequence every teacher completes in full. It is a diagnostic-driven, personalised development journey — you begin at the point your T1 results indicate, take the programmes that address your specific gaps.
               </p>
             </div>
 
             {/* Pathway Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full text-[14px]">
+            <div className="overflow-hidden rounded-[2rem] border border-neutral-border shadow-2xl bg-white mb-12">
+              <table className="w-full text-base">
                 <thead>
-                  <tr className={ui.tables.header}>
-                    <th className="p-4 text-left">Code</th>
-                    <th className="p-4 text-left">Programme</th>
-                    <th className="p-4 text-left">Duration</th>
-                    <th className="p-4 text-left">Certification</th>
+                  <tr className="bg-brand-primary text-white">
+                    <th className="p-6 text-left font-bold uppercase tracking-wider text-sm">Code</th>
+                    <th className="p-6 text-left font-bold uppercase tracking-wider text-sm">Programme</th>
+                    <th className="p-6 text-left font-bold uppercase tracking-wider text-sm">Duration</th>
+                    <th className="p-6 text-left font-bold uppercase tracking-wider text-sm">Certification</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-neutral-border">
                   {pathwaySteps.map((step, idx) => (
-                    <tr key={idx} className={idx % 2 === 0 ? ui.tables.row : ui.tables.rowAlt}>
-                      <td className="p-4 font-semibold text-[#2366c9]">{step.code}</td>
-                      <td className="p-4">{step.name}</td>
-                      <td className="p-4">{step.duration}</td>
-                      <td className="p-4">{step.cert}</td>
+                    <tr key={idx} className="hover:bg-brand-primary-soft transition-colors">
+                      <td className="p-6 font-bold text-brand-primary">{step.code}</td>
+                      <td className="p-6 font-bold text-neutral-text">{step.name}</td>
+                      <td className="p-6 text-neutral-muted font-medium">{step.duration}</td>
+                      <td className="p-6 text-neutral-muted font-medium">{step.cert}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
 
-            <div className={`${ui.cards.standard} p-6 mt-8 border-l-4 border-[#2366c9]`}>
-              <p className="text-base font-semibold text-black mb-3">The recommended starting point for every teacher new to EduMeUp is T1 — the Subject Knowledge Diagnostic.</p>
-              <p className="text-[14px] text-black">It identifies your specific Cambridge knowledge and pedagogy gaps, and generates a personalised T2/T3/T4 development pathway. You do not have to guess what to study next.</p>
+            <div className="bg-brand-primary-soft p-8 rounded-2xl border-l-8 border-brand-primary shadow-sm">
+              <p className="text-lg font-bold text-neutral-text mb-3">The recommended starting point for every teacher new to EduMeUp is T1 — the Subject Knowledge Diagnostic.</p>
+              <p className="text-base text-neutral-muted font-medium">It identifies your specific Cambridge knowledge and pedagogy gaps, and generates a personalised T2/T3/T4 development pathway. You do not have to guess what to study next.</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* CLASSROOM ENGLISH COMMUNICATION */}
-      <section className="py-14 md:py-20 bg-white">
+      <section className="py-20 md:py-32 bg-neutral-surface">
         <div className="container-custom">
           <div className="mx-auto max-w-5xl">
-            <div className={`${ui.cards.standard} p-8 md:p-10 border-t-4 border-teal-600`}>
-              <div className="mb-6">
-                <p className="text-xs font-semibold uppercase tracking-wider text-teal-600 mb-2">Programme</p>
-                <h2 className="text-3xl font-semibold text-slate-900">Classroom English Communication (CC)</h2>
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="bg-white p-10 md:p-16 rounded-[3rem] border border-neutral-border shadow-2xl relative overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 w-40 h-40 bg-teal-500/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
+              <div className="mb-12 border-b border-neutral-border pb-8">
+                <span className="inline-flex items-center rounded-full bg-teal-100 px-3 py-1 text-xs font-bold uppercase tracking-widest text-teal-700 mb-4">
+                  Programme CC
+                </span>
+                <h2 className="text-4xl font-bold text-neutral-text">Classroom English Communication</h2>
+                <p className="text-lg text-neutral-muted mt-2 italic font-medium">[NEW PROGRAMME] Self-paced Moodle course</p>
               </div>
 
-              <div className="space-y-6">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Format</p>
-                  <p className="text-[14px] text-black">[NEW PROGRAMME] Self-paced Moodle course | Flexible — complete at your own pace</p>
-                </div>
-
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">CPD Hours & Certification</p>
-                  <p className="text-[14px] text-black">Counts towards CPD hours (exact hours TBD) | Certificate of Completion | Mastery Gate: 80% (course completion)</p>
-                </div>
-
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Who This Is For</p>
-                  <p className="text-[14px] text-black">Cambridge teachers whose first language is not English — specifically Urdu-speaking and Arabic-speaking teachers. Any teacher who wants to improve the precision and confidence of their English-medium instruction.</p>
-                </div>
-
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">7 Modules</p>
-                  <div className="space-y-3">
-                    {classroomEnglishModules.map((mod) => (
-                      <div key={mod.num} className="flex gap-4">
-                        <div className="flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-full bg-teal-100 text-teal-700 font-semibold text-xs">
-                          {mod.num}
-                        </div>
+              <div className="grid md:grid-cols-2 gap-16">
+                <div className="space-y-10">
+                  <div>
+                    <h4 className="text-xs font-bold uppercase tracking-widest text-neutral-muted mb-4">Format & Certification</h4>
+                    <ul className="space-y-4">
+                      <li className="flex items-start gap-3">
+                        <CheckCircle2 className="h-5 w-5 text-teal-600 mt-1 shrink-0" />
                         <div>
-                          <p className="font-semibold text-[14px] text-black">{mod.title}</p>
-                          <p className="text-[13px] text-slate-600 mt-1">{mod.desc}</p>
+                          <p className="font-bold text-neutral-text">Flexible Completion</p>
+                          <p className="text-sm text-neutral-muted">Self-paced, complete at your own speed.</p>
+                        </div>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <CheckCircle2 className="h-5 w-5 text-teal-600 mt-1 shrink-0" />
+                        <div>
+                          <p className="font-bold text-neutral-text">Mastery Gate: 80%</p>
+                          <p className="text-sm text-neutral-muted">Required for Certificate of Completion.</p>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h4 className="text-xs font-bold uppercase tracking-widest text-neutral-muted mb-4">Who This Is For</h4>
+                    <p className="text-base text-neutral-muted leading-relaxed font-medium">Cambridge teachers whose first language is not English — specifically Urdu-speaking and Arabic-speaking teachers. Any teacher who wants to improve precision and confidence.</p>
+                  </div>
+                </div>
+
+                <div className="space-y-8">
+                  <h4 className="text-xs font-bold uppercase tracking-widest text-neutral-muted">7 Strategic Modules</h4>
+                  <div className="space-y-4">
+                    {classroomEnglishModules.map((mod) => (
+                      <div key={mod.num} className="group p-4 rounded-xl hover:bg-neutral-surface transition-colors border border-transparent hover:border-neutral-border">
+                        <div className="flex gap-4">
+                          <div className="flex-shrink-0 h-10 w-10 flex items-center justify-center rounded-xl bg-teal-100 text-teal-700 font-bold text-sm group-hover:bg-teal-600 group-hover:text-white transition-all shadow-sm">
+                            {mod.num}
+                          </div>
+                          <div>
+                            <p className="font-bold text-neutral-text group-hover:text-teal-700 transition-colors">{mod.title}</p>
+                            <p className="text-xs text-neutral-muted mt-1 leading-relaxed">{mod.desc}</p>
+                          </div>
                         </div>
                       </div>
                     ))}
                   </div>
                 </div>
-
-                <div className="pt-6 border-t border-[#dbe7f4]">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">What You Receive</p>
-                  <ul className="space-y-2 text-[14px] text-black">
-                    <li className="flex gap-2">
-                      <CheckCircle2 className="h-4 w-4 shrink-0 text-teal-600 mt-0.5" />
-                      Certificate of Completion
-                    </li>
-                    <li className="flex gap-2">
-                      <CheckCircle2 className="h-4 w-4 shrink-0 text-teal-600 mt-0.5" />
-                      Verified proficiency in Cambridge classroom English
-                    </li>
-                    <li className="flex gap-2">
-                      <CheckCircle2 className="h-4 w-4 shrink-0 text-teal-600 mt-0.5" />
-                      Immediate improvement in the precision of mark-scheme feedback delivered to students
-                    </li>
-                  </ul>
-                </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* T1 DIAGNOSTIC */}
-      <section className={ui.sections.softBlue + " py-14 md:py-20"} id="programmes">
+      <section className="py-20 md:py-32 bg-white" id="programmes">
         <div className="container-custom">
           <div className="mx-auto max-w-5xl">
-            <div className={`${ui.cards.standard} p-8 md:p-10 border-t-4 border-blue-700`}>
-              <div className="mb-6">
-                <p className="text-xs font-semibold uppercase tracking-wider text-blue-700 mb-2">T1</p>
-                <h2 className="text-3xl font-semibold text-slate-900">{t1Details.title}</h2>
-                <p className="text-sm text-[#2366c9] font-semibold mt-2">{t1Details.tagline}</p>
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="bg-neutral-surface p-10 md:p-16 rounded-[3rem] border border-neutral-border shadow-2xl relative"
+            >
+              <div className="mb-12">
+                <span className="inline-flex items-center rounded-full bg-brand-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-brand-primary mb-4">
+                  Programme T1
+                </span>
+                <h2 className="text-4xl font-bold text-neutral-text">{t1Details.title}</h2>
+                <p className="text-sm text-brand-primary font-bold mt-4 uppercase tracking-widest">{t1Details.tagline}</p>
               </div>
 
-              <div className="space-y-6">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Format</p>
-                  <p className="text-[14px] text-black">{t1Details.format}</p>
+              <div className="grid md:grid-cols-3 gap-8 mb-12">
+                <div className="p-6 bg-white rounded-2xl border border-neutral-border shadow-sm">
+                  <p className="text-xs font-bold text-brand-primary uppercase mb-2 tracking-widest">Format</p>
+                  <p className="text-sm text-neutral-muted font-medium">AI-powered assessment — online, on demand.</p>
                 </div>
-
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="p-3 bg-blue-50 rounded-lg">
-                    <p className="text-xs font-semibold text-blue-700">CPD Hours</p>
-                    <p className="text-[13px] text-black mt-2">{t1Details.cpdHours}</p>
-                  </div>
-                  <div className="p-3 bg-blue-50 rounded-lg">
-                    <p className="text-xs font-semibold text-blue-700">Certification</p>
-                    <p className="text-[13px] text-black mt-2">{t1Details.certification}</p>
-                  </div>
-                  <div className="p-3 bg-blue-50 rounded-lg col-span-2">
-                    <p className="text-xs font-semibold text-blue-700">Mastery Gate</p>
-                    <p className="text-[13px] text-black mt-2">{t1Details.masteryGate}</p>
-                  </div>
+                <div className="p-6 bg-white rounded-2xl border border-neutral-border shadow-sm">
+                  <p className="text-xs font-bold text-brand-primary uppercase mb-2 tracking-widest">Duration</p>
+                  <p className="text-sm text-neutral-muted font-medium">60-90 minutes per subject.</p>
                 </div>
-
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Who This Is For</p>
-                  <p className="text-[14px] text-black">{t1Details.whoFor}</p>
-                </div>
-
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">What You Learn</p>
-                  <p className="text-[14px] text-black leading-relaxed">{t1Details.whatYouLearn}</p>
-                </div>
-
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">What You Receive</p>
-                  <p className="text-[14px] text-black leading-relaxed">{t1Details.whatYouReceive}</p>
-                </div>
-
-                <div className="pt-6 border-t border-[#dbe7f4]">
-                  <p className="text-sm font-semibold text-slate-900 mb-3">The T1 diagnostic is always a full-subject assessment — teachers cannot select individual topics for assessment.</p>
-                  <p className="text-[14px] text-black">This ensures the CPD pathway recommendation is based on a complete picture of the teacher's Cambridge readiness, not a partial view.</p>
+                <div className="p-6 bg-white rounded-2xl border border-neutral-border shadow-sm">
+                  <p className="text-xs font-bold text-brand-primary uppercase mb-2 tracking-widest">Certification</p>
+                  <p className="text-sm text-neutral-muted font-medium">Personalised CPD Pathway Report.</p>
                 </div>
               </div>
-            </div>
+
+              <div className="space-y-10 border-t border-neutral-border pt-12">
+                <div className="grid md:grid-cols-2 gap-12">
+                  <div>
+                    <h4 className="text-xs font-bold uppercase tracking-widest text-neutral-muted mb-4">What You Learn</h4>
+                    <p className="text-base text-neutral-muted leading-relaxed font-medium">{t1Details.whatYouLearn}</p>
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold uppercase tracking-widest text-neutral-muted mb-4">What You Receive</h4>
+                    <p className="text-base text-neutral-muted leading-relaxed font-medium">{t1Details.whatYouReceive}</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* T2 WORKSHOP */}
-      <section className="py-14 md:py-20 bg-white">
+      <section className="py-20 md:py-32 bg-brand-primary-soft">
         <div className="container-custom">
           <div className="mx-auto max-w-5xl">
-            <div className={`${ui.cards.standard} p-8 md:p-10 border-t-4 border-blue-900`}>
-              <div className="mb-6">
-                <p className="text-xs font-semibold uppercase tracking-wider text-blue-900 mb-2">T2</p>
-                <h2 className="text-3xl font-semibold text-slate-900">Cambridge Teacher Mastery Workshop (CTMW)</h2>
-                <p className="text-sm text-[#2366c9] font-semibold mt-2">[MOST IMPACTFUL — HIGHEST CPD VALUE]</p>
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="bg-brand-primary p-10 md:p-16 rounded-[4rem] text-white shadow-2xl relative overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 w-64 h-64 bg-brand-primary opacity-10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl" />
+              <div className="mb-12 text-center">
+                <span className="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-xs font-bold uppercase tracking-widest text-white mb-4">
+                  Programme T2
+                </span>
+                <h2 className="text-4xl md:text-5xl font-bold">Cambridge Teacher Mastery Workshop</h2>
+                <p className="text-sm text-white/80 font-bold mt-4 uppercase tracking-[0.3em]">[HIGHEST CPD VALUE]</p>
               </div>
 
-              <div className="space-y-6">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Format</p>
-                  <p className="text-[14px] text-black">In-person OR live online — one intensive day | One full day (7 hours of structured CPD)</p>
+              <div className="grid md:grid-cols-2 gap-16 mb-16">
+                <div className="space-y-6">
+                  <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
+                    <h4 className="text-xs font-bold text-white uppercase tracking-widest mb-2">Key Highlights</h4>
+                    <ul className="space-y-3">
+                      <li className="flex items-center gap-3 text-sm font-medium">
+                        <CheckCircle2 className="h-4 w-4 text-status-success shrink-0" />
+                        7 CPD Hours (Highest Single Award)
+                      </li>
+                      <li className="flex items-center gap-3 text-sm font-medium">
+                        <CheckCircle2 className="h-4 w-4 text-status-success shrink-0" />
+                        Mastery Gate: 88%
+                      </li>
+                      <li className="flex items-center gap-3 text-sm font-medium">
+                        <CheckCircle2 className="h-4 w-4 text-status-success shrink-0" />
+                        CCTE Certification
+                      </li>
+                    </ul>
+                  </div>
+                  <p className="text-base text-blue-100/70 font-medium leading-relaxed">
+                    The CTMW is the most impactful single-day training on the EduMeUp pathway. It bridges the gap between subject knowledge and examiner-standard instruction.
+                  </p>
                 </div>
 
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Key Details</p>
-                  <p className="text-[14px] text-black"><strong>CPD Hours:</strong> 7 CPD Hours — the highest single-session CPD award on the EduMeUp pathway</p>
-                  <p className="text-[14px] text-black mt-2"><strong>Certification:</strong> Cambridge Certificate of Cambridge Teaching Excellence (CCTE)</p>
-                  <p className="text-[14px] text-black mt-2"><strong>Mastery Gate:</strong> 88% — the teacher certification mastery gate</p>
-                </div>
-
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">7 Modules — What the Day Covers</p>
-                  <div className="space-y-3">
+                <div className="space-y-4">
+                  <h4 className="text-xs font-bold text-white uppercase tracking-widest">Intensive Modules</h4>
+                  <div className="space-y-3 max-h-[300px] overflow-y-auto pr-4 custom-scrollbar">
                     {t2Modules.map((mod) => (
-                      <div key={mod.num} className="flex gap-4 p-4 bg-slate-50 rounded-lg">
-                        <div className="flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-full bg-blue-700 text-white font-semibold text-xs">
-                          {mod.num}
-                        </div>
-                        <div>
-                          <p className="font-semibold text-[14px] text-black">{mod.title}</p>
-                          <p className="text-[13px] text-slate-600 mt-1">{mod.desc}</p>
-                        </div>
+                      <div key={mod.num} className="p-4 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
+                        <p className="font-bold text-white text-sm">{mod.num}. {mod.title}</p>
+                        <p className="text-xs text-blue-100/60 mt-1">{mod.desc}</p>
                       </div>
                     ))}
                   </div>
                 </div>
-
-                <div className="pt-6 border-t border-[#dbe7f4]">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">What Teachers Leave With</p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <p className="font-semibold text-[14px] text-[#2366c9] mb-3">Practical tools — ready tomorrow:</p>
-                      <ul className="space-y-2">
-                        <li className="flex gap-2 text-[14px] text-black">
-                          <CheckCircle2 className="h-4 w-4 shrink-0 text-green-500 mt-0.5" />
-                          A personalised 3-week lesson improvement plan
-                        </li>
-                        <li className="flex gap-2 text-[14px] text-black">
-                          <CheckCircle2 className="h-4 w-4 shrink-0 text-green-500 mt-0.5" />
-                          One retrieval practice opener for their next lesson
-                        </li>
-                        <li className="flex gap-2 text-[14px] text-black">
-                          <CheckCircle2 className="h-4 w-4 shrink-0 text-green-500 mt-0.5" />
-                          The Cambridge command word taxonomy — annotated
-                        </li>
-                        <li className="flex gap-2 text-[14px] text-black">
-                          <CheckCircle2 className="h-4 w-4 shrink-0 text-green-500 mt-0.5" />
-                          A mark-loss pattern analysis for their subject
-                        </li>
-                        <li className="flex gap-2 text-[14px] text-black">
-                          <CheckCircle2 className="h-4 w-4 shrink-0 text-green-500 mt-0.5" />
-                          The 3-phase retention lesson structure template
-                        </li>
-                      </ul>
-                    </div>
-                    <div>
-                      <p className="font-semibold text-[14px] text-[#2366c9] mb-3">What the CCTE Certificate confirms:</p>
-                      <ul className="space-y-2">
-                        <li className="flex gap-2 text-[14px] text-black">
-                          <Award className="h-4 w-4 shrink-0 text-[#2366c9] mt-0.5" />
-                          Cambridge assessment architecture competency (AO1/AO2/AO3)
-                        </li>
-                        <li className="flex gap-2 text-[14px] text-black">
-                          <Award className="h-4 w-4 shrink-0 text-[#2366c9] mt-0.5" />
-                          Evidence-based retention lesson design skills
-                        </li>
-                        <li className="flex gap-2 text-[14px] text-black">
-                          <Award className="h-4 w-4 shrink-0 text-[#2366c9] mt-0.5" />
-                          Examination strategy teaching capability
-                        </li>
-                        <li className="flex gap-2 text-[14px] text-black">
-                          <Award className="h-4 w-4 shrink-0 text-[#2366c9] mt-0.5" />
-                          Classroom management for academic culture
-                        </li>
-                        <li className="flex gap-2 text-[14px] text-black">
-                          <Award className="h-4 w-4 shrink-0 text-[#2366c9] mt-0.5" />
-                          Cambridge AI tool integration capability
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* T3 SMK */}
-      <section className={ui.sections.softBlue + " py-14 md:py-20"}>
-        <div className="container-custom">
-          <div className="mx-auto max-w-5xl">
-            <div className={`${ui.cards.standard} p-8 md:p-10 border-t-4 border-purple-600`}>
-              <div className="mb-6">
-                <p className="text-xs font-semibold uppercase tracking-wider text-purple-600 mb-2">T3</p>
-                <h2 className="text-3xl font-semibold text-slate-900">Subject Mastery Knowledge Training (SMK)</h2>
-                <p className="text-sm text-[#2366c9] font-semibold mt-2">[SUBJECT-SPECIFIC — PER SUBJECT]</p>
               </div>
 
-              <div className="space-y-6">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Format</p>
-                  <p className="text-[14px] text-black">Self-paced Moodle course — complete at your own pace | Flexible — typically 4-8 weeks per subject depending on gap depth</p>
-                </div>
-
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Key Details</p>
-                  <p className="text-[14px] text-black"><strong>CPD Hours:</strong> CPD hours awarded proportional to modules completed (TBD per subject)</p>
-                  <p className="text-[14px] text-black mt-2"><strong>Certification:</strong> Subject Mastery Knowledge Certificate (SMKC) — one per subject completed</p>
-                  <p className="text-[14px] text-black mt-2"><strong>Mastery Gate:</strong> 88% — must achieve 88% on the end-of-subject assessment to earn the SMKC</p>
-                </div>
-
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Available For All 10 Cambridge O-Level Subjects</p>
-                  <div className="flex flex-wrap gap-2">
-                    {t3Subjects.map((subject) => (
-                      <span key={subject} className="px-3 py-1.5 bg-purple-100 text-purple-700 rounded-full text-[13px] font-semibold">
-                        {subject}
-                      </span>
+              <div className="pt-12 border-t border-white/10 flex flex-col md:flex-row gap-12">
+                <div className="flex-1">
+                  <h4 className="text-sm font-bold text-white mb-4 uppercase tracking-wider">The CCTE Certificate confirms:</h4>
+                  <ul className="grid grid-cols-1 gap-3">
+                    {[
+                      "Assessment architecture competency",
+                      "Retention lesson design skills",
+                      "Examination strategy teaching",
+                      "Academic culture management",
+                      "AI tool integration capability"
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-center gap-2 text-sm font-medium">
+                        <Award className="h-4 w-4 text-white" /> {item}
+                      </li>
                     ))}
-                  </div>
+                  </ul>
                 </div>
-
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Who This Is For</p>
-                  <p className="text-[14px] text-black">Teachers whose T1 diagnostic identified specific subject knowledge gaps at Cambridge examiner depth. Teachers who want to achieve verified mastery of the Cambridge syllabus for their subject — not just familiarity. Each T3 programme is for one specific subject.</p>
-                </div>
-
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">What You Receive</p>
-                  <p className="text-[14px] text-black">Subject Mastery Knowledge Certificate (SMKC) for the subject completed — internationally recognised by EduMeUp as evidence of examiner-level Cambridge subject mastery. CPD hours documented. Dashboard updated to reflect T3 completion. T3 completion in a subject unlocks advanced features in the T6 AI Teaching Tools for that subject.</p>
+                <div className="flex-1">
+                  <h4 className="text-sm font-bold text-white mb-4 uppercase tracking-wider">Practical tools included:</h4>
+                  <ul className="grid grid-cols-1 gap-3">
+                    {[
+                      "3-week lesson improvement plan",
+                      "Retrieval practice openers",
+                      "Command word taxonomy",
+                      "Mark-loss pattern analysis",
+                      "Retention lesson templates"
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-center gap-2 text-sm font-medium">
+                        <CheckCircle2 className="h-4 w-4 text-status-success" /> {item}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* T6 AI TOOLS */}
-      <section className="py-14 md:py-20 bg-white">
+      <section className="py-20 md:py-32 bg-white">
         <div className="container-custom">
           <div className="mx-auto max-w-5xl">
-            <div className="text-center mb-12">
-              <p className={ui.pills.brand + " mb-5 justify-center"}>
-                T6 AI Teaching Tools
-              </p>
-              <h2 className="text-4xl font-semibold text-slate-900 tracking-tight">
-                5 Cambridge-Calibrated AI Tools
+            <div className="text-center mb-20">
+              <span className="inline-flex items-center rounded-full bg-brand-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-brand-primary mb-4">
+                Programme T6
+              </span>
+              <h2 className="text-4xl md:text-6xl font-bold text-neutral-text tracking-tighter">
+                AI Teaching <span className="text-brand-primary">Ecosystem</span>
               </h2>
-              <p className="text-base text-slate-600 mt-4">Available after T2 completion — tools unlock progressively as you complete further pathway stages</p>
+              <p className="text-lg text-neutral-muted mt-6 font-medium italic">Available after T2 completion — tools unlock progressively as you grow</p>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-12">
               {tools.map((tool) => (
                 <motion.div
                   key={tool.num}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  className={`${ui.cards.standard} p-6 md:p-8 hover:shadow-lg transition-shadow`}
+                  className="bg-neutral-surface p-10 rounded-[2.5rem] border border-neutral-border shadow-xl hover:shadow-2xl transition-all relative overflow-hidden group"
                 >
-                  <div className="flex items-start gap-4 mb-4">
-                    <div className="flex-shrink-0 h-10 w-10 flex items-center justify-center rounded-full bg-[#2366c9] text-white font-bold text-sm">
-                      {tool.num}
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-brand-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl group-hover:bg-brand-primary/10 transition-all" />
+                  <div className="flex flex-col md:flex-row gap-10">
+                    <div className="flex-shrink-0">
+                      <div className="h-16 w-16 flex items-center justify-center rounded-[1.25rem] bg-brand-primary text-white font-bold text-xl shadow-lg">
+                        {tool.num}
+                      </div>
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-2xl font-semibold text-[#2366c9]">{tool.title}</h3>
+                      <h3 className="text-2xl font-bold text-brand-primary mb-4">{tool.title}</h3>
+                      <p className="text-base text-neutral-text leading-relaxed font-medium mb-8">{tool.desc}</p>
+                      <div className="p-6 bg-white rounded-2xl border border-brand-primary-soft shadow-inner">
+                        <p className="text-xs font-bold text-brand-primary mb-2 uppercase tracking-[0.2em]">Why It Matters:</p>
+                        <p className="text-sm text-neutral-muted italic font-medium leading-relaxed">{tool.why}</p>
+                      </div>
                     </div>
-                  </div>
-                  <p className="text-[14px] text-black mb-4 leading-relaxed">{tool.desc}</p>
-                  <div className="p-4 bg-blue-50 rounded-lg">
-                    <p className="text-xs font-semibold text-[#2366c9] mb-2">WHY IT MATTERS:</p>
-                    <p className="text-[13px] text-black italic">{tool.why}</p>
                   </div>
                 </motion.div>
               ))}
@@ -523,66 +467,61 @@ export default function TeacherCourses() {
       </section>
 
       {/* RESEARCH FOUNDATION */}
-      <section className={ui.sections.softBlue + " py-14 md:py-20"}>
+      <section className="py-20 md:py-32 bg-neutral-surface">
         <div className="container-custom">
           <div className="mx-auto max-w-5xl">
-            <div className="text-center mb-12">
-              <p className={ui.pills.brand + " mb-5 justify-center"}>
+            <div className="text-center mb-20">
+              <span className="inline-flex items-center rounded-full bg-brand-navy/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-brand-navy mb-4">
                 The Evidence
-              </p>
-              <h2 className="text-4xl font-semibold text-slate-900 tracking-tight">
-                Every EduMeUp Programme Is Grounded in Educational Research
+              </span>
+              <h2 className="text-4xl md:text-5xl font-bold text-neutral-text tracking-tight">
+                Grounded in <span className="text-brand-primary">Educational Research</span>
               </h2>
             </div>
 
-            <div className="space-y-6">
-              <div className={`${ui.cards.standard} p-6 md:p-8 border-l-4 border-[#2366c9]`}>
-                <p className="text-sm font-semibold text-[#2366c9] mb-2">Hattie (2009)</p>
-                <h3 className="text-xl font-semibold text-slate-900 mb-3">Visible Learning</h3>
-                <p className="text-[14px] text-black leading-relaxed">Teacher quality is the single most powerful in-school factor affecting student achievement — more than class size, school resources, or curriculum. The effect size of teacher expertise on student outcomes is d=0.49, among the highest modifiable factors in education.</p>
-              </div>
-
-              <div className={`${ui.cards.standard} p-6 md:p-8 border-l-4 border-[#2366c9]`}>
-                <p className="text-sm font-semibold text-[#2366c9] mb-2">Shulman (1986)</p>
-                <h3 className="text-xl font-semibold text-slate-900 mb-3">Pedagogical Content Knowledge</h3>
-                <p className="text-[14px] text-black leading-relaxed">Knowing a subject thoroughly and knowing how to teach it for examination performance are distinct competencies. The most significant differentiator between teachers who produce Cambridge results and those who do not is not subject knowledge — it is pedagogical content knowledge (PCK): how to translate subject expertise into student examination performance.</p>
-              </div>
-
-              <div className={`${ui.cards.standard} p-6 md:p-8 border-l-4 border-[#2366c9]`}>
-                <p className="text-sm font-semibold text-[#2366c9] mb-2">Darling-Hammond et al. (2017)</p>
-                <h3 className="text-xl font-semibold text-slate-900 mb-3">Effective Teacher Professional Development</h3>
-                <p className="text-[14px] text-black leading-relaxed">CPD that produces lasting change in classroom practice is: sustained (not one-off); content-specific (not generic); directly connected to classroom application; collaborative; and provides coaching or follow-up. One-day workshops that meet none of these criteria produce no measurable improvement in teacher practice.</p>
-              </div>
+            <div className="grid md:grid-cols-1 gap-10">
+              {[
+                { author: "Hattie (2009)", title: "Visible Learning", desc: "Teacher quality is the single most powerful in-school factor affecting student achievement. The effect size of teacher expertise is d=0.49." },
+                { author: "Shulman (1986)", title: "Pedagogical Content Knowledge", desc: "Knowing how to translate subject expertise into student examination performance is the key differentiator for results." },
+                { author: "Darling-Hammond (2017)", title: "Effective CPD", desc: "CPD that produces lasting change must be sustained, content-specific, and connected to classroom application." }
+              ].map((item, i) => (
+                <div key={i} className="bg-white p-10 rounded-[2.5rem] border-l-[12px] border-brand-primary shadow-xl">
+                  <p className="text-xs font-bold text-brand-primary mb-2 uppercase tracking-widest">{item.author}</p>
+                  <h3 className="text-2xl font-bold text-neutral-text mb-4">{item.title}</h3>
+                  <p className="text-base text-neutral-muted leading-relaxed font-medium">{item.desc}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
       {/* FINAL CTA */}
-      <section className={ui.sections.brand + " py-20 md:py-32"}>
-        <div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
-        <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
+      <section className="py-24 md:py-40 bg-white relative overflow-hidden border-t border-neutral-border">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-primary/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-[120px]" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-brand-primary/5 rounded-full -translate-x-1/2 translate-y-1/2 blur-[120px]" />
         <div className="container-custom text-center relative z-10">
-          <h2 className="text-4xl md:text-6xl text-white font-semibold leading-[1.05] mb-5 tracking-tight">
-            Start Where the Evidence Starts — With Your Diagnostic.
+          <h2 className="text-5xl md:text-8xl text-neutral-text font-bold leading-tight mb-8 tracking-tighter">
+            Find Your <br/><span className="text-brand-primary">Starting Point.</span>
           </h2>
-          <p className="text-base text-blue-200 mb-12 max-w-3xl mx-auto">
-            The T1 diagnostic tells you which programmes you need and in which order — based on your actual gaps, not a generic CPD recommendation. Start there.
+          <p className="text-xl text-neutral-muted max-w-2xl mx-auto mb-16 font-medium leading-relaxed">
+            The T1 diagnostic identifies your specific gaps and generates your personalised pathway. No guesswork, just mastery.
           </p>
-          <div className="flex flex-col md:flex-row justify-center gap-6">
+          <div className="flex flex-col md:flex-row justify-center gap-8">
             <Link href="/diagnostic?role=teacher">
-              <Button size="lg" className={`w-full md:w-auto min-w-[260px] font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2 ${ui.buttons.brandLight}`}>
-                Take the T1 Diagnostic <ArrowRight className="h-4 w-4" />
+              <Button className="h-16 px-12 rounded-[1.5rem] bg-brand-primary text-white font-bold text-xl hover:bg-brand-primary-dark shadow-2xl transition-all transform hover:scale-105">
+                Take the T1 Diagnostic <ArrowRight className="ml-3 h-6 w-6" />
               </Button>
             </Link>
             <Link href="/contact">
-              <Button size="lg" variant="outline" className={`w-full md:w-auto min-w-[260px] font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2 ${ui.buttons.brandOutline}`}>
-                Training Your School's Teaching Team?
+              <Button variant="outline" className="h-16 px-12 rounded-[1.5rem] border-2 border-brand-primary text-brand-primary font-bold text-xl hover:bg-brand-primary/5 shadow-xl transition-all transform hover:scale-105">
+                Training Your School Team?
               </Button>
             </Link>
           </div>
         </div>
       </section>
+
     </Layout>
   );
 }

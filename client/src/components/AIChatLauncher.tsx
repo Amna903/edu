@@ -123,7 +123,7 @@ export function AIChatLauncher({ className }: AIChatLauncherProps) {
       <Button
         type="button"
         onClick={() => setOpen(true)}
-        className={className ?? "bg-[#2366c9] text-white hover:bg-[#1c56aa]"}
+        className={className ?? "bg-brand-primary text-white hover:bg-brand-primary-dark"}
       >
         <MessageCircle className="h-4 w-4" />
         AI Support
@@ -145,7 +145,7 @@ export function AIChatLauncher({ className }: AIChatLauncherProps) {
                   key={message.id}
                   className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-6 shadow-sm ${
                     message.role === "user"
-                      ? "ml-auto bg-[#2366c9] text-white rounded-br-md"
+                      ? "ml-auto bg-brand-primary text-white rounded-br-md"
                       : "mr-auto border border-slate-200 bg-white text-slate-800 rounded-bl-md"
                   }`}
                 >
@@ -166,12 +166,12 @@ export function AIChatLauncher({ className }: AIChatLauncherProps) {
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Type your question..."
                   disabled={isSending}
-                  className="flex-1 rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-800 outline-none focus:border-[#2366c9] focus:ring-2 focus:ring-blue-100"
+                  className="flex-1 rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-800 outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary-soft"
                 />
                 <button
                   type="submit"
                   disabled={!canSend}
-                  className="rounded-xl bg-[#2366c9] px-5 py-3 text-sm font-bold text-white hover:bg-[#1c56aa] disabled:cursor-not-allowed disabled:opacity-50"
+                  className="rounded-xl bg-brand-primary px-5 py-3 text-sm font-bold text-white hover:bg-brand-primary-dark disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Send
                 </button>

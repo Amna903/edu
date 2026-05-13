@@ -192,7 +192,7 @@ export default function ForStudents() {
       courses: "Learn How to Learn (6 modules) — Cornell note-taking, spaced retrieval, exam strategy, academic independence. Vocabulary Mastery Gr5-7 (7 modules). Reading Comprehension RC68 (10 modules, Foundation and Challenge tracks, CEFR A2-B1+). ESL1 (CEFR A2). ESL2 (CEFR B1). English Bridge B1+ to B2. Classroom English Communication (student sections).",
       linkText: "Start here",
       link: "/programs/must-have-courses",
-      color: "border-[#2366c9]"
+      color: "border-brand-primary"
     },
     {
       id: "CAT 2",
@@ -306,11 +306,11 @@ export default function ForStudents() {
 
   const colorMap: Record<string, { bg: string; text: string; border: string; light: string; header: string }> = {
     blue: {
-      bg: "bg-[#2366c9]",
-      text: "text-[#2366c9]",
+      bg: "bg-brand-primary",
+      text: "text-brand-primary",
       border: "border-blue-100",
       light: "bg-blue-50/50",
-      header: "bg-[#2366c9]"
+      header: "bg-brand-primary"
     },
     navy: {
       bg: "bg-[#1e3a8a]",
@@ -397,7 +397,7 @@ export default function ForStudents() {
       content: "A chemical equation is displayed at the top. Below it, a diagram shows boxes labelled 'moles of H2', 'moles of O2', and 'moles of H2O' with drag-target zones. On the right side, draggable tiles show values: 2 mol, 1 mol, 2 mol, 4 mol, 32 g, 36 g. Students drag the correct values into the diagram. An animated progress indicator shows 0/3 correct. A 'Check Answers' button is highlighted in teal. Timer is optional — student can turn it on or off.",
       correctFeedback: "Excellent AO2 application. The mole ratio directly reflects the balancing numbers in the equation: 2:1:2. You correctly used the stoichiometric ratio — not the masses — to determine the mole quantities. This is the most common error Cambridge examiners report in this topic: students confuse mass ratio with mole ratio. Now try the extension question below: How many moles of water are produced from 4 moles of hydrogen, assuming oxygen is in excess?",
       incorrectFeedback: "Not quite. Remember: the mole ratio in a chemical equation comes from the balancing numbers (the large numbers in front of each formula), not from the relative molecular masses. The balancing number for H2 is 2, for O2 is 1, and for H2O is 2. So the mole ratio is 2:1:2. Review the Mole Ratio video note below, then try again.",
-      color: "teal"
+      color: "brand-primary"
     },
     {
       id: 2,
@@ -424,7 +424,7 @@ export default function ForStudents() {
   ];
 
   const h5pTheme: Record<string, any> = {
-    teal: { header: "bg-[#0d9488]", body: "bg-[#f0fdfa]", text: "text-[#0d9488]", title: "text-[#0d9488]" },
+    "brand-primary": { header: "bg-brand-primary", body: "bg-blue-50/30", text: "text-brand-primary", title: "text-brand-primary" },
     navy: { header: "bg-[#1e3a8a]", body: "bg-[#eff6ff]", text: "text-[#1e3a8a]", title: "text-[#1e3a8a]" },
     purple: { header: "bg-[#7c3aed]", body: "bg-[#f5f3ff]", text: "text-[#7c3aed]", title: "text-[#7c3aed]" }
   };
@@ -455,19 +455,19 @@ export default function ForStudents() {
               <div className="max-w-7xl mx-auto relative z-10">
                 <div className="grid lg:grid-cols-2 gap-12 items-center">
                   <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6 max-w-2xl">
-                    <span className="inline-block rounded-full bg-blue-50 border border-blue-100 px-3 py-1 text-sm font-bold tracking-wide text-[#2366c9] uppercase">
+                    <span className="inline-block rounded-full bg-blue-50 border border-blue-100 px-3 py-1 text-sm font-bold tracking-wide text-brand-primary uppercase">
                       Your Cambridge O-Level Journey — Powered by AI, Proven by Science
                     </span>
                     <h1 className="text-4xl md:text-5xl lg:text-7xl font-semibold leading-[1.1] tracking-tight text-slate-900">
                       Start Mastering.
-                      <span className="block text-[#2366c9] mt-2 text-2xl md:text-3xl">The only Cambridge platform that knows exactly what you need — before you ask.</span>
+                      <span className="block text-brand-primary mt-2 text-2xl md:text-3xl">The only Cambridge platform that knows exactly what you need — before you ask.</span>
                     </h1>
                     <p className="text-lg text-slate-600 font-medium leading-relaxed">
                       Most students spend their Cambridge journey studying the wrong things — spending time on topics they already understand while their actual gaps remain unaddressed. EduMeUp fixes this. A free 30-minute diagnostic identifies your exact gaps. An AI-powered pathway tells you precisely what to study, in which order, and at which pace. Mastery-gated courses ensure you genuinely understand before advancing. The result: 75%+ long-term retention vs. the 5% that traditional studying produces.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 pt-4">
                       <Link href="/diagnostics">
-                        <Button className="w-full sm:w-auto h-14 px-8 bg-[#2366c9] hover:bg-blue-600 text-white text-lg font-bold rounded-xl shadow-[0_15px_30px_rgba(35,102,201,0.4)]">
+                        <Button className="w-full sm:w-auto h-14 px-8 bg-brand-primary hover:bg-blue-600 text-white text-lg font-bold rounded-xl shadow-[0_15px_30px_rgba(35,102,201,0.4)]">
                           Take the Free Diagnostic
                         </Button>
                       </Link>
@@ -480,14 +480,14 @@ export default function ForStudents() {
                     <p className="text-sm text-slate-500">Free · No login required to start · Results in 30 minutes</p>
 
                     <div className="flex flex-wrap gap-3 pt-6">
-                      <div className="flex items-center gap-2 bg-white rounded-full px-4 py-2 text-[14px] font-semibold text-slate-700 border border-slate-200 shadow-sm">
-                        <Award className="h-4 w-4 text-[#2366c9]" /> 91% pass rate — Designed to Achieve
+                      <div className="flex items-center gap-2 bg-white rounded-full px-4 py-2 text-base font-semibold text-slate-700 border border-slate-200 shadow-sm">
+                        <Award className="h-4 w-4 text-brand-primary" /> 91% pass rate — Designed to Achieve
                       </div>
-                      <div className="flex items-center gap-2 bg-white rounded-full px-4 py-2 text-[14px] font-semibold text-slate-700 border border-slate-200 shadow-sm">
-                        <BarChart3 className="h-4 w-4 text-[#2366c9]" /> 75%+ long-term retention vs. 5% from passive study
+                      <div className="flex items-center gap-2 bg-white rounded-full px-4 py-2 text-base font-semibold text-slate-700 border border-slate-200 shadow-sm">
+                        <BarChart3 className="h-4 w-4 text-brand-primary" /> 75%+ long-term retention vs. 5% from passive study
                       </div>
-                      <div className="flex items-center gap-2 bg-white rounded-full px-4 py-2 text-[14px] font-semibold text-slate-700 border border-slate-200 shadow-sm">
-                        <Lock className="h-4 w-4 text-[#2366c9]" /> Private diagnostic results — only you see them
+                      <div className="flex items-center gap-2 bg-white rounded-full px-4 py-2 text-base font-semibold text-slate-700 border border-slate-200 shadow-sm">
+                        <Lock className="h-4 w-4 text-brand-primary" /> Private diagnostic results — only you see them
                       </div>
                     </div>
                   </motion.div>
@@ -496,14 +496,14 @@ export default function ForStudents() {
                     <div className="bg-white rounded-[2.5rem] border border-white/20 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.5)] overflow-hidden scale-105 origin-center text-slate-800">
                       <div className="bg-slate-900 px-6 py-4 flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-[#2366c9] flex items-center justify-center text-white font-bold text-xs">ZH</div>
+                          <div className="w-8 h-8 rounded-full bg-brand-primary flex items-center justify-center text-white font-bold text-xs">ZH</div>
                           <div className="text-left">
-                            <p className="text-white font-bold text-[10px] leading-tight">Student: Zainab H.</p>
+                            <p className="text-white font-bold text-xs leading-tight">Student: Zainab H.</p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2 text-[#2366c9]">
+                        <div className="flex items-center gap-2 text-brand-primary">
                           <Activity className="w-3 h-3 animate-pulse" />
-                          <span className="text-[10px] font-black uppercase tracking-widest">Live Updates</span>
+                          <span className="text-xs font-black uppercase tracking-widest">Live Updates</span>
                         </div>
                       </div>
                       <div className="p-6 space-y-6 bg-slate-50/50">
@@ -511,8 +511,8 @@ export default function ForStudents() {
                           <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Subject Progress</p>
                           <div className="space-y-4">
                             <div>
-                              <div className="flex justify-between text-sm mb-1 font-bold"><span>Chemistry</span><span className="text-[#2366c9]">72%</span></div>
-                              <div className="h-2 bg-slate-100 rounded-full"><div className="h-full bg-[#2366c9] rounded-full" style={{ width: '72%' }}></div></div>
+                              <div className="flex justify-between text-sm mb-1 font-bold"><span>Chemistry</span><span className="text-brand-primary">72%</span></div>
+                              <div className="h-2 bg-slate-100 rounded-full"><div className="h-full bg-brand-primary rounded-full" style={{ width: '72%' }}></div></div>
                             </div>
                             <div>
                               <div className="flex justify-between text-sm mb-1 font-bold"><span>Physics</span><span className="text-amber-500">58%</span></div>
@@ -533,8 +533,8 @@ export default function ForStudents() {
                         </div>
                         <div className="bg-blue-50/50 border border-blue-200 rounded-xl p-4 shadow-sm">
                           <div className="flex items-center gap-2 mb-2">
-                            <MessageCircle className="h-4 w-4 text-[#2366c9]" />
-                            <p className="font-bold text-sm text-[#2366c9]">AI Study Advisor</p>
+                            <MessageCircle className="h-4 w-4 text-brand-primary" />
+                            <p className="font-bold text-sm text-brand-primary">AI Study Advisor</p>
                           </div>
                           <p className="text-xs text-slate-700 leading-relaxed font-medium">
                             "Based on your recent Physics mock, I recommend revising Kinematics. You lost 4 marks on AO2 application questions. Here is a targeted practice set."
@@ -559,13 +559,13 @@ export default function ForStudents() {
 
                 <div className="grid md:grid-cols-2 gap-6">
                   {problems.map((prob, i) => (
-                    <Card key={i} className="border-l-4 border-l-[#2366c9] border-y-slate-200 border-r-slate-200 shadow-sm rounded-r-2xl rounded-l-none bg-white">
+                    <Card key={i} className="border-l-4 border-l-brand-primary border-y-slate-200 border-r-slate-200 shadow-sm rounded-r-2xl rounded-l-none bg-white">
                       <CardContent className="p-8">
                         <h3 className="text-xl font-bold text-slate-900 mb-3">{prob.title}</h3>
                         <p className="text-slate-600 mb-6 font-medium leading-relaxed">{prob.desc}</p>
                         <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                          <p className="text-[14px] font-medium text-slate-800">
-                            <span className="font-bold text-[#2366c9] mr-1">EduMeUp fix:</span> {prob.fix}
+                          <p className="text-base font-medium text-slate-800">
+                            <span className="font-bold text-brand-primary mr-1">EduMeUp fix:</span> {prob.fix}
                           </p>
                         </div>
                       </CardContent>
@@ -592,18 +592,18 @@ export default function ForStudents() {
                   {categories.map((cat, i) => (
                     <div key={i} className={`border-l-4 ${cat.color} bg-white shadow-sm hover:shadow-md transition-all rounded-r-2xl border-y border-r border-slate-100 p-6 md:p-8 flex flex-col md:flex-row gap-6 items-start`}>
                       <div className="md:w-1/4 shrink-0">
-                        <span className="inline-block px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-md bg-slate-100 text-slate-600 mb-3">{cat.id}</span>
+                        <span className="inline-block px-3 py-1 text-xs font-black uppercase tracking-widest rounded-md bg-slate-100 text-slate-600 mb-3">{cat.id}</span>
                         <h3 className="text-xl font-bold text-slate-900 leading-snug">{cat.title}</h3>
                       </div>
                       <div className="md:w-1/2">
                         <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Who it is for:</p>
-                        <p className="text-[14px] text-slate-700 font-medium mb-4">{cat.who}</p>
+                        <p className="text-base text-slate-700 font-medium mb-4">{cat.who}</p>
                         <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Courses available:</p>
-                        <p className="text-[14px] text-slate-700 font-medium">{cat.courses}</p>
+                        <p className="text-base text-slate-700 font-medium">{cat.courses}</p>
                       </div>
                       <div className="md:w-1/4 w-full flex md:justify-end items-center md:items-start pt-4 md:pt-0">
                         <Link href={cat.link}>
-                          <Button variant="outline" className="w-full text-[#2366c9] border-blue-200 hover:bg-blue-50 font-bold rounded-xl h-10">
+                          <Button variant="outline" className="w-full text-brand-primary border-blue-200 hover:bg-blue-50 font-bold rounded-xl h-10">
                             {cat.linkText} <ArrowRight className="h-4 w-4 ml-2" />
                           </Button>
                         </Link>
@@ -632,7 +632,7 @@ export default function ForStudents() {
                       <div className={`w-12 h-12 rounded-full ${colorMap[step.color].bg} text-white flex items-center justify-center font-bold mb-3 shadow-lg border-4 border-white transition-transform group-hover:scale-110 z-10`}>
                         {i + 1}
                       </div>
-                      <span className={`text-[10px] font-black uppercase tracking-widest ${colorMap[step.color].text}`}>Step {i + 1}</span>
+                      <span className={`text-xs font-black uppercase tracking-widest ${colorMap[step.color].text}`}>Step {i + 1}</span>
                       <span className="text-[9px] font-bold text-slate-400 uppercase mt-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap absolute -bottom-6">
                         {step.title.split(' — ')[0]}
                       </span>
@@ -669,16 +669,16 @@ export default function ForStudents() {
                         <CardContent className="p-8 flex-1 flex flex-col">
                           <div className="space-y-6 flex-1">
                             <div>
-                              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                              <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
                                 <Zap className="w-3 h-3" /> What you do
                               </p>
-                              <p className="text-[14px] text-slate-700 font-medium leading-relaxed">{step.do}</p>
+                              <p className="text-base text-slate-700 font-medium leading-relaxed">{step.do}</p>
                             </div>
                             <div>
-                              <p className={`text-[10px] font-black ${colorMap[step.color].text} uppercase tracking-widest mb-2 flex items-center gap-2`}>
+                              <p className={`text-xs font-black ${colorMap[step.color].text} uppercase tracking-widest mb-2 flex items-center gap-2`}>
                                 <CheckCircle2 className="w-3 h-3" /> What you get
                               </p>
-                              <p className="text-[14px] text-slate-700 font-medium leading-relaxed">{step.get}</p>
+                              <p className="text-base text-slate-700 font-medium leading-relaxed">{step.get}</p>
                             </div>
 
                             {/* Extra Section for Step 8 */}
@@ -695,8 +695,8 @@ export default function ForStudents() {
                           </div>
 
                           <div className={`mt-8 pt-6 border-t border-slate-100 ${colorMap[step.color].light} -mx-8 -mb-8 p-8`}>
-                            <p className="text-[11px] text-slate-500 font-medium leading-relaxed italic">
-                              <span className="font-bold text-slate-800 not-italic uppercase tracking-tighter text-[10px] mr-1">Research: </span>
+                            <p className="text-xs text-slate-500 font-medium leading-relaxed italic">
+                              <span className="font-bold text-slate-800 not-italic uppercase tracking-tighter text-xs mr-1">Research: </span>
                               {step.research}
                             </p>
                           </div>
@@ -712,7 +712,7 @@ export default function ForStudents() {
                       Steps 1 and 2 happen before any study begins. Steps 3-5 are the active learning phase. Steps 6-8 are the consolidation and examination preparation phase.
                     </p>
                     <Link href="/diagnostics">
-                      <Button className="h-14 px-8 bg-[#2366c9] hover:bg-blue-600 text-white font-bold rounded-xl shadow-lg">
+                      <Button className="h-14 px-8 bg-brand-primary hover:bg-blue-600 text-white font-bold rounded-xl shadow-lg">
                         Start Step 1: Take Diagnostic
                       </Button>
                     </Link>
@@ -746,7 +746,7 @@ export default function ForStudents() {
                             {stage.num}
                           </div>
                           <h4 className="font-bold text-base text-slate-900 mb-3 tracking-wide uppercase">{stage.title}</h4>
-                          <p className="text-[14px] text-slate-600 font-medium leading-relaxed">{stage.desc}</p>
+                          <p className="text-base text-slate-600 font-medium leading-relaxed">{stage.desc}</p>
                         </div>
 
                         {/* Connector Arrows (Desktop) */}
@@ -758,7 +758,7 @@ export default function ForStudents() {
 
                         {/* Cycle Return Arrow (Desktop - from 6 back towards 1) */}
                         {i === 5 && (
-                          <div className="hidden lg:flex absolute -bottom-10 left-1/2 -translate-x-1/2 text-slate-200 pointer-events-none italic text-[10px] font-black uppercase tracking-widest gap-2 items-center">
+                          <div className="hidden lg:flex absolute -bottom-10 left-1/2 -translate-x-1/2 text-slate-200 pointer-events-none italic text-xs font-black uppercase tracking-widest gap-2 items-center">
                             <RefreshCw className="w-3 h-3" /> Cycle repeats for every new topic
                           </div>
                         )}
@@ -817,7 +817,7 @@ export default function ForStudents() {
                           {/* Screen Header (Inside the Device) */}
                           <div className="bg-white border-b border-slate-100 px-6 py-4 flex items-center justify-between relative z-10 shrink-0">
                             <div className="flex items-center gap-3">
-                              <div className="w-9 h-9 bg-[#2366c9] rounded-xl flex items-center justify-center shadow-lg shadow-blue-200">
+                              <div className="w-9 h-9 bg-brand-primary rounded-xl flex items-center justify-center shadow-lg shadow-blue-200">
                                 <span className="text-white font-black text-sm italic">E</span>
                               </div>
                               <span className="font-black text-slate-800 text-lg tracking-tighter">EduMeUp</span>
@@ -828,7 +828,7 @@ export default function ForStudents() {
                             <div className="flex items-center gap-4">
                               <div className="flex gap-1.5 items-center mr-4">
                                 <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Mastery Level: 84%</span>
+                                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Mastery Level: 84%</span>
                               </div>
                               <div className="w-10 h-10 rounded-full bg-slate-100 border-2 border-white shadow-md overflow-hidden ring-2 ring-slate-50 transition-transform hover:scale-110 cursor-pointer">
                                 <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=student${activity.id}`} alt="Student" />
@@ -841,11 +841,11 @@ export default function ForStudents() {
                             {/* Inner Page Header */}
                             <div className={`${h5pTheme[activity.color].header} p-8 text-white relative overflow-hidden`}>
                               <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
-                              <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-2 text-white">Subject Mastery Activity</p>
+                              <p className="text-xs font-bold uppercase tracking-[0.2em] mb-2 text-white">Subject Mastery Activity</p>
                               <h4 className="text-xl md:text-3xl font-extrabold leading-tight tracking-tight max-w-2xl text-white">{activity.topic}</h4>
                               <div className="flex gap-2 mt-4">
                                 {["AO1", "AO2", "AO3"].map(ao => (
-                                  <span key={ao} className={`px-2 py-0.5 rounded text-[10px] font-bold ${ao === activity.title.split('—')[1]?.trim().split(' ')[0] ? 'bg-white text-slate-900' : 'bg-black/10 text-white/70'}`}>
+                                  <span key={ao} className={`px-2 py-0.5 rounded text-xs font-bold ${ao === activity.title.split('—')[1]?.trim().split(' ')[0] ? 'bg-white text-slate-900' : 'bg-black/10 text-white/70'}`}>
                                     {ao}
                                   </span>
                                 ))}
@@ -858,7 +858,7 @@ export default function ForStudents() {
                                 <div className="p-6 border-b border-slate-100 bg-slate-50/50">
                                   <div className="flex items-center gap-2 mb-2">
                                     <div className={`px-3 py-1 rounded-full ${h5pTheme[activity.color].title.replace('text-', 'bg-')} flex items-center gap-2 shadow-sm`}>
-                                      <p className="text-[10px] font-black text-white uppercase tracking-widest">INSTRUCTION</p>
+                                      <p className="text-xs font-black text-white uppercase tracking-widest">INSTRUCTION</p>
                                     </div>
                                   </div>
                                   <p className="text-[15px] italic font-medium leading-relaxed text-slate-700">{activity.instruction}</p>
@@ -885,12 +885,12 @@ export default function ForStudents() {
                                       onClick={() => act1SelectedTileIdx !== null && handleAct1Drop(idx, act1SelectedTileIdx)}
                                       className={`bg-slate-50 border-2 border-dashed ${act1Checked ? (act1IsCorrect ? 'border-green-300 bg-green-50/30' : 'border-red-300 bg-red-50/30') : (act1HoveredBox === idx ? 'border-blue-500 bg-blue-100/50 scale-[1.02] shadow-md ring-2 ring-blue-200' : (act1SelectedTileIdx !== null ? 'border-blue-400 bg-blue-50/20' : 'border-slate-300'))} rounded-2xl p-4 h-32 flex flex-col items-center justify-center group transition-all relative cursor-pointer`}
                                     >
-                                      <span className="text-[10px] font-bold text-slate-400 uppercase mb-4 absolute top-4">{label}</span>
+                                      <span className="text-xs font-bold text-slate-400 uppercase mb-4 absolute top-4">{label}</span>
                                       {act1Placed[idx] ? (
                                         <motion.div
                                           initial={{ scale: 0.8, opacity: 0 }}
                                           animate={{ scale: 1, opacity: 1 }}
-                                          className={`bg-[#2366c9] text-white px-5 py-2 rounded-xl text-sm font-bold shadow-lg transition-colors`}
+                                          className={`bg-brand-primary text-white px-5 py-2 rounded-xl text-sm font-bold shadow-lg transition-colors`}
                                           onClick={(e) => {
                                             e.stopPropagation();
                                             const next = [...act1Placed];
@@ -921,9 +921,9 @@ export default function ForStudents() {
 
                                 <div className="space-y-3">
                                   <div className="flex justify-between items-center">
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Available Tiles (Click to select or drag):</p>
+                                    <p className="text-xs font-black text-slate-400 uppercase tracking-widest">Available Tiles (Click to select or drag):</p>
                                     {act1SelectedTileIdx !== null && (
-                                      <span className="text-[10px] font-bold text-[#2366c9] animate-pulse">Select a target box above</span>
+                                      <span className="text-xs font-bold text-brand-primary animate-pulse">Select a target box above</span>
                                     )}
                                   </div>
                                   <div className="flex flex-wrap gap-3 pt-2">
@@ -944,7 +944,7 @@ export default function ForStudents() {
                                           cursor: 'grabbing',
                                           pointerEvents: 'none'
                                         }}
-                                        className={`px-4 py-2 rounded-xl text-sm font-bold shadow-sm cursor-grab hover:shadow-md transition-all select-none border ${act1SelectedTileIdx === idx ? 'bg-[#2366c9] text-white border-blue-700 ring-2 ring-blue-200' : 'bg-white text-slate-700 border-slate-200 hover:border-[#2366c9]'}`}
+                                        className={`px-4 py-2 rounded-xl text-sm font-bold shadow-sm cursor-grab hover:shadow-md transition-all select-none border ${act1SelectedTileIdx === idx ? 'bg-brand-primary text-white border-blue-700 ring-2 ring-blue-200' : 'bg-white text-slate-700 border-slate-200 hover:border-brand-primary'}`}
                                       >
                                         {val}
                                       </motion.div>
@@ -958,10 +958,10 @@ export default function ForStudents() {
                                       <motion.div
                                         initial={{ width: 0 }}
                                         animate={{ width: `${(act1Placed.filter(v => v !== null).length / 3) * 100}%` }}
-                                        className="h-full bg-[#2366c9]"
+                                        className="h-full bg-brand-primary"
                                       ></motion.div>
                                     </div>
-                                    <span className="text-[11px] font-bold text-slate-500 uppercase">
+                                    <span className="text-xs font-bold text-slate-500 uppercase">
                                       Progress: {act1Placed.filter(v => v !== null).length}/3
                                     </span>
                                   </div>
@@ -974,7 +974,7 @@ export default function ForStudents() {
                                       Reset
                                     </Button>
                                     <Button
-                                      className="bg-[#0d9488] hover:bg-[#0b7a70] text-white font-bold rounded-xl h-12 px-8"
+                                      className="bg-brand-primary hover:bg-blue-700 text-white font-bold rounded-xl h-12 px-8"
                                       onClick={checkAct1Answers}
                                       disabled={act1Placed.some(v => v === null)}
                                     >
@@ -992,7 +992,7 @@ export default function ForStudents() {
                                 <div className="grid md:grid-cols-2 gap-6">
                                   {/* Left Panel: Passage Extract */}
                                   <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-                                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">PASSAGE EXTRACT</p>
+                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">PASSAGE EXTRACT</p>
                                     <div className="leading-relaxed text-slate-700 text-[15px] font-medium space-y-3">
                                       <p>
                                         The clock on the wall ticked louder, each second a hammer blow.
@@ -1001,21 +1001,21 @@ export default function ForStudents() {
                                         <span className="bg-yellow-100 px-1 rounded">Sirens wailed in the distance</span>, growing closer.
                                         <span className="bg-green-100 px-1 rounded">She had thirty seconds.</span> Twenty. Ten. Her breath caught.
                                       </p>
-                                      <p className="text-[11px] text-slate-400 italic mt-2">Highlighted words/phrases are for illustration only.</p>
+                                      <p className="text-xs text-slate-400 italic mt-2">Highlighted words/phrases are for illustration only.</p>
                                     </div>
                                   </div>
 
                                   {/* Right Panel: Student Response + Mark Scheme */}
                                   <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-5">
                                     <div>
-                                      <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">STUDENT RESPONSE</p>
-                                      <div className="mt-2 p-4 bg-slate-50 rounded-xl border border-slate-100 italic text-slate-700 text-[14px] leading-relaxed">
+                                      <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">STUDENT RESPONSE</p>
+                                      <div className="mt-2 p-4 bg-slate-50 rounded-xl border border-slate-100 italic text-slate-700 text-base leading-relaxed">
                                         "The writer uses repetition of 'seconds' and short sentences to create a sense of urgency. The words 'ticked louder' and 'blinked' also add to this. It makes the reader feel like something bad is about to happen."
                                       </div>
                                     </div>
 
                                     <div>
-                                      <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">MARK SCHEME CRITERIA</p>
+                                      <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">MARK SCHEME CRITERIA</p>
                                       <div className="mt-2 space-y-2 text-[13px]">
                                         <div className="flex items-start gap-2 p-2 rounded-lg bg-green-50 border border-green-100">
                                           <span className="font-black text-green-700">Band 1</span>
@@ -1056,7 +1056,7 @@ export default function ForStudents() {
 
                                   {/* Explanation Text Box */}
                                   <div>
-                                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">Explain your decision in 2–3 sentences</p>
+                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Explain your decision in 2–3 sentences</p>
                                     <textarea
                                       rows={3}
                                       className="w-full border border-slate-200 rounded-xl p-3 text-sm font-medium focus:ring-2 focus:ring-[#1e3a8a] outline-none transition-all"
@@ -1070,7 +1070,7 @@ export default function ForStudents() {
 
                                 {/* Footer Buttons */}
                                 <div className="flex justify-between items-center pt-4 border-t border-slate-100">
-                                  <span className="text-[11px] font-bold text-slate-400 uppercase">
+                                  <span className="text-xs font-bold text-slate-400 uppercase">
                                     Status: {!act2SelectedBand ? "No band selected" : `${act2SelectedBand} chosen`}
                                   </span>
                                   <div className="flex gap-3">
@@ -1107,7 +1107,7 @@ export default function ForStudents() {
                                 <div className="grid md:grid-cols-2 gap-8 items-start">
                                   <div className="space-y-6">
                                     <div className="bg-slate-50 border border-slate-200 p-6 rounded-2xl shadow-sm space-y-4">
-                                      <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Simultaneous Equations</p>
+                                      <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Simultaneous Equations</p>
                                       <div className="font-serif text-2xl text-slate-800 space-y-2">
                                         <div className="flex items-center gap-4">
                                           <span className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-sans text-slate-500 font-bold">1</span>
@@ -1120,7 +1120,7 @@ export default function ForStudents() {
                                       </div>
                                     </div>
                                     <div className="space-y-3">
-                                      <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Select Method</p>
+                                      <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Select Method</p>
                                       <div className="flex gap-3">
                                         <Button
                                           variant={act3Method === 'Elimination' ? 'default' : 'outline'}
@@ -1142,10 +1142,10 @@ export default function ForStudents() {
                                     </div>
                                     <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-200/50">
                                       <div>
-                                        <p className="text-[10px] font-bold text-slate-400 uppercase mb-2">Final Answer x</p>
+                                        <p className="text-xs font-bold text-slate-400 uppercase mb-2">Final Answer x</p>
                                         <input
                                           type="text"
-                                          className={`w-full bg-white border-2 ${act3Checked ? (act3X === "2" ? 'border-green-500' : 'border-red-500') : 'border-[#2366c9]'} rounded-xl h-12 text-center font-bold text-lg text-slate-800 shadow-sm outline-none`}
+                                          className={`w-full bg-white border-2 ${act3Checked ? (act3X === "2" ? 'border-green-500' : 'border-red-500') : 'border-brand-primary'} rounded-xl h-12 text-center font-bold text-lg text-slate-800 shadow-sm outline-none`}
                                           value={act3X}
                                           onChange={(e) => setAct3X(e.target.value)}
                                           placeholder="?"
@@ -1153,10 +1153,10 @@ export default function ForStudents() {
                                         />
                                       </div>
                                       <div>
-                                        <p className="text-[10px] font-bold text-slate-400 uppercase mb-2">Final Answer y</p>
+                                        <p className="text-xs font-bold text-slate-400 uppercase mb-2">Final Answer y</p>
                                         <input
                                           type="text"
-                                          className={`w-full bg-white border-2 ${act3Checked ? (act3Y === "1" ? 'border-green-500' : 'border-red-500') : 'border-[#2366c9]'} rounded-xl h-12 text-center font-bold text-lg text-slate-800 shadow-sm outline-none`}
+                                          className={`w-full bg-white border-2 ${act3Checked ? (act3Y === "1" ? 'border-green-500' : 'border-red-500') : 'border-brand-primary'} rounded-xl h-12 text-center font-bold text-lg text-slate-800 shadow-sm outline-none`}
                                           value={act3Y}
                                           onChange={(e) => setAct3Y(e.target.value)}
                                           placeholder="?"
@@ -1167,7 +1167,7 @@ export default function ForStudents() {
                                   </div>
                                   <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm flex flex-col h-full min-h-[300px]">
                                     <div className="bg-slate-50 px-4 py-2 border-b border-slate-200 flex items-center justify-between">
-                                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Scratchpad / Working</span>
+                                      <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Scratchpad / Working</span>
                                       <div className="flex gap-2">
                                         <div className="w-3 h-3 rounded-full bg-red-400"></div>
                                         <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
@@ -1205,7 +1205,7 @@ export default function ForStudents() {
                                     <div className="w-32 h-2 bg-slate-200 rounded-full overflow-hidden">
                                       <div className={`h-full bg-[#7c3aed] transition-all`} style={{ width: act3Checked ? '100%' : '25%' }}></div>
                                     </div>
-                                    <span className="text-[11px] font-bold text-slate-500 uppercase">{act3Checked ? 'Step 1 Complete' : 'Question 1 of 4'}</span>
+                                    <span className="text-xs font-bold text-slate-500 uppercase">{act3Checked ? 'Step 1 Complete' : 'Question 1 of 4'}</span>
                                   </div>
                                   <div className="flex gap-3">
                                     <Button
@@ -1251,7 +1251,7 @@ export default function ForStudents() {
                                         <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600">
                                           <CheckCircle2 className="w-5 h-5" />
                                         </div>
-                                        <p className="text-[11px] font-bold text-green-600 uppercase tracking-widest">CORRECT ANSWER</p>
+                                        <p className="text-xs font-bold text-green-600 uppercase tracking-widest">CORRECT ANSWER</p>
                                       </div>
                                       <p className="text-[15px] font-medium leading-relaxed text-slate-700">
                                         {activity.correctFeedback}
@@ -1268,7 +1268,7 @@ export default function ForStudents() {
                                         <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-red-600">
                                           <AlertTriangle className="w-5 h-5" />
                                         </div>
-                                        <p className="text-[11px] font-bold text-red-600 uppercase tracking-widest">INCORRECT ANSWER</p>
+                                        <p className="text-xs font-bold text-red-600 uppercase tracking-widest">INCORRECT ANSWER</p>
                                       </div>
                                       <p className="text-[15px] font-medium leading-relaxed text-slate-600">
                                         {activity.incorrectFeedback}
@@ -1321,7 +1321,7 @@ export default function ForStudents() {
                         <Flame className="w-4 h-4 text-orange-500" />
                         <span className="text-sm font-bold text-slate-700">12 Day Streak</span>
                       </div>
-                      <div className="bg-[#2366c9] text-white px-4 py-2 rounded-xl shadow-md flex items-center gap-3">
+                      <div className="bg-brand-primary text-white px-4 py-2 rounded-xl shadow-md flex items-center gap-3">
                         <Award className="w-4 h-4" />
                         <span className="text-sm font-bold">1,240 Points</span>
                       </div>
@@ -1334,29 +1334,29 @@ export default function ForStudents() {
                     {/* 1. Today's Study Plan */}
                     <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col">
                       <div className="flex items-center justify-between mb-6">
-                        <h4 className="font-bold text-slate-900 flex items-center gap-2"><CheckCircle2 className="w-5 h-5 text-[#2366c9]" /> Today's Study Plan</h4>
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50 px-2 py-1 rounded">Daily Goal</span>
+                        <h4 className="font-bold text-slate-900 flex items-center gap-2"><CheckCircle2 className="w-5 h-5 text-brand-primary" /> Today's Study Plan</h4>
+                        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest bg-slate-50 px-2 py-1 rounded">Daily Goal</span>
                       </div>
                       <div className="space-y-3 flex-1">
                         <div className="p-4 rounded-2xl bg-rose-50 border border-rose-100 flex items-center gap-3 group cursor-pointer hover:bg-rose-100/50 transition-colors">
                           <div className="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-rose-500 font-bold">1</div>
                           <div className="flex-1">
                             <p className="text-[13px] font-bold text-slate-900">Diagnostic Retest: Math Pre-O</p>
-                            <p className="text-[11px] text-rose-600 font-bold">Due by 4 PM</p>
+                            <p className="text-xs text-rose-600 font-bold">Due by 4 PM</p>
                           </div>
                         </div>
                         <div className="p-4 rounded-2xl bg-blue-50 border border-blue-100 flex items-center gap-3 group cursor-pointer hover:bg-blue-100/50 transition-colors">
-                          <div className="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-[#2366c9] font-bold">2</div>
+                          <div className="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-brand-primary font-bold">2</div>
                           <div className="flex-1">
                             <p className="text-[13px] font-bold text-slate-900">Chemistry: Mole Concept</p>
-                            <p className="text-[11px] text-[#2366c9] font-bold italic">Chapter 4 • Mastery Gate</p>
+                            <p className="text-xs text-brand-primary font-bold italic">Chapter 4 • Mastery Gate</p>
                           </div>
                         </div>
                         <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-3 group cursor-pointer hover:bg-slate-200/50 transition-colors">
                           <div className="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-slate-400 font-bold">3</div>
                           <div className="flex-1">
                             <p className="text-[13px] font-bold text-slate-700">Retrieval: Bonding (D7)</p>
-                            <p className="text-[11px] text-slate-500 font-medium">Scheduled for 6 PM</p>
+                            <p className="text-xs text-slate-500 font-medium">Scheduled for 6 PM</p>
                           </div>
                         </div>
                       </div>
@@ -1364,7 +1364,7 @@ export default function ForStudents() {
 
                     {/* 2. Subject Mastery Overview */}
                     <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col">
-                      <h4 className="font-bold text-slate-900 mb-6 flex items-center gap-2"><BarChart3 className="w-5 h-5 text-[#2366c9]" /> Subject Mastery Overview</h4>
+                      <h4 className="font-bold text-slate-900 mb-6 flex items-center gap-2"><BarChart3 className="w-5 h-5 text-brand-primary" /> Subject Mastery Overview</h4>
                       <div className="space-y-5 flex-1">
                         {[
                           { name: "English Language", score: 88, color: "bg-[#1A7A3A]" },
@@ -1374,7 +1374,7 @@ export default function ForStudents() {
                         ].map((sub, i) => (
                           <div key={i} className="space-y-2 cursor-pointer group">
                             <div className="flex justify-between items-center">
-                              <span className="text-[13px] font-bold text-slate-700 group-hover:text-[#2366c9] transition-colors">{sub.name}</span>
+                              <span className="text-[13px] font-bold text-slate-700 group-hover:text-brand-primary transition-colors">{sub.name}</span>
                               <span className="text-[13px] font-black text-slate-900">{sub.score}%</span>
                             </div>
                             <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
@@ -1383,7 +1383,7 @@ export default function ForStudents() {
                           </div>
                         ))}
                       </div>
-                      <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-slate-400">
+                      <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-400">
                         <span>TAP TO BREAKDOWN</span>
                         <ArrowRight className="w-3 h-3" />
                       </div>
@@ -1391,42 +1391,42 @@ export default function ForStudents() {
 
                     {/* 3. Spaced Retrieval Schedule */}
                     <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col">
-                      <h4 className="font-bold text-slate-900 mb-6 flex items-center gap-2"><Calendar className="w-5 h-5 text-[#2366c9]" /> Spaced Retrieval Schedule</h4>
+                      <h4 className="font-bold text-slate-900 mb-6 flex items-center gap-2"><Calendar className="w-5 h-5 text-brand-primary" /> Spaced Retrieval Schedule</h4>
                       <div className="space-y-4 flex-1">
                         <div className="space-y-2">
-                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active Chips (This Week)</p>
+                          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Active Chips (This Week)</p>
                           <div className="flex flex-wrap gap-2">
-                            <span className="bg-rose-50 text-rose-700 text-[11px] px-3 py-1.5 rounded-full border border-rose-200 font-bold cursor-pointer hover:bg-rose-100 transition-colors">Mole Concept — Today</span>
-                            <span className="bg-amber-50 text-amber-700 text-[11px] px-3 py-1.5 rounded-full border border-amber-200 font-bold cursor-pointer hover:bg-amber-100 transition-colors">Bonding — Day 3</span>
-                            <span className="bg-blue-50 text-blue-700 text-[11px] px-3 py-1.5 rounded-full border border-blue-200 font-bold cursor-pointer hover:bg-blue-100 transition-colors">Rates — Day 7</span>
-                            <span className="bg-slate-50 text-slate-500 text-[11px] px-3 py-1.5 rounded-full border border-slate-200 font-bold cursor-pointer">Organic — Day 14</span>
+                            <span className="bg-rose-50 text-rose-700 text-xs px-3 py-1.5 rounded-full border border-rose-200 font-bold cursor-pointer hover:bg-rose-100 transition-colors">Mole Concept — Today</span>
+                            <span className="bg-amber-50 text-amber-700 text-xs px-3 py-1.5 rounded-full border border-amber-200 font-bold cursor-pointer hover:bg-amber-100 transition-colors">Bonding — Day 3</span>
+                            <span className="bg-blue-50 text-blue-700 text-xs px-3 py-1.5 rounded-full border border-blue-200 font-bold cursor-pointer hover:bg-blue-100 transition-colors">Rates — Day 7</span>
+                            <span className="bg-slate-50 text-slate-500 text-xs px-3 py-1.5 rounded-full border border-slate-200 font-bold cursor-pointer">Organic — Day 14</span>
                           </div>
                         </div>
                         <div className="mt-4 p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                          <p className="text-[11px] text-slate-600 leading-relaxed font-medium">Next intensive retrieval session: <span className="font-bold text-slate-900">Saturday at 10:00 AM</span>. 4 topics scheduled.</p>
+                          <p className="text-xs text-slate-600 leading-relaxed font-medium">Next intensive retrieval session: <span className="font-bold text-slate-900">Saturday at 10:00 AM</span>. 4 topics scheduled.</p>
                         </div>
                       </div>
-                      <Button variant="ghost" className="mt-4 w-full h-10 text-[12px] font-bold text-[#2366c9] hover:bg-blue-50 rounded-xl">View Calendar View</Button>
+                      <Button variant="ghost" className="mt-4 w-full h-10 text-[12px] font-bold text-brand-primary hover:bg-blue-50 rounded-xl">View Calendar View</Button>
                     </div>
 
                     {/* 4. Current Course Progress */}
                     <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col">
-                      <h4 className="font-bold text-slate-900 mb-6 flex items-center gap-2"><PlayCircle className="w-5 h-5 text-[#2366c9]" /> Current Progress</h4>
+                      <h4 className="font-bold text-slate-900 mb-6 flex items-center gap-2"><PlayCircle className="w-5 h-5 text-brand-primary" /> Current Progress</h4>
                       <div className="space-y-6 flex-1">
                         <div className="space-y-3">
                           <div className="flex justify-between items-end">
                             <div>
-                              <p className="text-[11px] font-bold text-[#2366c9] uppercase tracking-widest mb-1">O-Level Chemistry</p>
-                              <p className="text-[14px] font-bold text-slate-900">Chapter 4: Mole Concept</p>
+                              <p className="text-xs font-bold text-brand-primary uppercase tracking-widest mb-1">O-Level Chemistry</p>
+                              <p className="text-base font-bold text-slate-900">Chapter 4: Mole Concept</p>
                             </div>
                             <span className="text-xl font-black text-slate-900">36%</span>
                           </div>
                           <div className="h-3 bg-slate-100 rounded-full overflow-hidden shadow-inner">
-                            <div className="h-full bg-[#2366c9] rounded-full relative" style={{ width: "36%" }}>
+                            <div className="h-full bg-brand-primary rounded-full relative" style={{ width: "36%" }}>
                               <div className="absolute top-0 right-0 w-2 h-full bg-white/30 animate-pulse"></div>
                             </div>
                           </div>
-                          <div className="flex justify-between text-[11px] font-bold text-slate-400">
+                          <div className="flex justify-between text-xs font-bold text-slate-400">
                             <span>4 chapters completed</span>
                             <span>7 chapters remaining</span>
                           </div>
@@ -1441,7 +1441,7 @@ export default function ForStudents() {
                     {/* 5. AI Study Advisor */}
                     <div className="bg-[#eff6ff] border border-blue-100 rounded-3xl p-6 shadow-sm flex flex-col row-span-2">
                       <div className="flex items-center justify-between mb-6">
-                        <h4 className="font-bold text-[#2366c9] flex items-center gap-2"><MessageCircle className="w-5 h-5" /> AI Study Advisor</h4>
+                        <h4 className="font-bold text-brand-primary flex items-center gap-2"><MessageCircle className="w-5 h-5" /> AI Study Advisor</h4>
                         <div className="flex gap-1">
                           <div className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-bounce"></div>
                           <div className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-bounce [animation-delay:0.2s]"></div>
@@ -1459,11 +1459,11 @@ export default function ForStudents() {
                               placeholder="Type your question..."
                               rows={3}
                             />
-                            <div className="absolute right-3 bottom-3 w-8 h-8 bg-[#2366c9] rounded-xl flex items-center justify-center text-white shadow-lg cursor-pointer hover:bg-[#1e3a8a] transition-colors">
+                            <div className="absolute right-3 bottom-3 w-8 h-8 bg-brand-primary rounded-xl flex items-center justify-center text-white shadow-lg cursor-pointer hover:bg-[#1e3a8a] transition-colors">
                               <ArrowRight className="w-5 h-5" />
                             </div>
                           </div>
-                          <p className="text-[10px] text-center font-bold text-blue-400 uppercase tracking-widest">Cambridge-Calibrated Advisor</p>
+                          <p className="text-xs text-center font-bold text-blue-400 uppercase tracking-widest">Cambridge-Calibrated Advisor</p>
                         </div>
                       </div>
                     </div>
@@ -1472,7 +1472,7 @@ export default function ForStudents() {
                     <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl text-white flex flex-col">
                       <div className="flex items-center justify-between mb-6">
                         <h4 className="font-bold text-white flex items-center gap-2"><Zap className="w-5 h-5 text-yellow-400" /> Exam Readiness Countdown</h4>
-                        <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest bg-blue-900/50 px-2 py-1 rounded">Live Target</span>
+                        <span className="text-xs font-bold text-blue-400 uppercase tracking-widest bg-blue-900/50 px-2 py-1 rounded">Live Target</span>
                       </div>
                       <div className="space-y-6 flex-1">
                         <div className="flex gap-4">
@@ -1495,7 +1495,7 @@ export default function ForStudents() {
 
                     {/* 7. Diagnostic Results and Pathway */}
                     <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col">
-                      <h4 className="font-bold text-slate-900 mb-6 flex items-center gap-2"><Search className="w-5 h-5 text-[#2366c9]" /> Diagnostic Pathway</h4>
+                      <h4 className="font-bold text-slate-900 mb-6 flex items-center gap-2"><Search className="w-5 h-5 text-brand-primary" /> Diagnostic Pathway</h4>
                       <div className="space-y-4 flex-1">
                         <div className="grid grid-cols-2 gap-3">
                           <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
@@ -1510,19 +1510,19 @@ export default function ForStudents() {
                         <div className="p-4 rounded-2xl bg-blue-50/30 border border-blue-100/50 relative overflow-hidden group cursor-pointer">
                           <div className="relative z-10">
                             <p className="text-[12px] font-bold text-slate-900 mb-1">Your Personalised Pathway</p>
-                            <p className="text-[11px] text-slate-500 font-medium">Step 4 of 8: O-Level Bridge Complete</p>
+                            <p className="text-xs text-slate-500 font-medium">Step 4 of 8: O-Level Bridge Complete</p>
                           </div>
                           <div className="absolute right-[-10px] bottom-[-10px] opacity-10 group-hover:opacity-20 transition-opacity">
-                            <Navigation className="w-16 h-16 text-[#2366c9]" />
+                            <Navigation className="w-16 h-16 text-brand-primary" />
                           </div>
                         </div>
                       </div>
-                      <Button variant="outline" className="mt-4 w-full h-10 text-[12px] font-bold text-[#2366c9] border-blue-100 hover:bg-blue-50 rounded-xl">View Pathway Detail</Button>
+                      <Button variant="outline" className="mt-4 w-full h-10 text-[12px] font-bold text-brand-primary border-blue-100 hover:bg-blue-50 rounded-xl">View Pathway Detail</Button>
                     </div>
 
                     {/* 8. Resources and Downloads */}
                     <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col">
-                      <h4 className="font-bold text-slate-900 mb-6 flex items-center gap-2"><FileText className="w-5 h-5 text-[#2366c9]" /> Resources</h4>
+                      <h4 className="font-bold text-slate-900 mb-6 flex items-center gap-2"><FileText className="w-5 h-5 text-brand-primary" /> Resources</h4>
                       <div className="space-y-3 flex-1">
                         {[
                           { name: "Mind maps & infographics", icon: Globe, count: 12 },
@@ -1530,18 +1530,18 @@ export default function ForStudents() {
                           { name: "Exam Readiness Checklist", icon: ShieldCheck, count: 2 }
                         ].map((item, i) => (
                           <div key={i} className="flex items-center gap-3 p-3 rounded-2xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all cursor-pointer group">
-                            <div className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center text-[#2366c9] group-hover:bg-[#2366c9] group-hover:text-white transition-colors">
+                            <div className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center text-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-colors">
                               <item.icon className="w-5 h-5" />
                             </div>
                             <div className="flex-1">
                               <p className="text-[13px] font-bold text-slate-800">{item.name}</p>
-                              <p className="text-[10px] font-medium text-slate-400">{item.count} files available</p>
+                              <p className="text-xs font-medium text-slate-400">{item.count} files available</p>
                             </div>
                           </div>
                         ))}
                       </div>
                       <div className="mt-4 p-3 rounded-xl bg-[#eff6ff] text-center border border-blue-50 cursor-pointer hover:bg-blue-100 transition-colors">
-                        <span className="text-[11px] font-black text-[#2366c9] uppercase tracking-widest">Join Cambridge 360&deg; Hub</span>
+                        <span className="text-xs font-black text-brand-primary uppercase tracking-widest">Join Cambridge 360&deg; Hub</span>
                       </div>
                     </div>
 
@@ -1573,13 +1573,13 @@ export default function ForStudents() {
                       <CardContent className="p-8 space-y-6">
                         <div className="flex gap-4">
                           <div className="w-10 h-10 rounded-full bg-slate-200 flex-shrink-0 flex items-center justify-center text-lg shadow-inner">👤</div>
-                          <div className="bg-white border border-slate-200 p-4 rounded-2xl rounded-tl-none text-[14px] font-medium text-slate-800 shadow-sm leading-relaxed">
+                          <div className="bg-white border border-slate-200 p-4 rounded-2xl rounded-tl-none text-base font-medium text-slate-800 shadow-sm leading-relaxed">
                             "{sample.q}"
                           </div>
                         </div>
                         <div className="flex gap-4 flex-row-reverse">
-                          <div className="w-10 h-10 rounded-full bg-[#2366c9] flex-shrink-0 flex items-center justify-center text-white shadow-md"><Brain className="w-5 h-5" /></div>
-                          <div className="bg-[#1e3a8a] text-white p-4 rounded-2xl rounded-tr-none text-[14px] leading-relaxed shadow-sm font-medium">
+                          <div className="w-10 h-10 rounded-full bg-brand-primary flex-shrink-0 flex items-center justify-center text-white shadow-md"><Brain className="w-5 h-5" /></div>
+                          <div className="bg-[#1e3a8a] text-white p-4 rounded-2xl rounded-tr-none text-base leading-relaxed shadow-sm font-medium">
                             {sample.a}
                           </div>
                         </div>
@@ -1619,17 +1619,17 @@ export default function ForStudents() {
                 </div>
 
                 <div className="flex flex-wrap justify-center gap-6 mb-12">
-                  <div className="flex items-center gap-2 text-[13px] font-bold text-slate-700 bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm"><Award className="w-4 h-4 text-[#2366c9]" /> 91% pass rate (Designed to Achieve)</div>
-                  <div className="flex items-center gap-2 text-[13px] font-bold text-slate-700 bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm"><BarChart3 className="w-4 h-4 text-[#2366c9]" /> 75%+ retention (Designed to Achieve)</div>
-                  <div className="flex items-center gap-2 text-[13px] font-bold text-slate-700 bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm"><Lock className="w-4 h-4 text-[#2366c9]" /> Private results</div>
-                  <div className="flex items-center gap-2 text-[13px] font-bold text-slate-700 bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm"><CheckCircle2 className="w-4 h-4 text-[#2366c9]" /> 80% mastery gate</div>
-                  <div className="flex items-center gap-2 text-[13px] font-bold text-slate-700 bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm"><Brain className="w-4 h-4 text-[#2366c9]" /> AI Study Advisor</div>
-                  <div className="flex items-center gap-2 text-[13px] font-bold text-slate-700 bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm"><Globe className="w-4 h-4 text-[#2366c9]" /> Global Access</div>
+                  <div className="flex items-center gap-2 text-[13px] font-bold text-slate-700 bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm"><Award className="w-4 h-4 text-brand-primary" /> 91% pass rate (Designed to Achieve)</div>
+                  <div className="flex items-center gap-2 text-[13px] font-bold text-slate-700 bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm"><BarChart3 className="w-4 h-4 text-brand-primary" /> 75%+ retention (Designed to Achieve)</div>
+                  <div className="flex items-center gap-2 text-[13px] font-bold text-slate-700 bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm"><Lock className="w-4 h-4 text-brand-primary" /> Private results</div>
+                  <div className="flex items-center gap-2 text-[13px] font-bold text-slate-700 bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm"><CheckCircle2 className="w-4 h-4 text-brand-primary" /> 80% mastery gate</div>
+                  <div className="flex items-center gap-2 text-[13px] font-bold text-slate-700 bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm"><Brain className="w-4 h-4 text-brand-primary" /> AI Study Advisor</div>
+                  <div className="flex items-center gap-2 text-[13px] font-bold text-slate-700 bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm"><Globe className="w-4 h-4 text-brand-primary" /> Global Access</div>
                 </div>
 
                 <div className="pt-8 border-t border-slate-200">
                   <p className="text-slate-600 font-medium text-[15px]">
-                    Already have an account? <Link href="/login" className="text-[#2366c9] font-bold hover:text-blue-700 transition-colors">Log in to your dashboard</Link>
+                    Already have an account? <Link href="/login" className="text-brand-primary font-bold hover:text-blue-700 transition-colors">Log in to your dashboard</Link>
                   </p>
                 </div>
               </div>
@@ -1640,3 +1640,4 @@ export default function ForStudents() {
     </Layout>
   );
 }
+

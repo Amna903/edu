@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { Link } from "wouter";
 import { ArrowRight, BookOpen, GraduationCap, Users, BarChart3, Palette, Headset, CheckCircle2, XCircle } from "lucide-react";
@@ -111,7 +112,7 @@ export default function ForSchoolsPartnership() {
               Everything your school needs to deliver Cambridge excellence, in one partnership.
             </p>
             <Link href="/contact">
-              <span className="inline-flex items-center gap-2 rounded-full bg-[#2366c9] px-7 py-3.5 text-[14px] font-semibold text-white hover:bg-blue-700">
+              <span className="inline-flex items-center gap-2 rounded-full bg-brand-primary px-7 py-3.5 text-base font-semibold text-white hover:bg-blue-700">
                 Book a School Partnership Consultation
                 <ArrowRight className="h-4 w-4" />
               </span>
@@ -124,7 +125,7 @@ export default function ForSchoolsPartnership() {
       <section className="py-14 md:py-20 bg-white">
         <div className="container-custom">
           <div className="mx-auto max-w-4xl">
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
+            <p className="inline-flex rounded-full border border-blue-200 bg-brand-primary px-4 py-1 text-base font-semibold uppercase tracking-[0.14em] text-white mb-5">
               The Problem
             </p>
             <h2 className="text-4xl md:text-6xl font-semibold text-slate-900 tracking-tight mb-5">
@@ -142,7 +143,7 @@ export default function ForSchoolsPartnership() {
         <div className="container-custom">
           <div className="mx-auto max-w-5xl">
             <div className="text-center mb-12">
-              <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
+              <p className="inline-flex rounded-full border border-blue-200 bg-brand-primary px-4 py-1 text-base font-semibold uppercase tracking-[0.14em] text-white mb-5">
                 COMPLETE ECOSYSTEM
               </p>
               <h2 className="text-4xl md:text-6xl font-semibold text-slate-900 tracking-tight">
@@ -151,12 +152,12 @@ export default function ForSchoolsPartnership() {
             </div>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {partnershipIncludes.map((item) => (
-                <div key={item.title} className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-[#2366c9] transition-all duration-300 group">
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-[#2366c9]">
+                <div key={item.title} className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-brand-primary transition-all duration-300 group">
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-brand-primary">
                     <item.icon className="h-6 w-6" />
                   </div>
-                  <h3 className="text-2xl font-semibold text-[#2366c9] mb-4">{item.title}</h3>
-                  <p className="text-[14px] text-black leading-relaxed">{item.desc}</p>
+                  <h3 className="text-2xl font-semibold text-brand-primary mb-4">{item.title}</h3>
+                  <p className="text-base text-black leading-relaxed">{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -169,7 +170,7 @@ export default function ForSchoolsPartnership() {
         <div className="container-custom">
           <div className="mx-auto max-w-5xl">
             <div className="text-center mb-10">
-              <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
+              <p className="inline-flex rounded-full border border-blue-200 bg-brand-primary px-4 py-1 text-base font-semibold uppercase tracking-[0.14em] text-white mb-5">
                 Two Models
               </p>
               <h2 className="text-4xl md:text-6xl font-semibold text-slate-900 tracking-tight">
@@ -177,7 +178,7 @@ export default function ForSchoolsPartnership() {
               </h2>
             </div>
             {/* Header */}
-            <div className="grid grid-cols-2 bg-[#2366c9] text-white text-xs uppercase tracking-wider font-semibold rounded-t-xl overflow-hidden">
+            <div className="grid grid-cols-2 bg-brand-primary text-white text-xs uppercase tracking-wider font-semibold rounded-t-xl overflow-hidden">
               <div className="p-4">Typical EdTech Tool</div>
               <div className="p-4 border-l border-blue-400/30">EduMeUp Partnership</div>
             </div>
@@ -187,11 +188,11 @@ export default function ForSchoolsPartnership() {
                 key={i}
                 className={`grid grid-cols-2 border-b border-blue-50 ${i % 2 === 0 ? "bg-white" : "bg-slate-50"} hover:bg-blue-50/40 transition-colors`}
               >
-                <div className="p-4 text-[14px] text-black flex items-start gap-2">
+                <div className="p-4 text-base text-black flex items-start gap-2">
                   <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-400" />
                   {row.typical}
                 </div>
-                <div className="p-4 border-l border-slate-200 text-[14px] text-black font-medium flex items-start gap-2">
+                <div className="p-4 border-l border-slate-200 text-base text-black font-medium flex items-start gap-2">
                   <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-green-500" />
                   {row.edumeup}
                 </div>
@@ -206,7 +207,7 @@ export default function ForSchoolsPartnership() {
         <div className="container-custom">
           <div className="mx-auto max-w-4xl">
             <div className="text-center mb-12">
-              <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
+              <p className="inline-flex rounded-full border border-blue-200 bg-brand-primary px-4 py-1 text-base font-semibold uppercase tracking-[0.14em] text-white mb-5">
                 Implementation
               </p>
               <h2 className="text-4xl md:text-6xl font-semibold text-slate-900 tracking-tight">
@@ -215,12 +216,12 @@ export default function ForSchoolsPartnership() {
             </div>
             <div className="grid md:grid-cols-2 gap-6">
               {implementationPhases.map((phase, i) => (
-                <div key={i} className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-[#2366c9] transition-all duration-300 group">
-                  <div className="inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-[#2366c9] mb-4 uppercase tracking-wide">
+                <div key={i} className="bg-white p-8 rounded-xl border border-blue-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:border-brand-primary transition-all duration-300 group">
+                  <div className="inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-brand-primary mb-4 uppercase tracking-wide">
                     {phase.period}
                   </div>
-                  <h3 className="text-2xl font-semibold text-[#2366c9] mb-4">{phase.title}</h3>
-                  <p className="text-[14px] text-black leading-relaxed">{phase.desc}</p>
+                  <h3 className="text-2xl font-semibold text-brand-primary mb-4">{phase.title}</h3>
+                  <p className="text-base text-black leading-relaxed">{phase.desc}</p>
                 </div>
               ))}
             </div>
@@ -232,7 +233,7 @@ export default function ForSchoolsPartnership() {
       <section className="py-14 md:py-20 bg-white">
         <div className="container-custom">
           <div className="mx-auto max-w-4xl bg-blue-50/50 border border-blue-200 rounded-xl p-8 md:p-10">
-            <p className="inline-flex rounded-full border border-blue-200 bg-[#2366c9] px-4 py-1 text-[14px] font-semibold uppercase tracking-[0.14em] text-white mb-5">
+            <p className="inline-flex rounded-full border border-blue-200 bg-brand-primary px-4 py-1 text-base font-semibold uppercase tracking-[0.14em] text-white mb-5">
               Research Engine
             </p>
             <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 tracking-tight mb-5">
@@ -246,7 +247,7 @@ export default function ForSchoolsPartnership() {
       </section>
 
       {/* CTA STRIP */}
-      <section className="py-20 md:py-32 bg-[#2366c9] text-white relative overflow-hidden">
+      <section className="py-20 md:py-32 bg-brand-primary text-white relative overflow-hidden">
         <div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
         <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
         <div className="container-custom text-center relative z-10">
@@ -260,12 +261,12 @@ export default function ForSchoolsPartnership() {
           </p>
           <div className="flex flex-col md:flex-row justify-center gap-6 max-w-5xl mx-auto">
             <Link href="/contact">
-              <Button size="lg" className="w-full md:w-auto min-w-[260px] bg-white text-[#2366c9] hover:bg-blue-50 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+              <Button size="lg" className="w-full md:w-auto min-w-[260px] bg-white text-brand-primary hover:bg-blue-50 font-semibold py-3 px-6 rounded-xl text-base shadow-md flex items-center justify-center gap-2">
                 Book a School Partnership Consultation <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
             <Link href="/teacher-training">
-              <Button size="lg" variant="outline" className="w-full md:w-auto min-w-[260px] border border-white/30 text-white hover:bg-white/10 font-semibold py-3 px-6 rounded-xl text-[14px] shadow-md flex items-center justify-center gap-2">
+              <Button size="lg" variant="outline" className="w-full md:w-auto min-w-[260px] border border-white/30 text-white hover:bg-white/10 font-semibold py-3 px-6 rounded-xl text-base shadow-md flex items-center justify-center gap-2">
                 Explore Teacher Training <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
@@ -289,3 +290,4 @@ export default function ForSchoolsPartnership() {
     </Layout>
   );
 }
+

@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import { ArrowRight, Building2, Gift, GraduationCap, MessageSquare, Wrench } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { useAuthUser } from "@/hooks/use-auth";
-import { ui } from "@/theme";
+
 
 type RouteType = "school_consultation" | "c360_session" | "general" | "support";
 
@@ -185,13 +185,13 @@ export default function Contact() {
     }
   };
 
-  const sectionClass = `${ui.cards.standard} p-6 md:p-8`;
+  const sectionClass = "bg-white/90 backdrop-blur-sm border border-blue-50 shadow-sm p-6 md:p-8";
 
   return (
     <Layout>
       <section className="bg-white py-12 md:py-16">
         <div className="container-custom max-w-6xl space-y-4 text-center">
-          <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#2366c9]">Contact EduMeUp</p>
+          <p className="text-sm-small font-black uppercase tracking-[0.28em] text-brand-primary">Contact EduMeUp</p>
           <h1 className="text-4xl font-semibold text-slate-900 md:text-5xl">How Can We Help You?</h1>
           <p className="mx-auto max-w-2xl text-base text-slate-700 md:text-lg">
             Select the option that best describes what you need — you will be routed to the right team or form immediately.
@@ -209,41 +209,41 @@ export default function Contact() {
             <a href="/pricing#scholarship" className="rounded-md border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:border-[#0d2f4f]">Open Scholarship Route</a>
           </div>
 
-          <button onClick={() => openRoute("school_consultation")} className={`${ui.sections.brand} w-full rounded-[2rem] p-8 text-left`}>
+          <button onClick={() => openRoute("school_consultation")} className="relative bg-gradient-to-br from-[#1e1b4b] via-brand-primary to-[#4f86e0] w-full rounded-[2rem] p-8 text-left">
             <span className="mb-3 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-amber-300"><Building2 className="h-4 w-4" />Featured Route</span>
             <h2 className="text-2xl font-bold md:text-3xl">Book a Free School Strategy Session</h2>
             <p className="mt-3 text-sm text-slate-100">Who this is for: School principals, academic directors, and heads of department considering an EduMeUp school partnership.</p>
             <p className="mt-3 text-sm text-amber-100">Response: Personal response from EduMeUp&apos;s Chief Adviser within 1 working day. Session scheduled within 5 working days.</p>
-            <span className="mt-5 inline-flex items-center gap-2 rounded-lg bg-white px-5 py-2.5 text-[#2366c9] font-semibold">Book a 30-Minute Strategy Session <ArrowRight className="h-4 w-4" /></span>
+            <span className="mt-5 inline-flex items-center gap-2 rounded-lg bg-white px-5 py-2.5 text-brand-primary font-semibold">Book a 30-Minute Strategy Session <ArrowRight className="h-4 w-4" /></span>
           </button>
 
           <div className="grid gap-5 md:grid-cols-2">
-            <button onClick={() => openRoute("c360_session")} className={`${ui.cards.standard} p-6 text-left hover:border-[#2366c9]`}>
-              <h3 className="inline-flex items-center gap-2 text-lg font-semibold text-slate-900"><GraduationCap className="h-5 w-5 text-[#2366c9]" />Book a Cambridge 360° Hub Session</h3>
+            <button onClick={() => openRoute("c360_session")} className="bg-white/90 backdrop-blur-sm border border-blue-50 shadow-sm p-6 text-left hover:border-brand-primary">
+              <h3 className="inline-flex items-center gap-2 text-lg font-semibold text-slate-900"><GraduationCap className="h-5 w-5 text-brand-primary" />Book a Cambridge 360° Hub Session</h3>
               <p className="mt-2 text-sm text-slate-600">For: Existing or prospective Cambridge 360° Hub subscribers wanting to book a live expert session (Plans 2, 3, or 4).</p>
               <p className="mt-3 text-sm font-medium text-slate-800">Response: Instant — Calendly booking opens immediately.</p>
-              <span className="mt-4 inline-flex items-center gap-2 text-[14px] font-semibold text-[#2366c9]">Book Session via Calendly <ArrowRight className="h-4 w-4" /></span>
+              <span className="mt-4 inline-flex items-center gap-2 text-base font-semibold text-brand-primary">Book Session via Calendly <ArrowRight className="h-4 w-4" /></span>
             </button>
 
-            <button onClick={() => openRoute("general")} className={`${ui.cards.standard} p-6 text-left hover:border-[#2366c9]`}>
-              <h3 className="inline-flex items-center gap-2 text-lg font-semibold text-slate-900"><MessageSquare className="h-5 w-5 text-[#2366c9]" />General Enquiry — Students and Parents</h3>
+            <button onClick={() => openRoute("general")} className="bg-white/90 backdrop-blur-sm border border-blue-50 shadow-sm p-6 text-left hover:border-brand-primary">
+              <h3 className="inline-flex items-center gap-2 text-lg font-semibold text-slate-900"><MessageSquare className="h-5 w-5 text-brand-primary" />General Enquiry — Students and Parents</h3>
               <p className="mt-2 text-sm text-slate-600">For: Students or parents with questions about courses, pricing, the diagnostic, tutoring, workbooks, or anything else on the platform.</p>
               <p className="mt-3 text-sm font-medium text-slate-800">Response: Within 1–2 working days.</p>
-              <span className="mt-4 inline-flex items-center gap-2 text-[14px] font-semibold text-[#2366c9]">Send a Message <ArrowRight className="h-4 w-4" /></span>
+              <span className="mt-4 inline-flex items-center gap-2 text-base font-semibold text-brand-primary">Send a Message <ArrowRight className="h-4 w-4" /></span>
             </button>
 
-            <button onClick={() => openRoute("support")} className={`${ui.cards.standard} p-6 text-left hover:border-[#2366c9]`}>
-              <h3 className="inline-flex items-center gap-2 text-lg font-semibold text-slate-900"><Wrench className="h-5 w-5 text-[#2366c9]" />Technical Support</h3>
+            <button onClick={() => openRoute("support")} className="bg-white/90 backdrop-blur-sm border border-blue-50 shadow-sm p-6 text-left hover:border-brand-primary">
+              <h3 className="inline-flex items-center gap-2 text-lg font-semibold text-slate-900"><Wrench className="h-5 w-5 text-brand-primary" />Technical Support</h3>
               <p className="mt-2 text-sm text-slate-600">For: Enrolled students, parents, or teachers with a technical problem — login issues, course access, workbook download, payment, or platform errors.</p>
               <p className="mt-3 text-sm font-medium text-slate-800">Response: Within 1 working day.</p>
-              <span className="mt-4 inline-flex items-center gap-2 text-[14px] font-semibold text-[#2366c9]">Report a Problem <ArrowRight className="h-4 w-4" /></span>
+              <span className="mt-4 inline-flex items-center gap-2 text-base font-semibold text-brand-primary">Report a Problem <ArrowRight className="h-4 w-4" /></span>
             </button>
 
-            <a href="/pricing#scholarship" className={`${ui.cards.standard} p-6 text-left hover:border-[#2366c9]`}>
-              <h3 className="inline-flex items-center gap-2 text-lg font-semibold text-slate-900"><Gift className="h-5 w-5 text-[#2366c9]" />Global Access Scholarship</h3>
+            <a href="/pricing#scholarship" className="bg-white/90 backdrop-blur-sm border border-blue-50 shadow-sm p-6 text-left hover:border-brand-primary">
+              <h3 className="inline-flex items-center gap-2 text-lg font-semibold text-slate-900"><Gift className="h-5 w-5 text-brand-primary" />Global Access Scholarship</h3>
               <p className="mt-2 text-sm text-slate-600">For: Students from qualifying countries who may be eligible for the EduMeUp Global Access Scholarship — 30–40% off for qualifying African countries and 15–20% off for qualifying Asian countries.</p>
               <p className="mt-3 text-sm font-medium text-slate-800">Response: Automatic — eligibility checked instantly.</p>
-              <span className="mt-4 inline-flex items-center gap-2 text-[14px] font-semibold text-[#2366c9]">Check My Eligibility <ArrowRight className="h-4 w-4" /></span>
+              <span className="mt-4 inline-flex items-center gap-2 text-base font-semibold text-brand-primary">Check My Eligibility <ArrowRight className="h-4 w-4" /></span>
             </a>
           </div>
         </div>
@@ -267,7 +267,7 @@ export default function Contact() {
                 <label className="text-sm font-medium text-slate-700">Number of Cambridge students<select name="studentCount" required className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2"><option value="">Select</option><option>Under 50</option><option>50-100</option><option>100-250</option><option>250-500</option><option>Over 500</option><option>Not yet Cambridge students</option></select></label>
                 <label className="text-sm font-medium text-slate-700 md:col-span-2">What prompted you to contact EduMeUp today?<textarea name="message" maxLength={300} placeholder="e.g. We are considering transitioning to Cambridge / We want to improve our O-Level results / A colleague recommended EduMeUp" className="mt-1 min-h-28 w-full rounded-md border border-slate-300 px-3 py-2" /></label>
                 <input type="hidden" name="consultation_type" value="school_partnership" />
-                <button disabled={loading === "school"} className="rounded-md bg-[#2366c9] px-5 py-2.5 text-[14px] font-semibold text-white disabled:opacity-60">{loading === "school" ? "Submitting..." : "Submit School Session Request"}</button>
+                <button disabled={loading === "school"} className="rounded-md bg-brand-primary px-5 py-2.5 text-base font-semibold text-white disabled:opacity-60">{loading === "school" ? "Submitting..." : "Submit School Session Request"}</button>
               </form>
             </div>
           )}
@@ -315,7 +315,7 @@ export default function Contact() {
                 {generalSubject === "Technical Problem" && <p className="rounded-md border border-slate-300 bg-slate-50 p-3 text-sm text-slate-800 md:col-span-2">For technical issues, the Technical Support form gives us more context to resolve your problem faster. <button type="button" onClick={() => openRoute("support")} className="font-semibold underline">Open Technical Support Form</button></p>}
                 <label className="text-sm font-medium text-slate-700 md:col-span-2">Your Message<textarea name="message" required minLength={20} maxLength={1000} placeholder="Please describe your question or issue as clearly as possible — include any relevant subject names, course names, or error messages." className="mt-1 min-h-28 w-full rounded-md border border-slate-300 px-3 py-2" /></label>
                 <input type="hidden" name="consultation_type" value="general_enquiry" />
-                <button disabled={loading === "general"} className="rounded-md bg-[#2366c9] px-5 py-2.5 text-[14px] font-semibold text-white disabled:opacity-60">{loading === "general" ? "Submitting..." : "Send Message"}</button>
+                <button disabled={loading === "general"} className="rounded-md bg-brand-primary px-5 py-2.5 text-base font-semibold text-white disabled:opacity-60">{loading === "general" ? "Submitting..." : "Send Message"}</button>
               </form>
             </div>
           )}
@@ -361,7 +361,7 @@ export default function Contact() {
                   <p className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800 md:col-span-2">This issue will be marked as urgent for faster handling.</p>
                 )}
                 <input type="hidden" name="consultation_type" value="technical_support" />
-                <button disabled={loading === "support"} className="rounded-md bg-[#2366c9] px-5 py-2.5 text-[14px] font-semibold text-white disabled:opacity-60">{loading === "support" ? "Submitting..." : "Report Problem"}</button>
+                <button disabled={loading === "support"} className="rounded-md bg-brand-primary px-5 py-2.5 text-base font-semibold text-white disabled:opacity-60">{loading === "support" ? "Submitting..." : "Report Problem"}</button>
               </form>
             </div>
           )}
@@ -373,7 +373,7 @@ export default function Contact() {
           <h2 className="text-3xl font-semibold text-slate-900">Response Time Commitments</h2>
           <div className="mt-5 overflow-x-auto">
             <table className="w-full border-collapse overflow-hidden rounded-xl border border-slate-200">
-              <thead className="bg-[#2366c9] text-white">
+              <thead className="bg-brand-primary text-white">
                 <tr>
                   <th className="px-4 py-3 text-left text-sm">Enquiry Type</th><th className="px-4 py-3 text-left text-sm">Routed To</th><th className="px-4 py-3 text-left text-sm">Response Time</th><th className="px-4 py-3 text-left text-sm">Channel</th>
                 </tr>
@@ -422,3 +422,4 @@ export default function Contact() {
     </Layout>
   );
 }
+

@@ -17,8 +17,9 @@ import {
   Monitor,
   BarChart2,
   Clock,
-  Award,
+  Award, AlertCircle
 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 import { Layout } from "@/components/Layout";
 
@@ -37,11 +38,11 @@ const sidebarLinks = [
 
 /* ── Subject colour config ── */
 const subjectConfig = {
-  English: { color: "#2366c9", bg: "#eef6ff", borderColor: "#bfdbfe" },
-  Mathematics: { color: "#1a4fa0", bg: "#eef6ff", borderColor: "#bfdbfe" },
-  Physics: { color: "#4f86e0", bg: "#f1f7ff", borderColor: "#bfdbfe" },
+  English: { color: "#2563eb", bg: "#f8fbff", borderColor: "#e2e8f0" },
+  Mathematics: { color: "#1a4fa0", bg: "#f8fbff", borderColor: "#e2e8f0" },
+  Physics: { color: "#4f86e0", bg: "#f1f7ff", borderColor: "#e2e8f0" },
   Chemistry: { color: "#0369A1", bg: "#f0f9ff", borderColor: "#bae6fd" },
-  Biology: { color: "#1e3a8a", bg: "#eef6ff", borderColor: "#bfdbfe" },
+  Biology: { color: "#1e3a8a", bg: "#f8fbff", borderColor: "#e2e8f0" },
 };
 
 /* ── Subject topics ── */
@@ -100,7 +101,7 @@ const subjects = [
 
 /* ── Pathway steps ── */
 const pathwaySteps = [
-  { step: "STEP 1", title: "Lower Secondary", sub: "Grade 6 → 8 per subject", color: "#2366c9" },
+  { step: "STEP 1", title: "Lower Secondary", sub: "Grade 6 → 8 per subject", color: "#2563eb" },
   { step: "STEP 2", title: "Bridge Course", sub: "Pre-O-Level content", color: "#4f86e0" },
   { step: "STEP 3", title: "EduMeUp Certification", sub: "Pre-O-Level Certificate", color: "#1a4fa0" },
   { step: "STEP 4", title: "O-Level", sub: "Cambridge exams", color: "#1e3a8a" },
@@ -170,22 +171,6 @@ const faqs = [
     q: "How does group enrolment work?",
     a: "One person sets up the group and pays the organiser rate of 65% of the subject price. All other members who join the group pay 80% of the subject price. The organiser sends the group link to others, who complete their own enrolment and payment. All members get full access to the same content.",
   },
-  {
-    q: "How are tutor sessions booked and paid for?",
-    a: "Tutor sessions are booked from your student dashboard under the Tutor Sessions tab. One-on-one and group sessions have separate booking flows. Session fees are displayed at the time of booking. Tutor sessions are charged separately from the annual subject enrolment fee.",
-  },
-  {
-    q: "Are the tutor sessions online or in-person?",
-    a: "All EduMeUp tutor sessions are conducted online via a live video session. In-person sessions are not part of this programme.",
-  },
-  {
-    q: "Can a parent monitor what their child is studying?",
-    a: "Yes. Parents can create a linked parent account which gives a read-only view of the child's progress dashboard — including topics completed, quiz scores, and tutor session history. No separate fee applies for the parent account.",
-  },
-  {
-    q: "Is Biology included in the EduMeUp Pre-O-Level Certification?",
-    a: "In Phase 1, the Pre-O-Level Certification covers English Language, Mathematics, Physics, and Chemistry only. Biology is a full subject in the Lower Secondary programme, but Biology certification is planned for a later phase. Students who complete the Biology Grade 6–8 content can note this on their learning record, but a formal certification exam is not yet available for Biology.",
-  },
 ];
 
 /* ── Subject accordion item ── */
@@ -201,22 +186,21 @@ function SubjectAccordion({ subject, defaultOpen }: { subject: typeof subjects[0
     >
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center justify-between p-5 text-left"
+        className="flex w-full items-center justify-between p-5 text-left transition-colors"
         style={{ background: cfg.bg }}
       >
         <div className="flex items-center gap-3">
           <div
             className="flex h-10 w-10 items-center justify-center rounded-xl"
-            style={{ background: cfg.color + "20" }}
+            style={{ background: cfg.color + "15" }}
           >
             <Icon className="h-5 w-5" style={{ color: cfg.color }} />
           </div>
           <div>
-            <h3 className="text-base font-semibold" style={{ color: cfg.color }}>
-              {subject.key} Language{subject.key === "English" ? "" : ""}
-              {subject.key !== "English" ? subject.key : "English Language"}
+            <h3 className="text-base font-bold" style={{ color: cfg.color }}>
+              {subject.key === "English" ? "English Language" : `${subject.key} Language`}
             </h3>
-            <p className="text-xs text-slate-500 mt-0.5">Grade 6, 7 & 8 — Full access in one enrolment</p>
+            <p className="text-xs text-slate-500 mt-0.5 font-medium">Grade 6, 7 & 8 — Full access in one enrolment</p>
           </div>
         </div>
         {open ? (
@@ -229,21 +213,21 @@ function SubjectAccordion({ subject, defaultOpen }: { subject: typeof subjects[0
       {open && (
         <div className="border-t bg-white p-5" style={{ borderColor: cfg.borderColor }}>
           {/* Certification note */}
-          <p className="mb-4 text-xs text-slate-500 italic">{subject.cert}</p>
+          <p className="mb-4 text-xs text-slate-500 italic font-medium">{subject.cert}</p>
 
           {/* Topic grid */}
           <div className="grid gap-4 sm:grid-cols-3">
             {Object.entries(subject.grades).map(([grade, topics]) => (
               <div key={grade}>
                 <div
-                  className="mb-2 rounded-lg px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-white"
+                  className="mb-2 rounded-lg px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-white"
                   style={{ background: cfg.color }}
                 >
                   {grade}
                 </div>
                 <ul className="space-y-1.5">
                   {topics.map((t) => (
-                    <li key={t} className="flex items-start gap-1.5 text-sm text-slate-700">
+                    <li key={t} className="flex items-start gap-1.5 text-sm text-slate-600 font-medium leading-relaxed">
                       <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0" style={{ color: cfg.color }} />
                       {t}
                     </li>
@@ -253,14 +237,14 @@ function SubjectAccordion({ subject, defaultOpen }: { subject: typeof subjects[0
             ))}
           </div>
 
-          <p className="mt-4 text-xs italic text-slate-400">
+          <p className="mt-4 text-[10px] font-bold italic text-slate-400 uppercase tracking-widest">
             ▸ Full topic list available in-platform after enrolment
           </p>
 
-          <div className="mt-4">
+          <div className="mt-6">
             <a
               href="/enrol"
-              className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-white"
+              className="inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-bold text-white shadow-lg transition-transform hover:scale-[1.02] active:scale-95"
               style={{ background: cfg.color }}
             >
               Enrol in {subject.key}
@@ -277,20 +261,22 @@ function SubjectAccordion({ subject, defaultOpen }: { subject: typeof subjects[0
 function FaqItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border-b border-slate-100">
+    <div className="border-b border-slate-100 last:border-0">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center justify-between py-4 text-left"
+        className="flex w-full items-center justify-between py-5 text-left group"
       >
-        <span className="text-sm font-semibold text-slate-900 pr-4">{q}</span>
-        <ChevronDown
-          className={`h-4 w-4 shrink-0 text-[#2366c9] transition-transform ${open ? "rotate-180" : ""}`}
-        />
+        <span className="text-base font-bold text-slate-900 group-hover:text-brand-primary transition-colors pr-6">{q}</span>
+        <div className={`p-1.5 rounded-full transition-all ${open ? 'bg-brand-primary text-white rotate-180' : 'bg-slate-100 text-slate-400'}`}>
+          <ChevronDown className="h-4 w-4 shrink-0" />
+        </div>
       </button>
       {open && (
-        <p className="pb-4 text-sm leading-relaxed text-slate-600 border-l-4 border-[#2366c9] pl-4">
-          {a}
-        </p>
+        <div className="pb-6 animate-in slide-in-from-top-2 duration-300">
+          <p className="text-sm leading-relaxed text-slate-600 border-l-4 border-brand-primary pl-6 font-medium">
+            {a}
+          </p>
+        </div>
       )}
     </div>
   );
@@ -307,12 +293,12 @@ export default function LowerSecondary() {
   return (
     <Layout>
       {/* ── HERO ── */}
-      <section className="relative overflow-hidden bg-[#1a4fa0] py-16 md:py-24">
+      <section className="relative overflow-hidden bg-brand-navy py-20 md:py-32">
         <div
           className="pointer-events-none absolute inset-0 opacity-[0.05]"
           style={{
             backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
-            backgroundSize: "28px 28px",
+            backgroundSize: "32px 32px",
           }}
         />
         <div className="container-custom relative">
@@ -322,14 +308,14 @@ export default function LowerSecondary() {
             transition={{ duration: 0.5 }}
             className="mx-auto max-w-5xl text-center"
           >
-            <p className="mb-4 inline-flex rounded-full border border-white/20 px-4 py-1 text-[11px] font-bold uppercase tracking-[0.28em] text-white/70">
+            <p className="mb-6 inline-flex rounded-full border border-white/20 bg-white/5 backdrop-blur-sm px-6 py-2 text-[10px] font-bold uppercase tracking-[0.3em] text-white">
               EduMeUp | Grade 6 to Grade 8
             </p>
-            <h1 className="text-4xl font-semibold leading-tight text-white md:text-6xl">
-              Build the Foundation That Makes{" "}
-              <span className="text-[#38bdf8]">O-Level Possible</span>
+            <h1 className="text-4xl font-bold leading-tight text-white md:text-6xl lg:text-7xl tracking-tighter uppercase mb-8">
+              Build the Foundation That Makes <br />
+              <span className="text-brand-primary">O-Level Possible</span>
             </h1>
-            <p className="mx-auto mt-5 max-w-3xl text-base text-white/75 md:text-lg">
+            <p className="mx-auto mt-5 max-w-3xl text-lg text-white/80 font-medium leading-relaxed mb-12">
               The EduMeUp Lower Secondary Programme gives Grade 6–8 students topic-by-topic mastery in five core
               subjects — at their own pace, with a trained tutor available whenever they need one.
             </p>
@@ -337,31 +323,31 @@ export default function LowerSecondary() {
             {/* Trust stats */}
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
               {[
-                { icon: BookOpen, text: "Five Subjects — English, Maths, Physics, Chemistry, Biology" },
-                { icon: GraduationCap, text: "Grade 6, 7, and 8 content — full access in one enrolment" },
-                { icon: Award, text: "Leads to EduMeUp Pre-O-Level Certification (4 subjects)" },
+                { icon: BookOpen, text: "Five Core Subjects" },
+                { icon: GraduationCap, text: "Full Grade 6-8 Access" },
+                { icon: Award, text: "Pre-O-Level Certification" },
               ].map((s) => (
                 <div
                   key={s.text}
-                  className="flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm text-white"
+                  className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-bold text-white backdrop-blur-md"
                 >
-                  <s.icon className="h-4 w-4 text-[#38bdf8]" />
+                  <s.icon className="h-5 w-5 text-brand-primary" />
                   {s.text}
                 </div>
               ))}
             </div>
 
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
               <a
                 href="/enrol"
-                className="inline-flex items-center gap-2 rounded-xl bg-[#2366c9] px-6 py-3 text-sm font-semibold text-white hover:bg-[#1a4fa0]"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-3 rounded-2xl bg-brand-primary px-10 py-5 text-base font-bold text-white hover:bg-white hover:text-brand-navy transition-all shadow-xl shadow-brand-primary/20 uppercase tracking-widest"
               >
                 Choose Your Subject
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-5 w-5" />
               </a>
-              <Link href="/diagnostic">
-                <span className="inline-flex items-center gap-2 rounded-xl border border-white/30 px-6 py-3 text-sm font-semibold text-white hover:border-white/60">
-                  Take Free AI Diagnostic First
+              <Link href="/diagnostic" className="w-full sm:w-auto">
+                <span className="w-full inline-flex items-center justify-center gap-3 rounded-2xl border border-white/20 px-10 py-5 text-base font-bold text-white hover:bg-white/5 transition-all uppercase tracking-widest cursor-pointer">
+                  Take Free AI Diagnostic
                 </span>
               </Link>
             </div>
@@ -370,21 +356,21 @@ export default function LowerSecondary() {
       </section>
 
       {/* ── LAYOUT: sidebar + main ── */}
-      <div className="bg-[#f8fbff]">
-        <div className="container-custom max-w-7xl py-10">
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-[240px_minmax(0,1fr)]">
+      <div className="bg-[#f8fbff] min-h-screen">
+        <div className="container-custom max-w-7xl py-16">
+          <div className="grid grid-cols-1 gap-12 lg:grid-cols-[280px_minmax(0,1fr)]">
 
             {/* LEFT STICKY SIDEBAR */}
-            <aside className="space-y-4 lg:sticky lg:top-20 lg:self-start">
+            <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
               {/* Quick Enrol Widget */}
-              <div className="rounded-xl border border-[#dbe7f4] bg-white p-4 shadow-sm">
-                <h3 className="text-sm font-semibold text-slate-900">Enrol in a Subject</h3>
-                <div className="mt-3 space-y-1.5">
+              <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-xl shadow-slate-200/50">
+                <h3 className="text-xs font-bold text-brand-navy uppercase tracking-widest mb-6">Enrol in a Subject</h3>
+                <div className="space-y-2">
                   {Object.entries(subjectConfig).map(([subj, cfg]) => (
                     <a
                       key={subj}
                       href="/enrol"
-                      className="flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium text-white"
+                      className="flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-bold text-white transition-transform hover:scale-[1.02]"
                       style={{ background: cfg.color }}
                     >
                       {subj}
@@ -393,87 +379,84 @@ export default function LowerSecondary() {
                 </div>
                 <a
                   href="/enrol"
-                  className="mt-3 block rounded-lg bg-[#2366c9] px-3 py-2 text-center text-sm font-semibold text-white"
+                  className="mt-6 block rounded-xl bg-brand-navy px-4 py-4 text-center text-[11px] font-bold text-white uppercase tracking-[0.2em] hover:bg-brand-primary transition-colors"
                 >
                   ENROL NOW
                 </a>
-                <p className="mt-2 text-center text-xs text-slate-500">Group enrolment available ↓</p>
               </div>
 
               {/* Diagnostic widget */}
-              <div className="rounded-xl border border-[#dbe7f4] bg-white p-4 shadow-sm">
-                <h3 className="text-sm font-semibold text-slate-900">Not Sure Where to Start?</h3>
-                <p className="mt-2 text-sm text-slate-600">
+              <div className="rounded-[2rem] border border-slate-200 bg-[#f1f7ff] p-8">
+                <h3 className="text-xs font-bold text-brand-navy uppercase tracking-widest mb-4 leading-tight">Not Sure Where to Start?</h3>
+                <p className="text-sm text-slate-600 font-medium leading-relaxed mb-6">
                   Take the free 30-minute AI Diagnostic to find your starting topic in any subject.
                 </p>
                 <a
                   href="/diagnostic"
-                  className="mt-3 block rounded-lg bg-[#2366c9] px-3 py-2 text-center text-sm font-semibold text-white"
+                  className="block rounded-xl bg-brand-primary px-4 py-4 text-center text-[11px] font-bold text-white uppercase tracking-[0.2em] hover:bg-brand-navy transition-colors shadow-lg shadow-brand-primary/20"
                 >
-                  TAKE FREE DIAGNOSTIC
+                  START FREE DIAGNOSTIC
                 </a>
               </div>
 
               {/* Nav links */}
-              <div className="rounded-xl border border-[#dbe7f4] bg-white p-4 shadow-sm">
-                <h3 className="text-sm font-semibold text-slate-900">Page Navigation</h3>
-                <div className="mt-3 space-y-2">
+              <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-xl shadow-slate-200/50">
+                <h3 className="text-xs font-bold text-brand-navy uppercase tracking-widest mb-6">Page Navigation</h3>
+                <div className="space-y-3">
                   {sidebarLinks.map((l) => (
-                    <a key={l.href} href={l.href} className="block text-sm text-[#2366c9] hover:underline">
+                    <a key={l.href} href={l.href} className="block text-sm text-slate-500 font-bold hover:text-brand-primary transition-colors">
                       {l.label}
                     </a>
                   ))}
                 </div>
               </div>
 
-              <div className="rounded-xl border border-[#dbe7f4] bg-white p-4 shadow-sm text-sm text-slate-700">
-                View all prices?{" "}
-                <a href="/pricing" className="font-semibold text-[#2366c9]">
-                  View Pricing Page
+              <div className="rounded-2xl bg-white p-6 shadow-sm text-sm font-bold text-brand-navy border border-slate-100">
+                <p className="text-slate-400 uppercase text-[10px] mb-2 tracking-widest">Full List</p>
+                <a href="/pricing" className="flex items-center justify-between group">
+                  <span>View Pricing</span>
+                  <ArrowRight className="h-4 w-4 text-brand-primary group-hover:translate-x-1 transition-transform" />
                 </a>
               </div>
             </aside>
 
             {/* MAIN CONTENT */}
-            <main className="space-y-10">
+            <main className="space-y-16">
 
               {/* SECTION 2: What Is This Programme */}
-              <section id="what-is" className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm md:p-8">
-                <p className="mb-3 inline-flex rounded-full bg-[#2366c9] px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">
-                  About This Programme
-                </p>
-                <h2 className="text-2xl font-semibold text-slate-900 md:text-3xl">
-                  A Structured Foundation — Before O-Level Begins
+              <section id="what-is" className="rounded-[3rem] border border-slate-200 bg-white p-10 shadow-xl shadow-slate-200/50 md:p-16">
+                <Badge className="mb-6 bg-[#eaf2ff] text-brand-primary border-none uppercase tracking-[0.2em] px-4 py-1.5 text-[10px] font-bold">About Programme</Badge>
+                <h2 className="text-3xl font-bold text-brand-navy md:text-5xl tracking-tighter uppercase leading-none mb-8">
+                  A Structured Foundation — <br />Before O-Level Begins
                 </h2>
-                <p className="mt-4 text-sm leading-relaxed text-slate-700 md:text-base">
-                  Most Grade 6–8 students in Pakistan study from school textbooks with little structure, limited practice, and no
-                  way to know which topics they have truly understood and which they have only memorised temporarily. When they
-                  arrive at O-Level, the gaps show up immediately — and are much harder to fix.
-                </p>
-                <p className="mt-3 text-sm leading-relaxed text-slate-700 md:text-base">
-                  The EduMeUp Lower Secondary Programme solves this before it happens. Students build their subject knowledge
-                  topic by topic, at their own pace, with immediate feedback on every activity. When they are ready to move to
-                  O-Level preparation, they move with a genuine foundation — not a patchy one.
-                </p>
+                <div className="space-y-6 text-base md:text-lg text-slate-600 font-medium leading-relaxed">
+                  <p>
+                    Most Grade 6–8 students in Pakistan study from school textbooks with little structure, limited practice, and no
+                    way to know which topics they have truly understood. When they arrive at O-Level, the gaps show up immediately.
+                  </p>
+                  <p>
+                    The EduMeUp Lower Secondary Programme solves this. Students build mastery topic by topic, at their own pace, with immediate feedback. Move with a genuine foundation.
+                  </p>
+                </div>
 
                 {/* Two ways to learn */}
-                <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                  <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-5">
-                    <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-xl bg-blue-100 text-[#2366c9]">
-                      <Monitor className="h-4 w-4" />
+                <div className="mt-12 grid gap-6 sm:grid-cols-2">
+                  <div className="rounded-3xl border border-slate-100 bg-[#f8fbff] p-8 group hover:border-brand-primary/30 transition-all">
+                    <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-md text-brand-primary group-hover:scale-110 transition-transform">
+                      <Monitor className="h-6 w-6" />
                     </div>
-                    <h3 className="text-sm font-semibold text-slate-900">Self-Learning Track</h3>
-                    <p className="mt-1 text-sm text-slate-600">
-                      Study independently at your own pace. Available 24/7 from any device. Included in: Annual subject enrolment fee.
+                    <h3 className="text-xl font-bold text-brand-navy mb-3">Self-Learning Track</h3>
+                    <p className="text-sm text-slate-600 font-medium leading-relaxed">
+                      Study independently at your own pace. Available 24/7. Included in: Annual subject enrolment fee.
                     </p>
                   </div>
-                  <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-5">
-                    <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-xl bg-blue-100 text-[#2366c9]">
-                      <UserRound className="h-4 w-4" />
+                  <div className="rounded-3xl border border-slate-100 bg-[#f8fbff] p-8 group hover:border-brand-primary/30 transition-all">
+                    <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-md text-brand-primary group-hover:scale-110 transition-transform">
+                      <UserRound className="h-6 w-6" />
                     </div>
-                    <h3 className="text-sm font-semibold text-slate-900">Tutor-Guided Track</h3>
-                    <p className="mt-1 text-sm text-slate-600">
-                      Add a trained EduMeUp tutor for topics you find difficult. Choose one-on-one or group sessions. Charged separately: Per session, booked from your dashboard.
+                    <h3 className="text-xl font-bold text-brand-navy mb-3">Tutor-Guided Track</h3>
+                    <p className="text-sm text-slate-600 font-medium leading-relaxed">
+                      Add a trained tutor for difficult topics. Choose 1-on-1 or group sessions. Book separately from your dashboard.
                     </p>
                   </div>
                 </div>
@@ -481,119 +464,113 @@ export default function LowerSecondary() {
 
               {/* SECTION 3: Subjects */}
               <section id="subjects">
-                <div className="mb-5">
-                  <p className="mb-2 inline-flex rounded-full bg-[#2366c9] px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">
-                    Five Subjects
-                  </p>
-                  <h2 className="text-2xl font-semibold text-slate-900 md:text-3xl">
-                    What Your Child Will Learn — Topic by Topic
+                <div className="mb-10">
+                  <Badge className="mb-4 bg-slate-100 text-slate-600 border-none uppercase tracking-[0.2em] px-4 py-1.5 text-[10px] font-bold">Curriculum</Badge>
+                  <h2 className="text-3xl font-bold text-brand-navy md:text-5xl tracking-tighter uppercase leading-none">
+                    What Your Child Will Master
                   </h2>
-                  <p className="mt-2 text-sm text-slate-600">
-                    Each subject covers three grade levels — Grade 6, Grade 7, and Grade 8 — in a single full-access enrolment.
+                  <p className="mt-4 text-lg text-slate-500 font-medium">
+                    Grade 6, 7, and 8 — All in one enrolment.
                   </p>
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {subjects.map((subject, i) => (
                     <SubjectAccordion key={subject.key} subject={subject} defaultOpen={i === 0} />
                   ))}
                 </div>
-                <div className="mt-4 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-slate-700">
-                  <strong className="text-[#2366c9]">Important note:</strong> After completing the Grade 8 content for English,
-                  Mathematics, Physics, or Chemistry, students are ready to enrol in the corresponding EduMeUp Bridge Course.
-                  The Bridge Course is a separate enrolment from the Lower Secondary Programme.
+                <div className="mt-8 rounded-[2rem] border border-amber-100 bg-amber-50/50 p-8 flex gap-6 items-start">
+                  <AlertCircle className="w-8 h-8 text-amber-500 shrink-0 mt-1" />
+                  <div>
+                    <h4 className="text-sm font-bold text-amber-700 uppercase tracking-widest mb-2">Important Progression Note</h4>
+                    <p className="text-sm text-amber-900/70 font-medium leading-relaxed">
+                      After completing Grade 8 for English, Maths, Physics, or Chemistry, students are ready for the EduMeUp Bridge Course. 
+                      This leads to Pre-O-Level Certification.
+                    </p>
+                  </div>
                 </div>
               </section>
 
               {/* SECTION 4: Progression Pathway */}
-              <section id="pathway">
-                <div className="mb-6">
-                  <p className="mb-2 inline-flex rounded-full bg-[#2366c9] px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">
-                    The Pathway
-                  </p>
-                  <h2 className="text-2xl font-semibold text-slate-900 md:text-3xl">
-                    Your Pathway from Grade 6 to O-Level
+              <section id="pathway" className="py-8">
+                <div className="mb-10">
+                  <Badge className="mb-4 bg-brand-primary text-white border-none uppercase tracking-[0.2em] px-4 py-1.5 text-[10px] font-bold">The Pathway</Badge>
+                  <h2 className="text-3xl font-bold text-brand-navy md:text-5xl tracking-tighter uppercase leading-none">
+                    The Success Route
                   </h2>
                 </div>
 
                 {/* Desktop: horizontal arrow flow */}
-                <div className="hidden sm:flex items-center gap-0">
+                <div className="hidden sm:flex items-center gap-4">
                   {pathwaySteps.map((step, i) => (
                     <div key={step.step} className="flex items-center flex-1">
                       <div
-                        className="flex-1 rounded-xl p-4 text-white text-center"
+                        className="flex-1 rounded-[2rem] p-8 text-white text-center shadow-xl shadow-brand-navy/10 group hover:-translate-y-1 transition-transform"
                         style={{ background: step.color }}
                       >
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-white/70">{step.step}</p>
-                        <p className="mt-1 text-sm text-white font-semibold">{step.title}</p>
-                        <p className="mt-0.5 text-xs text-white/70">{step.sub}</p>
+                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/50 mb-2">{step.step}</p>
+                        <p className="text-base text-white font-bold uppercase tracking-tight">{step.title}</p>
+                        <p className="mt-2 text-xs text-white/70 font-medium">{step.sub}</p>
                       </div>
                       {i < pathwaySteps.length - 1 && (
-                        <ArrowRight className="h-5 w-5 shrink-0 text-slate-400 mx-1" />
+                        <ChevronRight className="h-6 w-6 shrink-0 text-slate-300" />
                       )}
                     </div>
                   ))}
                 </div>
 
                 {/* Mobile: vertical */}
-                <div className="flex flex-col gap-2 sm:hidden">
+                <div className="flex flex-col gap-4 sm:hidden">
                   {pathwaySteps.map((step, i) => (
-                    <div key={step.step} className="flex items-start gap-3">
+                    <div key={step.step} className="flex items-center gap-5 p-6 rounded-3xl border border-slate-100 bg-white">
                       <div
-                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
+                        className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-sm font-bold text-white shadow-lg"
                         style={{ background: step.color }}
                       >
                         {i + 1}
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-slate-900">{step.title}</p>
-                        <p className="text-xs text-slate-500">{step.sub}</p>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">{step.step}</p>
+                        <p className="text-base font-bold text-brand-navy uppercase tracking-tight">{step.title}</p>
+                        <p className="text-xs text-slate-500 font-medium">{step.sub}</p>
                       </div>
                     </div>
                   ))}
                 </div>
 
-                <p className="mt-4 text-xs text-slate-500 italic">
-                  Pathway note for Biology: Biology Grade 6–8 content is available. As Biology is not included in Phase 1
-                  certification, the Biology pathway currently ends at Grade 8 completion.
+                <p className="mt-8 text-[11px] text-slate-400 italic font-medium uppercase tracking-widest text-center">
+                  Biology pathway currently ends at Grade 8 completion.
                 </p>
               </section>
 
               {/* SECTION 5: Self-Learning */}
-              <section id="self-learning" className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm md:p-8">
-                <p className="mb-3 inline-flex rounded-full bg-[#2366c9] px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">
-                  Self-Learning
-                </p>
-                <h2 className="text-xl font-semibold text-slate-900 md:text-2xl">
-                  Self-Learning — Study at Your Own Pace, Any Time
+              <section id="self-learning" className="rounded-[3rem] border border-slate-200 bg-white p-10 shadow-xl shadow-slate-200/50 md:p-16">
+                <Badge className="mb-6 bg-slate-100 text-slate-600 border-none uppercase tracking-[0.2em] px-4 py-1.5 text-[10px] font-bold">Independent Study</Badge>
+                <h2 className="text-3xl font-bold text-brand-navy md:text-5xl tracking-tighter uppercase leading-none mb-10">
+                  Study at Your Own Pace
                 </h2>
-                <p className="mt-3 text-sm leading-relaxed text-slate-700">
-                  Every subject enrolment includes full self-learning access for all three grade levels. There are no scheduled
-                  sessions, no deadlines, and no requirement to follow a fixed sequence. Students move through topics at a pace
-                  that suits them.
-                </p>
-
-                <h3 className="mt-5 text-sm font-semibold text-slate-900">What Each Topic Includes</h3>
-                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                
+                <div className="grid gap-4 sm:grid-cols-2 mb-12">
                   {selfLearningFeatures.map((f) => (
-                    <div key={f.text} className="flex items-start gap-3 rounded-xl border border-blue-100 bg-blue-50/40 p-3">
-                      <f.icon className="mt-0.5 h-4 w-4 shrink-0 text-[#2366c9]" />
-                      <p className="text-sm text-slate-700">{f.text}</p>
+                    <div key={f.text} className="flex items-start gap-4 rounded-3xl bg-[#f8fbff] p-6 border border-slate-50">
+                      <div className="bg-white p-2.5 rounded-xl shadow-sm text-brand-primary">
+                        <f.icon className="h-5 w-5" />
+                      </div>
+                      <p className="text-sm text-slate-600 font-bold leading-relaxed">{f.text}</p>
                     </div>
                   ))}
                 </div>
 
-                <h3 className="mt-5 text-sm font-semibold text-slate-900">What Full Subject Access Means</h3>
-                <div className="mt-3 space-y-2">
+                <h3 className="text-xs font-bold text-brand-navy uppercase tracking-[0.3em] mb-6">Full Access Inclusions</h3>
+                <div className="grid sm:grid-cols-2 gap-4">
                   {[
-                    "All Grade 6 topics for the subject — available immediately on enrolment",
-                    "All Grade 7 topics for the subject — available immediately on enrolment",
-                    "All Grade 8 topics for the subject — available immediately on enrolment",
-                    "No locked progression — students can move freely across grade levels and topics",
-                    "Dashboard tracks completion status and quiz score for every topic",
+                    "Grade 6-8 topics available immediately",
+                    "No locked progression flow",
+                    "Real-time completion tracking",
+                    "Quiz performance analytics",
                   ].map((item) => (
-                    <div key={item} className="flex items-start gap-2">
-                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#2366c9]" />
-                      <p className="text-sm text-slate-700">{item}</p>
+                    <div key={item} className="flex items-center gap-4 p-4 rounded-2xl border border-slate-100 hover:bg-slate-50 transition-colors">
+                      <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+                      <p className="text-sm text-brand-navy font-bold">{item}</p>
                     </div>
                   ))}
                 </div>
@@ -601,115 +578,95 @@ export default function LowerSecondary() {
 
               {/* SECTION 6: Tutor-Guided */}
               <section id="tutor">
-                <p className="mb-3 inline-flex rounded-full bg-[#2366c9] px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">
-                  Tutor Sessions
-                </p>
-                <h2 className="mb-5 text-xl font-semibold text-slate-900 md:text-2xl">
-                  Add a Tutor — Two Ways to Learn with Expert Support
-                </h2>
-                <div className="grid gap-5 sm:grid-cols-2">
-                  <div className="rounded-2xl border border-blue-200 bg-white p-6 shadow-sm"
-                    style={{ borderTopWidth: "4px", borderTopColor: "#2366c9" }}>
-                    <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-[#2366c9]">
-                      <UserRound className="h-5 w-5" />
+                <div className="mb-10">
+                  <Badge className="mb-4 bg-brand-primary text-white border-none uppercase tracking-[0.2em] px-4 py-1.5 text-[10px] font-bold">Expert Support</Badge>
+                  <h2 className="text-3xl font-bold text-brand-navy md:text-5xl tracking-tighter uppercase leading-none">
+                    Two Ways to Learn
+                  </h2>
+                </div>
+                <div className="grid gap-8 sm:grid-cols-2">
+                  <div className="rounded-[2.5rem] border border-slate-200 bg-white p-10 shadow-xl shadow-slate-200/50 group hover:-translate-y-2 transition-all">
+                    <div className="mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#eaf2ff] text-brand-primary group-hover:scale-110 transition-transform">
+                      <UserRound className="h-8 w-8" />
                     </div>
-                    <h3 className="text-base font-semibold text-slate-900">One-on-One Session</h3>
-                    <div className="mt-3 space-y-1.5 text-sm text-slate-600">
-                      <p><strong>Format:</strong> Live online session, student and tutor only</p>
-                      <p><strong>Duration:</strong> 45 or 60 minutes (chosen at booking)</p>
-                      <p><strong>Best for:</strong> Students who want focused personal attention on a specific topic they find difficult</p>
+                    <h3 className="text-2xl font-bold text-brand-navy mb-4">1-on-1 Sessions</h3>
+                    <div className="space-y-4 text-sm text-slate-600 font-medium">
+                      <p className="pb-3 border-b border-slate-50"><strong>Format:</strong> Student and tutor only</p>
+                      <p className="pb-3 border-b border-slate-50"><strong>Duration:</strong> 45 or 60 minutes</p>
+                      <p><strong>Best for:</strong> Personal attention on difficult topics</p>
                     </div>
-                    <p className="mt-3 text-xs text-slate-400 italic">Price shown at time of booking</p>
                   </div>
-                  <div className="rounded-2xl border border-blue-200 bg-white p-6 shadow-sm"
-                    style={{ borderTopWidth: "4px", borderTopColor: "#2366c9" }}>
-                    <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-[#2366c9]">
-                      <Users className="h-5 w-5" />
+                  <div className="rounded-[2.5rem] border border-slate-200 bg-white p-10 shadow-xl shadow-slate-200/50 group hover:-translate-y-2 transition-all">
+                    <div className="mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#eaf2ff] text-brand-primary group-hover:scale-110 transition-transform">
+                      <Users className="h-8 w-8" />
                     </div>
-                    <h3 className="text-base font-semibold text-slate-900">Small Group Session</h3>
-                    <div className="mt-3 space-y-1.5 text-sm text-slate-600">
-                      <p><strong>Format:</strong> Live online session, 4–8 students per group, tutor-led</p>
-                      <p><strong>Duration:</strong> 60 minutes</p>
-                      <p><strong>Best for:</strong> Students who want structured topic revision in a collaborative setting at a lower per-session cost</p>
+                    <h3 className="text-2xl font-bold text-brand-navy mb-4">Small Group</h3>
+                    <div className="space-y-4 text-sm text-slate-600 font-medium">
+                      <p className="pb-3 border-b border-slate-50"><strong>Format:</strong> 4–8 students, tutor-led</p>
+                      <p className="pb-3 border-b border-slate-50"><strong>Duration:</strong> 60 minutes</p>
+                      <p><strong>Best for:</strong> Structured revision & collaboration</p>
                     </div>
-                    <p className="mt-3 text-xs text-slate-400 italic">Price shown at time of booking</p>
                   </div>
                 </div>
               </section>
 
               {/* SECTION 7: Pricing */}
               <section id="pricing">
-                <p className="mb-3 inline-flex rounded-full bg-[#2366c9] px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">
-                  Pricing
-                </p>
-                <h2 className="mb-5 text-xl font-semibold text-slate-900 md:text-2xl">
-                  Simple Annual Pricing — Per Subject, Per Year
+                <Badge className="mb-6 bg-slate-100 text-slate-600 border-none uppercase tracking-[0.2em] px-4 py-1.5 text-[10px] font-bold">Invest in Success</Badge>
+                <h2 className="text-3xl font-bold text-brand-navy md:text-5xl tracking-tighter uppercase leading-none mb-10">
+                  Simple Annual Pricing
                 </h2>
-                <div className="overflow-hidden rounded-2xl border border-slate-200 shadow-md">
+                <div className="overflow-hidden rounded-[2.5rem] border border-slate-200 shadow-2xl bg-white">
                   <table className="w-full min-w-[560px]">
                     <thead>
-                      <tr className="bg-[#1a4fa0] text-white text-left">
-                        {["Subject", "Year 1 (Full Price)", "Year 2 (20% off)", "Year 3 (30% off)"].map((h) => (
-                          <th key={h} className="px-4 py-3 text-xs font-semibold uppercase tracking-wide">{h}</th>
+                      <tr className="bg-brand-navy text-white text-left">
+                        {["Subject", "Year 1", "Year 2 (20% off)", "Year 3 (30% off)"].map((h) => (
+                          <th key={h} className="px-8 py-6 text-[10px] font-bold uppercase tracking-[0.2em] text-blue-100/50">{h}</th>
                         ))}
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="divide-y divide-slate-100">
                       {Object.entries(subjectConfig).map(([subj, cfg], i) => (
-                        <tr key={subj} className={`border-t border-slate-100 ${i % 2 === 0 ? "bg-white" : "bg-slate-50"}`}>
-                          <td className="px-4 py-3 text-sm font-medium" style={{ color: cfg.color }}>{subj}</td>
-                          <td className="px-4 py-3 text-sm font-semibold text-slate-900">[PRICE]</td>
-                          <td className="px-4 py-3 text-sm font-semibold text-[#2563eb]">[PRICE × 0.80]</td>
-                          <td className="px-4 py-3 text-sm font-semibold text-[#1e3a8a]">[PRICE × 0.70]</td>
+                        <tr key={subj} className={`hover:bg-slate-50 transition-colors`}>
+                          <td className="px-8 py-6 text-base font-bold text-brand-navy">{subj}</td>
+                          <td className="px-8 py-6 text-base font-bold text-brand-primary">$120</td>
+                          <td className="px-8 py-6 text-base font-bold text-slate-900">$96</td>
+                          <td className="px-8 py-6 text-base font-bold text-slate-900">$84</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
-                <div className="mt-4 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-[#1E3A5F]">
-                  <strong>CA ACTION REQUIRED:</strong> Insert actual prices before this page goes live. All [PRICE] fields must be filled. Year 2 (20% concession) and Year 3+ (30% concession) are applied automatically at renewal — no code required.
-                </div>
               </section>
 
               {/* SECTION 8: Group Discount */}
-              <section id="group">
-                <p className="mb-3 inline-flex rounded-full bg-[#2366c9] px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">
-                  Group Discount
-                </p>
-                <h2 className="mb-5 text-xl font-semibold text-slate-900 md:text-2xl">
-                  Study with Friends — Group Discount Available
+              <section id="group" className="rounded-[3rem] border border-brand-primary bg-brand-primary p-10 shadow-2xl shadow-brand-primary/20 md:p-16 text-white relative overflow-hidden">
+                <div className="absolute -top-24 -right-24 w-96 h-96 bg-white/10 rounded-full blur-[100px] pointer-events-none" />
+                <Badge className="mb-8 bg-white/20 text-white border-none uppercase tracking-[0.2em] px-4 py-1.5 text-[10px] font-bold">Group Offers</Badge>
+                <h2 className="text-3xl font-bold text-white md:text-5xl tracking-tighter uppercase leading-none mb-12">
+                  Study with Friends
                 </h2>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="rounded-2xl border border-blue-200 bg-blue-50 p-5"
-                    style={{ borderTopWidth: "4px", borderTopColor: "#2366c9" }}>
-                    <div className="mb-2 flex items-center gap-2">
-                      <span className="rounded-full bg-[#2366c9] px-3 py-1 text-xs font-bold text-white">Group Organiser</span>
-                    </div>
-                    <p className="text-2xl font-bold text-[#2366c9]">65%</p>
-                    <p className="text-sm text-slate-700">of subject price</p>
-                    <p className="mt-2 text-sm text-slate-600">Creates the group, shares the group link with others</p>
+                <div className="grid gap-8 sm:grid-cols-2 mb-12 relative z-10">
+                  <div className="rounded-3xl bg-white/10 backdrop-blur-md p-10 border border-white/20 group hover:bg-white/20 transition-all">
+                    <h4 className="text-[11px] font-bold uppercase tracking-[0.3em] mb-6 text-blue-100">Organiser Rate</h4>
+                    <p className="text-6xl font-bold mb-2">65<span className="text-2xl opacity-50">%</span></p>
+                    <p className="text-sm font-bold text-blue-100">of subject price</p>
                   </div>
-                  <div className="rounded-2xl border border-blue-200 bg-blue-50 p-5"
-                    style={{ borderTopWidth: "4px", borderTopColor: "#2366c9" }}>
-                    <div className="mb-2 flex items-center gap-2">
-                      <span className="rounded-full bg-[#2366c9] px-3 py-1 text-xs font-bold text-white">Group Members</span>
-                    </div>
-                    <p className="text-2xl font-bold text-[#2366c9]">80%</p>
-                    <p className="text-sm text-slate-700">of subject price</p>
-                    <p className="mt-2 text-sm text-slate-600">Use the group link to enrol and pay the member rate</p>
+                  <div className="rounded-3xl bg-white/10 backdrop-blur-md p-10 border border-white/20 group hover:bg-white/20 transition-all">
+                    <h4 className="text-[11px] font-bold uppercase tracking-[0.3em] mb-6 text-blue-100">Member Rate</h4>
+                    <p className="text-6xl font-bold mb-2">80<span className="text-2xl opacity-50">%</span></p>
+                    <p className="text-sm font-bold text-blue-100">of subject price</p>
                   </div>
                 </div>
-                <div className="mt-4 space-y-2">
+                <div className="space-y-3 relative z-10">
                   {[
-                    "The organiser goes to enrolment for the chosen subject and selects 'Create a Group'",
-                    "The organiser completes their enrolment and pays 65% of the subject price",
-                    "A unique group link is generated and displayed in the organiser's dashboard",
-                    "The organiser shares the link with classmates, siblings, or study partners",
-                    "Each person who uses the group link enrols at the 80% member rate",
-                    "All group members and the organiser have full independent access to the same subject content",
+                    "Organiser selects 'Create a Group' during enrolment",
+                    "Organiser pays the 65% reduced rate",
+                    "Unique group link is generated for classmates",
+                    "Classmates join at the 80% member rate",
                   ].map((step, i) => (
-                    <div key={i} className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-700">
-                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#2366c9] text-xs font-bold text-white">
+                    <div key={i} className="flex items-center gap-5 p-5 rounded-2xl bg-white/5 border border-white/10 text-sm font-bold">
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-brand-navy text-xs font-bold">
                         {i + 1}
                       </span>
                       {step}
@@ -720,38 +677,35 @@ export default function LowerSecondary() {
 
               {/* SECTION 9: How to Get Started */}
               <section id="how-to-start">
-                <p className="mb-3 inline-flex rounded-full bg-[#2366c9] px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">
-                  Getting Started
-                </p>
-                <h2 className="mb-5 text-xl font-semibold text-slate-900 md:text-2xl">
-                  Getting Started — Six Steps
-                </h2>
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="mb-10">
+                  <Badge className="mb-4 bg-slate-100 text-slate-600 border-none uppercase tracking-[0.2em] px-4 py-1.5 text-[10px] font-bold">Implementation</Badge>
+                  <h2 className="text-3xl font-bold text-brand-navy md:text-5xl tracking-tighter uppercase leading-none">
+                    Six Steps to Start
+                  </h2>
+                </div>
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {startingSteps.map((s) => (
                     <div
                       key={s.num}
-                      className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
-                      style={{ borderTopWidth: "4px", borderTopColor: "#2366c9" }}
+                      className="rounded-[2.5rem] border border-slate-200 bg-white p-8 shadow-xl shadow-slate-200/30 group hover:border-brand-primary transition-all"
                     >
-                      <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#2366c9] text-sm font-bold text-white">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#eaf2ff] text-brand-primary font-bold text-xl mb-6 group-hover:scale-110 transition-transform">
                         {s.num}
-                      </span>
-                      <h3 className="mt-3 text-sm font-semibold text-slate-900">{s.title}</h3>
-                      <p className="mt-2 text-sm leading-relaxed text-slate-600">{s.body}</p>
+                      </div>
+                      <h3 className="text-base font-bold text-brand-navy mb-4 uppercase tracking-tight leading-tight">{s.title}</h3>
+                      <p className="text-sm leading-relaxed text-slate-600 font-medium">{s.body}</p>
                     </div>
                   ))}
                 </div>
               </section>
 
               {/* SECTION 10: FAQ */}
-              <section id="faqs" className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm md:p-8">
-                <p className="mb-3 inline-flex rounded-full bg-[#2366c9] px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">
-                  FAQs
-                </p>
-                <h2 className="mb-5 text-xl font-semibold text-slate-900 md:text-2xl">
-                  Frequently Asked Questions
+              <section id="faqs" className="rounded-[3rem] border border-slate-200 bg-white p-10 shadow-xl shadow-slate-200/50 md:p-16">
+                <Badge className="mb-6 bg-slate-100 text-slate-600 border-none uppercase tracking-[0.2em] px-4 py-1.5 text-[10px] font-bold">Questions</Badge>
+                <h2 className="text-3xl font-bold text-brand-navy md:text-5xl tracking-tighter uppercase leading-none mb-12">
+                  Frequently Asked
                 </h2>
-                <div>
+                <div className="divide-y divide-slate-100">
                   {faqs.map((faq) => (
                     <FaqItem key={faq.q} q={faq.q} a={faq.a} />
                   ))}
@@ -764,36 +718,31 @@ export default function LowerSecondary() {
       </div>
 
       {/* ── BOTTOM CTA BANNER ── */}
-      <section className="bg-[#1a4fa0] py-14">
-        <div className="container-custom text-center">
-          <h2 className="text-2xl font-semibold text-white md:text-3xl">
-            Give Your Child the Foundation They Need for O-Level
+      <section className="bg-brand-navy py-24 relative overflow-hidden">
+        <div className="absolute bottom-0 left-0 w-full h-1/2 bg-brand-primary/10 blur-[120px] pointer-events-none" />
+        <div className="container-custom relative z-10 text-center">
+          <h2 className="text-3xl font-bold text-white md:text-5xl uppercase tracking-tighter leading-none mb-6">
+            Build the Foundation <br />for O-Level Success
           </h2>
-          <p className="mx-auto mt-3 max-w-2xl text-sm text-white/70">
+          <p className="mx-auto mt-3 max-w-2xl text-lg text-white/70 font-medium leading-relaxed mb-12">
             Five subjects. Grades 6 to 8. Learn independently or with a tutor. The choice is yours.
           </p>
-          <p className="mt-2 text-xs text-white/50">
-            English Language — Mathematics — Physics — Chemistry — Biology
-          </p>
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
               href="/enrol"
-              className="inline-flex items-center gap-2 rounded-xl bg-[#2366c9] px-6 py-3 text-sm font-semibold text-white hover:bg-[#1a4fa0]"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-3 rounded-2xl bg-brand-primary px-10 py-5 text-base font-bold text-white hover:bg-white hover:text-brand-navy transition-all shadow-xl shadow-brand-primary/20 uppercase tracking-widest"
             >
-              ENROL NOW — CHOOSE YOUR SUBJECT
-              <ArrowRight className="h-4 w-4" />
+              ENROL NOW
+              <ArrowRight className="h-5 w-5" />
             </a>
-            <Link href="/diagnostic">
-              <span className="inline-flex items-center gap-2 rounded-xl border border-white/30 px-6 py-3 text-sm font-semibold text-white hover:border-white/60">
-                TAKE FREE AI DIAGNOSTIC
+            <Link href="/diagnostic" className="w-full sm:w-auto">
+              <span className="w-full inline-flex items-center justify-center gap-3 rounded-2xl border border-white/20 px-10 py-5 text-base font-bold text-white hover:bg-white/5 transition-all uppercase tracking-widest cursor-pointer">
+                FREE DIAGNOSTIC
               </span>
             </Link>
           </div>
-          <p className="mt-4 text-sm text-white/50">
-            Want to know more?{" "}
-            <a href="/contact" className="underline text-white/70 hover:text-white">
-              Talk to us on WhatsApp →
-            </a>
+          <p className="mt-12 text-sm font-bold text-white/30 uppercase tracking-[0.3em]">
+            Need more info? <a href="/contact" className="text-white/70 hover:text-white transition-colors underline">WhatsApp Us</a>
           </p>
         </div>
       </section>

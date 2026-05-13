@@ -11,7 +11,7 @@
 @tailwind utilities;
 
 :root {
-  --font-sans: 'Aeonik', 'Inter', sans-serif;
+  --font-sans: 'Geist', 'Aeonik', 'Inter', sans-serif;
   --font-display: 'Aeonik', 'Inter', sans-serif;
 
   /* Brand Blue Palette - #2366c9 */
@@ -48,12 +48,13 @@
 
 @layer base {
   body {
-    @apply bg-background text-[#4b5563] antialiased selection:bg-primary/20 selection:text-primary;
+    @apply bg-background antialiased selection:bg-primary/20 selection:text-primary;
     font-family: var(--font-sans);
     font-size: 16px;
     line-height: 1.6;
     font-weight: 400;
     overflow-x: hidden;
+    color: #4b5563;
   }
 
   /* Hide scrollbars globally */
@@ -68,34 +69,62 @@
     scrollbar-width: none;
   }
 
+  /* Body text sizing (16px-18px) */
+  p {
+    @apply text-base text-black leading-relaxed;
+    font-size: 16px;
+    font-family: var(--font-sans);
+  }
+
+  /* Larger body text variant (18px) */
+  .body-text-lg, .card-text, .table-text {
+    font-size: 18px;
+    font-family: var(--font-sans);
+    line-height: 1.6;
+  }
+
+  /* Card text styling */
+  .card-text, .emu-card, [class*="card"] {
+    font-size: 18px;
+    font-family: var(--font-sans);
+  }
+
+  /* Table text styling */
+  .table-text, table, .emu-table {
+    font-size: 18px;
+    font-family: var(--font-sans);
+  }
+
   /* Typography Hierarchy */
   h1 {
     @apply text-5xl md:text-7xl font-semibold tracking-tight text-slate-950 leading-tight;
+    font-family: var(--font-sans);
   }
 
   h2 {
     @apply text-4xl md:text-5xl font-semibold tracking-tight text-slate-900 leading-tight;
+    font-family: var(--font-sans);
   }
 
   h3 {
     @apply text-2xl md:text-3xl font-semibold tracking-tight text-slate-900;
+    font-family: var(--font-sans);
   }
 
   h4 {
     @apply text-xl md:text-2xl font-semibold text-slate-900;
+    font-family: var(--font-sans);
   }
 
   h5 {
     @apply text-lg font-semibold text-slate-900;
-  }
-
-  p {
-    @apply text-base text-black leading-relaxed;
+    font-family: var(--font-sans);
   }
 
   /* Utility classes for text styles */
   .text-display-lg {
     @apply text-6xl md:text-7xl font-semibold tracking-tighter text-slate-950 leading-[1.1];
+    font-family: var(--font-sans);
   }
 
   .text-display-sm {
