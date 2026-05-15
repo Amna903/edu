@@ -1,25 +1,101 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Layout } from "@/components/Layout";
 import { useCart } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trash2, ShoppingBag, CheckCircle2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Trash2, ShoppingBag, CheckCircle2, Tag, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
 import { useAuthUser } from "@/hooks/use-auth";
 import { useCheckout } from "@/hooks/use-orders";
 import { useInitPayment } from "@/hooks/use-payments";
+import { useScholarshipValidate } from "@/hooks/use-scholarship";
 import { formatMoneyFromMinorUnits } from "@/lib/currency";
+import { saveScholarshipToStorage, loadScholarshipFromStorage } from "@/lib/scholarship-storage";
 
 export default function Cart() {
-  const { items, removeFromCart, clearCart, total } = useCart();
+  const {
+    items,
+    removeFromCart,
+    clearCart,
+    subtotal,
+    discount,
+    total,
+    scholarship,
+    applyScholarship,
+    clearScholarship,
+  } = useCart();
   const { toast } = useToast();
   const { data: user } = useAuthUser();
   const checkout = useCheckout();
   const initPayment = useInitPayment();
+  const validateScholarship = useScholarshipValidate();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [codeInput, setCodeInput] = useState("");
+
+  useEffect(() => {
+    const stored = loadScholarshipFromStorage();
+    if (stored && !scholarship) {
+      applyScholarship({
+        code: stored.code,
+        country: stored.country,
+        concessionPercent: stored.concessionPercent,
+        region: stored.region,
+      });
+      setCodeInput(stored.code);
+    } else if (scholarship) {
+      setCodeInput(scholarship.code);
+    }
+  }, [scholarship, applyScholarship]);
+
+  const handleApplyCode = async () => {
+    const trimmed = codeInput.trim().toUpperCase();
+    if (!trimmed) return;
+
+    if (!user) {
+      toast({
+        title: "Login required",
+        description: "Scholarship codes are verified against your logged-in account and country.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const result = await validateScholarship.mutateAsync(trimmed);
+      const applied = {
+        code: result.code,
+        country: result.country,
+        concessionPercent: result.concessionPercent,
+        region: result.region,
+      };
+      applyScholarship(applied);
+      saveScholarshipToStorage({
+        ...applied,
+        email: user?.email ?? "",
+        expiresAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
+      });
+      toast({
+        title: "Concession applied",
+        description: `${result.concessionPercent}% off for ${result.country}.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Invalid code",
+        description: error instanceof Error ? error.message : "Could not apply scholarship code",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleRemoveScholarship = () => {
+    clearScholarship();
+    setCodeInput("");
+    toast({ title: "Scholarship removed" });
+  };
 
   const handleCheckout = async () => {
     if (items.length === 0) return;
@@ -31,35 +107,36 @@ export default function Cart() {
       });
       return;
     }
-    
+
     setIsCheckingOut(true);
     try {
+      const payload = {
+        items,
+        totalAmount: total,
+        scholarshipCode: scholarship?.code,
+      };
+
       if (total > 0) {
-        const payment = await initPayment.mutateAsync({
-          items,
-          totalAmount: total,
-        });
+        const payment = await initPayment.mutateAsync(payload);
         window.location.assign(payment.checkoutUrl);
         return;
       }
 
-      await checkout.mutateAsync({
-        items,
-        totalAmount: total
-      });
+      await checkout.mutateAsync(payload);
 
       toast({
         title: "Order Successful",
         description: "You have been enrolled in all selected programs!",
       });
-      
+
       clearCart();
+      clearScholarship();
       setIsSuccess(true);
     } catch (error) {
       toast({
         title: "Checkout Failed",
         description: error instanceof Error ? error.message : "There was an error processing your request.",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setIsCheckingOut(false);
@@ -94,7 +171,7 @@ export default function Cart() {
       <div className="bg-slate-50 py-16">
         <div className="container-custom">
           <h1 className="text-4xl font-semibold mb-8">Your Shopping Cart</h1>
-          
+
           <div className="grid lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-4">
               {items.length === 0 ? (
@@ -117,9 +194,9 @@ export default function Cart() {
                           {formatMoneyFromMinorUnits(item.price)}
                         </p>
                       </div>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
+                      <Button
+                        variant="ghost"
+                        size="icon"
                         className="text-slate-400 hover:text-red-500"
                         onClick={() => removeFromCart(item.programId)}
                       >
@@ -137,10 +214,59 @@ export default function Cart() {
                   <CardTitle>Order Summary</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-3">
+                    <div className="flex items-center gap-2 text-sm font-semibold text-brand-navy">
+                      <Tag className="h-4 w-4 text-brand-primary" />
+                      Scholarship / concession code
+                    </div>
+                    <div className="flex gap-2">
+                      <Input
+                        value={codeInput}
+                        onChange={(e) => setCodeInput(e.target.value.toUpperCase())}
+                        placeholder="e.g. EDU30-ABC123"
+                        className="font-mono uppercase"
+                        disabled={!!scholarship}
+                      />
+                      {scholarship ? (
+                        <Button type="button" variant="outline" size="icon" onClick={handleRemoveScholarship}>
+                          <X className="h-4 w-4" />
+                        </Button>
+                      ) : (
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          onClick={handleApplyCode}
+                          disabled={validateScholarship.isPending || !codeInput.trim()}
+                        >
+                          Apply
+                        </Button>
+                      )}
+                    </div>
+                    {scholarship && (
+                      <p className="text-xs text-emerald-700 font-medium">
+                        {scholarship.concessionPercent}% concession applied ({scholarship.country})
+                      </p>
+                    )}
+                    {!scholarship && (
+                      <p className="text-xs text-slate-500">
+                        No code yet?{" "}
+                        <Link href="/pricing#scholarship" className="text-brand-primary underline font-medium">
+                          Apply on the pricing page
+                        </Link>
+                      </p>
+                    )}
+                  </div>
+
                   <div className="flex justify-between text-black">
                     <span>Subtotal</span>
-                    <span>{formatMoneyFromMinorUnits(total)}</span>
+                    <span>{formatMoneyFromMinorUnits(subtotal)}</span>
                   </div>
+                  {discount > 0 && (
+                    <div className="flex justify-between text-emerald-700">
+                      <span>Scholarship ({scholarship?.concessionPercent}%)</span>
+                      <span>-{formatMoneyFromMinorUnits(discount)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-black">
                     <span>Tax</span>
                     <span>{formatMoneyFromMinorUnits(0)}</span>
@@ -149,10 +275,14 @@ export default function Cart() {
                     <span>Total</span>
                     <span className="text-emerald-600">{formatMoneyFromMinorUnits(total)}</span>
                   </div>
-                  
+
                   <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 mt-4">
                     <p className="text-[13px] text-blue-800 font-medium">
-                      Do you qualify for our scholarship? <Link href="/pricing#scholarship" className="underline font-bold hover:text-blue-900">Check here</Link> before paying.
+                      Do you qualify for our scholarship?{" "}
+                      <Link href="/pricing#scholarship" className="underline font-bold hover:text-blue-900">
+                        Check here
+                      </Link>{" "}
+                      before paying.
                     </p>
                   </div>
                 </CardContent>
@@ -167,13 +297,13 @@ export default function Cart() {
                     </div>
                   )}
                   {user && (
-                    <Button 
-                    className="w-full bg-emerald-600 hover:bg-emerald-700 h-12 text-lg"
-                    disabled={items.length === 0 || isCheckingOut || checkout.isPending}
-                    onClick={handleCheckout}
-                  >
-                    {isCheckingOut || checkout.isPending ? "Processing..." : "Complete Checkout"}
-                  </Button>
+                    <Button
+                      className="w-full bg-emerald-600 hover:bg-emerald-700 h-12 text-lg"
+                      disabled={items.length === 0 || isCheckingOut || checkout.isPending}
+                      onClick={handleCheckout}
+                    >
+                      {isCheckingOut || checkout.isPending ? "Processing..." : "Complete Checkout"}
+                    </Button>
                   )}
                 </CardFooter>
               </Card>
@@ -184,4 +314,3 @@ export default function Cart() {
     </Layout>
   );
 }
-

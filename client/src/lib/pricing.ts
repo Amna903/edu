@@ -79,10 +79,9 @@ export const PRICING = {
     EXCELLENCE: { MONTHLY: 99, YEARLY: 850 },
   },
 
-  // 7. SCHOLARSHIP
+  // 7. SCHOLARSHIP (country concessions — see shared/scholarship-concessions.ts)
   SCHOLARSHIP: {
-    MIN_DISCOUNT: 0.20,
-    MAX_DISCOUNT: 0.40,
-    QUALIFYING_COUNTRIES: ['Pakistan', 'Bangladesh', 'Nigeria', 'Egypt', 'Sri Lanka', 'Vietnam', 'Kenya']
-  }
+    AFRICA_PERCENT: 30,
+    ASIA_AMERICAS_PERCENT: 15,
+  },
 };

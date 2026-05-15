@@ -12,6 +12,7 @@ import { useState } from "react";
 import { InquiryDialog } from "@/components/InquiryDialog";
 import { Link } from "wouter";
 import { PRICING } from "@/lib/pricing";
+import { ScholarshipApplicationForm } from "@/components/ScholarshipApplicationForm";
 
 const SaveBadge = ({ percent }: { percent: number }) => (
   <Badge className="bg-[#eaf2ff] text-brand-primary hover:bg-[#eaf2ff] font-bold uppercase tracking-wider border-none text-[10px]">
@@ -326,7 +327,7 @@ export default function Pricing() {
                   className="inline-flex items-center gap-2 text-base font-bold text-brand-primary hover:text-brand-navy transition-colors group"
                 >
                   <Globe className="w-5 h-5 group-hover:scale-110 transition-transform" /> 
-                  <span>Studying in a developing country? You may qualify for our Global Access Scholarship — 40% off.</span>
+                  <span>Studying in a developing country? You may qualify for our Global Access Scholarship — up to 30% off.</span>
                   <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
                 </a>
               </div>
@@ -647,14 +648,14 @@ export default function Pricing() {
                   EduMeUp Global Access Scholarship.
                 </h2>
                 <p className="text-slate-600 text-lg font-medium mb-12 relative z-10 max-w-4xl leading-relaxed">
-                  If the cost of Cambridge preparation is a financial barrier, our scholarship can reduce your course price by up to <span className="text-brand-primary font-bold">40%</span>. Instant verification for qualifying countries.
+                  If the cost of Cambridge preparation is a financial barrier, our country-based concession can reduce your course price by <span className="text-brand-primary font-bold">15% or 30%</span> depending on where you live. Instant verification for qualifying countries.
                 </p>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 relative z-10">
                   <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
                     <h4 className="text-brand-primary font-bold text-xs uppercase tracking-[0.2em] mb-4">Qualifying Regions</h4>
                     <p className="text-[14px] text-slate-600 font-medium leading-relaxed">
-                      Maintained internally for developing and lower-income countries. System checks automatically.
+                      30% concession for listed African countries; 15% for listed Asian countries and Haiti. The system checks your country automatically.
                     </p>
                   </div>
                   <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
@@ -671,55 +672,7 @@ export default function Pricing() {
                   </div>
                 </div>
 
-                <form className="bg-white p-10 rounded-[32px] shadow-2xl shadow-slate-200/50 border border-slate-100 relative z-10">
-                  <h3 className="font-bold text-brand-navy mb-8 text-xl flex items-center gap-3">
-                    <GraduationCap className="w-6 h-6 text-brand-primary" /> Scholarship Application Form
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-                    <div className="space-y-2">
-                      <label className="text-[11px] font-bold uppercase tracking-widest text-slate-400 ml-1">Full Name</label>
-                      <input type="text" maxLength={100} required className="w-full h-14 px-6 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary outline-none transition-all text-brand-navy font-bold" placeholder="Your name" />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[11px] font-bold uppercase tracking-widest text-slate-400 ml-1">Current Grade</label>
-                      <select required className="w-full h-14 px-6 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary outline-none transition-all text-brand-navy font-bold bg-white">
-                        <option value="">Select class...</option>
-                        <option value="Grade 8">Grade 8</option>
-                        <option value="O-Level Year 1">O-Level Year 1</option>
-                        <option value="O-Level Year 2">O-Level Year 2</option>
-                        <option value="Other">Other</option>
-                      </select>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[11px] font-bold uppercase tracking-widest text-slate-400 ml-1">Email Address</label>
-                      <input type="email" required className="w-full h-14 px-6 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary outline-none transition-all text-brand-navy font-bold" placeholder="your@email.com" />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[11px] font-bold uppercase tracking-widest text-slate-400 ml-1">Country</label>
-                      <select required className="w-full h-14 px-6 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary outline-none transition-all text-brand-navy font-bold bg-white">
-                        <option value="">Select country...</option>
-                        <option value="Pakistan">Pakistan</option>
-                        <option value="Bangladesh">Bangladesh</option>
-                        <option value="Nigeria">Nigeria</option>
-                        <option value="Egypt">Egypt</option>
-                        <option value="Other">Other...</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="mb-10 p-6 bg-slate-50 rounded-2xl border border-slate-100">
-                    <label className="flex items-start gap-4 cursor-pointer">
-                      <input type="checkbox" required className="mt-1 w-5 h-5 rounded border-slate-300 text-brand-primary focus:ring-brand-primary" />
-                      <span className="text-sm text-slate-600 font-medium leading-relaxed">
-                        I confirm that I am genuinely unable to pay the full course price and that I am applying for this scholarship in good faith.
-                      </span>
-                    </label>
-                  </div>
-
-                  <Button type="button" className="w-full h-16 text-lg font-bold bg-brand-primary hover:bg-brand-navy text-white rounded-2xl transition-all shadow-xl shadow-brand-primary/20 uppercase tracking-widest">
-                    Check Eligibility & Apply
-                  </Button>
-                </form>
+                <ScholarshipApplicationForm />
               </div>
             </section>
 
@@ -745,7 +698,7 @@ export default function Pricing() {
                 />
                 <FAQItem
                   question="What does the scholarship cover?"
-                  answer="The EduMeUp Global Access Scholarship covers O-Level subject course pricing. The 40% discount is applied to whichever access period you select."
+                  answer="The EduMeUp Global Access Scholarship covers O-Level subject course pricing. A 30% concession applies for qualifying African countries; a 15% concession applies for qualifying Asian and American countries. The discount is applied at checkout with your generated code."
                 />
                 <FAQItem
                   question="Are all prices in USD?"

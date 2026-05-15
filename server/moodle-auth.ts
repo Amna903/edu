@@ -1,4 +1,5 @@
 import type { AppRole, AuthUser, LoginInput, RegisterInput } from "../shared/schema.js";
+import { countryToMoodleIso, normalizeScholarshipCountry } from "../shared/scholarship-concessions.js";
 import { env } from "./config.js";
 import { getPendingSignupByUsername, getStoredRoleByMoodleUserId, markPendingSignupConfirmed, rememberPendingRegistrationRole, rememberPendingSignup, syncUserFromMoodleSession } from "./user-store.js";
 
@@ -238,17 +239,24 @@ export async function registerWithMoodle(input: RegisterInput): Promise<Register
     };
   }
 
+  const createParams = new URLSearchParams({
+    "users[0][username]": normalizedUsername,
+    "users[0][password]": input.password,
+    "users[0][firstname]": input.firstname.trim(),
+    "users[0][lastname]": input.lastname.trim(),
+    "users[0][email]": normalizedEmail,
+    "users[0][auth]": "manual",
+  });
+  const scholarshipCountry = normalizeScholarshipCountry(input.country);
+  const moodleCountryIso = scholarshipCountry ? countryToMoodleIso(scholarshipCountry) : undefined;
+  if (moodleCountryIso) {
+    createParams.append("users[0][country]", moodleCountryIso);
+  }
+
   const result = await moodlePost<MoodleCreateUserRow[]>(
     getAdminToken(),
     "core_user_create_users",
-    new URLSearchParams({
-      "users[0][username]": normalizedUsername,
-      "users[0][password]": input.password,
-      "users[0][firstname]": input.firstname.trim(),
-      "users[0][lastname]": input.lastname.trim(),
-      "users[0][email]": normalizedEmail,
-      "users[0][auth]": "manual",
-    }),
+    createParams,
   );
 
   const createdUser = Array.isArray(result) ? result[0] : undefined;

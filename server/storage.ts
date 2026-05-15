@@ -1,5 +1,6 @@
 import { programs, type Program, type InsertProgram, resources, type Resource, type InsertResource, inquiries, type Inquiry, type InsertInquiry, orders, type Order, type InsertOrder, orderItems, type OrderItem, type InsertOrderItem, enrollments, type Enrollment, type InsertEnrollment } from "../shared/schema.js";
 import type { CheckoutItem } from "../shared/schema.js";
+import type { ScholarshipCodeRecord } from "./scholarship.js";
 import { db } from "./db.js";
 import { desc, eq, sql } from "drizzle-orm";
 
@@ -29,6 +30,15 @@ export interface IStorage {
   createPendingPayment(payment: PendingPayment): Promise<void>;
   getPendingPayment(orderRef: string): Promise<PendingPayment | undefined>;
   deletePendingPayment(orderRef: string): Promise<void>;
+
+  saveScholarshipCode(record: ScholarshipCodeRecord): Promise<void>;
+  getScholarshipCode(code: string): Promise<ScholarshipCodeRecord | undefined>;
+  getActiveScholarshipCodeForUser(moodleUserId: number): Promise<ScholarshipCodeRecord | undefined>;
+  markScholarshipCodeUsed(code: string, userId: string): Promise<void>;
+  setRegisteredCountry(moodleUserId: number, country: string): Promise<void>;
+  getRegisteredCountry(moodleUserId: number): Promise<string | undefined>;
+  setRegistrationCountryForUsername(username: string, country: string): Promise<void>;
+  takeRegistrationCountryForUsername(username: string): Promise<string | undefined>;
 }
 
 export interface PendingPayment {
@@ -36,6 +46,7 @@ export interface PendingPayment {
   userId: string;
   items: CheckoutItem[];
   totalAmount: number;
+  scholarshipCode?: string;
   tracker?: string;
   createdAt: Date;
 }
@@ -49,6 +60,9 @@ export class MemStorage implements IStorage {
   private enrollments: Map<number, Enrollment>;
   private parentChildLinks: Map<string, Set<number>>;
   private pendingPayments: Map<string, PendingPayment>;
+  private scholarshipCodes: Map<string, ScholarshipCodeRecord>;
+  private registeredCountries: Map<number, string>;
+  private registrationCountryByUsername: Map<string, string>;
   private currentId: { [key: string]: number };
 
   constructor() {
@@ -60,6 +74,9 @@ export class MemStorage implements IStorage {
     this.enrollments = new Map();
     this.parentChildLinks = new Map();
     this.pendingPayments = new Map();
+    this.scholarshipCodes = new Map();
+    this.registeredCountries = new Map();
+    this.registrationCountryByUsername = new Map();
     this.currentId = { programs: 1, resources: 1, inquiries: 1, orders: 1, orderItems: 1, enrollments: 1 };
   }
 
@@ -216,6 +233,58 @@ async createOrder(insertOrder: InsertOrder): Promise<Order> {
 
   async deletePendingPayment(orderRef: string): Promise<void> {
     this.pendingPayments.delete(orderRef);
+  }
+
+  async saveScholarshipCode(record: ScholarshipCodeRecord): Promise<void> {
+    this.scholarshipCodes.set(record.code.toUpperCase(), record);
+  }
+
+  async getScholarshipCode(code: string): Promise<ScholarshipCodeRecord | undefined> {
+    return this.scholarshipCodes.get(code.toUpperCase());
+  }
+
+  async getActiveScholarshipCodeForUser(
+    moodleUserId: number,
+  ): Promise<ScholarshipCodeRecord | undefined> {
+    const now = Date.now();
+    for (const record of this.scholarshipCodes.values()) {
+      if (
+        record.moodleUserId === moodleUserId &&
+        !record.used &&
+        record.expiresAt.getTime() > now
+      ) {
+        return record;
+      }
+    }
+    return undefined;
+  }
+
+  async markScholarshipCodeUsed(code: string, userId: string): Promise<void> {
+    const record = this.scholarshipCodes.get(code.toUpperCase());
+    if (!record) return;
+    record.used = true;
+    record.usedAt = new Date();
+    record.usedByUserId = userId;
+    this.scholarshipCodes.set(code.toUpperCase(), record);
+  }
+
+  async setRegisteredCountry(moodleUserId: number, country: string): Promise<void> {
+    this.registeredCountries.set(moodleUserId, country);
+  }
+
+  async getRegisteredCountry(moodleUserId: number): Promise<string | undefined> {
+    return this.registeredCountries.get(moodleUserId);
+  }
+
+  async setRegistrationCountryForUsername(username: string, country: string): Promise<void> {
+    this.registrationCountryByUsername.set(username.trim().toLowerCase(), country);
+  }
+
+  async takeRegistrationCountryForUsername(username: string): Promise<string | undefined> {
+    const key = username.trim().toLowerCase();
+    const country = this.registrationCountryByUsername.get(key);
+    if (country) this.registrationCountryByUsername.delete(key);
+    return country;
   }
 }
 

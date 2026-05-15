@@ -304,6 +304,7 @@ export const registerInputSchema = z.object({
   lastname: z.string().min(1, "Last name is required"),
   email: z.string().email("Valid email is required"),
   role: appRoleSchema.default("student"),
+  country: z.string().min(1, "Country is required"),
 });
 
 export const registerResponseSchema = z.object({
@@ -324,6 +325,7 @@ export const checkoutRequestSchema = z.object({
   items: z.array(checkoutItemSchema).min(1, "At least one item is required"),
   totalAmount: z.number().min(0),
   tracker: z.string().optional(),
+  scholarshipCode: z.string().optional(),
 });
 
 export const orderHistoryItemSchema = z.object({
@@ -550,9 +552,46 @@ export const adminSyncCoursesResponseSchema = z.object({
   coursesAffected: z.number(),
 });
 
+export const scholarshipApplyInputSchema = z.object({
+  gradeLevel: z.string().min(1, "Grade is required"),
+  declarationAccepted: z.literal(true, {
+    errorMap: () => ({ message: "You must confirm the declaration" }),
+  }),
+});
+
+export const scholarshipEligibilityResponseSchema = z.object({
+  eligible: z.boolean(),
+  country: z.string().nullable(),
+  concessionPercent: z.number().nullable(),
+  region: z.enum(["africa", "asia", "americas"]).nullable(),
+  message: z.string().optional(),
+});
+
+export const scholarshipApplyResponseSchema = z.object({
+  eligible: z.literal(true),
+  country: z.string(),
+  concessionPercent: z.number(),
+  region: z.enum(["africa", "asia", "americas"]),
+  code: z.string(),
+  expiresAt: z.string(),
+});
+
+export const scholarshipValidateInputSchema = z.object({
+  code: z.string().min(1, "Discount code is required"),
+});
+
+export const scholarshipValidateResponseSchema = z.object({
+  valid: z.literal(true),
+  code: z.string(),
+  country: z.string(),
+  concessionPercent: z.number(),
+  region: z.enum(["africa", "asia", "americas"]),
+});
+
 export const paymentInitRequestSchema = z.object({
   items: z.array(checkoutItemSchema).min(1, "At least one item is required"),
   totalAmount: z.number().min(0),
+  scholarshipCode: z.string().optional(),
 });
 
 export const paymentInitResponseSchema = z.object({

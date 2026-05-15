@@ -8,6 +8,11 @@ import { Navbar } from "@/components/Navbar";
 import { useLogin, useRegister } from "@/hooks/use-auth";
 import { CheckCircle2, Eye, EyeOff, GraduationCap, Loader2, Presentation, School, ShieldCheck } from "lucide-react";
 import logoImage from "@/assets/WhatsApp_Image_2026-02-22_at_20.36.37_1771782478374.jpeg";
+import {
+  getConcessionPercent,
+  isScholarshipEligibleCountry,
+  SCHOLARSHIP_COUNTRY_OPTIONS,
+} from "@shared/scholarship-concessions";
 
 type AuthTab = "login" | "register";
 type RegisterRole = "student" | "parent" | "teacher" | "school";
@@ -313,6 +318,7 @@ export default function Login() {
                         username: registerUsername,
                         password: baseRegisterForm.password,
                         role: resolveRegisterRole(),
+                        country: baseRegisterForm.country,
                       });
                       if (result.requiresEmailConfirmation) {
                         navigate(`/register/verify-pending?email=${encodeURIComponent(baseRegisterForm.email.trim().toLowerCase())}`);
@@ -378,15 +384,21 @@ export default function Login() {
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="student-country">Country</Label>
-                        <select id="student-country" value={baseRegisterForm.country} onChange={(event) => { const value = event.target.value; setBaseRegisterForm((current) => ({ ...current, country: value })); setCountryScholarshipHint(["Pakistan", "United Arab Emirates", "Saudi Arabia", "Malaysia"].includes(value)); }} className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm" required>
-                          <option value="">Select country</option>
-                          {COUNTRY_OPTIONS.map((option) => (
+                        <select id="student-country" value={baseRegisterForm.country} onChange={(event) => { const value = event.target.value; setBaseRegisterForm((current) => ({ ...current, country: value })); setCountryScholarshipHint(isScholarshipEligibleCountry(value)); }} className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm" required>
+                          <option value="">Select country (used for scholarship verification)</option>
+                          {SCHOLARSHIP_COUNTRY_OPTIONS.map((option) => (
                             <option key={option} value={option}>
                               {option}
                             </option>
                           ))}
+                          <option value="Other">Other (not on scholarship list)</option>
                         </select>
-                        {countryScholarshipHint && <p className="rounded-md bg-brand-primary/10 px-3 py-2 text-xs text-brand-primary">You may be eligible for a scholarship - see /pricing#scholarship after registration.</p>}
+                        {countryScholarshipHint && (
+                          <p className="rounded-md bg-brand-primary/10 px-3 py-2 text-xs text-brand-primary">
+                            You may qualify for a {getConcessionPercent(baseRegisterForm.country)}% course concession — apply at{" "}
+                            <a href="/pricing#scholarship" className="underline font-semibold">/pricing#scholarship</a> after registration.
+                          </p>
+                        )}
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="student-hear">How did you hear about EduMeUp</Label>

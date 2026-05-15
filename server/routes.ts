@@ -15,6 +15,13 @@ import { prisma } from "./prisma.js";
 import { db } from "./db.js";
 import { getStoredUserByMoodleUserId, linkParentToChild, syncUserFromMoodleSession } from "./user-store.js";
 import { completeDiagnosticSession, createDiagnosticSession, getDiagnosticContent, getDiagnosticEligibility, getDiagnosticResults, linkGuestDiagnosticToAccount, saveDiagnosticAnswer } from "./diagnostics.js";
+import {
+  assertScholarshipCodeForUser,
+  calculateOrderTotalWithScholarship,
+  createScholarshipCodeRecord,
+  resolveScholarshipCountryForUser,
+} from "./scholarship.js";
+import { countryToMoodleIso, normalizeScholarshipCountry } from "../shared/scholarship-concessions.js";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -63,6 +70,30 @@ export async function registerRoutes(
     return req.ip || req.socket.remoteAddress || "unknown";
   };
 
+  const resolveCheckoutTotals = async (params: {
+    items: { programId: number; title: string; price: number }[];
+    totalAmount: number;
+    scholarshipCode?: string;
+    user?: { id: number; email?: string | null; country?: string | null };
+  }) => {
+    let scholarshipRecord;
+    if (params.scholarshipCode) {
+      if (!params.user) {
+        throw new Error("You must be logged in to use a scholarship code.");
+      }
+      scholarshipRecord = await storage.getScholarshipCode(params.scholarshipCode);
+      const registrationCountry = await storage.getRegisteredCountry(params.user.id);
+      assertScholarshipCodeForUser(scholarshipRecord, params.user, registrationCountry);
+    }
+
+    const pricing = calculateOrderTotalWithScholarship(params.items, scholarshipRecord);
+    if (pricing.total !== params.totalAmount) {
+      throw new Error("Order total does not match the applied scholarship discount.");
+    }
+
+    return { pricing, scholarshipRecord };
+  };
+
   const finalizePaidOrder = async (orderRef: string, tracker?: string) => {
     const pending = await storage.getPendingPayment(orderRef);
     if (!pending) {
@@ -92,6 +123,10 @@ export async function registerRoutes(
         userId: pending.userId,
         programId: item.programId,
       });
+    }
+
+    if (pending.scholarshipCode) {
+      await storage.markScholarshipCodeUsed(pending.scholarshipCode, pending.userId);
     }
 
     await storage.deletePendingPayment(orderRef);
@@ -548,8 +583,28 @@ EduMeUp`,
       req.session.moodleToken = result.token;
       req.session.moodlePrivateToken = result.privateToken ?? undefined;
       req.session.user = result.user;
+
+      const pendingCountry = await storage.takeRegistrationCountryForUsername(result.user.username);
+      if (pendingCountry) {
+        await storage.setRegisteredCountry(result.user.id, pendingCountry);
+        const iso = countryToMoodleIso(pendingCountry);
+        if (iso && !result.user.country) {
+          await updateMoodleProfile(
+            result.user.id,
+            {
+              firstname: result.user.firstname || "",
+              lastname: result.user.lastname || "",
+              email: result.user.email || input.username,
+              country: iso,
+            },
+            result.token,
+          ).catch(() => undefined);
+          req.session.user = await fetchCurrentUser(result.token).catch(() => result.user);
+        }
+      }
+
       await linkGuestDiagnosticToAccount({ moodleUserId: result.user.id, ip: getClientIp(req) }).catch(() => undefined);
-      res.json(result.user);
+      res.json(req.session.user);
     } catch (err) {
       if (err instanceof z.ZodError) {
         return res.status(400).json({
@@ -577,7 +632,31 @@ EduMeUp`,
         req.session.moodleToken = loginResult.token;
         req.session.moodlePrivateToken = loginResult.privateToken ?? undefined;
         req.session.user = loginResult.user;
+        const scholarshipCountry = normalizeScholarshipCountry(input.country);
+        if (scholarshipCountry) {
+          await storage.setRegisteredCountry(loginResult.user.id, scholarshipCountry);
+          const iso = countryToMoodleIso(scholarshipCountry);
+          if (iso && req.session.moodleToken) {
+            await updateMoodleProfile(
+              loginResult.user.id,
+              {
+                firstname: loginResult.user.firstname || input.firstname,
+                lastname: loginResult.user.lastname || input.lastname,
+                email: loginResult.user.email || input.email,
+                country: iso,
+              },
+              req.session.moodleToken,
+            ).catch(() => undefined);
+            const refreshed = await fetchCurrentUser(req.session.moodleToken).catch(() => loginResult.user);
+            req.session.user = refreshed;
+          }
+        }
         await linkGuestDiagnosticToAccount({ moodleUserId: loginResult.user.id, ip: getClientIp(req) }).catch(() => undefined);
+      } else {
+        const scholarshipCountry = normalizeScholarshipCountry(input.country);
+        if (scholarshipCountry) {
+          await storage.setRegistrationCountryForUsername(input.username, scholarshipCountry);
+        }
       }
 
       res.status(201).json({
@@ -1086,6 +1165,139 @@ EduMeUp`,
     }
   });
 
+  // === SCHOLARSHIP / COUNTRY CONCESSIONS ===
+  app.get(api.scholarship.eligibility.path, async (req, res) => {
+    if (!req.session.user) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+
+    const concession = await resolveScholarshipCountryForUser(storage, req.session.user);
+    if (!concession) {
+      return res.json({
+        eligible: false,
+        country: normalizeScholarshipCountry(req.session.user.country),
+        concessionPercent: null,
+        region: null,
+        message:
+          "Your account country is not on the scholarship list, or country is not set on your profile. Use the same country you registered with.",
+      });
+    }
+
+    return res.json({
+      eligible: true,
+      country: concession.country,
+      concessionPercent: concession.percent,
+      region: concession.region,
+    });
+  });
+
+  app.post(api.scholarship.apply.path, async (req, res) => {
+    try {
+      if (!req.session.user) {
+        return res.status(401).json({ message: "Please log in to apply for a scholarship." });
+      }
+
+      const input = api.scholarship.apply.input.parse(req.body);
+      const user = req.session.user;
+      const concession = await resolveScholarshipCountryForUser(storage, user);
+
+      if (!concession) {
+        return res.status(400).json({
+          message:
+            "Your account country is not eligible, or no country is saved on your profile. Register with an eligible country or update your profile — you cannot pick a different country here.",
+        });
+      }
+
+      const existing = await storage.getActiveScholarshipCodeForUser(user.id);
+      if (existing) {
+        return res.json({
+          eligible: true,
+          country: existing.country,
+          concessionPercent: existing.concessionPercent,
+          region: existing.region,
+          code: existing.code,
+          expiresAt: existing.expiresAt.toISOString(),
+        });
+      }
+
+      const displayName =
+        user.fullname ||
+        [user.firstname, user.lastname].filter(Boolean).join(" ") ||
+        user.username;
+      const email = user.email || "";
+
+      const record = createScholarshipCodeRecord({
+        moodleUserId: user.id,
+        name: displayName,
+        email,
+        country: concession.country,
+      });
+      await storage.saveScholarshipCode(record);
+
+      await storage.createInquiry({
+        type: "scholarship_application",
+        name: displayName,
+        email,
+        role: "student",
+        gradeLevel: input.gradeLevel,
+        subjectInterest: `Global Access Scholarship — ${concession.percent}% (${concession.region})`,
+        message: `Verified account country: ${concession.country}. User ID: ${user.id}. Code: ${record.code}`,
+        phone: null,
+        learningMode: null,
+      });
+
+      res.json({
+        eligible: true,
+        country: record.country,
+        concessionPercent: record.concessionPercent,
+        region: record.region,
+        code: record.code,
+        expiresAt: record.expiresAt.toISOString(),
+      });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({
+          message: err.errors[0].message,
+          field: err.errors[0].path.join("."),
+        });
+      }
+      res.status(400).json({
+        message: err instanceof Error ? err.message : "Scholarship application failed",
+      });
+    }
+  });
+
+  app.post(api.scholarship.validate.path, async (req, res) => {
+    try {
+      if (!req.session.user) {
+        return res.status(401).json({ message: "Please log in to apply a scholarship code." });
+      }
+
+      const { code } = api.scholarship.validate.input.parse(req.body);
+      const record = await storage.getScholarshipCode(code);
+      const registrationCountry = await storage.getRegisteredCountry(req.session.user.id);
+      assertScholarshipCodeForUser(record, req.session.user, registrationCountry);
+
+      res.json({
+        valid: true,
+        code: record!.code,
+        country: record!.country,
+        concessionPercent: record!.concessionPercent,
+        region: record!.region,
+      });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({
+          message: err.errors[0].message,
+          field: err.errors[0].path.join("."),
+        });
+      }
+      res.status(404).json({
+        message: err instanceof Error ? err.message : "Invalid scholarship code",
+      });
+    }
+  });
+
   // === ORDERS & CART ===
   app.post("/api/orders", async (req, res) => {
     try {
@@ -1093,8 +1305,16 @@ EduMeUp`,
         return res.status(401).json({ message: "Not authenticated" });
       }
 
-      const { items, totalAmount } = checkoutRequestSchema.parse(req.body);
+      const { items, totalAmount, scholarshipCode } = checkoutRequestSchema.parse(req.body);
       const userId = String(req.session.user.id);
+
+      const { scholarshipRecord } = await resolveCheckoutTotals({
+        items,
+        totalAmount,
+        scholarshipCode,
+        user: req.session.user,
+      });
+
       const order = await storage.createOrder({ userId, totalAmount, status: "completed" });
       const isSchoolPurchase = req.session.user.role === "school";
 
@@ -1115,6 +1335,10 @@ EduMeUp`,
             programId: item.programId
           });
         }
+      }
+
+      if (scholarshipRecord) {
+        await storage.markScholarshipCodeUsed(scholarshipRecord.code, userId);
       }
 
       const response = {
@@ -1150,7 +1374,15 @@ EduMeUp`,
         return res.status(401).json({ message: "Not authenticated" });
       }
 
-      const { items, totalAmount } = api.payments.init.input.parse(req.body);
+      const { items, totalAmount, scholarshipCode } = api.payments.init.input.parse(req.body);
+
+      await resolveCheckoutTotals({
+        items,
+        totalAmount,
+        scholarshipCode,
+        user: req.session.user,
+      });
+
       const isSingleCourse = items.length === 1;
       const orderRef = isSingleCourse
         ? `${items[0].programId}-${req.session.user.id}`
@@ -1160,6 +1392,7 @@ EduMeUp`,
         userId: String(req.session.user.id),
         items,
         totalAmount,
+        scholarshipCode,
         createdAt: new Date(),
       });
 

@@ -1,6 +1,6 @@
 
 import { z } from 'zod';
-import { insertInquirySchema, insertResourceSchema, inquiries, resources, programs, lmsCourseSchema, authUserSchema, loginInputSchema, registerInputSchema, checkoutRequestSchema, orderHistorySchema, passwordChangeInputSchema, profileUpdateInputSchema, studentDashboardSchema, parentDashboardSchema, schoolDashboardSchema, adminDashboardSchema, adminUsersListSchema, adminActivityLogsListSchema, adminSuspendUserInputSchema, adminAssignRoleInputSchema, adminResetPasswordInputSchema, adminActionResponseSchema, adminCoursesListSchema, adminUpdateCoursePricingInputSchema, adminUpdateCourseVisibilityInputSchema, adminUpdateCourseCategoryInputSchema, adminSyncCoursesInputSchema, adminSyncCoursesResponseSchema, parentLinkChildInputSchema, paymentInitRequestSchema, paymentInitResponseSchema, paymentVerifyRequestSchema, paymentVerifyResponseSchema, registerResponseSchema, studentCertificateSchema, schoolSeatPurchaseInputSchema, dashboardNotificationListSchema, markNotificationReadInputSchema, markNotificationReadResponseSchema, revenueReportSchema, enrollmentReportSchema, progressAnalyticsSchema, usageMetricsSchema, analyticsQueryInputSchema, analyticsReportSchema, bulkLicensePurchaseInputSchema, bulkLicensePurchaseResponseSchema, schoolStudentUploadSchema, bulkSeatAssignmentInputSchema, bulkSeatAssignmentResponseSchema, licenseUsageMetricsSchema, schoolUsageReportSchema, diagnosticEligibilityInputSchema, diagnosticEligibilityResponseSchema, diagnosticStartInputSchema, diagnosticStartResponseSchema, diagnosticContentRequestSchema, diagnosticContentResponseSchema, diagnosticAnswerInputSchema, diagnosticCompleteInputSchema, diagnosticResultSchema } from './schema.js';
+import { insertInquirySchema, insertResourceSchema, inquiries, resources, programs, lmsCourseSchema, authUserSchema, loginInputSchema, registerInputSchema, checkoutRequestSchema, orderHistorySchema, passwordChangeInputSchema, profileUpdateInputSchema, studentDashboardSchema, parentDashboardSchema, schoolDashboardSchema, adminDashboardSchema, adminUsersListSchema, adminActivityLogsListSchema, adminSuspendUserInputSchema, adminAssignRoleInputSchema, adminResetPasswordInputSchema, adminActionResponseSchema, adminCoursesListSchema, adminUpdateCoursePricingInputSchema, adminUpdateCourseVisibilityInputSchema, adminUpdateCourseCategoryInputSchema, adminSyncCoursesInputSchema, adminSyncCoursesResponseSchema, parentLinkChildInputSchema, paymentInitRequestSchema, paymentInitResponseSchema, paymentVerifyRequestSchema, paymentVerifyResponseSchema, registerResponseSchema, studentCertificateSchema, schoolSeatPurchaseInputSchema, dashboardNotificationListSchema, markNotificationReadInputSchema, markNotificationReadResponseSchema, revenueReportSchema, enrollmentReportSchema, progressAnalyticsSchema, usageMetricsSchema, analyticsQueryInputSchema, analyticsReportSchema, bulkLicensePurchaseInputSchema, bulkLicensePurchaseResponseSchema, schoolStudentUploadSchema, bulkSeatAssignmentInputSchema, bulkSeatAssignmentResponseSchema, licenseUsageMetricsSchema, schoolUsageReportSchema, diagnosticEligibilityInputSchema, diagnosticEligibilityResponseSchema, diagnosticStartInputSchema, diagnosticStartResponseSchema, diagnosticContentRequestSchema, diagnosticContentResponseSchema, diagnosticAnswerInputSchema, diagnosticCompleteInputSchema, diagnosticResultSchema, scholarshipApplyInputSchema, scholarshipApplyResponseSchema, scholarshipValidateInputSchema, scholarshipValidateResponseSchema, scholarshipEligibilityResponseSchema } from './schema.js';
 
 export const errorSchemas = {
   validation: z.object({
@@ -339,6 +339,35 @@ export const api = {
       responses: {
         200: markNotificationReadResponseSchema,
         401: errorSchemas.notFound,
+      },
+    },
+  },
+  scholarship: {
+    eligibility: {
+      method: 'GET' as const,
+      path: '/api/scholarship/eligibility' as const,
+      responses: {
+        200: scholarshipEligibilityResponseSchema,
+        401: errorSchemas.notFound,
+      },
+    },
+    apply: {
+      method: 'POST' as const,
+      path: '/api/scholarship/apply' as const,
+      input: scholarshipApplyInputSchema,
+      responses: {
+        200: scholarshipApplyResponseSchema,
+        400: errorSchemas.validation,
+      },
+    },
+    validate: {
+      method: 'POST' as const,
+      path: '/api/scholarship/validate' as const,
+      input: scholarshipValidateInputSchema,
+      responses: {
+        200: scholarshipValidateResponseSchema,
+        400: errorSchemas.validation,
+        404: errorSchemas.notFound,
       },
     },
   },
