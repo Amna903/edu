@@ -40,10 +40,10 @@ const learnColumns: MegaColumn[] = [
     heading: "Student Programmes",
     items: [
       { label: "Lower Secondary Grade 6–8", href: "/programs" },
-      { label: "Pre-O-Level", href: "/programs/pre-o-level-victory" },
+      { label: "Pre-O-Level", href: "/programs/pre-o-level" },
       { label: "Must-Have Courses", href: "/programs/must-have-courses" },
       { label: "O-Level English", href: "/programs/english-mastery" },
-      { label: "O-Level Subjects", href: "/programs/complete-o-level" },
+      { label: "O-Level Subjects", href: "/olevel-subjects" },
       { label: "ATP Courses", href: "/programs/atp-courses" },
       { label: "Bridge Courses", href: "/programs/bridge-courses" },
     ],
