@@ -33,6 +33,8 @@ import WhyEduMeUp from "@/pages/WhyEduMeUp";
 import EightStepModel from "@/pages/EightStepModel";
 import ATPCourses from "@/pages/programs/ATPCourses";
 import TutorBooking from "@/pages/programs/TutorBooking";
+import Tutoring from "@/pages/Tutoring";
+import FindATutor from "@/pages/FindATutor";
 import Matric from "@/pages/programs/Matric";
 import FscIcs from "@/pages/programs/FscIcs";
 import Ecat from "@/pages/programs/Ecat";
@@ -92,7 +94,8 @@ function Router() {
       <Route path="/programs" component={Programs} />
       <Route path="/all-programs" component={Programs} />
       <Route path="/courses" component={Courses} />
-      <Route path="/tutoring" component={TutorBooking} />
+      <Route path="/tutoring" component={Tutoring} />
+      <Route path="/find-a-tutor" component={FindATutor} />
       <Route path="/diagnostics" component={Diagnostics} />
       <Route path="/diagnostics/start" component={DiagnosticsStart} />
       <Route path="/programs/ai-diagnostic" component={Diagnostics} />

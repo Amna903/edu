@@ -74,6 +74,12 @@ const forYouItems: SimpleDropdownItem[] = [
   { label: "Contact Us / Get a Demo", description: "Talk to the EduMeUp team", href: "/contact" },
 ];
 
+const tutorItems: SimpleDropdownItem[] = [
+  { label: "Tutoring", description: "Explore our tutoring services and programmes", href: "/tutoring" },
+  { label: "Find a Tutor", description: "Search and connect with certified tutors", href: "/find-a-tutor" },
+  { label: "Become a Tutor", description: "Join our certified tutor network", href: "/become-a-tutor" },
+];
+
 const consultancyItems: SimpleDropdownItem[] = [
   { label: "Cambridge Consultancy", description: "Strategy and implementation support", href: "/cambridge-consultancy" },
   { type: "separator" },
@@ -197,9 +203,13 @@ export function Navbar() {
             </div>
           </div>
 
-          <Link href="/tutoring" className={navLinkClass("/tutoring")}>
-            Tutoring
-          </Link>
+          <SimpleDropdown
+            label="Tutor"
+            active={["/tutoring", "/find-a-tutor", "/become-a-tutor"].some(isActive)}
+            items={tutorItems}
+            widthClass="w-[280px]"
+            navLinkClass={navLinkClass}
+          />
 
           <SimpleDropdown
             label="For You"

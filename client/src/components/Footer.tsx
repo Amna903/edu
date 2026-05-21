@@ -23,6 +23,7 @@ const diagnoseLinks = [
   { label: "Teacher Diagnostic (T1)", href: "/teacher-courses#t1" },
   { label: "School Class Diagnostic", href: "/diagnostics#school-class" },
   { label: "Personalised Tutoring", href: "/tutoring", isPopular: true },
+  { label: "Tutor Directory", href: "/find-a-tutor" },
   { label: "Pricing", href: "/pricing" },
   { label: "Free Resources", href: "/free-resources", isFree: true },
 ];
