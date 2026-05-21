@@ -44,6 +44,7 @@ import BridgeSciencesEconomics from "@/pages/programs/BridgeSciencesEconomics";
 import EnglishMastery from "@/pages/programs/EnglishMastery";
 import EnglishPathway from "@/pages/programs/EnglishPathway";
 import PakistanCurriculum from "@/pages/programs/PakistanCurriculum";
+import { PreOLevel } from "@/pages/programs/PreOLevel";
 import PreOLevelVictory from "@/pages/programs/PreOLevelVictory";
 import CompleteOLevel from "@/pages/programs/CompleteOLevel";
 import ExamPrep from "@/pages/programs/ExamPrep";
@@ -103,6 +104,7 @@ function Router() {
       <Route path="/olevel-readiness-forecast/start" component={OLevelReadinessForecastStart} />
       <Route path="/olevel-readiness-forecast/results/:sessionId" component={OLevelReadinessForecastResults} />
       <Route path="/olevel-subjects" component={CompleteOLevel} />
+      <Route path="/programs/o-level-subjects" component={CompleteOLevel} />
       <Route path="/olevel/:subjectSlug" component={OLevelSubjectPage} />
       <Route path="/programs/atp-courses" component={ATPCourses} />
       <Route path="/programs/tutor-booking" component={TutorBooking} />
@@ -114,6 +116,7 @@ function Router() {
       <Route path="/programs/pakistan-curriculum" component={PakistanCurriculum} />
       <Route path="/programs/english-pathway" component={EnglishPathway} />
       <Route path="/programs/english-mastery" component={EnglishMastery} />
+      <Route path="/programs/pre-o-level" component={PreOLevel} />
       <Route path="/programs/pre-o-level-victory" component={PreOLevelVictory} />
       <Route path="/programs/must-have" component={MustHaveCoursesPage} />
       <Route path="/programs/must-have-courses" component={MustHaveCoursesPage} />
