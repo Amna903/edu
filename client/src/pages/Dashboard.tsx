@@ -130,10 +130,17 @@ export default function Dashboard() {
   const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
   const [linkChildState, setLinkChildState] = useState<{ pending: boolean; success: string; error: string }>({ pending: false, success: "", error: "" });
   const [reportDownloadState, setReportDownloadState] = useState<{ pending: boolean; error: string }>({ pending: false, error: "" });
+  const [aiWebhookTestState, setAiWebhookTestState] = useState<{
+    pending: boolean;
+    success: string;
+    error: string;
+    result: string;
+  }>({ pending: false, success: "", error: "", result: "" });
   const [adminPanel, setAdminPanel] = useState({ tab: "users", userPage: 1, logPage: 1, coursePage: 1, searchQuery: "", courseSearch: "", selectedUserId: null as string | null });
-  const adminUsers = useAdminUsers(adminPanel.userPage, 20, adminPanel.searchQuery);
-  const activityLogs = useActivityLogs(adminPanel.logPage, 20);
-  const adminCourses = useAdminCourses(adminPanel.coursePage, 20, adminPanel.courseSearch);
+  const isAdminUser = user?.role === "admin";
+  const adminUsers = useAdminUsers(adminPanel.userPage, 20, adminPanel.searchQuery, isAdminUser);
+  const activityLogs = useActivityLogs(adminPanel.logPage, 20, isAdminUser);
+  const adminCourses = useAdminCourses(adminPanel.coursePage, 20, adminPanel.courseSearch, isAdminUser);
   const suspendUser = useSuspendUser();
   const assignRole = useAssignRole();
   const resetPassword = useResetPassword();
@@ -167,6 +174,71 @@ export default function Dashboard() {
       navigate("/dashboard/support");
     }
   }, [location, navigate, user]);
+
+  useEffect(() => {
+    const isMainDashboard = location === "/dashboard" || location === getDashboardPath(user?.role);
+    if (!user || user.role !== "student" || !isMainDashboard) {
+      return;
+    }
+
+    const dashboardData = studentDashboard.data;
+    if (!dashboardData || !Array.isArray(dashboardData.activities) || dashboardData.activities.length === 0) {
+      return;
+    }
+
+    const quizActivities = dashboardData.activities.filter((activity) => /quiz/i.test(activity.moduleName));
+    if (quizActivities.length === 0) {
+      return;
+    }
+
+    const storageKey = `edu:quiz-webhook-sent:${user.id}`;
+    const savedIdsRaw = window.localStorage.getItem(storageKey);
+    const savedIds = new Set<string>(
+      savedIdsRaw
+        ? (JSON.parse(savedIdsRaw) as string[])
+        : [],
+    );
+
+    const pending = quizActivities.filter((activity) => !savedIds.has(`${activity.id}:${activity.timeCompleted}`));
+    if (pending.length === 0) {
+      return;
+    }
+
+    void (async () => {
+      const newlySaved: string[] = [];
+
+      for (const activity of pending) {
+        const matchedCourse = dashboardData.courses.find((course) => course.title === activity.courseName);
+        const rawGradeValue =
+          typeof matchedCourse?.percentage === "number" && Number.isFinite(matchedCourse.percentage)
+            ? matchedCourse.percentage.toFixed(2)
+            : "0.00";
+
+        const response = await fetch("/api/webhook/quiz-attempt", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userid: String(user.id),
+            quizid: String(activity.id),
+            attemptid: `${activity.id}-${activity.timeCompleted}`,
+            timefinish: String(activity.timeCompleted),
+            rawgrade: rawGradeValue,
+          }),
+        }).catch(() => null);
+
+        if (response?.ok) {
+          const dedupeId = `${activity.id}:${activity.timeCompleted}`;
+          savedIds.add(dedupeId);
+          newlySaved.push(dedupeId);
+        }
+      }
+
+      if (newlySaved.length > 0) {
+        window.localStorage.setItem(storageKey, JSON.stringify(Array.from(savedIds)));
+      }
+    })();
+  }, [location, studentDashboard.data, user]);
 
   const effectiveProfile = {
     firstname: profileForm.firstname || user?.firstname || "",
@@ -258,6 +330,83 @@ export default function Dashboard() {
     }
   }
 
+  async function testAiTeamWebhook() {
+    if (!user) return;
+
+    setAiWebhookTestState({ pending: true, success: "", error: "", result: "" });
+
+    try {
+      const nowUnix = Math.floor(Date.now() / 1000);
+      const payload = {
+        userid: String(user.id),
+        quizid: "12",
+        attemptid: `manual-test-${user.id}-${nowUnix}`,
+        timefinish: String(nowUnix),
+        rawgrade: "14.00",
+      };
+
+      const response = await fetch("/api/webhook/quiz-attempt", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const body = await readJsonSafely(response);
+      if (!response.ok) {
+        const postStatus = typeof body.postStatus === "number" ? body.postStatus : undefined;
+        const postResponse = typeof body.postResponse === "string"
+          ? body.postResponse
+          : body.postResponse !== undefined
+            ? JSON.stringify(body.postResponse)
+            : undefined;
+        const getStatus = typeof body.getStatus === "number" ? body.getStatus : undefined;
+        const getResponse = typeof body.getResponse === "string"
+          ? body.getResponse
+          : body.getResponse !== undefined
+            ? JSON.stringify(body.getResponse)
+            : undefined;
+
+        const detailParts = [
+          postStatus ? `POST: ${postStatus}${postResponse ? ` (${postResponse})` : ""}` : "",
+          getStatus ? `GET fallback: ${getStatus}${getResponse ? ` (${getResponse})` : ""}` : "",
+        ].filter(Boolean);
+
+        throw new Error(
+          `${typeof body.message === "string" ? body.message : `Webhook test failed with status ${response.status}`}${
+            detailParts.length ? ` | ${detailParts.join(" | ")}` : ""
+          }`,
+        );
+      }
+
+      const destinationStatus = typeof body.destinationStatus === "number" ? body.destinationStatus : 200;
+      const destinationResponse =
+        typeof body.destinationResponse === "string"
+          ? body.destinationResponse
+          : JSON.stringify(body.destinationResponse ?? {});
+
+      console.info("AI webhook test result", {
+        status: response.status,
+        destinationStatus,
+        destinationResponse,
+      });
+
+      setAiWebhookTestState({
+        pending: false,
+        success: `AI webhook test sent successfully (destination status: ${destinationStatus}).`,
+        error: "",
+        result: destinationResponse,
+      });
+    } catch (error) {
+      setAiWebhookTestState({
+        pending: false,
+        success: "",
+        error: error instanceof Error ? error.message : "Failed to test AI webhook",
+        result: "",
+      });
+    }
+  }
+
   return (
     <Layout>
       <div className="container-custom py-10 md:py-14">
@@ -344,8 +493,34 @@ export default function Dashboard() {
                       Your Moodle-connected data is now surfaced inside `edu`, including profile, orders, enrollments, role dashboards, and the new signup flow.
                     </p>
                     {user.role === "student" && (
-                      <div className="mt-5">
-                        <AIChatLauncher className="bg-brand-primary text-white hover:bg-brand-primary-dark" />
+                      <div className="mt-5 space-y-3">
+                        <div className="flex flex-wrap items-center gap-3">
+                          <AIChatLauncher className="bg-brand-primary text-white hover:bg-brand-primary-dark" />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={testAiTeamWebhook}
+                            disabled={aiWebhookTestState.pending}
+                          >
+                            {aiWebhookTestState.pending ? "Testing AI Webhook..." : "Test AI Webhook"}
+                          </Button>
+                        </div>
+                        {aiWebhookTestState.success ? (
+                          <p className="rounded-2xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700">
+                            {aiWebhookTestState.success}
+                          </p>
+                        ) : null}
+                        {aiWebhookTestState.error ? (
+                          <p className="rounded-2xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700">
+                            {aiWebhookTestState.error}
+                          </p>
+                        ) : null}
+                        {aiWebhookTestState.result ? (
+                          <div className="rounded-2xl border border-slate-200 bg-white/80 px-3 py-2 text-xs text-slate-700">
+                            <p className="mb-1 font-semibold uppercase tracking-[0.12em] text-slate-500">Webhook Result</p>
+                            <pre className="whitespace-pre-wrap break-words text-[11px] leading-5">{aiWebhookTestState.result}</pre>
+                          </div>
+                        ) : null}
                       </div>
                     )}
                   </div>

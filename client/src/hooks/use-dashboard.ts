@@ -84,9 +84,10 @@ export function useAdminDashboard(enabled = true) {
   });
 }
 
-export function useAdminUsers(page = 1, limit = 20, search = "") {
+export function useAdminUsers(page = 1, limit = 20, search = "", enabled = true) {
   return useQuery({
     queryKey: [api.admin.users.path, page, limit, search],
+    enabled,
     queryFn: async () => {
       const params = new URLSearchParams({
         page: String(page),
@@ -171,9 +172,10 @@ export function useResetPassword() {
   });
 }
 
-export function useActivityLogs(page = 1, limit = 20) {
+export function useActivityLogs(page = 1, limit = 20, enabled = true) {
   return useQuery({
     queryKey: [api.admin.activityLogs.path, page, limit],
+    enabled,
     queryFn: async () => {
       const params = new URLSearchParams({
         page: String(page),
@@ -188,9 +190,10 @@ export function useActivityLogs(page = 1, limit = 20) {
   });
 }
 
-export function useAdminCourses(page = 1, limit = 20, search = "") {
+export function useAdminCourses(page = 1, limit = 20, search = "", enabled = true) {
   return useQuery({
     queryKey: [api.admin.courses.path, page, limit, search],
+    enabled,
     queryFn: async () => {
       const params = new URLSearchParams({
         page: String(page),

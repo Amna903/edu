@@ -34,6 +34,30 @@ export async function registerRoutes(
     process.env.AI_SUPPORT_WEBHOOK_URL ??
     "https://n8n.edumeup.com/webhook/f0a0ac6f-f667-404a-9b13-74d11dd68632";
 
+  const quizAttemptWebhookUrl =
+    process.env.QUIZ_ATTEMPT_WEBHOOK_URL ??
+    "https://n8n.edumeup.com/webhook/d8a35fd3-b70d-493e-933c-f8126a16f3ac";
+
+  const quizAttemptPayloadSchema = z
+    .object({
+      userid: z.union([z.string(), z.number()]).transform((value) => String(value).trim()).refine(Boolean, {
+        message: "userid is required",
+      }),
+      quizid: z.union([z.string(), z.number()]).transform((value) => String(value).trim()).refine(Boolean, {
+        message: "quizid is required",
+      }),
+      attemptid: z.union([z.string(), z.number()]).transform((value) => String(value).trim()).refine(Boolean, {
+        message: "attemptid is required",
+      }),
+      timefinish: z.union([z.string(), z.number()]).transform((value) => String(value).trim()).refine(Boolean, {
+        message: "timefinish is required",
+      }),
+      rawgrade: z.union([z.string(), z.number()]).transform((value) => String(value).trim()).refine(Boolean, {
+        message: "rawgrade is required",
+      }),
+    })
+    .passthrough();
+
   const extractAiReply = (payload: unknown): string => {
     if (!payload) return "";
     if (typeof payload === "string") return payload.trim();
@@ -1455,6 +1479,142 @@ EduMeUp`,
       return res.json({ status: "ignored" });
     } catch (err) {
       res.status(500).json({ status: "failed" });
+    }
+  });
+
+  app.post("/api/webhook/quiz-attempt", async (req, res) => {
+    try {
+      const sourcePayload =
+        req.body && typeof req.body.data === "object" && req.body.data !== null
+          ? req.body.data
+          : req.body;
+
+      const payload = quizAttemptPayloadSchema.parse(sourcePayload);
+
+      const parseDestinationPreview = (rawText: string) => {
+        const destinationResponse = rawText.trim()
+          ? (() => {
+              try {
+                return JSON.parse(rawText);
+              } catch {
+                return rawText;
+              }
+            })()
+          : null;
+
+        return destinationResponse === null
+          ? null
+          : typeof destinationResponse === "string"
+            ? destinationResponse.slice(0, 500)
+            : JSON.stringify(destinationResponse).slice(0, 500);
+      };
+
+      const sendGet = async () => {
+        const getUrl = new URL(quizAttemptWebhookUrl);
+        Object.entries(payload).forEach(([key, value]) => {
+          getUrl.searchParams.set(key, String(value));
+        });
+
+        const response = await fetch(getUrl.toString(), {
+          method: "GET",
+          headers: { Accept: "application/json, text/plain, */*" },
+        });
+        const rawText = await response.text();
+        return {
+          response,
+          destinationPreview: parseDestinationPreview(rawText),
+        };
+      };
+
+      const sendPost = async () => {
+        const response = await fetch(quizAttemptWebhookUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json, text/plain, */*",
+          },
+          body: JSON.stringify(payload),
+        });
+        const rawText = await response.text();
+        return {
+          response,
+          destinationPreview: parseDestinationPreview(rawText),
+        };
+      };
+
+      const getAttempt = await sendGet();
+      if (getAttempt.response.ok) {
+        console.info("[quiz-webhook] forwarded", {
+          userid: payload.userid,
+          quizid: payload.quizid,
+          attemptid: payload.attemptid,
+          deliveryMethod: "GET",
+          destinationStatus: getAttempt.response.status,
+          destinationResponse: getAttempt.destinationPreview,
+        });
+
+        return res.json({
+          status: "success",
+          forwarded: true,
+          deliveryMethod: "GET",
+          destinationStatus: getAttempt.response.status,
+          destinationResponse: getAttempt.destinationPreview,
+        });
+      }
+
+      const postAttempt = await sendPost();
+      if (postAttempt.response.ok) {
+        console.info("[quiz-webhook] forwarded", {
+          userid: payload.userid,
+          quizid: payload.quizid,
+          attemptid: payload.attemptid,
+          deliveryMethod: "POST_FALLBACK",
+          destinationStatus: postAttempt.response.status,
+          destinationResponse: postAttempt.destinationPreview,
+        });
+
+        return res.json({
+          status: "success",
+          forwarded: true,
+          deliveryMethod: "POST_FALLBACK",
+          destinationStatus: postAttempt.response.status,
+          destinationResponse: postAttempt.destinationPreview,
+          initialGetStatus: getAttempt.response.status,
+          initialGetResponse: getAttempt.destinationPreview,
+        });
+      }
+
+      console.error("[quiz-webhook] destination rejected", {
+        userid: payload.userid,
+        quizid: payload.quizid,
+        attemptid: payload.attemptid,
+        getStatus: getAttempt.response.status,
+        getResponse: getAttempt.destinationPreview,
+        postStatus: postAttempt.response.status,
+        postResponse: postAttempt.destinationPreview,
+      });
+
+      return res.status(502).json({
+        status: "failed",
+        message: "Quiz webhook destination rejected both GET and POST fallback",
+        getStatus: getAttempt.response.status,
+        getResponse: getAttempt.destinationPreview,
+        postStatus: postAttempt.response.status,
+        postResponse: postAttempt.destinationPreview,
+      });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({
+          status: "failed",
+          message: err.errors[0]?.message || "Invalid quiz attempt payload",
+          field: err.errors[0]?.path.join("."),
+        });
+      }
+
+      return res.status(500).json({
+        status: "failed",
+        message: err instanceof Error ? err.message : "Failed to forward quiz attempt webhook",
+      });
     }
   });
 
