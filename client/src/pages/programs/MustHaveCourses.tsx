@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "wouter";
-import { ArrowRight, CheckCircle2, Brain, BarChart3, BookOpen, GraduationCap } from "lucide-react";
+import { ArrowRight, CheckCircle2, Brain, BarChart3, BookOpen, GraduationCap, FileStack, Timer, Star, Mic, Globe, Lock, Phone } from "lucide-react";
 import { motion } from "framer-motion";
 import { Layout } from "@/components/Layout";
 
@@ -245,14 +245,36 @@ const sections = [
 function CourseCard({ course }) {
   const [showPopup, setShowPopup] = useState(false);
   const [popupSide, setPopupSide] = useState("right");
+  const [popupRect, setPopupRect] = useState(null);
   const cardRef = useRef(null);
 
   const handleMouseEnter = () => {
     if (cardRef.current) {
       const rect = cardRef.current.getBoundingClientRect();
       setPopupSide(window.innerWidth - rect.right < 320 ? "left" : "right");
+      setPopupRect(rect);
     }
     setShowPopup(true);
+  };
+
+  const EmojiIcon = () => {
+    // Map common emoji glyphs to lucide icons
+    const map = {
+      "🧠": Brain,
+      "📖": BookOpen,
+      "📦": FileStack,
+      "⏱": Timer,
+      "⭐": Star,
+      "🎤": Mic,
+      "🌐": Globe,
+      "🎓": GraduationCap,
+      "🔒": Lock,
+      "📊": BarChart3,
+      "📞": Phone,
+    } as Record<string, any>;
+    const Icon = map[course.emoji as string];
+    if (!Icon) return <span style={{ fontSize: 48, position: "relative", zIndex: 1 }}>{course.emoji}</span>;
+    return <Icon className="relative z-10" style={{ width: 48, height: 48 }} />;
   };
 
   return (
@@ -288,9 +310,7 @@ function CourseCard({ course }) {
                 "linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.18))",
             }}
           />
-          <span style={{ fontSize: "48px", position: "relative", zIndex: 1 }}>
-            {course.emoji}
-          </span>
+          <EmojiIcon />
           {/* Level badge */}
           <span
             className="absolute top-2 left-2 rounded-md px-2 py-0.5"
@@ -377,23 +397,26 @@ function CourseCard({ course }) {
       </div>
 
       {/* Hover Popup */}
-      <div
-        className="absolute top-0 z-50 pointer-events-none"
-        style={{
-          width: "300px",
-          ...(popupSide === "right"
-            ? { left: "calc(100% + 12px)" }
-            : { right: "calc(100% + 12px)" }),
-          opacity: showPopup ? 1 : 0,
-          transform: showPopup ? "scale(1)" : "scale(0.97)",
-          transition: "opacity 150ms, transform 200ms",
-          boxShadow: "0 20px 60px rgba(11,60,93,0.22)",
-          borderRadius: "14px",
-          overflow: "hidden",
-        }}
-      >
-        {/* Popup header */}
-        <div className="px-5 py-4" style={{ background: "#2366c9" }}>
+      {popupRect && (
+        <div
+          className="fixed z-50 pointer-events-none"
+          style={{
+            width: "300px",
+            top: popupRect.top + window.scrollY + "px",
+            left:
+              popupSide === "right"
+                ? popupRect.right + 12 + "px"
+                : popupRect.left - 12 - 300 + "px",
+            opacity: showPopup ? 1 : 0,
+            transform: showPopup ? "scale(1)" : "scale(0.97)",
+            transition: "opacity 150ms, transform 200ms",
+            boxShadow: "0 20px 60px rgba(11,60,93,0.22)",
+            borderRadius: "14px",
+            overflow: "hidden",
+          }}
+        >
+          {/* Popup header */}
+          <div className="px-5 py-4" style={{ background: "#2366c9" }}>
           <p
             className="uppercase mb-1"
             style={{ color: "#dbeafe", fontSize: "10px", fontWeight: 700, letterSpacing: "0.1em" }}
@@ -487,7 +510,8 @@ function CourseCard({ course }) {
             </button>
           </div>
         </div>
-      </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -514,7 +538,7 @@ function CourseScrollRow({ courseIds }) {
       </button>
       <div
         ref={rowRef}
-        className="flex gap-[18px] overflow-x-auto pb-4"
+        className="flex gap-[18px] overflow-x-auto pb-4 md:pl-12 md:pr-12"
         style={{
           scrollbarWidth: "thin",
           scrollbarColor: "#dbe7f4 transparent",

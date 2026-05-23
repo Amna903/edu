@@ -62,11 +62,11 @@ const comparisonRows = [
 
 const phase1Steps = [
   {
-    number: 1,
-    icon: Search,
-    phase: "Phase 1 — Diagnostic",
-    title: "Diagnostic Analysis",
-    desc: "A 90-minute AI-powered assessment maps every learner's exact knowledge gaps — subject by subject, topic by topic, sub-skill by sub-skill. No guessing. No generic starting points. The student does not begin learning until we know precisely where they actually stand.",
+  number: 1,
+  icon: Search,
+  phase: "Phase 1 — Diagnostic",
+  title: "Diagnostic Analysis",
+  desc: "A 30-minute AI-powered assessment maps every learner's exact knowledge gaps — subject by subject, topic by topic, sub-skill by sub-skill. No guessing. No generic starting points. The student does not begin learning until we know precisely where they actually stand.",
     aiTutor:
       "The Cambridge AI Tutor conducts and interprets the diagnostic. It identifies not just which topics are weak, but which specific sub-skills within each topic are causing the gap. It generates a personalised gap report for each student.",
     examinerLink:

@@ -112,7 +112,7 @@ export default function Home() {
             <motion.div initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
               <div className="grid grid-cols-1 md:grid-cols-[1fr_minmax(320px,0.66fr)] gap-7 md:gap-10 items-center">
                 <div>
-                  <h1 className="text-white text-4xl md:text-5xl leading-[1.1] mb-4 font-bold">From Content Delivery to Learning Mastery.</h1>
+                  <h1 className="text-white text-4xl md:text-5xl leading-[1.1] mb-4 font-bold">The World’s No.1 Cambridge Education Ecosystem from Grade 6 to OLevel/IGCSE</h1>
                   <p className="text-white/90 text-base md:text-lg leading-[1.7] max-w-[760px] mb-6">EduMeUp replaces passive video with interactive mastery learning - so students do not just watch Cambridge content, they understand it, retain it, and apply it under exam conditions.</p>
                   <div className="flex gap-3 flex-wrap mb-6">
                     <a href="/diagnostics" className="no-underline rounded-lg px-6 py-3 text-base font-bold inline-block bg-white text-brand-primary">Start Free Diagnostic</a>
@@ -409,10 +409,11 @@ export default function Home() {
               </div>
               <div className="bg-blue-50/50 border border-slate-200 rounded-xl p-5 text-sm text-slate-700">
                 <h3 className="font-bold text-slate-900 mb-4 text-base">Platform Stats and Partnerships</h3>
-                <div className="text-brand-primary text-3xl font-bold leading-none mt-1.5">91%</div><div className="text-slate-400 text-sm font-bold mb-3 mt-1">O-Level Pass Rate</div>
+                <div className="text-brand-primary text-3xl font-bold leading-none mt-1.5">91%*</div><div className="text-slate-400 text-sm font-bold mb-3 mt-1">O-Level Pass Rate</div>
                 <div className="text-brand-primary text-3xl font-bold leading-none mt-1.5">47%</div><div className="text-slate-400 text-sm font-bold mb-4 mt-1">Achieve A or A*</div>
                 <div className="grid grid-cols-2 gap-2 mt-2">
                   <div className="border border-slate-200 bg-white rounded-lg text-center p-2 text-sm text-slate-700 font-medium">Partner School</div><div className="border border-slate-200 bg-white rounded-lg text-center p-2 text-sm text-slate-700 font-medium">Institution</div><div className="border border-slate-200 bg-white rounded-lg text-center p-2 text-sm text-slate-700 font-medium">Tutor Network</div><div className="border border-slate-200 bg-white rounded-lg text-center p-2 text-sm text-slate-700 font-medium">Academic Team</div>
+                  <div className="text-xs text-slate-500 mt-3">*Designed to Achieve</div>
                 </div>
               </div>
             </div>

@@ -57,6 +57,38 @@
     color: #4b5563;
   }
 
+  /* Enforce Geist and body sizing across main content areas.
+     These rules target paragraphs and list items inside primary content containers
+     and use !important to ensure utility classes (text-sm, text-[13px], etc.)
+     do not accidentally leave body copy below 16px. Cards and tables are
+     targeted to use 18px per the design guidance. */
+  main, .container-custom, .prose, .prose-max, article, section {
+    font-family: var(--font-sans) !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+  }
+
+  /* Body copy: enforce 16px — not less than 16px and not more than 18px */
+  main p,
+  main li,
+  .container-custom p,
+  .container-custom li,
+  .prose p,
+  .prose li,
+  .prose-max p {
+    font-size: 16px !important;
+    line-height: 1.6 !important;
+    font-weight: 400 !important;
+    font-family: var(--font-sans) !important;
+  }
+
+  /* Cards and tables should use 18px for improved readability */
+  .card, .emu-card, [class*="card"], table, .emu-table, .comparison-table, .card p, .card td, .card th, table td, table th {
+    font-size: 18px !important;
+    line-height: 1.6 !important;
+    font-family: var(--font-sans) !important;
+  }
+
   /* Hide scrollbars globally */
   ::-webkit-scrollbar {
     width: 0px;

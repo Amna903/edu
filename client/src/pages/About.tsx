@@ -39,10 +39,8 @@ export default function About() {
           ]}
         />
 
-        <div className="flex-1 min-w-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-          {/* ================= HERO - THE MISSION ================= */}
-          <section className="relative overflow-hidden bg-white py-8 md:py-12">
-            <div className="container-custom max-w-7xl mx-auto">
+        <section className="relative overflow-hidden bg-white py-8 md:py-12">
+          <div className="container-custom max-w-7xl mx-auto">
               <div className="grid lg:grid-cols-[1.4fr_0.9fr] gap-6 items-stretch">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -103,20 +101,17 @@ export default function About() {
                         </div>
                       </div>
                     </div>
-                    <div className="grid grid-cols-3 gap-3">
+                    <div className="grid grid-cols-2 gap-3">
                       <div className="rounded-2xl border border-neutral-border bg-white shadow-sm rounded-2xl p-4 text-center shadow-sm">
-                        <p className="text-2xl font-semibold text-brand-primary">91%</p>
+                        <p className="text-2xl font-semibold text-brand-primary">91%*</p>
                         <p className="text-sm-small font-semibold uppercase tracking-widest text-slate-500 mt-1">Pass rate</p>
                       </div>
                       <div className="rounded-2xl border border-neutral-border bg-white shadow-sm p-4 text-center">
                         <p className="text-2xl font-semibold text-brand-primary">85%+</p>
                         <p className="text-sm-small font-semibold uppercase tracking-widest text-slate-500 mt-1">Retention</p>
                       </div>
-                      <div className="rounded-2xl border border-neutral-border bg-white shadow-sm p-4 text-center">
-                        <p className="text-2xl font-semibold text-brand-primary">271%</p>
-                        <p className="text-sm-small font-semibold uppercase tracking-widest text-slate-500 mt-1">ROI</p>
-                      </div>
                     </div>
+                    <p className="mt-3 text-xs text-white/80">*Designed to Achieve</p>
                   </div>
                 </motion.div>
               </div>
@@ -236,7 +231,7 @@ export default function About() {
                     <p className="text-blue-200 text-sm">Steps 1–3 | Know exactly what to fix before teaching</p>
                   </div>
                   {[
-                    { step: 1, title: "Comprehensive Diagnostic Assessment", desc: "AI identifies precise sub-skill gaps — not vague scores. Based on effect size d=2.0 (Bloom's 2 Sigma). Duration: approx. 90 minutes.", res: "VanLehn, 2011" },
+                    { step: 1, title: "Comprehensive Diagnostic Assessment", desc: "AI identifies precise sub-skill gaps — not vague scores. Based on effect size d=2.0 (Bloom's 2 Sigma). Duration: approx. 30 minutes.", res: "VanLehn, 2011" },
                     { step: 2, title: "Personalised Remedial Pathway", desc: "A custom repair plan targeting only the student's actual weak areas — saving 40–60% of study time compared to linear curriculum coverage.", res: "Bloom, 1984" },
                     { step: 3, title: "Bridge &amp; Readiness Courses", desc: "Pre-syllabus scaffolding for students not yet ready for O-Level content. Built on Vygotsky's Zone of Proximal Development (ZPD). Covers Grades 7–9 gaps.", res: "Vygotsky, 1978" },
                   ].map((item, i) => (
@@ -277,21 +272,18 @@ export default function About() {
 
               {/* Guaranteed Outcomes strip */}
               <div className="bg-brand-primary text-white relative overflow-hidden mt-20 p-12 rounded-[3rem]">
-                <div className="grid md:grid-cols-3 gap-8 text-center">
+                <div className="grid md:grid-cols-2 gap-8 text-center">
                   <div>
-                    <h4 className="text-3xl font-semibold text-blue-400 mb-2">91%</h4>
-                    <p className="text-xs font-semibold text-blue-200">Pass rate (validated study, vs ~35% traditional average)</p>
+                    <h4 className="text-3xl font-semibold text-blue-400 mb-2">91%*</h4>
+                    <p className="text-xs font-semibold text-blue-200">Pass rate (vs ~35% traditional average)</p>
                   </div>
                   <div>
                     <h4 className="text-3xl font-semibold text-blue-400 mb-2">85%+</h4>
                     <p className="text-xs font-semibold text-blue-200">Knowledge retention after 90 days (vs 10% traditional)</p>
                   </div>
-                  <div>
-                    <h4 className="text-3xl font-semibold text-blue-400 mb-2">271%</h4>
-                    <p className="text-xs font-semibold text-blue-200">ROI for school partners in validated institutional study</p>
-                  </div>
                 </div>
-                <p className="text-center text-blue-300 text-xs mt-6">Research reference: University-validated study across 611 students over 3 years. Full methodology and data available on request.</p>
+                <p className="text-center text-blue-300 text-xs mt-6">Based on platform-tracked outcomes. Full methodology available on request.</p>
+                <p className="text-center text-blue-300 text-xs mt-2">*Designed to Achieve</p>
               </div>
 
               <div className="mt-8 text-center">
@@ -623,8 +615,8 @@ export default function About() {
                   {[
                     { year: "2019–20", title: "The Realisation", desc: "An educator and institution leader observes a repeating crisis: passive teaching, rapid forgetting, tutor dependency, exam failure. The research points clearly to a better system." },
                     { year: "2021", title: "EduMeUp Founded", desc: "The platform is founded with a single mandate: apply the full body of cognitive science research to Cambridge education, systematically and at scale." },
-                    { year: "2021–24", title: "University-Validated Results", desc: "A rigorous 3-year study across 611 students produces validated outcomes: 91% pass rate, 47% A/A* rate, 75% long-term retention, 271% ROI for school partners." },
-                    { year: "2026+", title: "Global Expansion", desc: "2,000+ students across 25+ countries. A-Level development in progress. Charter Programme expansion. Continued R&D with partner institutions." },
+                    { year: "2021–24", title: "University-Validated Results", desc: "A rigorous 3-year study across 611 students produces validated outcomes: 91% pass rate, 47% A/A* rate, 75% long-term retention." },
+                    { year: "2026+", title: "Global Expansion", desc: "2,000+ students across 25+ countries. A-Level development in progress. School Partnerships — serving students across 25+ countries. Continued R&D with partner institutions." },
                   ].map((m, i) => (
                     <div key={i} className="relative text-center">
                       <div className="inline-flex w-10 h-10 rounded-full bg-brand-primary text-white items-center justify-center text-sm font-bold mb-3 mx-auto">{i + 1}</div>
@@ -646,7 +638,7 @@ export default function About() {
                     <h4 className="text-xl font-semibold text-slate-900">Muhammad Benyameen</h4>
                     <p className="text-brand-primary font-semibold text-sm mb-3">Founder &amp; Chief Adviser</p>
                     <p className="text-slate-700 leading-relaxed text-base">
-                      With over 15 years of experience across educational leadership, institutional development, and cognitive science application — including roles as Principal and Deputy Director at leading institutions — Muhammad built EduMeUp because he had seen, firsthand, what the passive instruction model costs students. His M.Phil in Educational Planning &amp; Management and M.Sc. in Physics are the academic foundation. The 10X Learning Leap Model™ is the result.
+                      With over 27 years of educational leadership experience across institutional development and cognitive science application — including roles as Principal and Deputy Director at leading institutions — Muhammad built EduMeUp because he had seen, firsthand, what the passive instruction model costs students. His M.Phil in Educational Planning &amp; Management and M.Sc. in Physics are the academic foundation. The 10X Learning Leap Model™ is the result.
                     </p>
                     <p className="mt-4 italic text-slate-600 font-medium">"The research has always shown us a better way to teach. We simply chose to build it."</p>
                   </div>
@@ -670,7 +662,7 @@ export default function About() {
 
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="bg-brand-primary-soft/40 p-10 rounded-[2.5rem]">
-                  <h4 className="text-3xl text-slate-900 mb-2">2,000+</h4>
+                  <h4 className="text-3xl text-slate-900 mb-2">2,000+*</h4>
                   <p className="text-xs font-black uppercase text-blue-600 tracking-widest">Students Globally</p>
                 </div>
                 <div className="bg-brand-primary-soft/40 p-10 rounded-[2.5rem]">
@@ -678,6 +670,7 @@ export default function About() {
                   <p className="text-xs font-black uppercase text-blue-600 tracking-widest">Countries Reached</p>
                 </div>
               </div>
+              <p className="text-sm text-slate-600 mt-4">*Designed to Achieve</p>
             </div>
           </section>
 
@@ -791,11 +784,9 @@ export default function About() {
                 </p>
               </div>
             </div>
-          </section>
+            </section>
 
-      </main>
-
-      {/* ================= SECTION 9: FINAL CTA — THREE OPTIONS ================= */}
+          {/* ================= SECTION 9: FINAL CTA — THREE OPTIONS ================= */}
       <section id="get-started" className="bg-brand-primary text-white relative overflow-hidden py-20 md:py-32 relative overflow-hidden -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
         <div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
         <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-blue-600 opacity-30 blur-3xl" aria-hidden="true" />
@@ -874,8 +865,7 @@ export default function About() {
           </div>
         </div>
       </section>
-
-      </div>
+        </main>
       </div>
     </Layout>
   );

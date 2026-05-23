@@ -80,11 +80,6 @@ const tutorItems: SimpleDropdownItem[] = [
 ];
 
 const consultancyItems: SimpleDropdownItem[] = [
-  { label: "Cambridge Consultancy", description: "Strategy and implementation support", href: "/cambridge-consultancy" },
-  { type: "separator" },
-  { label: "About EduMeUp", description: "Mission, team, and learning philosophy", href: "/about" },
-  { label: "How EduMeUp Works", description: "Our model from diagnosis to mastery", href: "/how-it-works" },
-  { label: "Why EduMeUp", description: "Compare EduMeUp vs alternatives", href: "/how-edumeup-is-different" },
   { label: "Research & Development", description: "Learning science and product research", href: "/research" },
   { label: "Blog", description: "Insights for students, parents, and schools", href: "/blog" },
   { type: "separator" },
@@ -219,22 +214,16 @@ export function Navbar() {
             navLinkClass={navLinkClass}
           />
 
-          <SimpleDropdown
-            label="Cambridge Consultancy"
-            active={["/cambridge-consultancy", "/about", "/how-it-works", "/how-edumeup-is-different", "/research", "/blog"].some(isActive)}
-            items={consultancyItems}
-            widthClass="w-[300px]"
-            navLinkClass={navLinkClass}
-          />
+          <Link href="/cambridge-360" className={navLinkClass("/cambridge-360")}>Cambridge Consultancy</Link>
 
           <SimpleDropdown
             label="Why EduMeUp"
-            active={["/how-edumeup-is-different", "/why-edumeup"].some(isActive)}
+            active={["/how-edumeup-is-different", "/why-edumeup", "/how-it-works", "/about", "/research"].some(isActive)}
             items={[
               { label: "How EduMeUp Works", description: "Our model from diagnosis to mastery", href: "/how-it-works" },
+              { label: "How We Are Different", description: "Why EduMeUp vs alternatives", href: "/how-edumeup-is-different" },
               { label: "About EduMeUp", description: "Mission, team, and learning philosophy", href: "/about" },
               { label: "Research & Development", description: "Learning science and product research", href: "/research" },
-              { label: "Why EduMeUp", description: "Compare EduMeUp vs alternatives", href: "/how-edumeup-is-different" },
             ]}
             widthClass="w-[320px]"
             navLinkClass={navLinkClass}
