@@ -59,12 +59,12 @@ function TutorCard({ tutor }: { tutor: TutorProfile }) {
       ? "bg-brand-primary"
       : tutor.avatarColor === "blue"
         ? "bg-brand-sky"
-        : "bg-brand-navy";
+        : "bg-brand-primary-dark";
 
   return (
     <div className="rounded-2xl border border-neutral-border bg-white shadow-sm overflow-hidden flex flex-col">
       {/* Card Top */}
-      <div className="bg-gradient-to-r from-brand-navy to-[#243D5C] p-5 text-white">
+      <div className="bg-gradient-to-r from-brand-primary to-brand-sky p-5 text-white">
         <div className="flex items-center gap-4">
           <div
             className={`w-14 h-14 rounded-full ${avatarBg} flex items-center justify-center text-white font-bold text-lg`}
@@ -225,13 +225,14 @@ export default function FindATutor() {
 
   return (
     <Layout>
+      <div className="min-h-screen bg-white font-sans text-slate-700">
       {/* ─── Hero Section ─── */}
-      <section className="bg-brand-navy text-white py-16 md:py-20">
+      <section className="bg-brand-primary text-white py-16 md:py-20">
         <div className="max-w-6xl mx-auto px-4 text-center">
           <p className="text-sm font-medium text-brand-sky uppercase tracking-wider mb-3">
             EduMeUp Certified Tutors
           </p>
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
             Browse Our Tutor Directory
           </h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto mb-8">
@@ -409,7 +410,7 @@ export default function FindATutor() {
       </section>
 
       {/* ─── Trust Numbers ─── */}
-      <section className="bg-brand-navy text-white py-14">
+      <section className="bg-blue-50/50 py-14">
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {[
@@ -419,10 +420,10 @@ export default function FindATutor() {
               { stat: "30 min", label: "Free Demo Session" },
             ].map((item) => (
               <div key={item.label}>
-                <div className="text-3xl md:text-4xl font-bold mb-1">
+                <div className="text-3xl md:text-4xl font-bold text-brand-navy mb-1">
                   {item.stat}
                 </div>
-                <p className="text-sm text-white/70">{item.label}</p>
+                <p className="text-sm text-neutral-slate-gray">{item.label}</p>
               </div>
             ))}
           </div>
@@ -462,6 +463,7 @@ export default function FindATutor() {
           </div>
         </div>
       </section>
+      </div>
     </Layout>
   );
 }

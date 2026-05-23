@@ -11,24 +11,25 @@ export default function Tutoring() {
 
   return (
     <Layout>
+      <div className="min-h-screen bg-white font-sans text-slate-700">
       {/* HERO */}
-      <section className="relative overflow-hidden bg-brand-navy px-10 pb-14 pt-16 max-md:px-5 max-md:py-10">
+      <section className="relative overflow-hidden bg-brand-primary px-10 pb-14 pt-16 max-md:px-5 max-md:py-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(35,102,201,0.15)_0%,transparent_60%)]" />
         <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-primary via-brand-sky to-brand-primary" />
         <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 lg:grid-cols-[58%_42%]">
           <div>
-            <p className="mb-3.5 text-[11px] font-bold uppercase tracking-[2.5px] text-brand-sky">
+            <p className="mb-3.5 text-sm md:text-base font-bold uppercase tracking-[2.5px] text-blue-100">
               Personalised Cambridge Tutoring
             </p>
             <h1 className="mb-4 text-[40px] font-bold leading-[1.15] text-white max-md:text-[30px]">
               The Right Tutor.<br />The Right Subject.<br />Matched for You.
             </h1>
-            <p className="mb-7 text-base leading-[1.65] text-white/80">
+            <p className="mb-7 text-lg leading-[1.75] text-white/95">
               EduMeUp connects students with certified Cambridge tutors for personalised sessions — online globally or in person in major cities. All fees paid securely to EduMeUp. Never directly to the tutor.
             </p>
             <div className="mb-7 flex flex-wrap gap-2.5">
               {["\u2713 Every tutor EduMeUp-certified", "\u2713 Fees always via EduMeUp", "\u2713 Notes & worksheets included", "\u2713 Free 30-min demo session", "\u2713 Online worldwide"].map((pill) => (
-                <span key={pill} className="rounded-full border border-brand-primary/30 bg-brand-primary/15 px-3.5 py-1.5 text-xs font-semibold text-brand-sky">
+                <span key={pill} className="rounded-full border border-white/35 bg-white/10 px-3.5 py-1.5 text-sm font-semibold text-white">
                   {pill}
                 </span>
               ))}
@@ -45,13 +46,13 @@ export default function Tutoring() {
 
           {/* Demo Box - hidden on mobile */}
           <div className="hidden rounded-2xl border border-brand-primary/20 bg-white/[0.06] p-7 lg:flex lg:flex-col lg:gap-3.5">
-            <p className="mb-1 text-[11px] font-bold uppercase tracking-[1.5px] text-brand-sky">Your Tutoring Dashboard</p>
+            <p className="mb-1 text-sm font-bold uppercase tracking-[1.5px] text-white">Your Tutoring Dashboard</p>
             <DemoItem label="Your Tutor" value="Mr Ahmed K. — Physics & Mathematics" sub="EduMeUp Certified · 47 sessions delivered" />
             <DemoItem label="Next Session" value="Tuesday 15 April · 4:00 PM" sub="Topic: Trigonometry — Sine and Cosine Rules" />
             <DemoItem label="Current Plan" value="Progress — 3 sessions/week" sub="Online · $100/month · 12 sessions this month" />
             <div className="rounded-lg border-l-[3px] border-brand-sky bg-white/[0.07] px-4 py-3.5">
-              <p className="mb-1 text-[10px] uppercase tracking-[1px] text-white/50">Latest Session Note</p>
-              <p className="text-[13px] text-white">Strong improvement in algebraic manipulation. Focus next session on graph interpretation under timed conditions.</p>
+              <p className="mb-1 text-xs uppercase tracking-[1px] text-white">Latest Session Note</p>
+              <p className="text-sm md:text-base text-white">Strong improvement in algebraic manipulation. Focus next session on graph interpretation under timed conditions.</p>
             </div>
           </div>
         </div>
@@ -166,12 +167,12 @@ export default function Tutoring() {
           </div>
 
           {/* Non-Cambridge Callout */}
-          <div className="mt-8 flex flex-col items-center justify-between gap-6 rounded-xl bg-gradient-to-br from-brand-navy to-brand-sky p-7 sm:flex-row">
+          <div className="mt-8 flex flex-col items-center justify-between gap-6 rounded-xl border border-neutral-border bg-blue-50/60 p-7 sm:flex-row">
             <div>
-              <p className="text-[17px] font-bold text-white">Non-Cambridge Curricula</p>
-              <p className="mt-1 text-[13px] text-white/75">Matric, FSc, and other curricula — tutoring pricing arranged individually. Contact us to discuss availability and rates for your specific curriculum.</p>
+              <p className="text-[17px] font-bold text-brand-navy">Non-Cambridge Curricula</p>
+              <p className="mt-1 text-[13px] text-neutral-slate-gray">Matric, FSc, and other curricula — tutoring pricing arranged individually. Contact us to discuss availability and rates for your specific curriculum.</p>
             </div>
-            <Link href="/contact" className="inline-block whitespace-nowrap rounded-lg bg-white px-5 py-2.5 text-[13px] font-bold text-brand-primary transition hover:bg-brand-primary-soft">
+            <Link href="/contact" className="inline-block whitespace-nowrap rounded-lg bg-brand-primary px-5 py-2.5 text-[13px] font-bold text-white transition hover:bg-brand-primary-dark">
               Contact Us →
             </Link>
           </div>
@@ -179,11 +180,11 @@ export default function Tutoring() {
       </section>
 
       {/* WHAT'S INCLUDED */}
-      <section className="bg-brand-navy px-10 py-16 max-md:px-5">
+      <section className="bg-blue-50/50 px-10 py-16 max-md:px-5">
         <div className="mx-auto max-w-7xl">
-          <p className="mb-2.5 text-[10px] font-bold uppercase tracking-[2px] text-brand-sky">Included in Every Plan</p>
-          <h2 className="mb-2.5 text-[30px] font-bold text-white">What Every Tutoring Plan Includes</h2>
-          <p className="mb-9 max-w-[700px] text-[15px] leading-[1.65] text-white/75">
+          <p className="mb-2.5 text-[10px] font-bold uppercase tracking-[2px] text-brand-primary">Included in Every Plan</p>
+          <h2 className="mb-2.5 text-[30px] font-bold text-brand-navy">What Every Tutoring Plan Includes</h2>
+          <p className="mb-9 max-w-[700px] text-[15px] leading-[1.65] text-neutral-slate-gray">
             These are included in every TB1 and TB2 plan at every price point — Starter, Progress, and Intensive. No upsells, no hidden extras.
           </p>
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
@@ -271,25 +272,26 @@ export default function Tutoring() {
       </section>
 
       {/* FINAL CTA */}
-      <section className="bg-brand-navy px-10 py-[72px] text-center max-md:px-5">
+      <section className="bg-blue-50/50 px-10 py-[72px] text-center max-md:px-5">
         <div className="mx-auto max-w-[800px]">
-          <h2 className="mb-3 text-[34px] font-bold text-white">Ready to Find Your Tutor?</h2>
-          <p className="mb-9 text-base leading-[1.6] text-white/75">
+          <h2 className="mb-3 text-[34px] font-bold text-brand-navy">Ready to Find Your Tutor?</h2>
+          <p className="mb-9 text-base leading-[1.6] text-neutral-slate-gray">
             Start with a free 30-minute demo session. No payment. No commitment. Just a genuine experience of what EduMeUp certified tutoring delivers.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link href="/contact" className="inline-block rounded-lg bg-brand-primary px-6 py-3 text-sm font-bold text-white transition hover:bg-brand-primary-dark">
               Book Free Demo Session
             </Link>
-            <Link href="/pricing" className="inline-block rounded-lg border-2 border-white/50 px-6 py-3 text-sm font-bold text-white transition hover:border-white">
+            <Link href="/pricing" className="inline-block rounded-lg border-2 border-brand-primary/40 px-6 py-3 text-sm font-bold text-brand-primary transition hover:border-brand-primary">
               View Full Pricing
             </Link>
-            <Link href="/for-teachers" className="inline-block rounded-lg border-2 border-white/50 px-6 py-3 text-sm font-bold text-white transition hover:border-white">
+            <Link href="/for-teachers" className="inline-block rounded-lg border-2 border-brand-primary/40 px-6 py-3 text-sm font-bold text-brand-primary transition hover:border-brand-primary">
               Become a Tutor
             </Link>
           </div>
         </div>
       </section>
+      </div>
     </Layout>
   );
 }
@@ -299,9 +301,9 @@ export default function Tutoring() {
 function DemoItem({ label, value, sub }: { label: string; value: string; sub: string }) {
   return (
     <div className="rounded-lg border-l-[3px] border-brand-primary bg-white/[0.07] px-4 py-3.5">
-      <p className="mb-1 text-[10px] uppercase tracking-[1px] text-white/50">{label}</p>
-      <p className="text-[15px] font-bold text-white">{value}</p>
-      <p className="mt-0.5 text-[11px] text-white/60">{sub}</p>
+      <p className="mb-1 text-xs uppercase tracking-[1px] text-white">{label}</p>
+      <p className="text-base md:text-lg font-bold text-white">{value}</p>
+      <p className="mt-0.5 text-sm text-white/95">{sub}</p>
     </div>
   );
 }

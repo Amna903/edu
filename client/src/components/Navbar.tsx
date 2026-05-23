@@ -77,7 +77,6 @@ const forYouItems: SimpleDropdownItem[] = [
 const tutorItems: SimpleDropdownItem[] = [
   { label: "Tutoring", description: "Explore our tutoring services and programmes", href: "/tutoring" },
   { label: "Find a Tutor", description: "Search and connect with certified tutors", href: "/find-a-tutor" },
-  { label: "Become a Tutor", description: "Join our certified tutor network", href: "/become-a-tutor" },
 ];
 
 const consultancyItems: SimpleDropdownItem[] = [
@@ -205,7 +204,7 @@ export function Navbar() {
 
           <SimpleDropdown
             label="Tutor"
-            active={["/tutoring", "/find-a-tutor", "/become-a-tutor"].some(isActive)}
+            active={["/tutoring", "/find-a-tutor"].some(isActive)}
             items={tutorItems}
             widthClass="w-[280px]"
             navLinkClass={navLinkClass}
