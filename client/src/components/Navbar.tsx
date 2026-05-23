@@ -84,6 +84,7 @@ const consultancyItems: SimpleDropdownItem[] = [
   { type: "separator" },
   { label: "About EduMeUp", description: "Mission, team, and learning philosophy", href: "/about" },
   { label: "How EduMeUp Works", description: "Our model from diagnosis to mastery", href: "/how-it-works" },
+  { label: "Why EduMeUp", description: "Compare EduMeUp vs alternatives", href: "/how-edumeup-is-different" },
   { label: "Research & Development", description: "Learning science and product research", href: "/research" },
   { label: "Blog", description: "Insights for students, parents, and schools", href: "/blog" },
   { type: "separator" },
@@ -220,9 +221,22 @@ export function Navbar() {
 
           <SimpleDropdown
             label="Cambridge Consultancy"
-            active={["/cambridge-consultancy", "/about", "/how-it-works", "/research", "/blog"].some(isActive)}
+            active={["/cambridge-consultancy", "/about", "/how-it-works", "/how-edumeup-is-different", "/research", "/blog"].some(isActive)}
             items={consultancyItems}
             widthClass="w-[300px]"
+            navLinkClass={navLinkClass}
+          />
+
+          <SimpleDropdown
+            label="Why EduMeUp"
+            active={["/how-edumeup-is-different", "/why-edumeup"].some(isActive)}
+            items={[
+              { label: "How EduMeUp Works", description: "Our model from diagnosis to mastery", href: "/how-it-works" },
+              { label: "About EduMeUp", description: "Mission, team, and learning philosophy", href: "/about" },
+              { label: "Research & Development", description: "Learning science and product research", href: "/research" },
+              { label: "Why EduMeUp", description: "Compare EduMeUp vs alternatives", href: "/how-edumeup-is-different" },
+            ]}
+            widthClass="w-[320px]"
             navLinkClass={navLinkClass}
           />
 

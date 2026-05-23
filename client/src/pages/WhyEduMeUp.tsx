@@ -1,357 +1,569 @@
+import { useEffect } from "react";
 import { Link } from "wouter";
-import { motion } from "framer-motion";
 import { Layout } from "@/components/Layout";
 import { PageSidebar } from "@/components/PageSidebar";
-import {
-  ArrowRight,
-  Brain,
-  BarChart3,
-  CheckCircle2,
-  BookOpen,
-  Globe,
-  Users,
-  Zap,
-  Search,
-  Clock,
-  ShieldCheck,
-  Star,
-} from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const problemCards = [
+type ProblemCard = {
+  title: string;
+  description: string;
+  hover: string;
+};
+
+type DifferentiatorCard = {
+  badge: string;
+  title: string;
+  description: string;
+  hover: string;
+};
+
+type ComparisonRow = {
+  feature: string;
+  edumeup: string;
+  khan: string;
+  kognity: string;
+  tutoring: string;
+  znotes: string;
+  ai: string;
+};
+
+const problemCards: ProblemCard[] = [
   {
     title: "Rapid Forgetting",
-    icon: BarChart3,
-    stat: "Up to 70% of material is forgotten within 24h.",
-    body: "The Ebbinghaus Forgetting Curve shows that content vanishes rapidly without reinforcement. Traditional tutoring lacks a system to prevent this.",
-    popup: "EduMeUp's AI tracks each student's forgetting curve and delivers precisely timed retrieval prompts — converting short-term memory into mastery.",
-    color: "bg-status-danger-soft/10",
-    iconColor: "text-status-danger",
-  },
-  {
-    title: "Tutor Dependency",
-    icon: Users,
-    stat: "Quality and availability vary dramatically.",
-    body: "When progress is tied to a single human tutor, inconsistency and absence create compound learning gaps that traditional models can't fix.",
-    popup: "EduMeUp provides a 24/7 Cambridge-expert AI tutor trained on examiner expectations — consistent, always available, always standard.",
-    color: "bg-status-warning-soft/10",
-    iconColor: "text-status-warning",
+    description:
+      "Up to 70% of new material is forgotten within 24 hours. Without timely, systematic reinforcement, even well-taught content vanishes rapidly.",
+    hover:
+      "EduMeUp's proprietary AI intelligence system tracks each student's forgetting curve and schedules retrieval at Day 1, 3, 7, 14, 30, and 90. After 90 days, retention averages 85%+ versus passive re-reading.",
   },
   {
     title: "Passive Learning Illusion",
-    icon: BookOpen,
-    stat: "Watching videos feels like learning — but isn't.",
-    body: "Passive methods produce 5–20% retention. Real mastery requires active engagement, retrieval practice, and immediate application.",
-    popup: "Every EduMeUp course is interactive — built with H5P technology so students actively apply and are evaluated in real time, not just consume content.",
-    color: "bg-brand-primary/5",
-    iconColor: "text-brand-primary",
+    description:
+      "Watching videos and reading notes feels like learning but often fails to produce durable mastery. Passive methods typically produce 5-20% retention.",
+    hover:
+      "Every EduMeUp course is interactive by design with H5P activities that require students to engage, apply, and get evaluated in real time. Active learning reduces examination failure rates by 55% (Freeman et al., 2014).",
+  },
+  {
+    title: "Tutor Dependency",
+    description:
+      "Tutor quality, Cambridge expertise, and availability vary widely. A system that depends on one person's schedule is structurally fragile.",
+    hover:
+      "EduMeUp provides a Cambridge-calibrated AI advisor, available 24/7 for every enrolled subject, with examiner-level guidance and consistent quality for every learner.",
   },
 ];
 
-const differentiators = [
+const differentiators: DifferentiatorCard[] = [
   {
-    icon: Brain,
-    title: "Cambridge-Focused AI Tutor",
-    desc: "Not a generic chatbot. Our AI tutor is trained specifically on IGCSE and O-Level curriculum, assessment objectives (AO1-AO3), and examiner marking expectations.",
-    popup: "It thinks like an examiner — available 24/7. It diagnoses, teaches, and evaluates with deep knowledge of syllabus nuances and mark scheme logic.",
-    color: "bg-brand-primary",
+    badge: "AI",
+    title: "Cambridge-Calibrated AI Advisor",
+    description:
+      "Not a generic chatbot. EduMeUp's AI advisor is calibrated to AO1, AO2, AO3, mark scheme logic, command words, and examiner expectations.",
+    hover:
+      "EduMeUp's proprietary AI intelligence system is built for Cambridge assessment logic, including what distinguishes stronger versus weaker responses and where students typically lose marks.",
   },
   {
-    icon: Zap,
-    title: "Interactive Courses — Not Videos",
-    desc: "Every lesson is an active experience. Every course element is designed to make the learner DO something, not just watch something.",
-    popup: "Research shows interactive, retrieval-based learning produces 3–5× higher retention than passive video learning. We use H5P and research-backed design.",
-    color: "bg-brand-primary",
+    badge: "H5P",
+    title: "Interactive Courses — No Passive Video",
+    description:
+      "Every lesson requires active engagement through H5P. Students apply and demonstrate understanding instead of passively consuming content.",
+    hover:
+      "EduMeUp uses retrieval-based interactive formats including drag-and-drop, fill-in-blank, and adaptive sequences to improve retention and transfer.",
   },
   {
-    icon: Search,
-    title: "Diagnostic & Remedial Engine",
-    desc: "Our platform identifies learning gaps before they become exam failures. Targeted remedial pathways automatically repair foundational weaknesses.",
-    popup: "EduMeUp's diagnostic system maps knowledge landscapes and prescribes targeted content to fix gaps from earlier grades that hinder O-Level success.",
-    color: "bg-brand-navy",
+    badge: "DIAG",
+    title: "4-Type Diagnostic System",
+    description:
+      "Before full study begins, EduMeUp identifies exact gaps per subject, topic, and AO level, then generates personalized remedial pathways.",
+    hover:
+      "Diagnostic pathways include O-Level Bridge, English Language Level Check, O-Level Subject Diagnostic, and ATP Diagnostic with written remedial direction.",
   },
   {
-    icon: Clock,
-    title: "AI-Timed Retrieval Practice",
-    desc: "Our system tracks the forgetting curve for each student and delivers precisely timed practice prompts — converting memory into exam-ready mastery.",
-    popup: "Spaced retrieval is the most evidence-backed method for long-term retention. EduMeUp automates this entirely — right practice, right time.",
-    color: "bg-brand-navy",
+    badge: "CLOCK",
+    title: "AI-Timed Spaced Retrieval System",
+    description:
+      "EduMeUp schedules retrieval at Day 1, 3, 7, 14, 30, and 90 after first learning, automatically managed per student and topic.",
+    hover:
+      "Spaced retrieval is among the strongest evidence-backed retention strategies. EduMeUp automates it at scale across subjects without manual planning burden.",
   },
   {
-    icon: Users,
+    badge: "PEOPLE",
     title: "Complete Stakeholder Ecosystem",
-    desc: "Students, parents, teachers, and administrators empowered with relevant tools and insights. Education does not happen in isolation.",
-    popup: "Parents track progress, teachers access curriculum tools, and administrators manage data. All in one ecosystem — not scattered tools.",
-    color: "bg-neutral-muted",
+    description:
+      "Students, parents, teachers, and school administrators each receive purpose-built tools, dashboards, and analytics.",
+    hover:
+      "Parents get real-time visibility, teachers get T1-T6 professional pathways, and schools get cohort analytics with implementation support.",
   },
   {
-    icon: Globe,
-    title: "Language Barriers Removed",
-    desc: "Built-in translation and audio features ensure that language is never a barrier to understanding Cambridge-standard content.",
-    popup: "Comprehension barriers can be as damaging as knowledge gaps. Our translation layer removes friction for ESL/EFL learners.",
-    color: "bg-neutral-muted",
+    badge: "GLOBE",
+    title: "Global Access Scholarship — Up to 40% Off",
+    description:
+      "Eligible students from qualifying developing countries can receive up to 40% off O-Level subject courses with a simple declaration process.",
+    hover:
+      "No salary certificates and no document-heavy process. Eligibility checks and discount application are streamlined to improve access without reducing quality.",
   },
 ];
 
-const comparisonRows = [
-  ["Cambridge / IGCSE curriculum alignment", "✔", "~", "✘", "✔"],
-  ["AI tutor (curriculum-specific, not generic)", "✔", "✘", "✘", "✘"],
-  ["Cambridge examiner insight & mark scheme logic", "✔", "~", "✘", "~"],
-  ["Interactive courses (active learning — not videos)", "✔", "✘", "~", "✘"],
-  ["Diagnostic & remedial learning pathways", "✔", "✘", "~", "✘"],
-  ["AI-timed retrieval practice (spaced repetition)", "✔", "✘", "✘", "✘"],
-  ["24/7 availability", "✔", "✘", "✔", "✘"],
-  ["Language barrier support (translation + audio)", "✔", "✘", "~", "✘"],
-  ["Complete stakeholder ecosystem (4 groups)", "✔", "✘", "✘", "~"],
-  ["Forgetting curve management (automated)", "✔", "✘", "✘", "✘"],
-  ["School partnership model (non-franchise)", "✔", "✘", "✘", "✘"],
-  ["Teacher training & CPD support", "✔", "✘", "✘", "~"],
-  ["Transparent pricing (USD, no hidden fees)", "✔", "~", "✔", "✘"],
-  ["Research-backed learning architecture", "✔", "✘", "~", "✘"],
+const comparisonRows: ComparisonRow[] = [
+  {
+    feature: "Cambridge-specific AI diagnostic (AO1/AO2/AO3 level)",
+    edumeup: "[YES]",
+    khan: "[NO]",
+    kognity: "[NO]",
+    tutoring: "[PART] Manual, tutor-dependent",
+    znotes: "[NO]",
+    ai: "[NO] No curriculum structure",
+  },
+  {
+    feature: "Adaptive question routing by AO level per topic",
+    edumeup: "[YES]",
+    khan: "[NO]",
+    kognity: "[NO]",
+    tutoring: "[PART] Depends on tutor training",
+    znotes: "[NO]",
+    ai: "[NO] Cannot guarantee AO calibration",
+  },
+  {
+    feature: "80% mastery gate — cannot advance without mastering",
+    edumeup: "[YES] Enforced by platform",
+    khan: "[NO] Self-directed",
+    kognity: "[PART] Basic completion only",
+    tutoring: "[NO] No system",
+    znotes: "[NO]",
+    ai: "[NO]",
+  },
+  {
+    feature: "Spaced retrieval system — automated per student per topic",
+    edumeup: "[YES] Day 1/3/7/14/30/90",
+    khan: "[NO]",
+    kognity: "[NO]",
+    tutoring: "[NO]",
+    znotes: "[NO]",
+    ai: "[NO]",
+  },
+  {
+    feature: "H5P interactive content — no passive video",
+    edumeup: "[YES] 100% interactive",
+    khan: "[NO] Video-based (5% retention)",
+    kognity: "[PART] Mix of video and text",
+    tutoring: "[NO]",
+    znotes: "[NO] PDFs and notes only",
+    ai: "[NO] Text responses only",
+  },
+  {
+    feature: "Cambridge examiner-level AI intelligence (mark scheme, AO, errors)",
+    edumeup: "[YES]",
+    khan: "[NO] Not Cambridge-specific",
+    kognity: "[PART] Partial",
+    tutoring: "[PART] Depends on experience",
+    znotes: "[PART] PMT has some content",
+    ai: "[NO] General AI — not examiner-calibrated",
+  },
+  {
+    feature: "Teacher professional development T1-T6 (CPD + certification)",
+    edumeup: "[YES] 7 programmes",
+    khan: "[NO]",
+    kognity: "[NO]",
+    tutoring: "[NO]",
+    znotes: "[NO]",
+    ai: "[NO]",
+  },
+  {
+    feature: "Parent real-time dashboard — free with all enrolments",
+    edumeup: "[YES] Free with all plans",
+    khan: "[NO]",
+    kognity: "[NO]",
+    tutoring: "[PART] Verbal updates only",
+    znotes: "[NO]",
+    ai: "[NO]",
+  },
+  {
+    feature: "School admin cohort analytics and CPD tracking",
+    edumeup: "[YES] Real-time heatmaps",
+    khan: "[NO]",
+    kognity: "[PART] Basic only",
+    tutoring: "[NO]",
+    znotes: "[NO]",
+    ai: "[NO]",
+  },
+  {
+    feature: "Comprehensive proprietary AI intelligence system",
+    edumeup: "[YES] Multi-function, Cambridge-specific",
+    khan: "[PART] Single general AI",
+    kognity: "[NO]",
+    tutoring: "[NO]",
+    znotes: "[NO]",
+    ai: "[PART] General-purpose only",
+  },
+  {
+    feature: "Pre-O-Level foundational courses (with certification)",
+    edumeup: "[YES] Chem, Maths, Physics, Biology",
+    khan: "[NO]",
+    kognity: "[NO]",
+    tutoring: "[PART] Tutor-dependent",
+    znotes: "[NO]",
+    ai: "[NO]",
+  },
+  {
+    feature: "Research-backed 10X learning model (d=0.62-2.0 effect sizes)",
+    edumeup: "[YES] All documented",
+    khan: "[PART] Some research backing",
+    kognity: "[NO] Not systematic",
+    tutoring: "[NO]",
+    znotes: "[NO]",
+    ai: "[NO]",
+  },
+  {
+    feature: "Enterprise LMS — Moodle 5.2 (mastery gates, competency, white-label)",
+    edumeup: "[YES] Full enterprise features",
+    khan: "[NO] Proprietary platform",
+    kognity: "[NO]",
+    tutoring: "[NO]",
+    znotes: "[NO]",
+    ai: "[NO]",
+  },
+  {
+    feature: "White-label platform for schools (name, logo, domain)",
+    edumeup: "[YES]",
+    khan: "[NO]",
+    kognity: "[NO]",
+    tutoring: "[NO]",
+    znotes: "[NO]",
+    ai: "[NO]",
+  },
+  {
+    feature: "Cambridge 360° AI consultancy service (4 plans)",
+    edumeup: "[YES] Essentials to Excellence",
+    khan: "[NO]",
+    kognity: "[NO]",
+    tutoring: "[PART] Ad hoc, not systematic",
+    znotes: "[NO]",
+    ai: "[PART] Generic only",
+  },
+  {
+    feature: "Pre-O-Level Certification (EduMeUp, 5 subjects)",
+    edumeup: "[YES]",
+    khan: "[NO]",
+    kognity: "[NO]",
+    tutoring: "[NO]",
+    znotes: "[NO]",
+    ai: "[NO]",
+  },
+  {
+    feature: "Global Access Scholarship — up to 40% off (developing countries)",
+    edumeup: "[YES] Automatic, no documents",
+    khan: "[NO]",
+    kognity: "[NO]",
+    tutoring: "[NO]",
+    znotes: "[NO] Free already",
+    ai: "[NO]",
+  },
+  {
+    feature: "Annual cost — 1 student, full O-Level prep (1 subject)",
+    edumeup: "$120/yr (scholarship: $72)",
+    khan: "Free (limited depth)",
+    kognity: "$300-1,200/yr",
+    tutoring: "$2,000-6,000/yr",
+    znotes: "Free (incomplete)",
+    ai: "$0-240/yr (no curriculum)",
+  },
 ];
 
-export default function HowEduMeUpIsDifferent() {
+const cellClass = (value: string) => {
+  if (value.startsWith("[YES]")) return "text-green-700 font-semibold";
+  if (value.startsWith("[PART]")) return "text-amber-700 font-semibold";
+  if (value.startsWith("[NO]")) return "text-rose-700 font-semibold";
+  return "text-slate-700";
+};
+
+const cleanCell = (value: string) => value.replace("[YES] ", "").replace("[PART] ", "").replace("[NO] ", "");
+
+export default function WhyEduMeUp() {
+  useEffect(() => {
+    const prev = document.title;
+    document.title = "How EduMeUp Is Different | EduMeUp";
+    return () => {
+      document.title = prev;
+    };
+  }, []);
+
   return (
     <Layout>
-      <div className="w-full lg:px-8 lg:grid lg:grid-cols-[260px_1fr] gap-8 lg:gap-12 items-start pt-8 md:pt-12 bg-neutral-surface min-h-screen">
-        <PageSidebar
-          title="Why EduMeUp"
-          quote="A complete Cambridge learning ecosystem — not just content delivery."
-          links={[
-            { label: "The Problem", href: "#problem" },
-            { label: "Our Solution", href: "#section-3" },
-            { label: "Key Differentiators", href: "#differentiators" },
-            { label: "Comparison Table", href: "#comparison-table" },
-            { label: "For Schools", href: "#schools" },
-            { label: "Get Started", href: "#cta" },
-          ]}
-        />
+      <div className="min-h-screen bg-white font-sans text-slate-700">
+        <div className="flex flex-col xl:flex-row items-start">
+          <PageSidebar
+            title="Why EduMeUp"
+            quote="Compare the architecture, not just the features."
+            links={[
+              { label: "The Problem", href: "#problem" },
+              { label: "Our Solution", href: "#solution" },
+              { label: "Key Differentiators", href: "#differentiators" },
+              { label: "Competitor Comparison", href: "#comparison-table" },
+              { label: "The Platform (Moodle)", href: "#platform" },
+              { label: "For Schools", href: "#schools" },
+              { label: "Get Started", href: "#cta" },
+            ]}
+          />
 
-        <main className="min-w-0 space-y-0 bg-white rounded-t-[3rem] shadow-2xl border-x border-t border-neutral-border overflow-hidden">
-          {/* SECTION 2: THE PROBLEM */}
-          <section id="problem" className="py-20 md:py-32 bg-status-danger-soft/5 px-6 md:px-12">
-            <div className="max-w-5xl mx-auto">
-              <div className="text-center mb-16">
-                <span className="inline-flex items-center rounded-full bg-status-danger/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-status-danger mb-6">
-                  The Research Is Clear
-                </span>
-                <h2 className="text-4xl md:text-6xl font-bold text-neutral-text mb-8 tracking-tighter leading-[0.95]">
-                  The Traditional Model <br/><span className="text-status-danger">Fails 95% of Learners.</span>
-                </h2>
-                <p className="text-xl text-neutral-muted font-medium max-w-3xl mx-auto mb-12">
-                  Traditional teaching methods yield only 5% retention after 24 hours. Here is why it matters for your results.
-                </p>
-
-                <div className="bg-white p-8 rounded-[2rem] border-l-8 border-status-danger shadow-xl text-left max-w-3xl mx-auto relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-status-danger/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
-                  <p className="text-lg italic text-neutral-text leading-relaxed relative z-10">
-                    "Traditional teaching methods — lectures, textbooks, and assigned readings — yield only 5% knowledge retention. Most tutoring centers are built on exactly this model."
+          <main className="flex-1 min-w-0">
+            <section className="min-h-[620px] bg-gradient-to-br from-[#1E3A5F] to-[#2366c9] p-6 md:p-12 lg:px-[60px] lg:pb-[60px] relative overflow-hidden">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.14),transparent_40%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.10),transparent_35%)]" />
+              <div className="relative grid grid-cols-1 md:grid-cols-[1.05fr_0.95fr] gap-8 items-center">
+                <div>
+                  <h1 className="text-white text-4xl md:text-5xl leading-[1.1] mb-4 font-bold">
+                    Not Just Another EdTech Platform.
+                    <br />
+                    A Complete Cambridge Learning Ecosystem.
+                  </h1>
+                  <p className="text-white/90 text-base md:text-lg leading-[1.75] max-w-[760px] mb-7">
+                    Most platforms deliver content. EduMeUp delivers mastery — built on how the human brain actually learns, and engineered specifically for Cambridge O-Level and IGCSE standards worldwide. The difference is not a feature. It is an architecture.
                   </p>
-                  <p className="text-xs text-neutral-muted mt-4 font-bold uppercase tracking-widest">— NTL Institute Research</p>
+                  <div className="flex gap-3 flex-wrap">
+                    <a href="#comparison-table" className="no-underline rounded-lg px-6 py-3 text-base font-bold inline-block bg-[#2366c9] text-white hover:bg-[#1a4fa0] transition-colors">
+                      See the Comparison
+                    </a>
+                    <Link href="/how-it-works" className="no-underline rounded-lg px-6 py-3 text-base font-bold inline-block border-2 border-white/85 text-white hover:bg-white/10 transition-colors">
+                      Explore How It Works
+                    </Link>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-white/20 bg-white/10 backdrop-blur-sm p-6">
+                  <p className="text-xs uppercase tracking-[2px] text-blue-100 font-bold mb-3">Comparison Snapshot</p>
+                  <div className="space-y-3">
+                    {[
+                      "Private tutoring only",
+                      "Generic free-content platforms",
+                      "Notes-only resources",
+                      "Generic AI chatbots",
+                      "Single-tool school products",
+                    ].map((item) => (
+                      <div key={item} className="rounded-lg border border-white/20 bg-white/5 px-4 py-3 text-white/55 line-through">
+                        {item}
+                      </div>
+                    ))}
+                    <div className="rounded-lg border border-[#2366c9]/50 bg-[#2366c9]/20 px-4 py-3 text-white font-semibold shadow-lg">
+                      EduMeUp complete mastery architecture
+                    </div>
+                  </div>
                 </div>
               </div>
+            </section>
 
-              <div className="grid md:grid-cols-3 gap-8">
-                {problemCards.map((card, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="group relative bg-white rounded-[2rem] p-8 border border-neutral-border shadow-lg hover:shadow-2xl transition-all overflow-hidden"
-                  >
-                    <div className={`w-14 h-14 ${card.color} rounded-2xl flex items-center justify-center mb-6`}>
-                      <card.icon className={`h-7 w-7 ${card.iconColor}`} />
-                    </div>
-                    <h3 className={`text-xl font-bold ${card.iconColor} mb-3 tracking-tight`}>{card.title}</h3>
-                    <p className="text-sm font-bold text-neutral-text mb-4 uppercase tracking-wider">{card.stat}</p>
-                    <p className="text-base text-neutral-muted leading-relaxed font-medium">{card.body}</p>
-                    <div className="absolute inset-0 bg-white rounded-[2rem] p-8 shadow-2xl opacity-0 group-hover:opacity-100 transition-all duration-300 z-10 flex flex-col justify-center border-l-8 border-status-danger">
-                      <p className="text-sm text-neutral-text leading-relaxed font-medium italic">"{card.popup}"</p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* SECTION 3: THE 10X SOLUTION */}
-          <section id="section-3" className="py-20 md:py-32 bg-white px-6 md:px-12">
-            <div className="max-w-5xl mx-auto">
-              <div className="text-center mb-20">
-                <span className="inline-flex items-center rounded-full bg-brand-primary/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand-primary mb-6">
-                  Our Proprietary Methodology
-                </span>
-                <h2 className="text-4xl md:text-6xl font-bold text-neutral-text mb-8 tracking-tighter leading-[0.95]">
-                  The <span className="text-brand-primary">10X Learning Leap</span> Model.
-                </h2>
-                <p className="text-xl text-neutral-muted font-medium max-w-3xl mx-auto">
-                  Transforming passive exposure into 50%+ mastery — systematically, measurably, and at scale.
+            <section id="problem" className="bg-[#eef6ff] p-8 md:p-[60px]">
+              <h2 className="text-3xl font-bold text-slate-900 mb-4">The Traditional Model Fails Most Learners — Quietly.</h2>
+              <p className="text-slate-700 text-[17px] leading-[1.75] max-w-5xl mb-6">
+                Most students study consistently, pay for tutoring, and attend thousands of hours of lessons — yet leave without durable mastery. Cambridge examination results confirm this every year. The problem is not effort. The problem is method.
+              </p>
+              <div className="bg-white border-l-4 border-[#2366c9] rounded-xl p-5 md:p-6 mb-8 shadow-sm">
+                <p className="text-slate-700 leading-[1.75]">
+                  Research Finding: The NTL Institute's Learning Pyramid shows that traditional teaching methods — lectures, textbooks, and audio-visual content — produce between 5% and 20% knowledge retention. Yet the majority of educational institutions and EdTech platforms are built on these methods. EduMeUp is built on the other 80%.
                 </p>
               </div>
-
-              <div className="grid lg:grid-cols-2 gap-16 items-center">
-                <div className="space-y-8 bg-neutral-surface p-12 rounded-[3rem] border border-neutral-border shadow-xl relative overflow-hidden">
-                   <div className="absolute top-0 right-0 w-32 h-32 bg-brand-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
-                   <h3 className="text-2xl font-bold text-brand-primary uppercase tracking-widest">Cognitive Engineering</h3>
-                   <p className="text-lg text-neutral-text leading-relaxed font-medium">
-                     Our 8-stage architecture is engineered around cognitive science, retrieval practice, and Cambridge examiner expectations.
-                   </p>
-                   <p className="text-base text-neutral-muted leading-relaxed">
-                     It is not a content library. It is a complete ecosystem that transforms how students think, retain, and perform.
-                   </p>
-                   <Link href="/how-it-works">
-                     <Button variant="outline" className="h-12 px-8 rounded-xl border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white font-bold transition-all">
-                        Explore the 8-Step Model <ArrowRight className="ml-2 h-4 w-4" />
-                     </Button>
-                   </Link>
-                </div>
-
-                <div className="space-y-6">
-                   {[
-                     { title: "Phase 1: Diagnostic & Remedial", steps: ["AI-powered skill gap identification", "Personalised target pathways", "Ready-for-O-Level scaffolding"], color: "bg-brand-primary" },
-                     { title: "Phase 2: Systematic Mastery", steps: ["Dual-coding interactive instruction", "80% mastery gate progression", "AI-timed retrieval practice (90 days)"], color: "bg-brand-navy" }
-                   ].map((phase, i) => (
-                     <div key={i} className="space-y-4">
-                       <span className={`inline-block ${phase.color} text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest shadow-lg`}>{phase.title}</span>
-                       <ul className="space-y-3">
-                         {phase.steps.map((step, j) => (
-                           <li key={j} className="flex items-center gap-4 text-sm font-bold text-neutral-muted bg-white p-4 rounded-2xl border border-neutral-border shadow-sm group hover:border-brand-primary transition-all">
-                             <CheckCircle2 className="h-5 w-5 text-brand-primary shrink-0 group-hover:scale-110 transition-transform" />
-                             {step}
-                           </li>
-                         ))}
-                       </ul>
-                     </div>
-                   ))}
-                </div>
-              </div>
-
-              {/* Stat Strip */}
-              <div className="mt-24 bg-brand-primary p-12 md:p-16 rounded-[4rem] text-white shadow-3xl relative overflow-hidden text-center">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_0%,transparent_70%)]" />
-                <div className="grid md:grid-cols-3 gap-12 relative z-10">
-                  {[
-                    { stat: "5% → 50%+", label: "Learning Retention Transformation", sub: "Passive vs Active Methods" },
-                    { stat: "24/7", label: "Cambridge Expert AI Tutor", sub: "Always available, always standard" },
-                    { stat: "8 Stages", label: "Research-Backed Architecture", sub: "The sequence is the product" },
-                  ].map((item, i) => (
-                    <div key={i} className="space-y-3">
-                      <p className="text-5xl font-bold text-white tracking-tighter">{item.stat}</p>
-                      <p className="text-sm font-bold text-blue-100 uppercase tracking-widest">{item.label}</p>
-                      <p className="text-xs text-blue-100/60 font-medium italic">{item.sub}</p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                {problemCards.map((card) => (
+                  <div key={card.title} className="group relative rounded-xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-all">
+                    <div className="h-2 w-full rounded-full bg-gradient-to-r from-[#1E3A5F] to-[#2366c9] mb-4" />
+                    <h3 className="text-xl font-bold text-[#e86f51] mb-2">{card.title}</h3>
+                    <p className="text-slate-700 leading-[1.7]">{card.description}</p>
+                    <div className="pointer-events-none absolute inset-0 rounded-xl border border-[#17A589]/35 bg-white p-6 opacity-0 shadow-xl transition-opacity duration-200 group-hover:opacity-100">
+                      <p className="text-sm leading-[1.7] text-slate-700">{card.hover}</p>
                     </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* SECTION 4: DIFFERENTIATORS */}
-          <section id="differentiators" className="py-20 md:py-32 bg-neutral-surface px-6 md:px-12 border-y border-neutral-border">
-            <div className="max-w-5xl mx-auto">
-              <div className="text-center mb-20">
-                 <h2 className="text-4xl md:text-6xl font-bold text-neutral-text mb-8 tracking-tighter leading-[0.95]">
-                   What Makes Us <span className="text-brand-primary">Truly Different.</span>
-                 </h2>
-                 <p className="text-xl text-neutral-muted font-medium max-w-3xl mx-auto">
-                   World-class technology meeting research-validated pedagogy.
-                 </p>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-8">
-                {differentiators.map((diff, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="group bg-white rounded-[2.5rem] overflow-hidden border border-neutral-border shadow-lg hover:shadow-2xl transition-all"
-                  >
-                    <div className={`p-8 ${diff.color === 'bg-brand-primary' ? 'bg-brand-primary' : diff.color === 'bg-brand-navy' ? 'bg-brand-navy' : 'bg-neutral-muted'} text-white flex items-center gap-4`}>
-                      <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center shrink-0 shadow-inner">
-                        <diff.icon className="h-6 w-6 text-white" />
-                      </div>
-                      <h3 className="text-xl font-bold tracking-tight">{diff.title}</h3>
-                    </div>
-                    <div className="p-8 space-y-6">
-                       <p className="text-lg text-neutral-text font-medium leading-relaxed">{diff.desc}</p>
-                       <div className="bg-neutral-surface p-6 rounded-2xl border border-neutral-border italic text-sm text-neutral-muted font-medium">
-                         "{diff.popup}"
-                       </div>
-                    </div>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
-            </div>
-          </section>
+            </section>
 
-          {/* SECTION 5: COMPARISON */}
-          <section id="comparison-table" className="py-20 md:py-32 bg-white px-6 md:px-12">
-            <div className="max-w-6xl mx-auto">
-              <div className="text-center mb-20">
-                <h2 className="text-4xl md:text-6xl font-bold text-neutral-text mb-8 tracking-tighter">
-                  An <span className="text-brand-primary">Honest</span> Comparison.
-                </h2>
+            <section id="solution" className="bg-[#eef6ff] p-8 md:p-[60px]">
+              <h2 className="text-3xl font-bold text-slate-900 mb-4">We Built the Solution from the Ground Up.</h2>
+              <p className="text-slate-700 text-[17px] leading-[1.75] max-w-5xl mb-6">
+                EduMeUp's 10X Learning Leap Model is an 8-stage learning architecture engineered around cognitive science, retrieval practice, spaced repetition, and Cambridge examiner expectations. It is not a question bank. It is not an adaptive quiz. It is a complete, architecturally designed system — built so that everything a student studies stays with them until examination day and beyond.
+              </p>
+              <p className="text-slate-700 text-[17px] leading-[1.75] max-w-5xl mb-7">
+                Every step is evidence-based. Every transition is sequenced. And unlike other platforms, the system is self-correcting — EduMeUp's proprietary AI intelligence system continuously monitors mastery levels and adjusts pathways in real time.
+              </p>
+              <Link href="/how-it-works" className="inline-block mb-8 text-[#1E3A5F] font-bold hover:text-[#2366c9] transition-colors">
+                Read the full methodology →
+              </Link>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="rounded-xl border border-slate-200 bg-white p-5">
+                  <div className="text-3xl font-bold text-[#1E3A5F] mb-1">5% to 75%+</div>
+                  <div className="font-semibold text-slate-900 mb-1">Learning Retention Transformation</div>
+                  <div className="text-sm text-slate-600">Passive study vs EduMeUp spaced retrieval after 90 days.</div>
+                </div>
+                <div className="rounded-xl border border-slate-200 bg-white p-5">
+                  <div className="text-3xl font-bold text-[#1E3A5F] mb-1">80%</div>
+                  <div className="font-semibold text-slate-900 mb-1">Mastery Gate — No Gaps Left Behind</div>
+                  <div className="text-sm text-slate-600">Students cannot advance until genuine mastery is achieved.</div>
+                </div>
+                <div className="rounded-xl border border-slate-200 bg-white p-5">
+                  <div className="text-3xl font-bold text-[#1E3A5F] mb-1">24/7</div>
+                  <div className="font-semibold text-slate-900 mb-1">AI Study Advisor Availability</div>
+                  <div className="text-sm text-slate-600">Examiner-level guidance for every enrolled subject.</div>
+                </div>
               </div>
+            </section>
 
-              <div className="overflow-x-auto rounded-[3rem] border-4 border-neutral-surface shadow-2xl bg-white mb-10">
-                <table className="w-full text-left min-w-[900px]">
+            <section id="differentiators" className="p-8 md:p-[60px] bg-white">
+              <h2 className="text-3xl font-bold text-slate-900 mb-4">What Makes EduMeUp Different — In Detail.</h2>
+              <p className="text-slate-700 text-[17px] leading-[1.75] max-w-5xl mb-8">
+                Every feature below is built around one goal: ensuring that every student achieves Cambridge-level mastery, not just Cambridge-level exposure.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                {differentiators.map((card) => (
+                  <div key={card.title} className="group relative rounded-xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-all overflow-hidden">
+                    <div className="px-5 py-3 bg-gradient-to-r from-[#1E3A5F] to-[#2366c9] text-white font-bold tracking-wide text-sm">
+                      [{card.badge}] {card.title}
+                    </div>
+                    <div className="p-5">
+                      <p className="text-slate-700 leading-[1.7]">{card.description}</p>
+                    </div>
+                    <div className="pointer-events-none absolute inset-0 bg-white p-5 opacity-0 transition-opacity duration-200 group-hover:opacity-100 border border-[#17A589]/35">
+                      <p className="text-sm text-slate-700 leading-[1.7]">{card.hover}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section id="comparison-table" className="p-8 md:p-[60px] bg-white">
+              <h2 className="text-3xl font-bold text-slate-900 mb-4">Not All Cambridge Preparation Is Equal. Here Is the Evidence.</h2>
+              <p className="text-slate-700 text-[17px] leading-[1.75] max-w-5xl mb-6">
+                Every claim in this table reflects specific, implemented platform features — not aspirational marketing.
+              </p>
+
+              <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+                <table className="min-w-[1200px] w-full border-collapse text-sm">
                   <thead>
-                    <tr className="bg-brand-navy text-white">
-                      <th className="p-8 font-bold uppercase tracking-widest text-xs">Feature</th>
-                      <th className="p-8 font-bold uppercase tracking-widest text-xs bg-brand-primary text-center">EduMeUp ★</th>
-                      <th className="p-8 font-bold uppercase tracking-widest text-xs text-center opacity-70">Tutoring</th>
-                      <th className="p-8 font-bold uppercase tracking-widest text-xs text-center opacity-70">EdTech</th>
-                      <th className="p-8 font-bold uppercase tracking-widest text-xs text-center opacity-70">Franchise</th>
+                    <tr className="bg-slate-100">
+                      <th className="sticky left-0 z-20 min-w-[280px] bg-slate-100 border-b border-r border-slate-200 px-4 py-3 text-left font-bold text-slate-900">Feature / Capability</th>
+                      <th className="sticky left-[280px] z-20 min-w-[220px] bg-[#2366c9] border-b border-r border-slate-200 px-4 py-3 text-left font-bold text-white">EduMeUp</th>
+                      <th className="border-b border-r border-slate-200 px-4 py-3 text-left font-bold text-slate-900">Khan Academy</th>
+                      <th className="border-b border-r border-slate-200 px-4 py-3 text-left font-bold text-slate-900">Kognity / GCSEPod</th>
+                      <th className="border-b border-r border-slate-200 px-4 py-3 text-left font-bold text-slate-900">Generic Tutoring</th>
+                      <th className="border-b border-r border-slate-200 px-4 py-3 text-left font-bold text-slate-900">ZNotes / PMT</th>
+                      <th className="border-b border-slate-200 px-4 py-3 text-left font-bold text-slate-900">Generic AI Chatbots</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-neutral-border">
-                    {comparisonRows.map((row, i) => (
-                      <tr key={i} className="hover:bg-neutral-surface transition-colors group">
-                        <td className="p-6 font-bold text-neutral-text text-sm">{row[0]}</td>
-                        <td className="p-6 text-center font-black text-2xl text-brand-primary bg-brand-primary/5 group-hover:bg-brand-primary/10 transition-all">{row[1]}</td>
-                        <td className="p-6 text-center font-bold text-xl text-neutral-muted/50">{row[2]}</td>
-                        <td className="p-6 text-center font-bold text-xl text-neutral-muted/50">{row[3]}</td>
-                        <td className="p-6 text-center font-bold text-xl text-neutral-muted/50">{row[4]}</td>
+                  <tbody>
+                    {comparisonRows.map((row) => (
+                      <tr key={row.feature} className="odd:bg-white even:bg-slate-50/50">
+                        <td className="sticky left-0 z-10 bg-inherit border-r border-b border-slate-200 px-4 py-3 text-slate-800 font-medium">{row.feature}</td>
+                        <td className="sticky left-[280px] z-10 bg-[#eef6ff] border-r border-b border-slate-200 px-4 py-3">
+                          <span className={cellClass(row.edumeup)}>{cleanCell(row.edumeup)}</span>
+                        </td>
+                        <td className="border-r border-b border-slate-200 px-4 py-3"><span className={cellClass(row.khan)}>{cleanCell(row.khan)}</span></td>
+                        <td className="border-r border-b border-slate-200 px-4 py-3"><span className={cellClass(row.kognity)}>{cleanCell(row.kognity)}</span></td>
+                        <td className="border-r border-b border-slate-200 px-4 py-3"><span className={cellClass(row.tutoring)}>{cleanCell(row.tutoring)}</span></td>
+                        <td className="border-r border-b border-slate-200 px-4 py-3"><span className={cellClass(row.znotes)}>{cleanCell(row.znotes)}</span></td>
+                        <td className="border-b border-slate-200 px-4 py-3"><span className={cellClass(row.ai)}>{cleanCell(row.ai)}</span></td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
-              <p className="text-center text-xs font-bold text-neutral-muted uppercase tracking-widest">✔ = Fully Available | ~ = Partial | ✘ = Not Available</p>
-            </div>
-          </section>
 
-          {/* FINAL CTA */}
-          <section id="cta" className="py-24 md:py-40 bg-brand-primary text-white relative overflow-hidden text-center px-6">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.1)_0%,transparent_60%)]" />
-            <div className="container-custom relative z-10">
-              <h2 className="text-5xl md:text-8xl font-bold mb-12 tracking-tighter leading-[0.9]">
-                READY TO <br/><span className="text-brand-sky">EXPERIENCE THE DIFFERENCE?</span>
-              </h2>
-              <div className="grid md:grid-cols-3 gap-10 max-w-5xl mx-auto">
-                 {[
-                   { t: "Explore Courses", d: "Browse our full library of interactive subjects.", l: "/courses", b: "Browse Library" },
-                   { t: "Start Diagnostic", d: "Identify your gaps in ~90 mins (Free).", l: "/diagnostics", b: "Start Now", primary: true },
-                   { t: "Partner With Us", d: "For schools and institutional growth.", l: "/for-schools", b: "School Portal" }
-                 ].map((card, i) => (
-                   <div key={i} className={`p-10 rounded-[3rem] border-4 ${card.primary ? 'bg-white text-neutral-text border-brand-sky' : 'bg-white/5 text-white border-white/10'} shadow-2xl flex flex-col items-center justify-between group transform transition-all hover:scale-105`}>
-                      <div className="space-y-4">
-                        <h3 className="text-2xl font-bold tracking-tight">{card.t}</h3>
-                        <p className={`text-sm font-medium ${card.primary ? 'text-neutral-muted' : 'text-blue-100/60'}`}>{card.d}</p>
-                      </div>
-                      <Link href={card.l} className="w-full mt-10">
-                        <Button className={`w-full h-14 rounded-2xl font-bold text-lg ${card.primary ? 'bg-brand-primary text-white hover:bg-brand-primary-dark' : 'bg-white text-brand-primary hover:bg-brand-sky'} shadow-xl transition-all`}>
-                          {card.b}
-                        </Button>
-                      </Link>
-                   </div>
-                 ))}
+              <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+                <span className="font-semibold">Legend:</span> [YES] Fully available | [PART] Partial or limited | [NO] Not available
               </div>
-            </div>
-          </section>
-        </main>
+              <p className="mt-4 text-sm text-slate-600 leading-[1.7]">
+                This comparison is based on publicly available information at the time of publication. EduMeUp invites scrutiny — every claim in the EduMeUp column reflects a specific, implemented platform feature that can be demonstrated.
+              </p>
+            </section>
+
+            <section id="platform" className="p-8 md:p-[60px] bg-[#f8fbff]">
+              <h2 className="text-3xl font-bold text-slate-900 mb-4">Most Cambridge EdTech Platforms Use Lightweight Infrastructure. EduMeUp Uses an Enterprise LMS.</h2>
+              <p className="text-slate-700 text-[17px] leading-[1.75] max-w-5xl mb-8">
+                EduMeUp is built on Moodle 5.2 — the world's most widely deployed open-source LMS. This infrastructure enables mastery gates, rich analytics, and AI-assisted personalization at scale.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="rounded-xl border border-slate-200 bg-white p-5">
+                  <h3 className="text-lg font-bold text-[#1E3A5F] mb-2">Mastery Gates and Competency Tracking</h3>
+                  <p className="text-slate-700 leading-[1.7]">Moodle enforces 80% mastery progression and tracks AO1/AO2/AO3 competencies per topic.</p>
+                </div>
+                <div className="rounded-xl border border-slate-200 bg-white p-5">
+                  <h3 className="text-lg font-bold text-[#1E3A5F] mb-2">H5P Native Integration</h3>
+                  <p className="text-slate-700 leading-[1.7]">Interactive content runs natively with 12+ activity types — no fragmented learning stack.</p>
+                </div>
+                <div className="rounded-xl border border-slate-200 bg-white p-5">
+                  <h3 className="text-lg font-bold text-[#1E3A5F] mb-2">AI Integration via API</h3>
+                  <p className="text-slate-700 leading-[1.7]">EduMeUp's proprietary AI intelligence system integrates with progress, scores, and schedules for real-time recommendations.</p>
+                </div>
+                <div className="rounded-xl border border-slate-200 bg-white p-5">
+                  <h3 className="text-lg font-bold text-[#1E3A5F] mb-2">White-Label for Schools</h3>
+                  <p className="text-slate-700 leading-[1.7]">School identity is preserved with custom name, logo, and domain while EduMeUp powers the infrastructure.</p>
+                </div>
+              </div>
+            </section>
+
+            <section id="schools" className="p-8 md:p-[60px] bg-[#f8fbff] border-t border-slate-200">
+              <h2 className="text-3xl font-bold text-slate-900 mb-4">EduMeUp Is a School Partner — Not a Franchise.</h2>
+              <p className="text-slate-700 text-[17px] leading-[1.75] max-w-5xl mb-6">
+                EduMeUp supports schools with 24 services across teacher capacity-building, classroom empowerment, student development, and exam preparation infrastructure — with implementation support from Day 1.
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-7">
+                <div className="rounded-xl border border-slate-200 bg-white p-5">
+                  <p className="font-bold text-[#1E3A5F] mb-2">A: Capacity Building of Teachers</p>
+                  <p className="text-slate-700 text-sm leading-[1.7]">T1-T6 pathway, subject mastery, examiner intelligence, AI teaching tools, and classroom communication.</p>
+                </div>
+                <div className="rounded-xl border border-slate-200 bg-white p-5">
+                  <p className="font-bold text-[#1E3A5F] mb-2">B: Empowering Teachers</p>
+                  <p className="text-slate-700 text-sm leading-[1.7]">Curriculum planning support, H5P content, auto-assessment, and expert implementation support.</p>
+                </div>
+                <div className="rounded-xl border border-slate-200 bg-white p-5">
+                  <p className="font-bold text-[#1E3A5F] mb-2">C: Student Skill Development</p>
+                  <p className="text-slate-700 text-sm leading-[1.7]">Must-Have courses, English pathway, Pre-O-Level, Bridge courses, and holiday programs.</p>
+                </div>
+                <div className="rounded-xl border border-slate-200 bg-white p-5">
+                  <p className="font-bold text-[#1E3A5F] mb-2">D: Student Learning & Exam Prep</p>
+                  <p className="text-slate-700 text-sm leading-[1.7]">Diagnostics, subject courses, ATP, mock exams, retrieval practice, AI advisor, parent dashboard, and school analytics.</p>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-4">
+                <p className="text-slate-700 font-medium">Most schools are fully operational within 14 days of first contact.</p>
+                <Link href="/for-schools" className="inline-block rounded-lg border border-[#1E3A5F] bg-white px-5 py-2.5 text-sm font-bold text-[#1E3A5F] hover:bg-[#2366c9] hover:text-white transition-colors">
+                  Explore the full school partnership
+                </Link>
+              </div>
+            </section>
+
+            <section id="cta" className="bg-[#2366c9] p-8 md:p-[60px]">
+              <h2 className="text-3xl font-bold text-white text-center mb-3">Ready to Experience the Difference?</h2>
+              <p className="text-white/85 text-center text-[17px] leading-[1.75] max-w-4xl mx-auto mb-8">
+                The free diagnostic is the fastest way to see EduMeUp in action — and identify exactly what to study next.
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-7">
+                <div className="rounded-xl border border-white/20 bg-white/10 p-5 text-white">
+                  <h3 className="text-lg font-bold mb-2">Take the Free Diagnostic</h3>
+                  <p className="text-sm text-white/85 mb-4">30 minutes. No credit card. Know your exact gaps before spending anything.</p>
+                  <Link href="/diagnostics">
+                    <Button className="w-full bg-[#2366c9] hover:bg-[#1a4fa0] text-white font-bold">Start Free Diagnostic</Button>
+                  </Link>
+                </div>
+                <div className="rounded-xl border border-white/20 bg-white/10 p-5 text-white">
+                  <h3 className="text-lg font-bold mb-2">Browse All Courses</h3>
+                  <p className="text-sm text-white/85 mb-4">10 O-Level subjects, ATP, Pre-O-Level, and English pathways.</p>
+                  <Link href="/olevel-subjects">
+                    <Button variant="outline" className="w-full border-white/70 text-white hover:bg-white hover:text-[#2366c9] font-bold">Browse Courses</Button>
+                  </Link>
+                </div>
+                <div className="rounded-xl border border-white/20 bg-white/10 p-5 text-white">
+                  <h3 className="text-lg font-bold mb-2">Explore School Partnership</h3>
+                  <p className="text-sm text-white/85 mb-4">See all 24 services, onboarding flow, and implementation model.</p>
+                  <Link href="/for-schools">
+                    <Button variant="outline" className="w-full border-white/70 text-white hover:bg-white hover:text-[#2366c9] font-bold">For Schools</Button>
+                  </Link>
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white/95 leading-[1.8]">
+                91% Pass Rate — Designed to Achieve | Available Worldwide — All Prices in USD | 3-Week Money-Back Guarantee | Global Access Scholarship — up to 40% off for qualifying countries | AI Advisor Included — all enrolled subjects | Access Begins Immediately After Payment
+              </div>
+            </section>
+          </main>
+        </div>
       </div>
     </Layout>
   );
