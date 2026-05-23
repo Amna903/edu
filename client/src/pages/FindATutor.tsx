@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { Link } from "wouter";
 import { Layout } from "@/components/Layout";
+import { Search } from "lucide-react";
 import tutorDataRaw from "@/data/tutors/directory.json";
 
 type TutorProfile = {
@@ -167,7 +168,7 @@ function TutorCard({ tutor }: { tutor: TutorProfile }) {
 function EmptyState() {
   return (
     <div className="col-span-full text-center py-16">
-      <div className="text-5xl mb-4">🔍</div>
+      <div className="mb-4 flex justify-center"><Search className="h-12 w-12 text-brand-primary" /></div>
       <h3 className="text-xl font-semibold text-brand-navy mb-2">
         No tutors match your filters
       </h3>

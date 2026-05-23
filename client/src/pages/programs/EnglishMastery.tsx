@@ -406,7 +406,7 @@ function CourseGroupCard({ course, accentColor, accentBg }: any) {
           <h3 className="font-bold text-[17px] text-brand-navy mb-1">
             {course.title}
           </h3>
-            <p className="text-[12px] text-slate-500">📦 {course.modules}</p>
+            <p className="text-[12px] text-slate-500"> {course.modules}</p>
         </div>
         <span
           className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-transform bg-brand-primary-soft text-brand-primary text-[16px] ${
@@ -429,7 +429,7 @@ function CourseGroupCard({ course, accentColor, accentBg }: any) {
               {course.moduleList.map((item: string, i: number) => (
                 <div key={i} className="flex items-start gap-2">
                   <span className="text-brand-primary font-bold text-[14px] mt-px">
-                    ✓
+                    
                   </span>
                   <p className="text-[13px] text-slate-900 leading-relaxed">{item}</p>
                 </div>
@@ -752,7 +752,7 @@ export default function OLevelEnglish() {
             {/* Two-texts callout */}
              <div className="rounded-xl p-5 bg-brand-primary-soft border-2 border-blue-200">
               <p style={{ fontSize: "14px", color: "#166534", lineHeight: 1.7, fontWeight: 500 }}>
-                <strong>⚠ IMPORTANT — Paper 1 uses TWO reading texts:</strong> Every comprehension
+                <strong> IMPORTANT — Paper 1 uses TWO reading texts:</strong> Every comprehension
                 question in Paper 1 is based on two reading texts provided in the exam. EduMeUp's 5
                 Comprehension Mastery courses are built on past papers that use this two-text format —
                 so students practise navigating and answering questions across two different reading
@@ -1154,12 +1154,12 @@ export default function OLevelEnglish() {
               {/* Trust signals */}
               <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
                 {[
-                  "🎓 Band 1 Standard Throughout",
-                  "📄 Built From Real Cambridge Past Papers",
-                  "📝 Covers Both Papers — Paper 1 & Paper 2",
-                  "🤖 AI-Evaluated Written Tasks",
-                  "🏆 Certificate on Completion",
-                  "✅ All 10 Courses Available Now",
+                  " Band 1 Standard Throughout",
+                  " Built From Real Cambridge Past Papers",
+                  " Covers Both Papers — Paper 1 & Paper 2",
+                  " AI-Evaluated Written Tasks",
+                  " Certificate on Completion",
+                  " All 10 Courses Available Now",
                 ].map((item) => (
                   <span
                     key={item}

@@ -19,6 +19,7 @@ import {
   BookOpen,
   Users,
   School,
+  GraduationCap,
 } from "lucide-react";
 import { Link } from "wouter";
 import { InquiryDialog } from "@/components/InquiryDialog";
@@ -188,7 +189,7 @@ const phase2Steps = [
 
 const stakeholders = [
   {
-    icon: "🎓",
+    icon: GraduationCap,
     title: "Students",
     color: "border-l-brand-primary",
     bg: "bg-blue-50/60",
@@ -204,7 +205,7 @@ const stakeholders = [
     ],
   },
   {
-    icon: "📋",
+    icon: Users,
     title: "Teachers",
     color: "border-l-brand-navy",
     bg: "bg-slate-50",
@@ -219,7 +220,7 @@ const stakeholders = [
     ],
   },
   {
-    icon: "👨‍👩‍👧",
+    icon: Users,
     title: "Parents",
     color: "border-l-green-500",
     bg: "bg-green-50/40",
@@ -233,7 +234,7 @@ const stakeholders = [
     ],
   },
   {
-    icon: "🏫",
+    icon: School,
     title: "Schools & Administrators",
     color: "border-l-orange-500",
     bg: "bg-orange-50/30",
@@ -663,7 +664,7 @@ export default function HowItWorks() {
                     {stakeholders.map((s, i) => (
                       <div key={i} className={`bg-white rounded-[2rem] p-8 border-l-4 ${s.color} shadow-sm`}>
                         <div className="flex items-center gap-3 mb-5">
-                          <span className="text-3xl">{s.icon}</span>
+                          <s.icon className="h-8 w-8 text-brand-primary" />
                           <h3 className="text-2xl font-semibold text-slate-900">How the 8-Step System Works for: {s.title}</h3>
                         </div>
                         <ul className="space-y-3">

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "wouter";
-import { ArrowRight, CheckCircle2, Brain, BarChart3, BookOpen, GraduationCap, FileStack, Timer, Star, Mic, Globe, Lock, Phone } from "lucide-react";
+import { ArrowRight, CheckCircle2, Brain, BarChart3, BookOpen, GraduationCap, FileStack, Timer, Star, Mic, Globe } from "lucide-react";
 import { motion } from "framer-motion";
 import { Layout } from "@/components/Layout";
 
@@ -32,7 +32,7 @@ const courses = [
     rating: "4.9",
     ratingCount: "218",
     thumbnailGradient: "linear-gradient(135deg, #1e3a5f, #2563eb)",
-    emoji: "🧠",
+    icon: BookOpen,
     popupTag: "Study Science · Foundation",
     popupSubtitle:
       "The single most valuable course before starting any other subject. Master cognitive science for high retention.",
@@ -57,7 +57,7 @@ const courses = [
     rating: "4.8",
     ratingCount: "304",
     thumbnailGradient: "linear-gradient(135deg, #7c2d12, #ea580c)",
-    emoji: "📖",
+    icon: BookOpen,
     popupTag: "Vocabulary · Grade 5–7 · Complete",
     popupSubtitle:
       "500+ academic and contextual words across 7 complete modules. Spaced repetition built in for maximum retention.",
@@ -83,7 +83,7 @@ const courses = [
     rating: "4.7",
     ratingCount: "189",
     thumbnailGradient: "linear-gradient(135deg, #164e63, #0891b2)",
-    emoji: "🔍",
+    icon: BookOpen,
     popupTag: "Reading Skills · Grade 6–8",
     popupSubtitle:
       "Go beyond surface reading. Inference, author's purpose, tone, and summary skills that transfer to exam papers.",
@@ -109,7 +109,7 @@ const courses = [
     rating: "4.8",
     ratingCount: "267",
     thumbnailGradient: "linear-gradient(135deg, #3b0764, #7c3aed)",
-    emoji: "💬",
+    icon: BookOpen,
     popupTag: "ESL · CEFR A2 · Elementary",
     popupSubtitle:
       "From basic grammar to simple conversations. Builds essential English structure for students new to the language.",
@@ -134,7 +134,7 @@ const courses = [
     rating: "4.9",
     ratingCount: "198",
     thumbnailGradient: "linear-gradient(135deg, #0f4c3f, #059669)",
-    emoji: "🌐",
+    icon: BookOpen,
     popupTag: "ESL · CEFR B1 · Intermediate",
     popupSubtitle:
       "Move from basic to confident English use. Prepare for academic reading, structured writing, and O-Level readiness.",
@@ -159,7 +159,7 @@ const courses = [
     rating: "4.9",
     ratingCount: "312",
     thumbnailGradient: "linear-gradient(135deg, #0B3C5D, #1a6fa8)",
-    emoji: "🎓",
+    icon: BookOpen,
     popupTag: "O-Level Bridge · B1+ to B2",
     popupSubtitle:
       "The structured bridge between intermediate English and Cambridge Paper 1 & 2 readiness. Changes examination outcomes.",
@@ -185,7 +185,7 @@ const courses = [
     rating: "4.7",
     ratingCount: "143",
     thumbnailGradient: "linear-gradient(135deg, #064e3b, #10b981)",
-    emoji: "🎤",
+    icon: BookOpen,
     popupTag: "Skill Booster · Communication",
     popupSubtitle:
       "Academic speaking, participation, and presentation skills that teachers rarely teach but examinations reward.",
@@ -257,25 +257,7 @@ function CourseCard({ course }) {
     setShowPopup(true);
   };
 
-  const EmojiIcon = () => {
-    // Map common emoji glyphs to lucide icons
-    const map = {
-      "🧠": Brain,
-      "📖": BookOpen,
-      "📦": FileStack,
-      "⏱": Timer,
-      "⭐": Star,
-      "🎤": Mic,
-      "🌐": Globe,
-      "🎓": GraduationCap,
-      "🔒": Lock,
-      "📊": BarChart3,
-      "📞": Phone,
-    } as Record<string, any>;
-    const Icon = map[course.emoji as string];
-    if (!Icon) return <span style={{ fontSize: 48, position: "relative", zIndex: 1 }}>{course.emoji}</span>;
-    return <Icon className="relative z-10" style={{ width: 48, height: 48 }} />;
-  };
+  const Icon = course.icon;
 
   return (
     <div
@@ -287,11 +269,11 @@ function CourseCard({ course }) {
     >
       {/* Card */}
       <div
-        className="rounded-[14px] bg-white overflow-hidden transition-all duration-200"
+        className="rounded-[14px] bg-[#eef6ff] overflow-hidden transition-all duration-200"
         style={{
           border: showPopup
             ? "1.5px solid rgba(11,60,93,0.2)"
-            : "1.5px solid #dbe7f4",
+            : "1.5px solid #cfe0f5",
           boxShadow: showPopup ? "0 8px 28px rgba(0,0,0,0.12)" : "none",
         }}
       >
@@ -300,7 +282,7 @@ function CourseCard({ course }) {
           className="relative flex items-center justify-center"
           style={{
             height: "148px",
-            background: course.thumbnailGradient,
+            background: "linear-gradient(135deg, #2366c9, #4f86e0)",
           }}
         >
           <div
@@ -310,7 +292,7 @@ function CourseCard({ course }) {
                 "linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.18))",
             }}
           />
-          <EmojiIcon />
+          <Icon className="relative z-10 text-white" style={{ width: 48, height: 48 }} />
           {/* Level badge */}
           <span
             className="absolute top-2 left-2 rounded-md px-2 py-0.5"
@@ -356,11 +338,11 @@ function CourseCard({ course }) {
           >
             {course.title}
           </h3>
-          <p className="mb-1" style={{ fontSize: "12px", color: "#64748B" }}>
-            📦 {course.modules} modules · ⏱ {course.duration}
+          <p className="mb-1 inline-flex items-center gap-1.5" style={{ fontSize: "12px", color: "#64748B" }}>
+            <BookOpen className="h-3.5 w-3.5" /> {course.modules} modules · <Timer className="h-3.5 w-3.5" /> {course.duration}
           </p>
           <p className="mb-3" style={{ fontSize: "12px", color: "#64748B" }}>
-            ⭐ <strong style={{ color: "#1E293B" }}>{course.rating}</strong>{" "}
+            <Star className="mr-1 inline h-3.5 w-3.5" /> <strong style={{ color: "#1E293B" }}>{course.rating}</strong>{" "}
             ({course.ratingCount})
           </p>
           <div
@@ -450,7 +432,7 @@ function CourseCard({ course }) {
           <div className="space-y-1 mb-3">
             {course.whatYoullLearn.map((item, i) => (
               <p key={i} style={{ fontSize: "13px", color: "#1E293B", display: "flex", gap: "6px" }}>
-                <span style={{ color: "#2366c9", fontWeight: 700 }}>✓</span>
+                <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 text-[#2366c9]" />
                 {item}
               </p>
             ))}
@@ -588,7 +570,7 @@ function CoursesSidebar({ activeSection }) {
           className="uppercase mb-1"
           style={{ color: "#2366c9", fontSize: "10px", fontWeight: 700, letterSpacing: "0.28em" }}
         >
-          🧠 Free · 30 Minutes
+          Free · 30 Minutes
         </p>
         <h4
           style={{
@@ -681,13 +663,13 @@ function CoursesSidebar({ activeSection }) {
       <div className="px-4">
         <div className="rounded-lg p-3" style={{ background: "#f8fbff", border: "1px solid #dbe7f4" }}>
           <p style={{ fontSize: "12.5px", color: "#64748B", lineHeight: 1.6 }}>
-             All 7 courses available now
+            All 7 courses available now
             <br />
-             Lifetime access included
+            Lifetime access included
             <br />
-             H5P interactive activities
+            H5P interactive activities
             <br />
-             AI diagnostic included free
+            AI diagnostic included free
           </p>
         </div>
       </div>
@@ -755,7 +737,7 @@ export default function MustHaveCoursesPage() {
               style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)" }}
             >
               <span style={{ fontSize: "13px", fontWeight: 700, color: "white" }}>
-                🎓 Complete Learning Pathway
+                Complete Learning Pathway
               </span>
             </div>
 
@@ -793,7 +775,7 @@ export default function MustHaveCoursesPage() {
                     cursor: "pointer",
                   }}
                 >
-                  🧠 Take Free AI Diagnostic →
+                  Take Free AI Diagnostic <ArrowRight className="h-4 w-4" />
                 </span>
               </Link>
               <a
@@ -854,7 +836,7 @@ export default function MustHaveCoursesPage() {
       >
         <div className="container-custom">
           <div className="flex flex-col md:flex-row items-center gap-4">
-            <span style={{ fontSize: "32px" }}>🧠</span>
+            <Brain className="h-8 w-8 text-brand-primary" />
             <div className="flex-1">
               <p style={{ fontFamily: "Sora, sans-serif", fontWeight: 700, fontSize: "17px", color: "#1E3A5F" }}>
                 Free 30-Minute AI Diagnostic — Know Exactly Which Course Is Right for You
@@ -998,7 +980,7 @@ export default function MustHaveCoursesPage() {
                   opacity: 0.08,
                 }}
               >
-                🧠
+                
               </span>
 
               <p
@@ -1087,7 +1069,7 @@ export default function MustHaveCoursesPage() {
                     e.currentTarget.style.boxShadow = "";
                   }}
                 >
-                  🧠 Take Free AI Diagnostic →
+                  Take Free AI Diagnostic <ArrowRight className="h-4 w-4" />
                 </span>
               </Link>
               <p style={{ color: "rgba(255,255,255,0.55)", fontSize: "13px", marginTop: "12px" }}>

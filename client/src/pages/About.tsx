@@ -14,6 +14,7 @@ import {
   School,
   Download,
   Play,
+  XCircle,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -394,7 +395,7 @@ export default function About() {
                   <thead>
                     <tr className="bg-brand-primary text-white text-xs uppercase tracking-wider">
                       <th className="p-4 text-left font-semibold">Feature / Capability</th>
-                      <th className="p-4 text-center font-semibold bg-green-600/20">EduMeUp ★</th>
+                      <th className="p-4 text-center font-semibold bg-green-600/20">EduMeUp </th>
                       <th className="p-4 text-center font-semibold">Khan Academy</th>
                       <th className="p-4 text-center font-semibold">Kognity</th>
                       <th className="p-4 text-center font-semibold">Generic AI Tools</th>
@@ -402,25 +403,31 @@ export default function About() {
                   </thead>
                   <tbody>
                     {[
-                      ["10X retention methodology (systematic)", "✔", "✘", "~", "✘"],
-                      ["Cambridge / IGCSE curriculum alignment", "✔", "✘", "✔", "✘"],
-                      ["AI diagnostics at sub-skill level", "✔", "✘", "~", "~"],
-                      ["Cambridge examiner insight (AO1/AO2/AO3)", "✔", "✘", "~", "✘"],
-                      ["Automated spaced retrieval (AI-timed)", "✔", "✘", "✘", "✘"],
-                      ["Interactive H5P activities (1000+)", "✔", "✘", "~", "✘"],
-                      ["80% mastery gates (no gap compounding)", "✔", "✘", "✘", "✘"],
-                      ["Complete stakeholder ecosystem (4 groups)", "✔", "✘", "~", "✘"],
-                      ["Diagnostic & remedial pathways (auto)", "✔", "✘", "~", "~"],
-                      ["24/7 Cambridge expert AI tutor", "✔", "✘", "✘", "~"],
-                      ["Research foundation (15+ peer-reviewed)", "✔", "~", "~", "✘"],
-                      ["Teacher training & CPD support", "✔", "✘", "✘", "✘"],
-                      ["University-validated outcomes (3-year study)", "✔", "✘", "✘", "✘"],
+                      ["10X retention methodology (systematic)", "Yes", "No", "~", "No"],
+                      ["Cambridge / IGCSE curriculum alignment", "Yes", "No", "Yes", "No"],
+                      ["AI diagnostics at sub-skill level", "Yes", "No", "~", "~"],
+                      ["Cambridge examiner insight (AO1/AO2/AO3)", "Yes", "No", "~", "No"],
+                      ["Automated spaced retrieval (AI-timed)", "Yes", "No", "No", "No"],
+                      ["Interactive H5P activities (1000+)", "Yes", "No", "~", "No"],
+                      ["80% mastery gates (no gap compounding)", "Yes", "No", "No", "No"],
+                      ["Complete stakeholder ecosystem (4 groups)", "Yes", "No", "~", "No"],
+                      ["Diagnostic & remedial pathways (auto)", "Yes", "No", "~", "~"],
+                      ["24/7 Cambridge expert AI tutor", "Yes", "No", "No", "~"],
+                      ["Research foundation (15+ peer-reviewed)", "Yes", "~", "~", "No"],
+                      ["Teacher training & CPD support", "Yes", "No", "No", "No"],
+                      ["University-validated outcomes (3-year study)", "Yes", "No", "No", "No"],
                     ].map((row, i) => (
                       <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-slate-50"}>
                         <td className="p-4 text-base text-slate-700 font-medium">{row[0]}</td>
                         {row.slice(1).map((val, j) => (
-                          <td key={j} className={`p-4 text-center text-lg font-bold ${j === 0 ? "bg-green-50" : ""} ${val === "✔" ? "text-green-600" : val === "✘" ? "text-red-400" : "text-amber-500"}`}>
-                            {val}
+                          <td key={j} className={`p-4 text-center text-lg font-bold ${j === 0 ? "bg-green-50" : ""}`}>
+                            {val === "Yes" ? (
+                              <CheckCircle2 className="mx-auto h-5 w-5 text-green-600" />
+                            ) : val === "No" ? (
+                              <XCircle className="mx-auto h-5 w-5 text-red-400" />
+                            ) : (
+                              <span className="text-amber-500">{val}</span>
+                            )}
                           </td>
                         ))}
                       </tr>
@@ -428,7 +435,7 @@ export default function About() {
                   </tbody>
                 </table>
               </div>
-              <p className="text-[12px] text-slate-500 mt-4">Legend: ✔ = Yes, fully available | ~ = Partial or limited | ✘ = Not available</p>
+              <p className="text-[12px] text-slate-500 mt-4">Legend: Yes = fully available | ~ = Partial or limited | No = Not available</p>
 
               {/* Verdict */}
               <div className="mt-8 border-l-4 border-brand-primary bg-blue-50 p-6 rounded-r-[1.5rem]">
@@ -455,7 +462,7 @@ export default function About() {
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                 {[
                   {
-                    icon: "🎓",
+                    icon: GraduationCap,
                     title: "Students",
                     items: [
                       "Personalised pathway — fixed to their exact gaps",
@@ -469,7 +476,7 @@ export default function About() {
                     result: "Confusion → Mastery"
                   },
                   {
-                    icon: "📋",
+                    icon: BookOpen,
                     title: "Teachers",
                     items: [
                       "Automated grading — saves 5–6 hours/week",
@@ -482,7 +489,7 @@ export default function About() {
                     result: "Overworked → Empowered"
                   },
                   {
-                    icon: "👨‍👩‍👧",
+                    icon: Users,
                     title: "Parents",
                     items: [
                       "Free real-time progress dashboard",
@@ -495,7 +502,7 @@ export default function About() {
                     result: "Anxiety → Confidence"
                   },
                   {
-                    icon: "🏫",
+                    icon: School,
                     title: "Schools",
                     items: [
                       "Real-time institutional analytics",
@@ -510,7 +517,7 @@ export default function About() {
                   }
                 ].map((box, i) => (
                   <div key={i} className={`group relative bg-brand-primary-soft/40 p-6 rounded-xl border border-white hover:border-blue-100 hover:shadow-xl transition-all`}>
-                    <div className="text-3xl mb-3">{box.icon}</div>
+                    <div className="mb-3"><box.icon className="h-8 w-8 text-brand-primary" /></div>
                     <h3 className="text-xl font-semibold text-slate-900 mb-4">{box.title}</h3>
                     <ul className="space-y-3 mb-6">
                       {box.items.map((item, j) => (
@@ -687,7 +694,7 @@ export default function About() {
               <div className="grid md:grid-cols-2 gap-12">
                 <div className="bg-white p-6 sm:p-10 md:p-12 rounded-[2rem] md:rounded-[3.5rem] border-4 border-white shadow-xl">
                   <h3 className="text-2xl font-black text-green-600 mb-6 md:mb-8 uppercase flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-lg">✓</div>
+                    <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-lg"></div>
                     Ideal For
                   </h3>
                   <div className="space-y-10">
@@ -846,12 +853,12 @@ export default function About() {
           {/* Trust signals strip */}
           <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-blue-200 font-medium">
             {[
-              "🎓 2,000+ Students",
-              "🌍 25+ Countries",
-              "🏛 University-Validated (3 years)",
-              "📊 91% Pass Rate",
-              "🔒 30-Day Money-Back Guarantee",
-              "📞 24/7 Expert Support",
+              " 2,000+ Students",
+              " 25+ Countries",
+              " University-Validated (3 years)",
+              " 91% Pass Rate",
+              " 30-Day Money-Back Guarantee",
+              " 24/7 Expert Support",
             ].map((item, i) => (
               <span key={i} className="flex items-center gap-1">{item}</span>
             ))}

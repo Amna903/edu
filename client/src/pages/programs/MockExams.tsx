@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Link } from "wouter";
-import { ArrowRight, CheckCircle2, BookOpen, Users } from "lucide-react";
+import { ArrowRight, CheckCircle2, BookOpen, Users, Calculator, Atom, FlaskConical, Dna, BarChart3, Languages, BriefcaseBusiness } from "lucide-react";
 import { motion } from "framer-motion";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,7 @@ const subjects = [
     name: "Mathematics",
     cambridge: "Cambridge O-Level 4024 / IGCSE 0580",
     color: "bg-slate-900",
-    icon: "📐",
+    icon: Calculator,
     paperFormat: "Paper 1: 80 marks, 2 hours 30 minutes — structured questions. Paper 2: 100 marks, 2 hours 30 minutes — structured and problem-solving questions.",
     reportIncludes: [
       "Total score and predicted Cambridge grade (A* to G equivalent)",
@@ -36,7 +36,7 @@ const subjects = [
     name: "Physics",
     cambridge: "Cambridge O-Level 5054 / IGCSE 0625",
     color: "bg-purple-600",
-    icon: "⚛️",
+    icon: Atom,
     paperFormat: "Paper 1: Multiple choice — 40 questions, 75 minutes. Paper 2: Theory — 75 marks, 1 hour 45 minutes.",
     reportIncludes: [
       "Total score across both papers and predicted Cambridge grade",
@@ -52,7 +52,7 @@ const subjects = [
     name: "Chemistry",
     cambridge: "Cambridge O-Level 5070 / IGCSE 0620",
     color: "bg-blue-600",
-    icon: "⚗️",
+    icon: FlaskConical,
     paperFormat: "Paper 1: Multiple choice — 40 questions, 1 hour. Paper 2: Theory — 80 marks, 1 hour 45 minutes.",
     reportIncludes: [
       "Total score and predicted Cambridge grade across both papers",
@@ -68,7 +68,7 @@ const subjects = [
     name: "Biology",
     cambridge: "Cambridge O-Level 5090 / IGCSE 0610",
     color: "bg-green-600",
-    icon: "🧬",
+    icon: Dna,
     paperFormat: "Paper 1: Multiple choice — 40 questions, 1 hour. Paper 2: Theory — 80 marks, 1 hour 45 minutes.",
     reportIncludes: [
       "Total score and predicted Cambridge grade across both papers",
@@ -84,7 +84,7 @@ const subjects = [
     name: "Economics",
     cambridge: "Cambridge O-Level 2281 / IGCSE 0455",
     color: "bg-teal-600",
-    icon: "📊",
+    icon: BarChart3,
     paperFormat: "Section A: Data response — 30 marks. Section B: Structured questions — 60 marks (choose 3 from 5). (Format matches Cambridge 2281, 1 hour 45 minutes total.)",
     reportIncludes: [
       "Total score and predicted Cambridge grade",
@@ -100,7 +100,7 @@ const subjects = [
     name: "English Language",
     cambridge: "Cambridge O-Level 1123 / IGCSE 0500",
     color: "bg-blue-700",
-    icon: "📖",
+    icon: Languages,
     paperFormat: "Paper 1: Reading and Directed Writing — 50 marks, 1 hour 45 minutes. Paper 2: Writing — 50 marks, 1 hour 30 minutes.",
     reportIncludes: [
       "Total score across both papers and predicted Cambridge grade",
@@ -116,7 +116,7 @@ const subjects = [
     name: "Business Studies",
     cambridge: "Cambridge O-Level 7115 / IGCSE 0450",
     color: "bg-orange-600",
-    icon: "💼",
+    icon: BriefcaseBusiness,
     paperFormat: "Paper 1: Short answer and data response — 80 marks, 1 hour 30 minutes. Paper 2: Case study — 80 marks, 1 hour 30 minutes.",
     reportIncludes: [
       "Total score across both papers and predicted Cambridge grade",
@@ -308,7 +308,7 @@ export default function MockExams() {
                       <h3 className="text-3xl md:text-4xl font-semibold mt-2">{subject.name}</h3>
                       <p className="text-white/80 text-sm mt-2">{subject.cambridge}</p>
                     </div>
-                    <span className="text-6xl">{subject.icon}</span>
+                    <subject.icon className="h-12 w-12 text-white" />
                   </div>
 
                   {/* Body */}

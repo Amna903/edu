@@ -284,7 +284,7 @@ export default function BridgeEnglishPage() {
                     <text x={s.x + s.w / 2} y={s.y + 25} textAnchor="middle" fill="white" fontSize={12} fontWeight="600">{s.label}</text>
                   </g>
                 ))}
-                <text x="250" y="55" fontSize="28" textAnchor="middle">🎓</text>
+                <text x="250" y="55" fontSize="28" textAnchor="middle"></text>
                 <text x="35" y="275" fill="rgba(255,255,255,0.5)" fontSize="11">Gr.5-7 Vocabulary</text>
               </svg>
             </motion.div>

@@ -28,6 +28,7 @@ import {
   Clock,
   Layers,
   TrendingUp,
+  XCircle,
 } from "lucide-react";
 
 
@@ -117,16 +118,16 @@ const platformComponents = [
 ];
 
 const competitorRows = [
-  ["Cambridge-Specific AI Diagnostic", "✔ 4 types, AO-level, all 10 subjects", "✘", "✘", "~ Manual", "✘", "✘"],
-  ["AO1/AO2/AO3 adaptive question routing", "✔ Full 3-level routing", "✘", "✘", "~ Depends on tutor", "✘", "✘"],
-  ["Mastery-gated progression (80% gate)", "✔ Enforced by Moodle", "✘ Self-directed", "~ Basic", "✘", "✘", "✘"],
-  ["Spaced retrieval (Day 1/3/7/14/30/90)", "✔ Per topic per student", "✘", "✘", "✘", "✘", "✘"],
-  ["H5P interactive content (no passive video)", "✔ 100% interactive", "✘ Video-based", "~ Mix", "✘", "✘ PDFs only", "✘"],
-  ["Cambridge examiner-level AI intelligence", "✔ Examiner-calibrated", "✘", "~ Partial", "~ Experience-dependent", "~ Partial", "✘"],
-  ["Teacher professional development (T1–T6)", "✔ 7 programmes, certificates", "✘", "✘", "✘", "✘", "✘"],
-  ["Parent real-time dashboard", "✔ Live mastery, traffic lights", "✘", "✘", "~ Periodic verbal", "✘", "✘"],
-  ["School admin cohort analytics", "✔ Full cohort heatmaps", "✘", "~ Basic", "✘", "✘", "✘"],
-  ["Spaced retrieval (automated)", "✔ Day 1/3/7/14/30/90", "✘", "✘", "✘", "✘", "✘"],
+  ["Cambridge-Specific AI Diagnostic", " 4 types, AO-level, all 10 subjects", "", "", "~ Manual", "", ""],
+  ["AO1/AO2/AO3 adaptive question routing", " Full 3-level routing", "", "", "~ Depends on tutor", "", ""],
+  ["Mastery-gated progression (80% gate)", " Enforced by Moodle", " Self-directed", "~ Basic", "", "", ""],
+  ["Spaced retrieval (Day 1/3/7/14/30/90)", " Per topic per student", "", "", "", "", ""],
+  ["H5P interactive content (no passive video)", " 100% interactive", " Video-based", "~ Mix", "", " PDFs only", ""],
+  ["Cambridge examiner-level AI intelligence", " Examiner-calibrated", "", "~ Partial", "~ Experience-dependent", "~ Partial", ""],
+  ["Teacher professional development (T1–T6)", " 7 programmes, certificates", "", "", "", "", ""],
+  ["Parent real-time dashboard", " Live mastery, traffic lights", "", "", "~ Periodic verbal", "", ""],
+  ["School admin cohort analytics", " Full cohort heatmaps", "", "~ Basic", "", "", ""],
+  ["Spaced retrieval (automated)", " Day 1/3/7/14/30/90", "", "", "", "", ""],
   ["Annual cost (1 student, full prep)", "$65–299/yr + plan", "Free (limited)", "$300–1,200/yr", "$2,000–6,000/yr", "Free (incomplete)", "$0–240 (no curriculum)"],
 ];
 
@@ -188,7 +189,7 @@ const plans = [
 
 const stakeholderPortals = [
   {
-    icon: "🎓",
+    icon: GraduationCap,
     role: "Students",
     color: "border-l-brand-primary",
     tagColor: "bg-brand-primary",
@@ -201,7 +202,7 @@ const stakeholderPortals = [
     ],
   },
   {
-    icon: "👨‍👩‍👧",
+    icon: Users,
     role: "Parents",
     color: "border-l-[#1e1b4b]",
     tagColor: "bg-[#1e1b4b]",
@@ -214,7 +215,7 @@ const stakeholderPortals = [
     ],
   },
   {
-    icon: "📋",
+    icon: BookOpen,
     role: "Teachers",
     color: "border-l-amber-500",
     tagColor: "bg-amber-500",
@@ -227,7 +228,7 @@ const stakeholderPortals = [
     ],
   },
   {
-    icon: "🏫",
+    icon: School,
     role: "Schools",
     color: "border-l-green-500",
     tagColor: "bg-green-500",
@@ -240,6 +241,21 @@ const stakeholderPortals = [
     ],
   },
 ];
+
+function renderStatusCell(value: string) {
+  if (value === "~" || value.startsWith("~")) {
+    return <span className="text-amber-600">{value.trim()}</span>;
+  }
+  if (!value.trim()) {
+    return <XCircle className="mx-auto h-4 w-4 text-red-400" />;
+  }
+  return (
+    <span className="inline-flex items-center gap-1 text-green-600">
+      <CheckCircle2 className="h-4 w-4" />
+      <span>{value.trim()}</span>
+    </span>
+  );
+}
 
 const faqs = [
   {
@@ -526,7 +542,7 @@ export default function CambridgeConsultancy() {
                     <thead>
                       <tr className="bg-[#1e1b4b] text-white text-xs uppercase tracking-wider">
                         <th className="p-4 text-left font-semibold">Feature</th>
-                        <th className="p-4 text-center font-semibold bg-green-700/30">EduMeUp ★</th>
+                        <th className="p-4 text-center font-semibold bg-green-700/30">EduMeUp </th>
                         <th className="p-4 text-center font-semibold">Khan Academy</th>
                         <th className="p-4 text-center font-semibold">Kognity</th>
                         <th className="p-4 text-center font-semibold">Generic Tutoring</th>
@@ -539,8 +555,8 @@ export default function CambridgeConsultancy() {
                         <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-slate-50"}>
                           <td className="p-3 text-[13px] text-slate-700 font-medium border-t border-slate-100">{row[0]}</td>
                           {row.slice(1).map((val, j) => (
-                            <td key={j} className={`p-3 text-center text-[12px] font-bold border-t border-slate-100 ${j === 0 ? "bg-green-50" : ""} ${val.startsWith("✔") ? "text-green-600" : val.startsWith("✘") ? "text-red-400" : "text-amber-600"}`}>
-                              {val}
+                            <td key={j} className={`p-3 text-center text-[12px] font-bold border-t border-slate-100 ${j === 0 ? "bg-green-50" : ""}`}>
+                              {renderStatusCell(val)}
                             </td>
                           ))}
                         </tr>
@@ -548,7 +564,7 @@ export default function CambridgeConsultancy() {
                     </tbody>
                   </table>
                 </div>
-                <p className="text-[12px] text-slate-400 mt-3">✔ = Yes, fully available | ~ = Partial or limited | ✘ = Not available</p>
+                <p className="text-[12px] text-slate-400 mt-3">Legend: Green check = Yes | ~ = Partial or limited | Red cross = Not available</p>
               </div>
             </div>
           </section>
@@ -604,7 +620,7 @@ export default function CambridgeConsultancy() {
                     className={`bg-white rounded-[2rem] p-8 border-l-4 ${portal.color} shadow-sm hover:shadow-xl transition-all`}
                   >
                     <div className="flex items-center gap-3 mb-4">
-                      <span className="text-3xl">{portal.icon}</span>
+                      <portal.icon className="h-8 w-8 text-brand-primary" />
                       <div>
                         <span className={`text-xs font-black uppercase tracking-[0.2em] text-white px-3 py-1 rounded-full ${portal.tagColor}`}>For {portal.role}</span>
                       </div>
@@ -733,25 +749,31 @@ export default function CambridgeConsultancy() {
                   </thead>
                   <tbody>
                     {[
-                      ["Unlimited AI Cambridge advisor", "✔", "✔", "✔", "✔"],
-                      ["Cambridge info Q&A", "✔", "✔", "✔", "✔"],
+                      ["Unlimited AI Cambridge advisor", "Yes", "Yes", "Yes", "Yes"],
+                      ["Cambridge info Q&A", "Yes", "Yes", "Yes", "Yes"],
                       ["Diagnostic interpretation (AI)", "Basic", "Full", "Full + monthly review", "Full + pre-session brief"],
-                      ["Template access", "Preview only", "✔ Download", "✔ Download", "✔ Download"],
+                      ["Template access", "Preview only", " Download", " Download", " Download"],
                       ["Diagnostics included", "Free only", "Free + 2 paid", "Free + 3 paid", "Free + all subjects"],
-                      ["Chapter courses included", "✘", "2 chapters", "1 complete subject", "2 complete subjects"],
-                      ["English language pathway", "✘", "✘", "✘", "✔ Full access"],
-                      ["Past paper + mock exam system", "✘", "✘", "✔", "✔"],
-                      ["Spaced retrieval system", "✘", "2 chapters", "Full subject", "Full + school"],
-                      ["Live sessions / month", "✘", "1 × 15 min", "2 × 30 min", "3–4 × 30–45 min"],
+                      ["Chapter courses included", "No", "2 chapters", "1 complete subject", "2 complete subjects"],
+                      ["English language pathway", "No", "No", "No", "Full access"],
+                      ["Past paper + mock exam system", "No", "No", "Yes", "Yes"],
+                      ["Spaced retrieval system", "", "2 chapters", "Full subject", "Full + school"],
+                      ["Live sessions / month", "No", "1 × 15 min", "2 × 30 min", "3–4 × 30–45 min"],
                       ["Expert Review questions", "2/month (48h)", "5/month (24h)", "Unlimited (12h)", "Unlimited (4h priority)"],
-                      ["School cohort analytics", "✘", "✘", "✘", "✔ (school plan)"],
-                      ["White-label platform", "✘", "✘", "✘", "✔ (school plan)"],
+                      ["School cohort analytics", "No", "No", "No", "Yes (school plan)"],
+                      ["White-label platform", "No", "No", "No", "Yes (school plan)"],
                     ].map((row, i) => (
                       <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-slate-50"}>
                         <td className="p-3 text-[13px] text-slate-700 font-medium border-t border-slate-100">{row[0]}</td>
                         {row.slice(1).map((val, j) => (
-                          <td key={j} className={`p-3 text-center text-[12px] border-t border-slate-100 ${val === "✔" ? "text-green-600 font-bold" : val === "✘" ? "text-red-400" : "text-slate-600"}`}>
-                            {val}
+                          <td key={j} className="p-3 text-center text-[12px] border-t border-slate-100">
+                            {val === "Yes" ? (
+                              <CheckCircle2 className="mx-auto h-4 w-4 text-green-600" />
+                            ) : val === "No" ? (
+                              <XCircle className="mx-auto h-4 w-4 text-red-400" />
+                            ) : (
+                              <span className="text-slate-600">{val}</span>
+                            )}
                           </td>
                         ))}
                       </tr>
@@ -830,7 +852,7 @@ export default function CambridgeConsultancy() {
               </div>
 
               <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-blue-200 font-medium">
-                {["🌍 Available in Any Country", "🤖 AI-Powered · Research-Backed", "🔗 Connected to EduMeUp's Complete Platform", "🔒 Private — Results Only Yours", "⚡ AI Response in Seconds", "✋ Expert Review Included in All Plans"].map((item, i) => (
+                {[" Available in Any Country", " AI-Powered · Research-Backed", " Connected to EduMeUp's Complete Platform", " Private — Results Only Yours", " AI Response in Seconds", " Expert Review Included in All Plans"].map((item, i) => (
                   <span key={i}>{item}</span>
                 ))}
               </div>

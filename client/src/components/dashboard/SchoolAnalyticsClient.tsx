@@ -14,6 +14,7 @@ import {
 } from "recharts";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { Download, Target, BarChart3, TrendingUp } from "lucide-react";
 
 interface SchoolAnalyticsClientProps {
   schoolName: string;
@@ -107,7 +108,7 @@ export default function SchoolAnalyticsClient({ schoolName, licenses }: SchoolAn
           onClick={generatePDF}
           className="flex items-center gap-2 rounded-2xl bg-slate-900 px-6 py-3 text-sm font-bold text-white shadow-xl shadow-slate-200 transition-all hover:scale-105"
         >
-          <span>📥</span> Download Detailed Report
+          <Download className="h-4 w-4" /> Download Detailed Report
         </button>
       </div>
 
@@ -167,7 +168,7 @@ export default function SchoolAnalyticsClient({ schoolName, licenses }: SchoolAn
               <p className="text-2xl font-black text-slate-900">{summary.assignedSeats}</p>
               <p className="text-xs font-bold uppercase text-slate-400">Assigned</p>
             </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 text-xl">🎯</div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 text-xl"><Target className="h-5 w-5 text-slate-500" /></div>
           </div>
         </div>
 
@@ -181,7 +182,7 @@ export default function SchoolAnalyticsClient({ schoolName, licenses }: SchoolAn
               <p className="text-2xl font-black text-slate-900">{summary.availableSeats}</p>
               <p className="text-xs font-bold uppercase text-slate-400">Available</p>
             </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 text-xl">📊</div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 text-xl"><BarChart3 className="h-5 w-5 text-slate-500" /></div>
           </div>
         </div>
 
@@ -195,7 +196,7 @@ export default function SchoolAnalyticsClient({ schoolName, licenses }: SchoolAn
               <p className="text-2xl font-black text-slate-900">{summary.utilization}%</p>
               <p className="text-xs font-bold uppercase text-slate-400">Usage</p>
             </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 text-xl">📈</div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 text-xl"><TrendingUp className="h-5 w-5 text-slate-500" /></div>
           </div>
         </div>
       </div>

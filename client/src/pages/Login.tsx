@@ -186,7 +186,7 @@ export default function Login() {
             <ul className="mt-8 space-y-4 text-left">
               {TRUST_POINTS.map((point) => (
                 <li key={point} className="flex items-start gap-3 text-sm text-white/90">
-                  <span className="mt-0.5 text-blue-300">✦</span>
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 text-blue-300" />
                   <span>{point}</span>
                 </li>
               ))}

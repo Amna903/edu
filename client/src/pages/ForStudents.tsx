@@ -1572,7 +1572,7 @@ export default function ForStudents() {
                     <Card key={i} className="border border-slate-200 shadow-sm bg-slate-50/50 rounded-2xl hover:shadow-md transition-shadow">
                       <CardContent className="p-8 space-y-6">
                         <div className="flex gap-4">
-                          <div className="w-10 h-10 rounded-full bg-slate-200 flex-shrink-0 flex items-center justify-center text-lg shadow-inner">👤</div>
+                          <div className="w-10 h-10 rounded-full bg-slate-200 flex-shrink-0 flex items-center justify-center text-lg shadow-inner"></div>
                           <div className="bg-white border border-slate-200 p-4 rounded-2xl rounded-tl-none text-base font-medium text-slate-800 shadow-sm leading-relaxed">
                             "{sample.q}"
                           </div>

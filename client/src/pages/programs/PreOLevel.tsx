@@ -697,7 +697,7 @@ export function PreOLevel() {
             className="mb-12 bg-white border-l-4 border-brand-primary rounded-xl p-8 shadow-sm"
           >
             <span className="text-brand-primary text-xs uppercase tracking-widest font-semibold">
-              PRE-O-LEVEL ENGLISH ★ NEW
+              PRE-O-LEVEL ENGLISH  NEW
             </span>
             <h3 className="text-2xl md:text-3xl font-semibold text-brand-navy mt-2 mb-4">
               Pre-O English Pathway (ESL & Bridge)
@@ -903,7 +903,7 @@ export function PreOLevel() {
               className="bg-white rounded-xl p-8 border-t-4 border-brand-primary shadow-sm relative"
             >
               <div className="absolute top-4 right-4 bg-brand-primary text-white px-3 py-1 rounded-full text-xs font-semibold">
-                ★ Best Value
+                 Best Value
               </div>
 
               <h3 className="text-2xl font-semibold text-brand-navy mb-4">

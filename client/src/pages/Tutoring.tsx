@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, type ComponentType } from "react";
 import { Link } from "wouter";
 import { Layout } from "@/components/Layout";
+import { BookOpen, CalendarDays, CreditCard, FileText, LineChart, NotebookPen, ShieldCheck, Target, UserCheck, Users, Wrench } from "lucide-react";
 
 export default function Tutoring() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -64,9 +65,9 @@ export default function Tutoring() {
           <p className="mb-2.5 text-[10px] font-bold uppercase tracking-[2px] text-brand-primary">Why EduMeUp Tutoring</p>
           <h2 className="mb-9 text-[30px] font-bold text-brand-navy">Three Guarantees Every Parent and Student Gets</h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <ProtectCard icon="🔒" title="All Fees Paid to EduMeUp" text="Every tutoring fee is paid securely to EduMeUp — never directly to the tutor. If you are ever asked to pay a tutor directly, report it to us immediately. Your money is always protected." />
-            <ProtectCard icon="🎓" title="Every Tutor Is Certified" text="Every EduMeUp tutor passes the T5 Tutor Certification Pathway — a rigorous subject knowledge test (81% pass mark) and a full professional training programme. No unverified tutors — ever." />
-            <ProtectCard icon="📚" title="Everything Included" text="Notes, worksheets, online platform tests, and three dashboards (Student, Parent, Tutor) are included in every tutoring plan — at no extra cost. A free 30-minute demo session before any plan starts." />
+            <ProtectCard icon={ShieldCheck} title="All Fees Paid to EduMeUp" text="Every tutoring fee is paid securely to EduMeUp — never directly to the tutor. If you are ever asked to pay a tutor directly, report it to us immediately. Your money is always protected." />
+            <ProtectCard icon={UserCheck} title="Every Tutor Is Certified" text="Every EduMeUp tutor passes the T5 Tutor Certification Pathway — a rigorous subject knowledge test (81% pass mark) and a full professional training programme. No unverified tutors — ever." />
+            <ProtectCard icon={BookOpen} title="Everything Included" text="Notes, worksheets, online platform tests, and three dashboards (Student, Parent, Tutor) are included in every tutoring plan — at no extra cost. A free 30-minute demo session before any plan starts." />
           </div>
         </div>
       </section>
@@ -188,14 +189,14 @@ export default function Tutoring() {
             These are included in every TB1 and TB2 plan at every price point — Starter, Progress, and Intensive. No upsells, no hidden extras.
           </p>
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-            <IncludedItem icon="📋" text="Session Notes" sub="Written by tutor after each session" />
-            <IncludedItem icon="📄" text="Practice Worksheets" sub="Curriculum-aligned per topic" />
-            <IncludedItem icon="💻" text="Online Platform Tests" sub="Track progress between sessions" />
-            <IncludedItem icon="📊" text="Student Dashboard" sub="Live progress and session history" />
-            <IncludedItem icon="👨‍👩‍👦" text="Parent Dashboard" sub="Reports and session summaries" />
-            <IncludedItem icon="📈" text="Tutor Management" sub="Booking, scheduling, notes" />
-            <IncludedItem icon="📅" text="Monthly Report" sub="Published by EduMeUp Academic Team" />
-            <IncludedItem icon="🎯" text="Curriculum Provided" sub="Tutor follows EduMeUp framework" />
+            <IncludedItem icon={NotebookPen} text="Session Notes" sub="Written by tutor after each session" />
+            <IncludedItem icon={FileText} text="Practice Worksheets" sub="Curriculum-aligned per topic" />
+            <IncludedItem icon={LineChart} text="Online Platform Tests" sub="Track progress between sessions" />
+            <IncludedItem icon={BookOpen} text="Student Dashboard" sub="Live progress and session history" />
+            <IncludedItem icon={Users} text="Parent Dashboard" sub="Reports and session summaries" />
+            <IncludedItem icon={Wrench} text="Tutor Management" sub="Booking, scheduling, notes" />
+            <IncludedItem icon={CalendarDays} text="Monthly Report" sub="Published by EduMeUp Academic Team" />
+            <IncludedItem icon={Target} text="Curriculum Provided" sub="Tutor follows EduMeUp framework" />
           </div>
         </div>
       </section>
@@ -308,10 +309,10 @@ function DemoItem({ label, value, sub }: { label: string; value: string; sub: st
   );
 }
 
-function ProtectCard({ icon, title, text }: { icon: string; title: string; text: string }) {
+function ProtectCard({ icon: Icon, title, text }: { icon: ComponentType<{ className?: string }>; title: string; text: string }) {
   return (
     <div className="rounded-xl border border-neutral-border border-t-4 border-t-brand-primary bg-white p-7 shadow-sm">
-      <p className="mb-3.5 text-[32px]">{icon}</p>
+      <div className="mb-3.5"><Icon className="h-8 w-8 text-brand-primary" /></div>
       <p className="mb-2.5 text-[17px] font-bold text-brand-navy">{title}</p>
       <p className="text-sm leading-[1.6] text-neutral-slate-gray">{text}</p>
     </div>
@@ -344,10 +345,10 @@ function GroupRow({ role, price, last }: { role: string; price: string; last?: b
   );
 }
 
-function IncludedItem({ icon, text, sub }: { icon: string; text: string; sub: string }) {
+function IncludedItem({ icon: Icon, text, sub }: { icon: ComponentType<{ className?: string }>; text: string; sub: string }) {
   return (
     <div className="rounded-lg border border-neutral-border bg-white p-4 text-center shadow-sm">
-      <p className="mb-2.5 text-2xl">{icon}</p>
+      <div className="mb-2.5 flex justify-center"><Icon className="h-6 w-6 text-brand-primary" /></div>
       <p className="text-[13px] font-semibold text-brand-navy">{text}</p>
       <p className="mt-1 text-xs text-neutral-muted">{sub}</p>
     </div>
@@ -369,7 +370,7 @@ function DemoStep({ num, title, desc }: { num: number; title: string; desc: stri
 function WhyCard({ title, text }: { title: string; text: string }) {
   return (
     <div className="rounded-xl border border-neutral-border bg-white p-6 shadow-sm">
-      <div className="mb-3.5 flex h-9 w-9 items-center justify-center rounded-full bg-brand-primary-soft text-lg text-brand-primary">✓</div>
+      <div className="mb-3.5 flex h-9 w-9 items-center justify-center rounded-full bg-brand-primary-soft text-brand-primary"><ShieldCheck className="h-5 w-5" /></div>
       <p className="mb-2 text-[15px] font-bold text-brand-navy">{title}</p>
       <p className="text-[13px] leading-[1.6] text-neutral-slate-gray">{text}</p>
     </div>

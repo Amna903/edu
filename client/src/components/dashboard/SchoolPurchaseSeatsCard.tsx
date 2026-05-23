@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { CreditCard } from "lucide-react";
 
 export default function SchoolPurchaseSeatsCard() {
   const { data: courses = [] } = usePrograms();
@@ -32,7 +33,7 @@ export default function SchoolPurchaseSeatsCard() {
     <Card className="border-blue-100 shadow-xl shadow-blue-50">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-xl font-black text-slate-900">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-sm text-white">💳</span>
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-sm text-white"><CreditCard className="h-4 w-4" /></span>
           Purchase Seats
         </CardTitle>
       </CardHeader>

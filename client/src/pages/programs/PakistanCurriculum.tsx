@@ -683,8 +683,8 @@ export default function PakistanCurriculum() {
                     {matricSubjects.map((row, i) => (
                       <tr key={row.subject} style={{ borderTop: `1px solid ${BORDER}`, background: i % 2 === 0 ? "white" : "#f8fbff" }}>
                         <td className="px-5 py-3 text-sm font-medium" style={{ color: BODY }}>{row.subject}</td>
-                        <td className="px-5 py-3 text-center text-lg" style={{ color: GREEN }}>✓</td>
-                        <td className="px-5 py-3 text-center text-lg" style={{ color: GREEN }}>✓</td>
+                        <td className="px-5 py-3 text-center text-lg" style={{ color: GREEN }}></td>
+                        <td className="px-5 py-3 text-center text-lg" style={{ color: GREEN }}></td>
                       </tr>
                     ))}
                   </tbody>

@@ -30,6 +30,7 @@ import {
   MessageCircle,
   BarChart3,
   Flame,
+  Zap,
   ShieldCheck,
   RefreshCw,
   AlertTriangle,
@@ -186,7 +187,7 @@ export default function ForParents() {
                   <div className="grid grid-cols-2 gap-3">
                     <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                       <p className="text-[9px] font-black text-slate-400 uppercase mb-1">Study Streak</p>
-                      <p className="text-lg font-black text-slate-900">12 Days 🔥</p>
+                      <p className="text-lg font-black text-slate-900">12 Days </p>
                     </div>
                     <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                       <p className="text-[9px] font-black text-slate-400 uppercase mb-1">Last Active</p>
@@ -201,7 +202,7 @@ export default function ForParents() {
                       <p className="text-xs font-black text-slate-900 uppercase">Today's Retrieval</p>
                     </div>
                     <div className="flex gap-2">
-                      <span className="px-2 py-1 bg-emerald-50 text-[#1A7A3A] border border-emerald-100 rounded text-[9px] font-bold">Mole Concept ✓</span>
+                      <span className="px-2 py-1 bg-emerald-50 text-[#1A7A3A] border border-emerald-100 rounded text-[9px] font-bold">Mole Concept </span>
                       <span className="px-2 py-1 bg-amber-50 text-[#C8860A] border border-amber-200 rounded text-[9px] font-bold">Bonding (Overdue)</span>
                     </div>
                   </div>
@@ -515,7 +516,7 @@ export default function ForParents() {
                       <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mb-1">Study Streak</p>
                       <div className="flex items-center gap-2">
                         <p className="text-2xl font-black text-slate-900">12 Days</p>
-                        <span className="text-xl">🔥</span>
+                        <Zap className="h-5 w-5 text-amber-500" />
                       </div>
                     </div>
                     <div className="pt-2">

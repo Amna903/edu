@@ -228,7 +228,7 @@ export function StudentDashboardSection({ data, fullname }: StudentDashboardProp
                   </div>
                   <div className="flex items-center gap-3">
                     <span className={`rounded-full px-3 py-1 text-xs font-bold ${diag.status === "completed" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
-                      {diag.status === "completed" ? "✓ Completed" : "⚠ Pending"}
+                      {diag.status === "completed" ? " Completed" : " Pending"}
                     </span>
                     <ChevronDown className={`h-5 w-5 text-slate-400 transition ${expandedDiagnostic === diag.id ? "rotate-180" : ""}`} />
                   </div>
@@ -290,7 +290,7 @@ export function StudentDashboardSection({ data, fullname }: StudentDashboardProp
                     <div className="text-right">
                       <p className="text-2xl font-black text-slate-900">{test.score}%</p>
                       <p className="text-xs text-slate-500">
-                        {test.trend === "up" && "📈 Improving"} {test.trend === "down" && "📉 Declining"} {test.trend === "flat" && "→ Steady"}
+                        {test.trend === "up" && " Improving"} {test.trend === "down" && " Declining"} {test.trend === "flat" && "→ Steady"}
                       </p>
                     </div>
                   </div>

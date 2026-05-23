@@ -776,12 +776,12 @@ export default function Research() {
           {/* Trust strip */}
           <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-blue-200 font-medium">
             {[
-              "🎓 2,000+ Students",
-              "🌍 25+ Countries",
-              "🏛 University-Validated (3 years)",
-              "📊 91% Pass Rate",
-              "🔒 30-Day Money-Back Guarantee",
-              "📞 24/7 Cambridge Expert Support",
+              " 2,000+ Students",
+              " 25+ Countries",
+              " University-Validated (3 years)",
+              " 91% Pass Rate",
+              " 30-Day Money-Back Guarantee",
+              " 24/7 Cambridge Expert Support",
             ].map((item, i) => (
               <span key={i}>{item}</span>
             ))}

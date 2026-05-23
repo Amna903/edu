@@ -1,6 +1,6 @@
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Trophy, Zap, BarChart3, GraduationCap, BookOpen, PieChart, Languages, ArrowRight, Download } from "lucide-react";
+import { CheckCircle2, Trophy, Zap, BarChart3, GraduationCap, BookOpen, PieChart, Languages, ArrowRight, Download, XCircle } from "lucide-react";
 import { InquiryDialog } from "@/components/InquiryDialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -40,7 +40,7 @@ export default function Schools() {
                     "No data-driven insights"
                   ].map((text, i) => (
                     <li key={i} className="flex items-center gap-3 text-base font-semibold text-neutral-muted">
-                      <span className="text-status-danger">❌</span> {text}
+                      <XCircle className="h-4 w-4 text-status-danger" /> {text}
                     </li>
                   ))}
                 </ul>
