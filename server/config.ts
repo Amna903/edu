@@ -124,9 +124,12 @@ export const env = {
     adminUserIds: splitCsv(process.env.MOODLE_ADMIN_USER_IDS),
   },
 
-  safepay: {
-    publicKey: process.env.SAFEPAY_PUBLIC_KEY || "",
-    baseUrl: process.env.SAFEPAY_BASE_URL || "https://sandbox.api.getsafepay.com",
+  payfast: {
+    merchantId: process.env.PAYFAST_MERCHANT_ID || "",
+    merchantKey: process.env.PAYFAST_MERCHANT_KEY || "",
+    passphrase: process.env.PAYFAST_PASSPHRASE || "",
+    baseUrl: process.env.PAYFAST_BASE_URL || "https://sandbox.payfast.co.za",
+    mode: process.env.PAYFAST_MODE || "sandbox",
   },
 
   app: {
@@ -172,6 +175,7 @@ export function logEnvPresence() {
     moodleAdminToken: Boolean(env.moodle.adminToken),
     moodleSignupToken: Boolean(env.moodle.signupToken),
     moodleAdminManage: Boolean(env.moodle.adminManageToken),
+    payfastConfigured: Boolean(env.payfast.merchantId && env.payfast.merchantKey),
     databaseUrl: Boolean(env.databaseUrl),
     databaseUrlDirect: Boolean(env.databaseUrlDirect),
     sessionSecret: Boolean(env.sessionSecret),

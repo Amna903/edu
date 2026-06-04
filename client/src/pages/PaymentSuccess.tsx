@@ -58,9 +58,9 @@ export default function PaymentSuccess() {
         <div className="mt-12 flex flex-col sm:flex-row justify-center gap-4">
           <Button
             className="bg-brand-primary text-white hover:bg-brand-navy px-8 py-6 h-auto text-base font-semibold transition-all shadow-lg shadow-brand-primary/20"
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate("/dashboard/orders")}
           >
-            Go To Dashboard
+            View Orders
           </Button>
           <Button 
             variant="outline" 

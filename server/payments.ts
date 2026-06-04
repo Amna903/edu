@@ -1,71 +1,85 @@
+import crypto from "crypto";
 import type { CheckoutItem } from "../shared/schema.js";
 import { env } from "./config.js";
 
-interface SafepayInitResponse {
-  status?: { message?: string };
-  data?: { token?: string };
+type PayfastFields = Record<string, string>;
+
+function getPayfastBaseUrl() {
+  if (env.payfast.mode === "live") {
+    return "https://www.payfast.co.za";
+  }
+
+  return env.payfast.baseUrl || "https://sandbox.payfast.co.za";
 }
 
-function getPublicKey() {
-  const key = env.safepay.publicKey || "";
-  if (!key) throw new Error("SAFEPAY_PUBLIC_KEY is not configured");
-  return key;
+function getPayfastProcessUrl() {
+  return `${getPayfastBaseUrl().replace(/\/+$/, "")}/eng/process`;
 }
 
-function getSafepayBaseUrl() {
-  return env.safepay.baseUrl || "https://sandbox.api.getsafepay.com";
-}
-
-function buildOrigin(host: string, proto?: string) {
+export function buildOrigin(host: string, proto?: string) {
   return `${proto || "http"}://${host}`;
 }
 
-export async function createSafepayCheckout(params: {
-  orderRef: string;
-  items: CheckoutItem[];
-  totalAmount: number;
-  origin: string;
-  cancelPath?: string;
-}) {
-  const response = await fetch(`${getSafepayBaseUrl()}/order/v1/init`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      client: getPublicKey(),
-      amount: Number(params.totalAmount / 100),
-      currency: "PKR",
-      environment: "sandbox",
-      mode: "payment",
-      intent: "CYBERSOURCE",
-      redirect_url: `${params.origin}/payment-success`,
-      cancel_url: `${params.origin}${params.cancelPath || "/cart"}`,
-      metadata: {
-        order_id: params.orderRef,
-        item_count: params.items.length,
-      },
-      configuration: {
-        success_url: `${params.origin}/payment-success`,
-        auto_redirect: true,
-      },
-    }),
-  });
+function generateSignature(data: PayfastFields, passphrase?: string) {
+  const output = Object.keys(data)
+    .sort()
+    .filter((key) => data[key] !== "")
+    .map((key) => `${key}=${encodeURIComponent(data[key].trim())}`)
+    .join("&");
 
-  if (!response.ok) {
-    throw new Error(`Safepay init failed with status ${response.status}`);
-  }
-
-  const data = (await response.json()) as SafepayInitResponse;
-  if (!data.data?.token) {
-    throw new Error(data.status?.message || "No Safepay token received");
-  }
-
-  const checkoutUrl =
-    `${getSafepayBaseUrl()}/checkout?env=sandbox` +
-    `&beacon=${data.data.token}` +
-    `&client_id=${getPublicKey()}` +
-    `&order_id=${params.orderRef}`;
-
-  return { checkoutUrl };
+  return typeof passphrase === "string" && passphrase.trim()
+    ? `${output}&passphrase=${encodeURIComponent(passphrase.trim())}`
+    : output;
 }
 
-export { buildOrigin };
+function generateSignatureHash(data: PayfastFields, passphrase?: string) {
+  const serialized = generateSignature(data, passphrase);
+  return crypto.createHash("md5").update(serialized).digest("hex");
+}
+
+export function buildPayfastCheckoutFields(params: {
+  orderRef: string;
+  itemName: string;
+  amount: number;
+  origin: string;
+  email?: string | null;
+  returnPath?: string;
+  cancelPath?: string;
+  notifyPath?: string;
+}) {
+  if (!env.payfast.merchantId || !env.payfast.merchantKey) {
+    throw new Error("PayFast credentials are not configured");
+  }
+
+  const fields: PayfastFields = {
+    merchant_id: env.payfast.merchantId,
+    merchant_key: env.payfast.merchantKey,
+    return_url: `${params.origin}${params.returnPath || "/payment-success"}?order_id=${encodeURIComponent(params.orderRef)}`,
+    cancel_url: `${params.origin}${params.cancelPath || "/cart"}?order_id=${encodeURIComponent(params.orderRef)}`,
+    notify_url: `${params.origin}${params.notifyPath || "/api/webhook/payfast"}`,
+    m_payment_id: params.orderRef,
+    amount: params.amount.toFixed(2),
+    item_name: params.itemName,
+    email_address: params.email || "",
+  };
+
+  const signature = generateSignatureHash(fields, env.payfast.passphrase || undefined);
+
+  return {
+    processUrl: getPayfastProcessUrl(),
+    fields: {
+      ...fields,
+      signature,
+    },
+  };
+}
+
+export function buildPayfastItemName(items: CheckoutItem[]) {
+  if (items.length === 1) {
+    return items[0]?.title || "EduMeUp Course";
+  }
+
+  return `${items.length} EduMeUp courses`;
+}
+
+export { getPayfastBaseUrl };

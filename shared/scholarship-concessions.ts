@@ -216,5 +216,5 @@ export function resolveConcessionFromProfileCountry(
     normalizeScholarshipCountry(registrationCountry);
   if (!country) return null;
   const concession = getCountryConcession(country);
-  return concession ? { country, ...concession } : null;
+  return concession ? { ...concession, country } : null;
 }

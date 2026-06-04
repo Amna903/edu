@@ -1,15 +1,36 @@
 
-import type { Express } from "express";
+import type { Express, Request as ExpressRequest } from "express";
 import type { Server } from "http";
+import { randomUUID } from "crypto";
 import { storage } from "./storage.js";
 import { api } from "../shared/routes.js";
 import { z } from "zod";
-import { checkoutRequestSchema, contactSubmissions, insertInquirySchema, loginInputSchema, markNotificationReadInputSchema, parentLinkChildInputSchema, passwordChangeInputSchema, profileUpdateInputSchema, registerInputSchema, diagnosticEligibilityInputSchema, diagnosticStartInputSchema, diagnosticAnswerInputSchema, diagnosticCompleteInputSchema } from "../shared/schema.js";
+import {
+  checkoutRequestSchema,
+  contactSubmissions,
+  dashboardNotificationReads,
+  insertInquirySchema,
+  loginInputSchema,
+  markNotificationReadInputSchema,
+  parentLinkChildInputSchema,
+  passwordChangeInputSchema,
+  profileUpdateInputSchema,
+  registerInputSchema,
+  diagnosticEligibilityInputSchema,
+  diagnosticStartInputSchema,
+  diagnosticAnswerInputSchema,
+  diagnosticCompleteInputSchema,
+  schoolLicenses,
+  schoolRosterStudents,
+  schoolSeatAssignments,
+  schoolStudentUploads,
+} from "../shared/schema.js";
+import { and, desc, eq } from "drizzle-orm";
 import { getLmsCourseById, getLmsCourseBySlug, getLmsCourses } from "./moodle.js";
 import { changeMoodlePassword, fetchCurrentUser, loginWithMoodle, registerWithMoodle, updateMoodleProfile } from "./moodle-auth.js";
 import { enrolUserInCourse } from "./moodle-commerce.js";
 import { getStudentActivityTimelineForDashboard, getStudentCertificatesForDashboard, getStudentGradesForDashboard, getUserCoursesForDashboard } from "./moodle-dashboard.js";
-import { buildOrigin, createSafepayCheckout } from "./payments.js";
+import { buildOrigin, buildPayfastCheckoutFields, buildPayfastItemName } from "./payments.js";
 import { env } from "./config.js";
 import { prisma } from "./prisma.js";
 import { db } from "./db.js";
@@ -29,6 +50,45 @@ export async function registerRoutes(
 ): Promise<Server> {
   const notificationReadByUser = new Map<number, Set<number>>();
   const contactRateLimitByIp = new Map<string, number[]>();
+  const schoolLicensesByUser = new Map<number, Array<{
+    id: string;
+    schoolUserId: number;
+    courseId: number;
+    courseName: string;
+    totalSeats: number;
+    usedSeats: number;
+    purchaseDate: string;
+    expiresAt: string | null;
+    orderId: number;
+    assignedStudents: Array<{
+      studentId: number;
+      studentEmail: string;
+      studentName: string;
+      assignedAt: string;
+    }>;
+  }>>();
+  const schoolUploadsByUser = new Map<number, Array<{
+    id: string;
+    filename: string;
+    uploadedAt: string;
+    totalStudents: number;
+    processedStudents: number;
+    failedStudents: number;
+    status: "pending" | "processing" | "completed" | "failed";
+    errors: Array<{ row: number; email?: string; error: string }>;
+  }>>();
+  const schoolRosterByUser = new Map<number, Map<number, {
+    studentId: number;
+    studentEmail: string;
+    studentName: string;
+    uploadedAt: string;
+    sourceUploadId: string;
+  }>>();
+  const paymentEventsByOrderId = new Map<number, Array<{
+    status: string;
+    message: string;
+    createdAt: string;
+  }>>();
 
   const aiSupportWebhookUrl =
     process.env.AI_SUPPORT_WEBHOOK_URL ??
@@ -86,12 +146,115 @@ export async function registerRoutes(
     return resolveLinkedChildren(parentId);
   };
 
-  const getClientIp = (req: Request) => {
+  const getClientIp = (req: ExpressRequest) => {
     const forwarded = req.headers["x-forwarded-for"];
     if (typeof forwarded === "string" && forwarded.trim()) {
       return forwarded.split(",")[0]?.trim() || req.ip || req.socket.remoteAddress || "unknown";
     }
     return req.ip || req.socket.remoteAddress || "unknown";
+  };
+
+  const getSchoolLicenses = async (schoolUserId: number) => {
+    const [licenses, assignments] = await Promise.all([
+      db.select().from(schoolLicenses).where(eq(schoolLicenses.schoolUserId, schoolUserId)).orderBy(desc(schoolLicenses.purchaseDate)),
+      db.select().from(schoolSeatAssignments).where(eq(schoolSeatAssignments.schoolUserId, schoolUserId)),
+    ]);
+
+    return licenses.map((license) => {
+      const assignedStudents = assignments
+        .filter((assignment) => assignment.licenseId === license.id)
+        .map((assignment) => ({
+          studentId: assignment.studentId,
+          studentEmail: assignment.studentEmail,
+          studentName: assignment.studentName,
+          assignedAt: assignment.assignedAt ? assignment.assignedAt.toISOString() : new Date().toISOString(),
+        }));
+
+      return {
+        id: license.id,
+        schoolUserId: license.schoolUserId,
+        courseId: license.courseId,
+        courseName: license.courseName,
+        totalSeats: license.totalSeats,
+        usedSeats: assignedStudents.length,
+        purchaseDate: license.purchaseDate ? license.purchaseDate.toISOString() : new Date().toISOString(),
+        expiresAt: license.expiresAt ? license.expiresAt.toISOString() : null,
+        orderId: license.orderId,
+        assignedStudents,
+      };
+    });
+  };
+
+  const createSchoolLicense = async (license: {
+    id: string;
+    schoolUserId: number;
+    courseId: number;
+    courseName: string;
+    totalSeats: number;
+    orderId: number;
+    expiresAt: string | null;
+  }) => {
+    await db.insert(schoolLicenses).values({
+      id: license.id,
+      schoolUserId: license.schoolUserId,
+      courseId: license.courseId,
+      courseName: license.courseName,
+      totalSeats: license.totalSeats,
+      orderId: license.orderId,
+      expiresAt: license.expiresAt ? new Date(license.expiresAt) : null,
+    });
+  };
+
+  const getSchoolRosterStudent = async (schoolUserId: number, studentId: number) => {
+    const [student] = await db
+      .select()
+      .from(schoolRosterStudents)
+      .where(and(eq(schoolRosterStudents.schoolUserId, schoolUserId), eq(schoolRosterStudents.studentId, studentId)))
+      .limit(1);
+    return student;
+  };
+
+  const getSchoolUploads = async (schoolUserId: number) => {
+    return db
+      .select()
+      .from(schoolStudentUploads)
+      .where(eq(schoolStudentUploads.schoolUserId, schoolUserId))
+      .orderBy(desc(schoolStudentUploads.uploadedAt));
+  };
+
+  const parseSchoolStudentCsv = (csvText: string) => {
+    const rows = csvText
+      .split(/\r?\n/)
+      .map((row) => row.trim())
+      .filter(Boolean);
+
+    const header = rows.shift() || "";
+    const normalizedHeader = header.toLowerCase().split(",").map((value) => value.trim());
+    const emailIndex = normalizedHeader.findIndex((value) => value === "email");
+    const firstNameIndex = normalizedHeader.findIndex((value) => value === "firstname" || value === "first_name" || value === "first name");
+    const lastNameIndex = normalizedHeader.findIndex((value) => value === "lastname" || value === "last_name" || value === "last name");
+    const moodleIdIndex = normalizedHeader.findIndex((value) => value === "moodleuserid" || value === "moodle_user_id" || value === "moodle id");
+
+    if (emailIndex === -1) {
+      throw new Error("CSV must include an email column.");
+    }
+
+    const parsedRows = rows.map((row, index) => {
+      const columns = row.split(",").map((column) => column.trim());
+      const email = columns[emailIndex] || "";
+      const firstName = firstNameIndex >= 0 ? columns[firstNameIndex] || "" : "";
+      const lastName = lastNameIndex >= 0 ? columns[lastNameIndex] || "" : "";
+      const moodleUserId = moodleIdIndex >= 0 ? Number(columns[moodleIdIndex]) : NaN;
+
+      return {
+        rowNumber: index + 2,
+        email,
+        name: [firstName, lastName].filter(Boolean).join(" ").trim() || email.split("@")[0] || `Student ${index + 1}`,
+        moodleUserId: Number.isFinite(moodleUserId) && moodleUserId > 0 ? moodleUserId : undefined,
+      };
+    });
+
+    return parsedRows;
   };
 
   const resolveCheckoutTotals = async (params: {
@@ -118,31 +281,90 @@ export async function registerRoutes(
     return { pricing, scholarshipRecord };
   };
 
-  const finalizePaidOrder = async (orderRef: string, tracker?: string) => {
+  const recordPaymentEvent = async (orderId: number, status: string, message: string) => {
+    const events = paymentEventsByOrderId.get(orderId) ?? [];
+    const entry = {
+      status,
+      message,
+      createdAt: new Date().toISOString(),
+    };
+    events.push(entry);
+    paymentEventsByOrderId.set(orderId, events);
+    await storage.updateOrder(orderId, { paymentNotes: events });
+    return entry;
+  };
+
+  const buildOrderHistoryResponse = async (order: any) => {
+    const items = await storage.getOrderItemsByOrderId(order.id);
+    const detailedItems = await Promise.all(
+      items.map(async (item) => {
+        const course = await getLmsCourseById(item.programId);
+        return {
+          id: item.id,
+          title: course?.title || `Course ${item.programId}`,
+          price: item.price,
+          programId: item.programId,
+        };
+      }),
+    );
+
+    const paymentNotes = paymentEventsByOrderId.get(order.id) ?? order.paymentNotes ?? [];
+    const remainingAmount = typeof order.remainingAmount === "number" ? order.remainingAmount : Math.max(order.totalAmount - (order.paidAmount ?? 0), 0);
+    return {
+      id: order.id,
+      userId: order.userId,
+      totalAmount: order.totalAmount,
+      status: order.status,
+      paymentStatus: order.paymentStatus ?? order.status,
+      paymentProvider: order.paymentProvider ?? null,
+      paymentRef: order.paymentRef ?? null,
+      invoiceNumber: order.invoiceNumber ?? null,
+      paidAmount: order.paidAmount ?? 0,
+      remainingAmount,
+      allowPartialPayment: order.allowPartialPayment ?? true,
+      refundStatus: order.refundStatus ?? null,
+      canRetryPayment: ["failed", "pending", "cancelled"].includes(String(order.paymentStatus ?? order.status).toLowerCase()),
+      refundable: ["completed", "partial"].includes(String(order.paymentStatus ?? order.status).toLowerCase()) && remainingAmount === 0,
+      paymentNotes,
+      createdAt: order.createdAt ? new Date(order.createdAt).toISOString() : new Date().toISOString(),
+      items: detailedItems,
+    };
+  };
+
+  const finalizePaidOrder = async (orderRef: string, userId: string, tracker?: string) => {
+    const inferredUserId = userId || orderRef.match(/^PF-(\d+)-/)?.[1] || "";
     const pending = await storage.getPendingPayment(orderRef);
     if (!pending) {
+      const allOrders = await storage.getOrdersByUserId(inferredUserId);
+      const existing = allOrders.find((order) => order.paymentRef === orderRef);
+      if (existing && ["paid", "partial", "completed"].includes(String(existing.paymentStatus ?? existing.status).toLowerCase())) {
+        return existing.id;
+      }
       throw new Error("Pending payment not found");
     }
 
-    const existingOrders = await storage.getOrdersByUserId(pending.userId);
-    const alreadyCreated = existingOrders.find((order) => order.status === "completed" && String(order.id) === orderRef.split("-").at(-1));
-    if (alreadyCreated) {
-      return alreadyCreated.id;
+    const orderId = pending.orderId ?? Number(orderRef.match(/(\d+)$/)?.[1] || 0);
+    const existingOrder = Number.isFinite(orderId) && orderId > 0 ? await storage.getOrderById(orderId) : undefined;
+    if (!existingOrder) {
+      throw new Error("Payment order not found");
     }
 
-    const order = await storage.createOrder({
-      userId: pending.userId,
-      totalAmount: pending.totalAmount,
-      status: "completed",
+    const paidAmount = pending.amountToPay ?? pending.totalAmount;
+    const remainingAmount = Math.max(pending.totalAmount - paidAmount, 0);
+    const completed = remainingAmount === 0;
+
+    await storage.updateOrder(existingOrder.id, {
+      status: completed ? "completed" : "partial",
+      paymentStatus: completed ? "paid" : "partial",
+      paymentProvider: "PayFast",
+      paymentRef: orderRef,
+      paidAmount,
+      remainingAmount,
+      refundStatus: null,
     });
 
     for (const item of pending.items) {
       await enrolUserInCourse(Number(pending.userId), item.programId);
-      await storage.createOrderItem({
-        orderId: order.id,
-        programId: item.programId,
-        price: item.price,
-      });
       await storage.createEnrollment({
         userId: pending.userId,
         programId: item.programId,
@@ -153,8 +375,9 @@ export async function registerRoutes(
       await storage.markScholarshipCodeUsed(pending.scholarshipCode, pending.userId);
     }
 
+    await recordPaymentEvent(existingOrder.id, completed ? "paid" : "partial", tracker ? `Verified by tracker ${tracker}` : "Payment verified");
     await storage.deletePendingPayment(orderRef);
-    return order.id;
+    return existingOrder.id;
   };
 
   const notificationIdFromKey = (key: string) => {
@@ -760,7 +983,7 @@ EduMeUp`,
         paid: input.paid ?? false,
       });
 
-      if (!session.eligible) {
+      if (!session.eligible || !("sessionToken" in session)) {
         return res.json(session);
       }
 
@@ -848,7 +1071,7 @@ EduMeUp`,
         paid: true,
       });
 
-      if (!session.eligible) {
+      if (!session.eligible || !("sessionToken" in session)) {
         return res.json(session);
       }
 
@@ -1199,7 +1422,7 @@ EduMeUp`,
     if (!concession) {
       return res.json({
         eligible: false,
-        country: normalizeScholarshipCountry(req.session.user.country),
+        country: normalizeScholarshipCountry((req.session.user as { country?: string | null }).country),
         concessionPercent: null,
         region: null,
         message:
@@ -1339,7 +1562,17 @@ EduMeUp`,
         user: req.session.user,
       });
 
-      const order = await storage.createOrder({ userId, totalAmount, status: "completed" });
+      const order = await storage.createOrder({
+        userId,
+        totalAmount,
+        status: "completed",
+        paymentStatus: "paid",
+        paymentProvider: "Internal",
+        paidAmount: totalAmount,
+        remainingAmount: 0,
+        allowPartialPayment: false,
+        paymentNotes: [],
+      });
       const isSchoolPurchase = req.session.user.role === "school";
 
       for (const item of items) {
@@ -1365,21 +1598,7 @@ EduMeUp`,
         await storage.markScholarshipCodeUsed(scholarshipRecord.code, userId);
       }
 
-      const response = {
-        id: order.id,
-        userId: order.userId,
-        totalAmount: order.totalAmount,
-        status: order.status,
-        createdAt: order.createdAt ? new Date(order.createdAt).toISOString() : new Date().toISOString(),
-        items: items.map((item) => ({
-          id: item.programId,
-          title: item.title,
-          price: item.price,
-          programId: item.programId,
-        })),
-      };
-
-      res.status(201).json(response);
+      res.status(201).json(await buildOrderHistoryResponse(order));
     } catch (err) {
       if (err instanceof z.ZodError) {
         return res.status(400).json({
@@ -1398,7 +1617,8 @@ EduMeUp`,
         return res.status(401).json({ message: "Not authenticated" });
       }
 
-      const { items, totalAmount, scholarshipCode } = api.payments.init.input.parse(req.body);
+      const { items, totalAmount, amountToPay, scholarshipCode } = api.payments.init.input.parse(req.body);
+      const amountRequested = typeof amountToPay === "number" ? amountToPay : totalAmount;
 
       await resolveCheckoutTotals({
         items,
@@ -1407,31 +1627,52 @@ EduMeUp`,
         user: req.session.user,
       });
 
+      if (amountRequested <= 0 || amountRequested > totalAmount) {
+        return res.status(400).json({ message: "Partial payment amount must be between 0 and the order total." });
+      }
+
       const isSingleCourse = items.length === 1;
-      const orderRef = isSingleCourse
-        ? `${items[0].programId}-${req.session.user.id}`
-        : `${req.session.user.id}-${Date.now()}`;
+      const orderRef = `PF-${req.session.user.id}-${Date.now()}${isSingleCourse ? `-${items[0].programId}` : ""}`;
+      const invoiceNumber = `INV-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`;
+      const pendingOrder = await storage.createOrder({
+        userId: String(req.session.user.id),
+        totalAmount,
+        status: amountRequested >= totalAmount ? "pending" : "partial",
+        paymentStatus: "initiated",
+        paymentProvider: "PayFast",
+        paymentRef: orderRef,
+        invoiceNumber,
+        paidAmount: 0,
+        remainingAmount: totalAmount,
+        allowPartialPayment: true,
+        refundStatus: null,
+        paymentNotes: [],
+      });
+      await recordPaymentEvent(pendingOrder.id, "initiated", `PayFast checkout created for ${amountRequested >= totalAmount ? "full" : "partial"} payment`);
+      for (const item of items) {
+        await storage.createOrderItem({
+          orderId: pendingOrder.id,
+          programId: item.programId,
+          price: item.price,
+        });
+      }
       await storage.createPendingPayment({
         orderRef,
         userId: String(req.session.user.id),
         items,
         totalAmount,
+        amountToPay: amountRequested,
         scholarshipCode,
+        orderId: pendingOrder.id,
         createdAt: new Date(),
       });
 
       const origin = env.app.publicUrl || buildOrigin(req.get("host") || "localhost:3001", req.protocol);
-      const payment = await createSafepayCheckout({
-        orderRef,
-        items,
-        totalAmount,
-        origin,
-        cancelPath: "/cart",
-      });
 
       res.json({
-        checkoutUrl: payment.checkoutUrl,
+        checkoutUrl: `${origin}/api/payments/payfast/checkout/${encodeURIComponent(orderRef)}`,
         orderRef,
+        provider: "PayFast",
       });
     } catch (err) {
       if (err instanceof z.ZodError) {
@@ -1444,6 +1685,59 @@ EduMeUp`,
     }
   });
 
+  app.get("/api/payments/payfast/checkout/:orderRef", async (req, res) => {
+    try {
+      if (!req.session.user) {
+        return res.status(401).send("Not authenticated");
+      }
+
+      const orderRef = typeof req.params.orderRef === "string" ? req.params.orderRef : "";
+      const pending = await storage.getPendingPayment(orderRef);
+      if (!pending || pending.userId !== String(req.session.user.id)) {
+        return res.status(404).send("Payment session not found");
+      }
+
+      const origin = env.app.publicUrl || buildOrigin(req.get("host") || "localhost:3001", req.protocol);
+      const payment = buildPayfastCheckoutFields({
+        orderRef,
+        itemName: buildPayfastItemName(pending.items),
+        amount: pending.amountToPay ?? pending.totalAmount,
+        origin,
+        email: req.session.user.email || undefined,
+        returnPath: "/payment-success",
+        cancelPath: "/cart",
+        notifyPath: "/api/webhook/payfast",
+      });
+
+      const fields = Object.entries(payment.fields)
+        .map(([name, value]) => `<input type="hidden" name="${name}" value="${String(value).replace(/"/g, "&quot;")}" />`)
+        .join("\n");
+
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.send(`<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Redirecting to PayFast…</title>
+  </head>
+  <body>
+    <form id="payfast-checkout" action="${payment.processUrl}" method="post">
+      ${fields}
+      <noscript>
+        <button type="submit">Continue to PayFast</button>
+      </noscript>
+    </form>
+    <script>
+      document.getElementById("payfast-checkout").submit();
+    </script>
+  </body>
+</html>`);
+    } catch (err) {
+      res.status(500).send(err instanceof Error ? err.message : "Failed to start PayFast checkout");
+    }
+  });
+
   app.post(api.payments.verify.path, async (req, res) => {
     try {
       if (!req.session.user) {
@@ -1451,7 +1745,7 @@ EduMeUp`,
       }
 
       const { orderRef, tracker } = api.payments.verify.input.parse(req.body);
-      const orderId = await finalizePaidOrder(orderRef, tracker);
+      const orderId = await finalizePaidOrder(orderRef, String(req.session.user.id), tracker);
       res.json({ success: true, orderId });
     } catch (err) {
       if (err instanceof z.ZodError) {
@@ -1466,14 +1760,35 @@ EduMeUp`,
 
   app.post(api.payments.webhook.path, async (req, res) => {
     try {
-      const notification = req.body?.data?.notification;
-      const state = notification?.state;
-      const orderRef = notification?.metadata?.order_id;
-      const tracker = notification?.tracker;
+      const payload = req.body ?? {};
+      const orderRef = typeof payload.m_payment_id === "string" ? payload.m_payment_id : typeof payload.order_id === "string" ? payload.order_id : "";
+      const paymentStatus = typeof payload.payment_status === "string" ? payload.payment_status.toLowerCase() : "";
+      const amountGross = typeof payload.amount_gross === "string" ? Number(payload.amount_gross) : Number(payload.amount_gross ?? 0);
+      const tracker = typeof payload.tracker === "string" ? payload.tracker : typeof payload.pf_payment_id === "string" ? payload.pf_payment_id : undefined;
+      const pending = orderRef ? await storage.getPendingPayment(orderRef) : undefined;
 
-      if (state === "PAID" && orderRef) {
-        await finalizePaidOrder(orderRef, tracker);
+      if (!orderRef) {
+        return res.status(200).json({ status: "ignored" });
+      }
+
+      if (paymentStatus === "complete" || paymentStatus === "successful" || paymentStatus === "paid") {
+        await finalizePaidOrder(orderRef, pending?.userId ? String(pending.userId) : "", tracker);
         return res.json({ status: "success" });
+      }
+
+      if (pending) {
+        const existingOrder = pending.orderId ? await storage.getOrderById(pending.orderId) : undefined;
+        if (existingOrder) {
+          const updatedStatus = paymentStatus === "failed" ? "failed" : paymentStatus === "cancelled" ? "cancelled" : "pending";
+          await storage.updateOrder(existingOrder.id, {
+            status: updatedStatus,
+            paymentStatus: updatedStatus,
+            paymentProvider: "PayFast",
+            paymentRef: orderRef,
+            remainingAmount: pending.totalAmount - (pending.amountToPay ?? pending.totalAmount),
+          });
+          await recordPaymentEvent(existingOrder.id, updatedStatus, `PayFast webhook reported ${updatedStatus}${Number.isFinite(amountGross) ? ` (${amountGross})` : ""}`);
+        }
       }
 
       return res.json({ status: "ignored" });
@@ -1624,33 +1939,41 @@ EduMeUp`,
     }
 
     const orders = await storage.getOrdersByUserId(String(req.session.user.id));
-    const response = await Promise.all(
-      orders.map(async (order) => {
-        const items = await storage.getOrderItemsByOrderId(order.id);
-        const detailedItems = await Promise.all(
-          items.map(async (item) => {
-            const course = await getLmsCourseById(item.programId);
-            return {
-              id: item.id,
-              title: course?.title || `Course ${item.programId}`,
-              price: item.price,
-              programId: item.programId,
-            };
-          }),
-        );
-
-        return {
-          id: order.id,
-          userId: order.userId,
-          totalAmount: order.totalAmount,
-          status: order.status,
-          createdAt: order.createdAt ? new Date(order.createdAt).toISOString() : new Date().toISOString(),
-          items: detailedItems,
-        };
-      }),
-    );
+    const response = await Promise.all(orders.map((order) => buildOrderHistoryResponse(order)));
 
     res.json(response);
+  });
+
+  app.post("/api/orders/:id/refund", async (req, res) => {
+    try {
+      if (!req.session.user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const orderId = Number(req.params.id);
+      if (!Number.isFinite(orderId) || orderId <= 0) {
+        return res.status(400).json({ message: "Invalid order id" });
+      }
+
+      const order = await storage.getOrderById(orderId);
+      if (!order || order.userId !== String(req.session.user.id)) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+
+      if (![ "paid", "partial", "completed" ].includes(String(order.paymentStatus ?? order.status).toLowerCase())) {
+        return res.status(400).json({ message: "Only paid orders can be refunded" });
+      }
+
+      await storage.updateOrder(order.id, {
+        refundStatus: "requested",
+        status: "refund_requested",
+        paymentStatus: "refund_requested",
+      });
+      await recordPaymentEvent(order.id, "refund_requested", "Refund requested from student dashboard");
+      return res.json({ success: true, message: "Refund request submitted" });
+    } catch (err) {
+      res.status(500).json({ message: err instanceof Error ? err.message : "Failed to request refund" });
+    }
   });
 
   app.get(api.dashboard.notifications.path, async (req, res) => {
@@ -1663,7 +1986,11 @@ EduMeUp`,
       email: req.session.user.email,
     });
 
-    const readIds = notificationReadByUser.get(req.session.user.id) ?? new Set<number>();
+    const readRows = await db
+      .select()
+      .from(dashboardNotificationReads)
+      .where(eq(dashboardNotificationReads.userId, req.session.user.id));
+    const readIds = new Set(readRows.map((row) => row.notificationId));
 
     res.json({
       notifications: notifications.map((notification) => ({
@@ -1679,9 +2006,10 @@ EduMeUp`,
     }
 
     const { notificationId } = markNotificationReadInputSchema.parse(req.body);
-    const existingIds = notificationReadByUser.get(req.session.user.id) ?? new Set<number>();
-    existingIds.add(notificationId);
-    notificationReadByUser.set(req.session.user.id, existingIds);
+    await db
+      .insert(dashboardNotificationReads)
+      .values({ userId: req.session.user.id, notificationId })
+      .onConflictDoNothing();
 
     res.json({ success: true });
   });
@@ -1689,6 +2017,9 @@ EduMeUp`,
   app.get(api.dashboard.student.path, async (req, res) => {
     if (!req.session.user || !req.session.moodleToken) {
       return res.status(401).json({ message: "Not authenticated" });
+    }
+    if (req.session.user.role !== "student") {
+      return res.status(403).json({ message: "Student access required" });
     }
 
     let courses: any[] = [];
@@ -1827,28 +2158,58 @@ EduMeUp`,
       return res.status(403).json({ message: "School access required" });
     }
 
-    const orders = await storage.getOrdersByUserId(String(req.session.user.id));
-    const licenses = await Promise.all(
-      orders.map(async (order) => {
-        const items = await storage.getOrderItemsByOrderId(order.id);
-        return Promise.all(
-          items.map(async (item) => {
-            const course = await getLmsCourseById(item.programId);
-            return {
-              courseId: item.programId,
-              courseName: course?.title || `Course ${item.programId}`,
-              assignedSeats: 1,
-              totalSeats: 1,
-            };
-          }),
-        );
-      }),
-    );
+    const schoolUserId = req.session.user.id;
+    const trackedLicenses = await getSchoolLicenses(schoolUserId);
+    const orders = await storage.getOrdersByUserId(String(schoolUserId));
+    if (trackedLicenses.length === 0 && orders.length > 0) {
+      const legacyLicenses = await Promise.all(
+        orders.map(async (order) => {
+          const items = await storage.getOrderItemsByOrderId(order.id);
+          return Promise.all(
+            items.map(async (item, index) => {
+              const course = await getLmsCourseById(item.programId);
+              return {
+                id: `school-order-${order.id}-${item.programId}-${index}`,
+                schoolUserId,
+                courseId: item.programId,
+                courseName: course?.title || `Course ${item.programId}`,
+                totalSeats: 1,
+                usedSeats: 0,
+                purchaseDate: order.createdAt ? new Date(order.createdAt).toISOString() : new Date().toISOString(),
+                expiresAt: null,
+                orderId: order.id,
+                assignedStudents: [],
+              };
+            }),
+          );
+        }),
+      );
 
-    const flatLicenses = licenses.flat();
+      for (const legacyLicense of legacyLicenses.flat()) {
+        await createSchoolLicense({
+          id: legacyLicense.id,
+          schoolUserId,
+          courseId: legacyLicense.courseId,
+          courseName: legacyLicense.courseName,
+          totalSeats: legacyLicense.totalSeats,
+          orderId: legacyLicense.orderId,
+          expiresAt: legacyLicense.expiresAt,
+        });
+      }
+      trackedLicenses.push(...legacyLicenses.flat());
+    }
+
+    const flatLicenses = trackedLicenses.map((license) => ({
+      id: license.id,
+      courseId: license.courseId,
+      courseName: license.courseName,
+      assignedSeats: license.usedSeats,
+      totalSeats: license.totalSeats,
+    }));
+
     res.json({
       stats: {
-        purchasedSeats: flatLicenses.length,
+        purchasedSeats: flatLicenses.reduce((sum, license) => sum + license.totalSeats, 0),
         assignedSeats: flatLicenses.reduce((sum, license) => sum + license.assignedSeats, 0),
         activeCourses: new Set(flatLicenses.map((license) => license.courseId)).size,
       },
@@ -1880,6 +2241,17 @@ EduMeUp`,
         status: "completed",
       });
 
+      const licenseId = `school-license-${order.id}-${course.id}`;
+      await createSchoolLicense({
+        id: licenseId,
+        schoolUserId: req.session.user.id,
+        courseId: course.id,
+        courseName: course.title,
+        totalSeats: input.seats,
+        orderId: order.id,
+        expiresAt: null,
+      });
+
       for (let index = 0; index < input.seats; index += 1) {
         await storage.createOrderItem({
           orderId: order.id,
@@ -1898,6 +2270,337 @@ EduMeUp`,
       }
 
       res.status(500).json({ message: err instanceof Error ? err.message : "Failed to purchase seats" });
+    }
+  });
+
+  app.post(api.dashboard.schoolBulkLicenses.path, async (req, res) => {
+    try {
+      if (!req.session.user || req.session.user.role !== "school") {
+        return res.status(403).json({ message: "School access required" });
+      }
+
+      const input = api.dashboard.schoolBulkLicenses.input.parse(req.body);
+      const course = await getLmsCourseById(input.courseId);
+
+      if (!course) {
+        return res.status(404).json({ message: "Course not found" });
+      }
+
+      if (typeof course.price !== "number" || course.price <= 0) {
+        return res.status(400).json({ message: "This course is not configured for bulk license purchase" });
+      }
+
+      const totalAmount = course.price * input.quantity;
+      const order = await storage.createOrder({
+        userId: String(req.session.user.id),
+        totalAmount,
+        status: "completed",
+      });
+
+      const license = {
+        id: `school-license-${order.id}-${course.id}-${randomUUID().slice(0, 8)}`,
+        schoolUserId: req.session.user.id,
+        courseId: course.id,
+        courseName: course.title,
+        totalSeats: input.quantity,
+        usedSeats: 0,
+        purchaseDate: new Date().toISOString(),
+        expiresAt: null,
+        orderId: order.id,
+        assignedStudents: [],
+      };
+      await createSchoolLicense({
+        id: license.id,
+        schoolUserId: license.schoolUserId,
+        courseId: license.courseId,
+        courseName: license.courseName,
+        totalSeats: license.totalSeats,
+        orderId: license.orderId,
+        expiresAt: license.expiresAt,
+      });
+
+      for (let index = 0; index < input.quantity; index += 1) {
+        await storage.createOrderItem({
+          orderId: order.id,
+          programId: course.id,
+          price: course.price,
+        });
+      }
+
+      res.status(201).json({
+        success: true,
+        licenses: [
+          {
+            id: license.id,
+            courseId: license.courseId,
+            courseName: license.courseName,
+            totalSeats: license.totalSeats,
+            usedSeats: license.usedSeats,
+            availableSeats: license.totalSeats - license.usedSeats,
+            expiresAt: license.expiresAt,
+            purchaseDate: license.purchaseDate,
+          },
+        ],
+        totalAmount,
+        orderId: String(order.id),
+      });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({
+          message: err.errors[0].message,
+          field: err.errors[0].path.join("."),
+        });
+      }
+
+      res.status(500).json({ message: err instanceof Error ? err.message : "Failed to purchase bulk licenses" });
+    }
+  });
+
+  app.post(api.dashboard.schoolUploadStudents.path, async (req, res) => {
+    try {
+      if (!req.session.user || req.session.user.role !== "school") {
+        return res.status(403).json({ message: "School access required" });
+      }
+
+      const input = api.dashboard.schoolUploadStudents.input.parse(req.body);
+      const parsedRows = parseSchoolStudentCsv(input.csvText);
+      const uploadId = `upload-${randomUUID()}`;
+      const errors: Array<{ row: number; email?: string; error: string }> = [];
+      let processedStudents = 0;
+
+      for (const row of parsedRows) {
+        if (!row.email || !row.email.includes("@")) {
+          errors.push({ row: row.rowNumber, error: "Invalid email address." });
+          continue;
+        }
+
+        const studentId = row.moodleUserId || Number.parseInt(`${Date.now()}${row.rowNumber}`, 10);
+        await db
+          .insert(schoolRosterStudents)
+          .values({
+            schoolUserId: req.session.user.id,
+            studentId,
+            studentEmail: row.email.toLowerCase(),
+            studentName: row.name,
+            sourceUploadId: uploadId,
+          })
+          .onConflictDoUpdate({
+            target: [schoolRosterStudents.schoolUserId, schoolRosterStudents.studentId],
+            set: {
+              studentEmail: row.email.toLowerCase(),
+              studentName: row.name,
+              sourceUploadId: uploadId,
+              uploadedAt: new Date(),
+            },
+          });
+        processedStudents++;
+      }
+
+      const uploadRecord = {
+        id: uploadId,
+        filename: input.filename || "students.csv",
+        uploadedAt: new Date().toISOString(),
+        totalStudents: parsedRows.length,
+        processedStudents,
+        failedStudents: errors.length,
+        status: errors.length > 0 && processedStudents === 0 ? "failed" as const : "completed" as const,
+        errors,
+      };
+
+      await db.insert(schoolStudentUploads).values({
+        id: uploadRecord.id,
+        schoolUserId: req.session.user.id,
+        filename: uploadRecord.filename,
+        totalStudents: uploadRecord.totalStudents,
+        processedStudents: uploadRecord.processedStudents,
+        failedStudents: uploadRecord.failedStudents,
+        status: uploadRecord.status,
+        errors: uploadRecord.errors,
+      });
+
+      res.status(201).json(uploadRecord);
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({
+          message: err.errors[0].message,
+          field: err.errors[0].path.join("."),
+        });
+      }
+
+      res.status(500).json({ message: err instanceof Error ? err.message : "Failed to upload students" });
+    }
+  });
+
+  app.get(api.dashboard.schoolUploadStatus.path, async (req, res) => {
+    try {
+      if (!req.session.user || req.session.user.role !== "school") {
+        return res.status(403).json({ message: "School access required" });
+      }
+
+      const uploadId = String(req.params.uploadId || "");
+      const upload = (await getSchoolUploads(req.session.user.id)).find((entry) => entry.id === uploadId);
+      if (!upload) {
+        return res.status(404).json({ message: "Upload not found" });
+      }
+
+      res.json({
+        id: upload.id,
+        filename: upload.filename,
+        uploadedAt: upload.uploadedAt ? upload.uploadedAt.toISOString() : new Date().toISOString(),
+        totalStudents: upload.totalStudents,
+        processedStudents: upload.processedStudents,
+        failedStudents: upload.failedStudents,
+        status: upload.status,
+        errors: upload.errors ?? [],
+      });
+    } catch (err) {
+      res.status(500).json({ message: err instanceof Error ? err.message : "Failed to load upload status" });
+    }
+  });
+
+  app.post(api.dashboard.schoolAssignSeats.path, async (req, res) => {
+    try {
+      if (!req.session.user || req.session.user.role !== "school") {
+        return res.status(403).json({ message: "School access required" });
+      }
+
+      const input = api.dashboard.schoolAssignSeats.input.parse(req.body);
+      const license = (await getSchoolLicenses(req.session.user.id)).find((entry) => entry.id === input.licenseId);
+      if (!license) {
+        return res.status(404).json({ message: "License not found" });
+      }
+
+      const assigned: Array<{
+        id: string;
+        licenseId: string;
+        studentMoodleId: number;
+        studentEmail: string;
+        studentName: string;
+        assignedAt: string;
+      }> = [];
+      const failed: Array<{ studentId: number; error: string }> = [];
+
+      for (const studentId of input.studentIds) {
+        if (license.usedSeats + assigned.length >= license.totalSeats) {
+          failed.push({ studentId, error: "No seats remaining on this license." });
+          continue;
+        }
+
+        const student = await getSchoolRosterStudent(req.session.user.id, studentId);
+        if (!student) {
+          failed.push({ studentId, error: "Student is not in this school's roster." });
+          continue;
+        }
+
+        if (license.assignedStudents.some((entry) => entry.studentId === studentId) || assigned.some((entry) => entry.studentMoodleId === studentId)) {
+          failed.push({ studentId, error: "Student already assigned to this license." });
+          continue;
+        }
+
+        const assignedAt = new Date().toISOString();
+        const assignment = {
+          id: `assignment-${license.id}-${studentId}`,
+          schoolUserId: req.session.user.id,
+          licenseId: license.id,
+          studentId,
+          studentEmail: student.studentEmail,
+          studentName: student.studentName,
+        };
+
+        await db.insert(schoolSeatAssignments).values(assignment);
+        assigned.push({
+          id: assignment.id,
+          licenseId: license.id,
+          studentMoodleId: studentId,
+          studentEmail: student.studentEmail,
+          studentName: student.studentName,
+          assignedAt,
+        });
+      }
+
+      res.json({ success: true, assigned, failed });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({
+          message: err.errors[0].message,
+          field: err.errors[0].path.join("."),
+        });
+      }
+
+      res.status(500).json({ message: err instanceof Error ? err.message : "Failed to assign seats" });
+    }
+  });
+
+  app.get(api.dashboard.schoolUsageReport.path, async (req, res) => {
+    try {
+      if (!req.session.user || req.session.user.role !== "school") {
+        return res.status(403).json({ message: "School access required" });
+      }
+
+      const licenses = await getSchoolLicenses(req.session.user.id);
+      const totalLicenses = licenses.length;
+      const totalSeats = licenses.reduce((sum, license) => sum + license.totalSeats, 0);
+      const usedSeats = licenses.reduce((sum, license) => sum + license.usedSeats, 0);
+      const availableSeats = Math.max(totalSeats - usedSeats, 0);
+      const utilizationRate = totalSeats > 0 ? Math.round((usedSeats / totalSeats) * 100) : 0;
+
+      res.json({
+        reportGeneratedAt: new Date().toISOString(),
+        totalLicenses,
+        totalSeats,
+        usedSeats,
+        availableSeats,
+        utilizationRate,
+        licenses: licenses.map((license) => ({
+          licenseId: license.id,
+          courseId: license.courseId,
+          courseName: license.courseName,
+          totalSeats: license.totalSeats,
+          assignedSeats: license.usedSeats,
+          activeUsers: license.usedSeats,
+          lastAccessDates: license.assignedStudents.map((student) => ({
+            studentId: student.studentId,
+            lastAccessAt: student.assignedAt,
+            enrollmentProgress: license.totalSeats > 0 ? Math.round((license.usedSeats / license.totalSeats) * 100) : 0,
+          })),
+        })),
+        studentActivity: {
+          activeStudents: usedSeats,
+          inactiveStudents: Math.max(totalSeats - usedSeats, 0),
+          totalEnrolled: usedSeats,
+        },
+      });
+    } catch (err) {
+      res.status(500).json({ message: err instanceof Error ? err.message : "Failed to generate usage report" });
+    }
+  });
+
+  app.get(api.dashboard.schoolLicenseMetrics.path, async (req, res) => {
+    try {
+      if (!req.session.user || req.session.user.role !== "school") {
+        return res.status(403).json({ message: "School access required" });
+      }
+
+      const license = (await getSchoolLicenses(req.session.user.id)).find((entry) => entry.id === String(req.params.licenseId));
+      if (!license) {
+        return res.status(404).json({ message: "License not found" });
+      }
+
+      res.json({
+        licenseId: license.id,
+        courseId: license.courseId,
+        courseName: license.courseName,
+        totalSeats: license.totalSeats,
+        assignedSeats: license.usedSeats,
+        activeUsers: license.usedSeats,
+        lastAccessDates: license.assignedStudents.map((student) => ({
+          studentId: student.studentId,
+          lastAccessAt: student.assignedAt,
+          enrollmentProgress: license.totalSeats > 0 ? Math.round((license.usedSeats / license.totalSeats) * 100) : 0,
+        })),
+      });
+    } catch (err) {
+      res.status(500).json({ message: err instanceof Error ? err.message : "Failed to load license metrics" });
     }
   });
 
@@ -2003,7 +2706,7 @@ EduMeUp`,
       }
 
       // Update user suspension status
-      await prisma.user.update({
+      await (prisma as any).user.update({
         where: { id: userId },
         data: { isSuspended: suspend },
       });
@@ -2129,7 +2832,7 @@ EduMeUp`,
       }
 
       // Update password reset tracking
-      await prisma.user.update({
+      await (prisma as any).user.update({
         where: { id: userId },
         data: {
           lastPasswordResetAt: new Date(),
@@ -2255,6 +2958,7 @@ EduMeUp`,
           shortname: course.shortname,
           fullname: course.fullname,
           summary: course.summary,
+          categoryId: course.categoryId,
           categoryName: course.categoryName,
           isVisible: course.isVisible,
           price: parseFloat(course.price.toString()),
@@ -2438,6 +3142,7 @@ EduMeUp`,
               shortname: course.slug,
               fullname: course.title,
               summary: course.fullDescription,
+              categoryId: course.categoryId,
               categoryName: course.category,
               isVisible: course.visible,
               price: 0,
@@ -2446,7 +3151,9 @@ EduMeUp`,
             update: {
               fullname: course.title,
               summary: course.fullDescription,
+              categoryId: course.categoryId,
               categoryName: course.category,
+              isVisible: course.visible,
               lastSyncedAt: new Date(),
             },
           });

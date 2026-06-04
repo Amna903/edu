@@ -1,7 +1,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { BarChart3, Bell, BookOpen, Check, CreditCard, Download, ExternalLink, FileText, GraduationCap, LayoutDashboard, LifeBuoy, LogOut, RefreshCw, Shield, UserCircle2, Users } from "lucide-react";
+import { BarChart3, Bell, Check, CreditCard, Download, FileText, GraduationCap, LayoutDashboard, LifeBuoy, LogOut, RefreshCw, Shield, UserCircle2, Users } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,11 +10,12 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { AIChatLauncher } from "@/components/AIChatLauncher";
-import SchoolPurchaseSeatsCard from "@/components/dashboard/SchoolPurchaseSeatsCard";
 import SchoolAnalyticsClient from "@/components/dashboard/SchoolAnalyticsClient";
 import { DashboardReportsSection } from "@/components/dashboard/DashboardReportsSection";
 import { SchoolAtRiskPanel } from "@/components/dashboard/SchoolAtRiskPanel";
+import SchoolOperationsPanel from "@/components/dashboard/SchoolOperationsPanel";
 import { StudentDashboardSection } from "@/components/dashboard/StudentDashboardSection";
+import { StudentPaymentsPanel } from "@/components/dashboard/StudentPaymentsPanel";
 import { useAuthUser, useLogout } from "@/hooks/use-auth";
 import { useOrders } from "@/hooks/use-orders";
 import { useChangePassword, useUpdateProfile } from "@/hooks/use-profile";
@@ -34,11 +35,10 @@ function getDashboardMenu(role?: string | null, unreadNotifications = 0) {
     { href: "/dashboard/profile", label: "Profile", icon: UserCircle2 },
     { href: "/dashboard/notifications", label: "Notifications", icon: Bell, badge: unreadNotifications > 0 ? (unreadNotifications > 99 ? "99+" : String(unreadNotifications)) : null },
     { href: role === "admin" ? "/dashboard/admin/support" : "/dashboard/support", label: "Support", icon: LifeBuoy },
-    { href: "/dashboard/orders", label: "Orders", icon: CreditCard },
   ];
 
   if (role === "student") {
-    return [...common, { href: "/dashboard/student/certificates", label: "Certificates", icon: GraduationCap }];
+    return [...common, { href: "/dashboard/orders", label: "Orders", icon: CreditCard }, { href: "/dashboard/student/certificates", label: "Certificates", icon: GraduationCap }];
   }
 
   if (role === "school") {
@@ -148,6 +148,7 @@ export default function Dashboard() {
   const updateCourseVisibility = useUpdateCourseVisibility();
   const updateCourseCategory = useUpdateCourseCategory();
   const syncCourses = useSyncCourses();
+  const [courseDrafts, setCourseDrafts] = useState<Record<string, { price: string; categoryId: string; categoryName: string }>>({});
 
   useEffect(() => {
     if (selectedTicketId !== null) {
@@ -166,14 +167,42 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (!user) return;
+    if (user.role !== "admin" && location.startsWith("/dashboard/admin")) {
+      navigate(getDashboardPath(user.role));
+      return;
+    }
     if (user.role === "admin" && location === "/dashboard/support") {
       navigate("/dashboard/admin/support");
       return;
     }
     if (user.role !== "admin" && location === "/dashboard/admin/support") {
       navigate("/dashboard/support");
+      return;
+    }
+    if (user.role !== "student" && location === "/dashboard/orders") {
+      navigate(getDashboardPath(user.role));
     }
   }, [location, navigate, user]);
+
+  useEffect(() => {
+    const courses = adminCourses.data?.courses;
+    if (!courses) {
+      return;
+    }
+
+    setCourseDrafts(
+      Object.fromEntries(
+        courses.map((course) => [
+          course.id,
+          {
+            price: course.price > 0 ? course.price.toFixed(2) : "",
+            categoryId: course.categoryId !== null ? String(course.categoryId) : "",
+            categoryName: course.categoryName ?? "",
+          },
+        ]),
+      ),
+    );
+  }, [adminCourses.data?.courses]);
 
   useEffect(() => {
     const isMainDashboard = location === "/dashboard" || location === getDashboardPath(user?.role);
@@ -282,11 +311,69 @@ export default function Dashboard() {
   const onStudentCertificates = location === "/dashboard/student/certificates";
   const onSchoolAnalytics = location === "/dashboard/school/analytics";
   const onAdminAnalytics = location === "/dashboard/admin/analytics";
+  const adminCourseCategoryOptions = useMemo(() => {
+    const categories = new Map<string, { id: number | null; name: string }>();
+
+    for (const course of adminCourses.data?.courses ?? []) {
+      const name = course.categoryName?.trim() || "Uncategorized";
+      const key = `${course.categoryId ?? "null"}:${name}`;
+      if (!categories.has(key)) {
+        categories.set(key, {
+          id: course.categoryId,
+          name,
+        });
+      }
+    }
+
+    return Array.from(categories.values()).sort((left, right) => left.name.localeCompare(right.name));
+  }, [adminCourses.data?.courses]);
+
+  const adminCourseCategoryStats = useMemo(() => {
+    const stats = new Map<string, { name: string; total: number; visible: number; hidden: number }>();
+
+    for (const course of adminCourses.data?.courses ?? []) {
+      const name = course.categoryName?.trim() || "Uncategorized";
+      const entry = stats.get(name) ?? { name, total: 0, visible: 0, hidden: 0 };
+      entry.total += 1;
+      if (course.isVisible) {
+        entry.visible += 1;
+      } else {
+        entry.hidden += 1;
+      }
+      stats.set(name, entry);
+    }
+
+    return Array.from(stats.values()).sort((left, right) => right.total - left.total || left.name.localeCompare(right.name));
+  }, [adminCourses.data?.courses]);
   const unreadUpdates = supportTickets.data?.filter((ticket) => ticket.status === "new").length ?? 0;
   const selectedTicket = supportTickets.data?.find((ticket) => ticket.id === selectedTicketId) ?? null;
   const parentChildren = parentDashboard.data?.children ?? [];
   const parentAlerts = notifications.data?.notifications ?? [];
   const unreadParentAlerts = parentAlerts.filter((notification) => !notification.isRead);
+  const studentRecentActivities = useMemo(() => studentDashboard.data?.activities?.slice(0, 6) ?? [], [studentDashboard.data?.activities]);
+  const studentRecentNotifications = useMemo(() => notifications.data?.notifications.slice(0, 5) ?? [], [notifications.data?.notifications]);
+  const studentDashboardCourses = useMemo(() => {
+    if (!studentDashboard.data) return [];
+    const activitiesByCourse = new Map<string, string>();
+    for (const activity of studentDashboard.data.activities) {
+      if (!activitiesByCourse.has(activity.courseName)) {
+        activitiesByCourse.set(activity.courseName, new Date(activity.timeCompleted * 1000).toLocaleString());
+      }
+    }
+
+    return studentDashboard.data.courses.map((course) => ({
+      id: String(course.id),
+      title: course.title,
+      progress: course.progress,
+      mastery: course.percentage ?? course.progress,
+      completed: course.completed,
+      grade: course.grade,
+      percentage: course.percentage,
+      thumbnail: course.imageUrl || undefined,
+      lastActivity: activitiesByCourse.get(course.title),
+      lmsCourseUrl: course.lmsCourseUrl,
+    }));
+  }, [studentDashboard.data]);
 
   async function readJsonSafely(response: Response): Promise<Record<string, unknown>> {
     const raw = await response.text();
@@ -541,23 +628,93 @@ export default function Dashboard() {
                 <StudentDashboardSection
                   data={studentDashboard.data ? {
                     ...studentDashboard.data,
-                    courses: studentDashboard.data.courses.map(c => ({
-                      id: String(c.id),
-                      title: c.title,
-                      progress: c.progress,
-                      mastery: c.progress,
-                      thumbnail: c.imageUrl || undefined,
-                    })),
+                    courses: studentDashboardCourses,
                     stats: {
                       overallMastery: studentDashboard.data.stats.averageProgress,
                       topicsCompleted: studentDashboard.data.stats.completedCourses,
                       topicsTotal: studentDashboard.data.stats.enrolledCourses,
-                      testsTaken: 0,
-                      streak: 0,
+                      testsTaken: studentDashboard.data.activities.length,
+                      streak: Math.min(30, studentDashboard.data.activities.length),
                     }
                   } : undefined}
                   fullname={user?.fullname || ""}
                 />
+              )}
+
+              {onMainDashboard && user?.role === "student" && (
+                <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+                  <Card className="border-slate-200 shadow-sm">
+                    <CardHeader>
+                      <CardTitle>Activity Timeline</CardTitle>
+                      <p className="text-sm text-slate-600">Your latest Moodle activity updates in one place.</p>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      {studentRecentActivities.length > 0 ? (
+                        studentRecentActivities.map((activity) => (
+                          <div key={`${activity.courseName}-${activity.id}-${activity.timeCompleted}`} className="rounded-2xl border border-slate-200 p-4">
+                            <p className="font-semibold text-slate-900">{activity.moduleName}</p>
+                            <p className="mt-1 text-sm text-slate-600">{activity.courseName}</p>
+                            <p className="mt-2 text-xs text-slate-500">{new Date(activity.timeCompleted * 1000).toLocaleString()}</p>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-sm text-slate-600">No recent activity yet.</p>
+                      )}
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border-slate-200 shadow-sm">
+                    <CardHeader>
+                      <CardTitle>Notifications</CardTitle>
+                      <p className="text-sm text-slate-600">Course, order, and account updates.</p>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      {studentRecentNotifications.length > 0 ? (
+                        studentRecentNotifications.map((notification) => (
+                          <div key={notification.id} className={`rounded-2xl border p-4 ${notification.isRead ? "border-slate-200 bg-white" : "border-blue-200 bg-blue-50/50"}`}>
+                            <p className="font-semibold text-slate-900">{notification.title}</p>
+                            <p className="mt-1 text-sm text-slate-600">{notification.message}</p>
+                            <p className="mt-2 text-xs text-slate-500">{new Date(notification.createdAt).toLocaleString()}</p>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-sm text-slate-600">No notifications yet.</p>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+
+              {onMainDashboard && user?.role === "student" && (
+                <div className="grid gap-4 md:grid-cols-3">
+                  <Card>
+                    <CardContent className="p-6">
+                      <p className="text-sm text-slate-500">Certificates</p>
+                      <p className="mt-2 text-3xl font-black text-slate-900">{studentCertificates.data?.length ?? 0}</p>
+                      <Button variant="ghost" className="mt-3 h-auto px-0 text-brand-primary hover:bg-transparent" asChild>
+                        <Link href="/dashboard/student/certificates">Open certificates</Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="p-6">
+                      <p className="text-sm text-slate-500">Orders</p>
+                      <p className="mt-2 text-3xl font-black text-slate-900">{orders?.length ?? 0}</p>
+                      <Button variant="ghost" className="mt-3 h-auto px-0 text-brand-primary hover:bg-transparent" asChild>
+                        <Link href="/dashboard/orders">Open payments</Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="p-6">
+                      <p className="text-sm text-slate-500">Unread Notifications</p>
+                      <p className="mt-2 text-3xl font-black text-slate-900">{unreadNotifications}</p>
+                      <Button variant="ghost" className="mt-3 h-auto px-0 text-brand-primary hover:bg-transparent" asChild>
+                        <Link href="/dashboard/notifications">Open notifications</Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </div>
               )}
 
               {onMainDashboard && user.role === "parent" && (
@@ -765,45 +922,22 @@ export default function Dashboard() {
             )}
 
             {onMainDashboard && user.role === "school" && schoolDashboard.data && (
-                <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
-                  <div className="space-y-6">
-                    <div className="grid gap-4 md:grid-cols-3">
-                      <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Purchased Seats</p><p className="mt-2 text-3xl font-black text-slate-900">{schoolDashboard.data.stats.purchasedSeats}</p></CardContent></Card>
-                      <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Assigned Seats</p><p className="mt-2 text-3xl font-black text-slate-900">{schoolDashboard.data.stats.assignedSeats}</p></CardContent></Card>
-                      <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Active Courses</p><p className="mt-2 text-3xl font-black text-slate-900">{schoolDashboard.data.stats.activeCourses}</p></CardContent></Card>
-                    </div>
-                    <Card>
-                      <CardHeader><CardTitle>Seat Allocation</CardTitle></CardHeader>
-                      <CardContent className="grid gap-4">
-                        {schoolDashboard.data.licenses.map((license) => (
-                          <div key={`${license.courseId}-${license.courseName}`} className="rounded-3xl border border-slate-200 p-4">
-                            <div className="flex items-center justify-between gap-4">
-                              <div>
-                                <p className="font-bold text-slate-900">{license.courseName}</p>
-                                <p className="text-sm text-slate-500">Course ID {license.courseId}</p>
-                              </div>
-                              <div className="rounded-full bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-700">
-                                {license.assignedSeats}/{license.totalSeats}
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </CardContent>
-                    </Card>
-
-                    <SchoolAtRiskPanel schoolName={user.fullname} />
+                <div className="space-y-6">
+                  <div className="grid gap-4 md:grid-cols-3">
+                    <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Purchased Seats</p><p className="mt-2 text-3xl font-black text-slate-900">{schoolDashboard.data.stats.purchasedSeats}</p></CardContent></Card>
+                    <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Assigned Seats</p><p className="mt-2 text-3xl font-black text-slate-900">{schoolDashboard.data.stats.assignedSeats}</p></CardContent></Card>
+                    <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Active Courses</p><p className="mt-2 text-3xl font-black text-slate-900">{schoolDashboard.data.stats.activeCourses}</p></CardContent></Card>
                   </div>
 
-                  <div className="space-y-6">
-                    <SchoolPurchaseSeatsCard />
-                    <Card className="bg-slate-900 text-white">
-                      <CardContent className="space-y-3 p-6">
-                        <p className="text-sm font-semibold uppercase tracking-[0.22em] text-blue-300">Need Help?</p>
-                        <p className="text-sm leading-7 text-slate-300">Contact our support team for customized enterprise plans and pricing.</p>
-                        <Button className="bg-white text-slate-900 hover:bg-blue-50">Contact Support</Button>
-                      </CardContent>
-                    </Card>
-                  </div>
+                  <SchoolOperationsPanel
+                    schoolName={user.fullname}
+                    licenses={schoolDashboard.data.licenses}
+                    purchasedSeats={schoolDashboard.data.stats.purchasedSeats}
+                    assignedSeats={schoolDashboard.data.stats.assignedSeats}
+                    activeCourses={schoolDashboard.data.stats.activeCourses}
+                  />
+
+                  <SchoolAtRiskPanel schoolName={user.fullname} />
                 </div>
               )}
 
@@ -1007,15 +1141,96 @@ export default function Dashboard() {
                       )}
 
                       {adminPanel.tab === "courses" && (
-                        <div className="space-y-4">
-                          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                            <div className="flex gap-2 flex-1">
-                              <Input placeholder="Search courses by name or category..." value={adminPanel.courseSearch} onChange={(e) => setAdminPanel({ ...adminPanel, courseSearch: e.target.value, coursePage: 1 })} />
-                              <Button onClick={() => adminCourses.refetch()}>Search</Button>
-                            </div>
-                            <Button onClick={() => syncCourses.mutate("COURSE_CATALOG")} disabled={syncCourses.isPending} className="bg-green-600 hover:bg-green-700">
-                              {syncCourses.isPending ? "Syncing..." : "Sync from Moodle"}
-                            </Button>
+                        <div className="space-y-5">
+                          <div className="grid gap-4 md:grid-cols-4">
+                            <Card className="border-slate-200 shadow-sm">
+                              <CardContent className="p-5">
+                                <p className="text-sm text-slate-500">Courses Loaded</p>
+                                <p className="mt-2 text-3xl font-black text-slate-900">{adminCourses.data?.total ?? 0}</p>
+                              </CardContent>
+                            </Card>
+                            <Card className="border-slate-200 shadow-sm">
+                              <CardContent className="p-5">
+                                <p className="text-sm text-slate-500">Visible</p>
+                                <p className="mt-2 text-3xl font-black text-emerald-600">
+                                  {adminCourses.data?.courses.filter((course) => course.isVisible).length ?? 0}
+                                </p>
+                              </CardContent>
+                            </Card>
+                            <Card className="border-slate-200 shadow-sm">
+                              <CardContent className="p-5">
+                                <p className="text-sm text-slate-500">Hidden</p>
+                                <p className="mt-2 text-3xl font-black text-amber-600">
+                                  {adminCourses.data?.courses.filter((course) => !course.isVisible).length ?? 0}
+                                </p>
+                              </CardContent>
+                            </Card>
+                            <Card className="border-slate-200 shadow-sm">
+                              <CardContent className="p-5">
+                                <p className="text-sm text-slate-500">Categories</p>
+                                <p className="mt-2 text-3xl font-black text-slate-900">{adminCourseCategoryStats.length}</p>
+                              </CardContent>
+                            </Card>
+                          </div>
+
+                          <Card className="border-blue-100 bg-blue-50/40 shadow-sm">
+                            <CardContent className="flex flex-col gap-4 p-5 lg:flex-row lg:items-center lg:justify-between">
+                              <div>
+                                <p className="text-sm font-semibold uppercase tracking-[0.22em] text-blue-600">Moodle Sync</p>
+                                <p className="mt-2 text-sm leading-6 text-slate-600">
+                                  Sync the catalog from Moodle, then control pricing, category assignment, and visibility from this admin-only panel.
+                                </p>
+                              </div>
+                              <div className="flex flex-wrap gap-2">
+                                <Button variant="outline" onClick={() => adminCourses.refetch()}>
+                                  <RefreshCw className="mr-2 h-4 w-4" />
+                                  Refresh
+                                </Button>
+                                <Button onClick={() => syncCourses.mutate("COURSE_CATALOG")} disabled={syncCourses.isPending} className="bg-green-600 hover:bg-green-700">
+                                  {syncCourses.isPending ? "Syncing..." : "Sync from Moodle"}
+                                </Button>
+                              </div>
+                            </CardContent>
+                          </Card>
+
+                          <div className="grid gap-4 xl:grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)]">
+                            <Card className="border-slate-200 shadow-sm">
+                              <CardHeader className="pb-3">
+                                <CardTitle>Category Overview</CardTitle>
+                              </CardHeader>
+                              <CardContent className="grid gap-3">
+                                {adminCourseCategoryStats.length > 0 ? (
+                                  adminCourseCategoryStats.map((category) => (
+                                    <div key={category.name} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                                      <div>
+                                        <p className="font-semibold text-slate-900">{category.name}</p>
+                                        <p className="text-xs text-slate-500">
+                                          {category.visible} visible, {category.hidden} hidden
+                                        </p>
+                                      </div>
+                                      <div className="rounded-full bg-white px-3 py-1 text-sm font-bold text-slate-700">{category.total}</div>
+                                    </div>
+                                  ))
+                                ) : (
+                                  <p className="text-sm text-slate-500">Category information will appear after Moodle sync.</p>
+                                )}
+                              </CardContent>
+                            </Card>
+
+                            <Card className="border-slate-200 shadow-sm">
+                              <CardHeader className="pb-3">
+                                <CardTitle>Quick Filters</CardTitle>
+                              </CardHeader>
+                              <CardContent className="space-y-3">
+                                <div className="flex gap-2">
+                                  <Input placeholder="Search courses by name or category..." value={adminPanel.courseSearch} onChange={(e) => setAdminPanel({ ...adminPanel, courseSearch: e.target.value, coursePage: 1 })} />
+                                  <Button onClick={() => adminCourses.refetch()}>Search</Button>
+                                </div>
+                                <p className="text-sm text-slate-600">
+                                  Every control here is hidden from non-admin users and blocked again on the server.
+                                </p>
+                              </CardContent>
+                            </Card>
                           </div>
 
                           {adminCourses.isLoading ? (
@@ -1024,61 +1239,155 @@ export default function Dashboard() {
                             <p className="text-red-500">Error loading courses</p>
                           ) : (
                             <>
-                              <div className="overflow-x-auto border border-slate-200 rounded-lg">
+                              <div className="overflow-x-auto rounded-2xl border border-slate-200">
                                 <table className="w-full text-sm">
                                   <thead className="bg-slate-50 border-b border-slate-200">
                                     <tr>
-                                      <th className="px-4 py-3 text-left font-semibold">Course Name</th>
+                                      <th className="px-4 py-3 text-left font-semibold">Course</th>
                                       <th className="px-4 py-3 text-left font-semibold">Category</th>
-                                      <th className="px-4 py-3 text-left font-semibold">Price</th>
-                                      <th className="px-4 py-3 text-left font-semibold">Status</th>
+                                      <th className="px-4 py-3 text-left font-semibold">Pricing</th>
+                                      <th className="px-4 py-3 text-left font-semibold">Visibility</th>
                                       <th className="px-4 py-3 text-left font-semibold">Actions</th>
                                     </tr>
                                   </thead>
                                   <tbody>
-                                    {adminCourses.data?.courses.map((course) => (
-                                      <tr key={course.id} className="border-b border-slate-200 hover:bg-slate-50">
-                                        <td className="px-4 py-3">
-                                          <div>
-                                            <p className="font-semibold text-slate-900">{course.fullname}</p>
-                                            <p className="text-xs text-slate-500">{course.shortname}</p>
-                                          </div>
-                                        </td>
-                                        <td className="px-4 py-3 text-slate-600">{course.categoryName || "Uncategorized"}</td>
-                                        <td className="px-4 py-3">
-                                          <input
-                                            type="number"
-                                            step="0.01"
-                                            value={course.price}
-                                            onChange={(e) => {
-                                              const newPrice = parseFloat(e.target.value) || 0;
-                                              updateCoursePricing.mutate({ courseId: course.id, price: newPrice });
-                                            }}
-                                            className="w-24 px-2 py-1 border border-slate-300 rounded text-sm"
-                                          />
-                                        </td>
-                                        <td className="px-4 py-3">
-                                          <button
-                                            onClick={() => updateCourseVisibility.mutate({ courseId: course.id, isVisible: !course.isVisible })}
-                                            disabled={updateCourseVisibility.isPending}
-                                            className={`px-3 py-1 rounded text-xs font-semibold ${
-                                              course.isVisible ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-700"
-                                            }`}
-                                          >
-                                            {course.isVisible ? "Published" : "Hidden"}
-                                          </button>
-                                        </td>
-                                        <td className="px-4 py-3">
-                                          <button
-                                            onClick={() => updateCourseVisibility.mutate({ courseId: course.id, isVisible: !course.isVisible })}
-                                            disabled={updateCourseVisibility.isPending}
-                                            className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-semibold hover:bg-blue-200"
-                                          >
-                                            {course.isVisible ? "Hide" : "Show"}
-                                          </button>
-                                        </td>
-                                      </tr>
-                                    ))}
+                                    {adminCourses.data?.courses.map((course) => {
+                                      const draft = courseDrafts[course.id] ?? {
+                                        price: course.price > 0 ? course.price.toFixed(2) : "",
+                                        categoryId: course.categoryId !== null ? String(course.categoryId) : "",
+                                        categoryName: course.categoryName ?? "",
+                                      };
+                                      const selectedCategory = adminCourseCategoryOptions.find((category) => String(category.id ?? "") === draft.categoryId) ?? null;
+
+                                      return (
+                                        <tr key={course.id} className="border-b border-slate-200 hover:bg-slate-50/80">
+                                          <td className="px-4 py-4 align-top">
+                                            <div className="space-y-1">
+                                              <p className="font-semibold text-slate-900">{course.fullname}</p>
+                                              <p className="text-xs font-medium uppercase tracking-[0.18em] text-slate-400">{course.shortname}</p>
+                                              <p className="max-w-md text-xs leading-5 text-slate-500">{course.summary || "No course summary available."}</p>
+                                            </div>
+                                          </td>
+                                          <td className="px-4 py-4 align-top">
+                                            <div className="space-y-2">
+                                              <select
+                                                value={draft.categoryId}
+                                                onChange={(event) => {
+                                                  const value = event.target.value;
+                                                  const matched = adminCourseCategoryOptions.find((category) => String(category.id ?? "") === value) ?? null;
+                                                  setCourseDrafts((previous) => ({
+                                                    ...previous,
+                                                    [course.id]: {
+                                                      ...draft,
+                                                      categoryId: value,
+                                                      categoryName: matched?.name || draft.categoryName,
+                                                    },
+                                                  }));
+                                                }}
+                                                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm"
+                                              >
+                                                <option value="">Custom or uncategorized</option>
+                                                {adminCourseCategoryOptions.map((category) => (
+                                                  <option key={`${category.id ?? "none"}-${category.name}`} value={String(category.id ?? "")}>
+                                                    {category.name}
+                                                  </option>
+                                                ))}
+                                              </select>
+                                              <Input
+                                                value={draft.categoryName}
+                                                onChange={(event) =>
+                                                  setCourseDrafts((previous) => ({
+                                                    ...previous,
+                                                    [course.id]: {
+                                                      ...draft,
+                                                      categoryName: event.target.value,
+                                                    },
+                                                  }))
+                                                }
+                                                placeholder={selectedCategory ? `Override ${selectedCategory.name}` : "Category name"}
+                                              />
+                                              <Button
+                                                type="button"
+                                                variant="outline"
+                                                className="w-full"
+                                                disabled={updateCourseCategory.isPending}
+                                                onClick={() =>
+                                                  updateCourseCategory.mutate({
+                                                    courseId: course.id,
+                                                    categoryId: draft.categoryId ? Number(draft.categoryId) : null,
+                                                    categoryName: draft.categoryName.trim() || selectedCategory?.name || null,
+                                                  })
+                                                }
+                                              >
+                                                Save Category
+                                              </Button>
+                                            </div>
+                                          </td>
+                                          <td className="px-4 py-4 align-top">
+                                            <div className="space-y-2">
+                                              <Input
+                                                type="number"
+                                                step="0.01"
+                                                min="0"
+                                                value={draft.price}
+                                                onChange={(event) =>
+                                                  setCourseDrafts((previous) => ({
+                                                    ...previous,
+                                                    [course.id]: {
+                                                      ...draft,
+                                                      price: event.target.value,
+                                                    },
+                                                  }))
+                                                }
+                                                placeholder="0.00"
+                                              />
+                                              <Button
+                                                type="button"
+                                                variant="outline"
+                                                className="w-full"
+                                                disabled={updateCoursePricing.isPending}
+                                                onClick={() => {
+                                                  const parsedPrice = Number(draft.price);
+                                                  if (!Number.isFinite(parsedPrice) || parsedPrice < 0) {
+                                                    return;
+                                                  }
+                                                  updateCoursePricing.mutate({ courseId: course.id, price: parsedPrice });
+                                                }}
+                                              >
+                                                Save Price
+                                              </Button>
+                                            </div>
+                                          </td>
+                                          <td className="px-4 py-4 align-top">
+                                            <button
+                                              onClick={() => updateCourseVisibility.mutate({ courseId: course.id, isVisible: !course.isVisible })}
+                                              disabled={updateCourseVisibility.isPending}
+                                              className={`inline-flex min-w-28 items-center justify-center rounded-full px-3 py-2 text-xs font-semibold transition ${
+                                                course.isVisible ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200" : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                                              }`}
+                                            >
+                                              {course.isVisible ? "Published" : "Hidden"}
+                                            </button>
+                                          </td>
+                                          <td className="px-4 py-4 align-top">
+                                            <div className="space-y-2">
+                                              <Button
+                                                type="button"
+                                                variant="secondary"
+                                                className="w-full"
+                                                onClick={() => updateCourseVisibility.mutate({ courseId: course.id, isVisible: !course.isVisible })}
+                                                disabled={updateCourseVisibility.isPending}
+                                              >
+                                                {course.isVisible ? "Hide Course" : "Show Course"}
+                                              </Button>
+                                              <p className="text-xs leading-5 text-slate-500">
+                                                Last synced {course.lastSyncedAt ? new Date(course.lastSyncedAt).toLocaleString() : "not yet synced"}.
+                                              </p>
+                                            </div>
+                                          </td>
+                                        </tr>
+                                      );
+                                    })}
                                   </tbody>
                                 </table>
                               </div>
@@ -1107,18 +1416,20 @@ export default function Dashboard() {
                             </>
                           )}
 
-                          {(updateCoursePricing.isSuccess || updateCourseVisibility.isSuccess || syncCourses.isSuccess) && (
-                            <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-green-700 text-sm">
-                              {updateCoursePricing.isSuccess && "Course pricing updated"}
-                              {updateCourseVisibility.isSuccess && "Course visibility updated"}
+                          {(updateCoursePricing.isSuccess || updateCourseVisibility.isSuccess || updateCourseCategory.isSuccess || syncCourses.isSuccess) && (
+                            <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">
+                              {updateCoursePricing.isSuccess && "Course pricing updated. "}
+                              {updateCourseVisibility.isSuccess && "Course visibility updated. "}
+                              {updateCourseCategory.isSuccess && "Course category updated. "}
                               {syncCourses.isSuccess && syncCourses.data?.message}
                             </div>
                           )}
 
-                          {(updateCoursePricing.isError || updateCourseVisibility.isError || syncCourses.isError) && (
-                            <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-red-700 text-sm">
+                          {(updateCoursePricing.isError || updateCourseVisibility.isError || updateCourseCategory.isError || syncCourses.isError) && (
+                            <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
                               {updateCoursePricing.error instanceof Error && updateCoursePricing.error.message}
                               {updateCourseVisibility.error instanceof Error && updateCourseVisibility.error.message}
+                              {updateCourseCategory.error instanceof Error && updateCourseCategory.error.message}
                               {syncCourses.error instanceof Error && syncCourses.error.message}
                             </div>
                           )}
@@ -1141,7 +1452,7 @@ export default function Dashboard() {
                 </div>
               )}
 
-              {onStudentCertificates && (
+              {onStudentCertificates && user.role === "student" && (
                 <Card>
                   <CardHeader><CardTitle>Certificates</CardTitle></CardHeader>
                   <CardContent className="space-y-4">
@@ -1320,37 +1631,11 @@ export default function Dashboard() {
                 </Card>
               )}
 
-              {onOrders && (
-                <Card>
-                  <CardHeader><CardTitle>Order History</CardTitle></CardHeader>
-                  <CardContent className="space-y-4">
-                    {orders && orders.length > 0 ? (
-                      orders.map((order) => (
-                        <div key={order.id} className="rounded-3xl border border-slate-200 p-5">
-                          <div className="flex items-center justify-between gap-4">
-                            <div>
-                              <p className="font-bold text-slate-900">Order #{order.id}</p>
-                              <p className="text-sm text-slate-500">{new Date(order.createdAt).toLocaleDateString()}</p>
-                            </div>
-                            <div className="rounded-full bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-700">
-                              ${(order.totalAmount / 100).toFixed(2)}
-                            </div>
-                          </div>
-                          <div className="mt-4 space-y-2">
-                            {order.items.map((item) => (
-                              <div key={item.id} className="flex items-center gap-2 text-sm text-slate-600">
-                                <BookOpen className="h-4 w-4 text-blue-500" />
-                                <span>{item.title}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-slate-600">No orders yet.</p>
-                    )}
-                  </CardContent>
-                </Card>
+              {onOrders && user.role === "student" && (
+                <StudentPaymentsPanel
+                  orders={orders ?? undefined}
+                  studentName={user.fullname}
+                />
               )}
 
               {onAdminSupport && user.role === "admin" && (

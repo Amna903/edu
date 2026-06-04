@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, ChevronDown, Download, BookOpen, Award, TrendingUp, AlertCircle, CheckCircle2, Clock, User, Zap } from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronDown, Download, BookOpen, Award, TrendingUp, Clock, Zap } from "lucide-react";
 import { useState } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -9,12 +9,16 @@ import jsPDF from "jspdf";
 type StudentDashboardProps = {
   data?: {
     courses: Array<{
-      id: string;
+      id: string | number;
       title: string;
       progress: number;
       mastery: number;
+      completed?: boolean;
+      grade?: string | null;
+      percentage?: number | null;
       thumbnail?: string;
       lastActivity?: string;
+      lmsCourseUrl?: string;
     }>;
     diagnostics?: Array<{
       id: string;
@@ -46,36 +50,15 @@ export function StudentDashboardSection({ data, fullname }: StudentDashboardProp
   const [activeScrollIndex, setActiveScrollIndex] = useState(0);
   const [expandedDiagnostic, setExpandedDiagnostic] = useState<string | null>(null);
 
-  const courses = data?.courses ?? [
-    { id: "1", title: "GCSE Mathematics", progress: 65, mastery: 72, lastActivity: "Today" },
-    { id: "2", title: "IGCSE Physics", progress: 52, mastery: 58, lastActivity: "Yesterday" },
-    { id: "3", title: "A-Level Chemistry", progress: 81, mastery: 85, lastActivity: "2 days ago" },
-    { id: "4", title: "English Literature", progress: 44, mastery: 51, lastActivity: "4 days ago" },
-  ];
-
-  const diagnostics = data?.diagnostics ?? [
-    {
-      id: "d1",
-      date: "May 1, 2026",
-      score: 78,
-      weaknesses: ["Quadratic equations", "Trigonometry"],
-      recommendedResources: ["Algebra mastery series", "Khan Academy trigonometry"],
-      status: "completed" as const,
-    },
-  ];
-
-  const tests = data?.tests ?? [
-    { id: "t1", date: "May 4, 2026", course: "GCSE Mathematics", score: 82, trend: "up" as const },
-    { id: "t2", date: "May 2, 2026", course: "IGCSE Physics", score: 71, trend: "flat" as const },
-    { id: "t3", date: "Apr 28, 2026", course: "A-Level Chemistry", score: 88, trend: "up" as const },
-  ];
-
+  const courses = data?.courses ?? [];
+  const diagnostics = data?.diagnostics ?? [];
+  const tests = data?.tests ?? [];
   const stats = data?.stats ?? {
-    overallMastery: 67,
-    topicsCompleted: 24,
-    topicsTotal: 38,
-    testsTaken: 12,
-    streak: 5,
+    overallMastery: 0,
+    topicsCompleted: 0,
+    topicsTotal: 0,
+    testsTaken: 0,
+    streak: 0,
   };
 
   const visibleCourses = courses.slice(activeScrollIndex, activeScrollIndex + 3);
@@ -180,26 +163,42 @@ export function StudentDashboardSection({ data, fullname }: StudentDashboardProp
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 md:grid-cols-3">
-            {visibleCourses.map((course) => (
-              <div key={course.id} className="rounded-2xl border border-slate-200 p-4 bg-white hover:shadow-md transition">
-                <div className="aspect-video bg-gradient-to-br from-[#2366c9] to-[#4f86e0] rounded-lg mb-3" />
-                <h3 className="font-semibold text-slate-900">{course.title}</h3>
-                <div className="mt-3 space-y-2">
-                  <div>
-                    <p className="text-xs text-slate-500 mb-1">Progress</p>
-                    <MasteryProgressBar value={course.progress} />
+            {visibleCourses.length > 0 ? visibleCourses.map((course) => (
+                <div key={course.id} className="rounded-2xl border border-slate-200 p-4 bg-white hover:shadow-md transition">
+                  {course.thumbnail ? (
+                    <img src={course.thumbnail} alt="" className="mb-3 aspect-video w-full rounded-lg object-cover" />
+                  ) : (
+                    <div className="mb-3 aspect-video rounded-lg bg-slate-100" />
+                  )}
+                  <h3 className="font-semibold text-slate-900">{course.title}</h3>
+                  <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
+                    <span className={`rounded-full px-2.5 py-1 font-bold ${course.completed ? "bg-emerald-100 text-emerald-700" : "bg-blue-100 text-blue-700"}`}>
+                      {course.completed ? "Completed" : "In progress"}
+                    </span>
+                    {typeof course.percentage === "number" && (
+                      <span className="rounded-full bg-slate-100 px-2.5 py-1 font-bold text-slate-700">
+                        Grade {course.grade || "Pending"} · {Math.round(course.percentage)}%
+                      </span>
+                    )}
                   </div>
+                  <div className="mt-3 space-y-2">
+                    <div>
+                      <p className="text-xs text-slate-500 mb-1">Progress</p>
+                      <MasteryProgressBar value={course.progress} />
+                    </div>
                   <div>
                     <p className="text-xs text-slate-500 mb-1">Mastery</p>
                     <MasteryProgressBar value={course.mastery} />
                   </div>
                 </div>
-                <p className="mt-2 text-xs text-slate-500">Last activity: {course.lastActivity}</p>
+                {course.lastActivity && <p className="mt-2 text-xs text-slate-500">Last activity: {course.lastActivity}</p>}
                 <Button className="mt-3 w-full bg-[#2366c9] text-white hover:bg-[#1a4fa0]" asChild>
-                  <Link href={`/programs/${course.id}`}>Continue</Link>
+                  <Link href={course.lmsCourseUrl || `/programs/${course.id}`}>{course.completed ? "View course" : "Continue"}</Link>
                 </Button>
               </div>
-            ))}
+            )) : (
+              <p className="text-sm text-slate-500 md:col-span-3">No enrolled courses found for this account.</p>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -317,9 +316,9 @@ export function StudentDashboardSection({ data, fullname }: StudentDashboardProp
           <CardContent className="space-y-4">
             <div className="rounded-lg bg-blue-50 border border-blue-100 p-4">
               <p className="text-xs font-black uppercase tracking-[0.18em] text-[#2366c9]">Latest Report</p>
-              <p className="mt-2 font-semibold text-slate-900">May 2026</p>
+              <p className="mt-2 font-semibold text-slate-900">{new Date().toLocaleString(undefined, { month: "long", year: "numeric" })}</p>
               <p className="mt-1 text-sm text-slate-600">Overall mastery: <span className="font-bold text-slate-900">{stats.overallMastery}%</span></p>
-              <p className="mt-2 text-sm italic text-slate-600">"Strong progress in core concepts. Focus on practice tests to consolidate learning."</p>
+              <p className="mt-2 text-sm text-slate-600">Generated from your Moodle enrollment, progress, activity, and grade records.</p>
             </div>
             <div className="flex gap-2">
               <Button className="flex-1 bg-[#2366c9] text-white hover:bg-[#1a4fa0]" asChild>
@@ -341,19 +340,21 @@ export function StudentDashboardSection({ data, fullname }: StudentDashboardProp
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              {[
-                { label: "Revisit Quadratic Equations", href: "/programs/math-quadratic" },
-                { label: "Take IGCSE Physics Quiz", href: "/programs/igcse-physics" },
-                { label: "Download Trigonometry Worksheet", href: "/resources" },
-                { label: "Schedule Tutoring Session", href: "/tutor-booking" },
-              ].map((step) => (
-                <Link key={step.label} href={step.href} className="flex items-center justify-between rounded-lg border border-slate-200 p-3 hover:bg-blue-50 hover:border-blue-200 transition">
-                  <span className="text-sm font-semibold text-slate-900">{step.label}</span>
-                  <ChevronRight className="h-4 w-4 text-slate-400" />
-                </Link>
-              ))}
-            </div>
+            {courses.length > 0 ? (
+              <div className="space-y-3">
+                {courses
+                  .filter((course) => !course.completed)
+                  .slice(0, 4)
+                  .map((course) => (
+                    <Link key={course.id} href={course.lmsCourseUrl || `/programs/${course.id}`} className="flex items-center justify-between rounded-lg border border-slate-200 p-3 hover:bg-blue-50 hover:border-blue-200 transition">
+                      <span className="text-sm font-semibold text-slate-900">Continue {course.title}</span>
+                      <ChevronRight className="h-4 w-4 text-slate-400" />
+                    </Link>
+                  ))}
+              </div>
+            ) : (
+              <p className="text-sm text-slate-500">No course-based next steps are available yet.</p>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -367,21 +368,7 @@ export function StudentDashboardSection({ data, fullname }: StudentDashboardProp
           <p className="mt-1 text-sm text-slate-600">Your saved notes, worksheets, and workbook samples</p>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
-            {[
-              { name: "Algebra Masterclass Notes", course: "GCSE Mathematics", date: "May 2, 2026" },
-              { name: "Forces & Motion Worksheet", course: "IGCSE Physics", date: "Apr 28, 2026" },
-              { name: "Ionic Bonding Study Guide", course: "A-Level Chemistry", date: "Apr 25, 2026" },
-            ].map((resource) => (
-              <div key={resource.name} className="rounded-lg border border-slate-200 p-4 hover:bg-slate-50 transition">
-                <p className="font-semibold text-slate-900">{resource.name}</p>
-                <div className="mt-1 flex items-center justify-between text-sm text-slate-500">
-                  <span>{resource.course}</span>
-                  <span>{resource.date}</span>
-                </div>
-              </div>
-            ))}
-          </div>
+          <p className="text-sm text-slate-500">Saved resources will appear here once they are returned by the backend.</p>
           <Button className="mt-4 w-full border-[#2366c9] text-[#2366c9]" variant="outline" asChild>
             <Link href="/free-resources">Browse Library</Link>
           </Button>

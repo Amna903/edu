@@ -279,7 +279,10 @@ export const api = {
     schoolUploadStudents: {
       method: 'POST' as const,
       path: '/api/dashboard/school/upload-students' as const,
-      input: z.object({ file: z.instanceof(File) }),
+      input: z.object({
+        csvText: z.string().min(1),
+        filename: z.string().optional(),
+      }),
       responses: {
         201: schoolStudentUploadSchema,
         400: errorSchemas.validation,
@@ -390,7 +393,7 @@ export const api = {
     },
     webhook: {
       method: 'POST' as const,
-      path: '/api/webhook/safepay' as const,
+      path: '/api/webhook/payfast' as const,
       responses: {
         200: z.object({ status: z.string() }),
       },

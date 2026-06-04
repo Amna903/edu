@@ -37,7 +37,11 @@ export async function getStoredCourseByMoodleId(moodleCourseId: number) {
 }
 
 export async function upsertCourseCatalogFromMoodle(course: MoodleCoursePayload, categoryName?: string | null) {
-  const price = extractCoursePrice(course.customfields);
+  const existingCourse = await prisma.courseCatalog.findUnique({
+    where: { moodleCourseId: course.id },
+  });
+  const extractedPrice = extractCoursePrice(course.customfields);
+  const price = typeof existingCourse?.price === "number" && existingCourse.price > 0 ? existingCourse.price : extractedPrice;
 
   return prisma.courseCatalog.upsert({
     where: { moodleCourseId: course.id },

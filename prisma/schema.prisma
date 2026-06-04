@@ -29,9 +29,13 @@ model User {
   lastName       String?
   profileImage   String?
   role           UserRole @default(student)
+  isSuspended    Boolean  @default(false)
+  lastPasswordResetAt DateTime?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   lastLoginAt    DateTime?
+
+  enrollments    UserCourseEnrollment[]
 
   @@index([role])
 }
@@ -86,6 +90,69 @@ model CourseCatalog {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
+  enrollments    UserCourseEnrollment[]
+
   @@index([categoryId])
   @@index([isVisible])
+}
+
+model UserCourseEnrollment {
+  id              String        @id @default(cuid())
+  userId          String
+  courseCatalogId String
+  progress        Int           @default(0)
+  isActive        Boolean       @default(true)
+  enrolledAt      DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  user            User          @relation(fields: [userId], references: [id])
+  courseCatalog   CourseCatalog @relation(fields: [courseCatalogId], references: [id])
+
+  @@unique([userId, courseCatalogId])
+  @@index([userId])
+  @@index([courseCatalogId])
+}
+
+model AdminActivityLog {
+  id            String   @id @default(cuid())
+  adminUserId   Int
+  targetUserId  String?
+  action        String
+  details       Json?
+  createdAt     DateTime @default(now())
+
+  @@index([adminUserId])
+  @@index([targetUserId])
+  @@index([action])
+}
+
+model RegistrationCountries {
+  id        Int      @id @default(autoincrement())
+  username  String   
+  country   String   
+  code      String?   
+  name      String?   
+  createdAt DateTime @default(now()) @map("created_at") // <-- Updated this line
+
+  @@map("registration_countries")
+}
+model Orders {
+  id          Int      @id @default(autoincrement())
+  username    String
+  userId      Int?     @map("user_id")
+  status      String   @default("pending")
+  totalAmount Float?   @map("total_amount") // <-- Add this final column right here
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("orders")
+}
+
+model Inquiries {
+  id        Int      @id @default(autoincrement())
+  username  String
+  userId    Int?     @map("user_id") // <-- Add this line
+  message   String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("inquiries")
 }

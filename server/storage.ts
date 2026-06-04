@@ -1,4 +1,27 @@
-import { programs, type Program, type InsertProgram, resources, type Resource, type InsertResource, inquiries, type Inquiry, type InsertInquiry, orders, type Order, type InsertOrder, orderItems, type OrderItem, type InsertOrderItem, enrollments, type Enrollment, type InsertEnrollment } from "../shared/schema.js";
+import {
+  programs,
+  type Program,
+  type InsertProgram,
+  resources,
+  type Resource,
+  type InsertResource,
+  inquiries,
+  type Inquiry,
+  type InsertInquiry,
+  orders,
+  type Order,
+  type InsertOrder,
+  orderItems,
+  type OrderItem,
+  type InsertOrderItem,
+  enrollments,
+  type Enrollment,
+  type InsertEnrollment,
+  pendingPayments,
+  scholarshipCodes,
+  registeredCountries,
+  registrationCountries,
+} from "../shared/schema.js";
 import type { CheckoutItem } from "../shared/schema.js";
 import type { ScholarshipCodeRecord } from "./scholarship.js";
 import { db } from "./db.js";
@@ -20,6 +43,8 @@ export interface IStorage {
   updateInquiry(id: number, updates: Partial<Inquiry>): Promise<Inquiry | undefined>;
   
   createOrder(order: InsertOrder): Promise<Order>;
+  getOrderById(orderId: number): Promise<Order | undefined>;
+  updateOrder(orderId: number, updates: Partial<Order>): Promise<Order | undefined>;
   createOrderItem(item: InsertOrderItem): Promise<OrderItem>;
   createEnrollment(enrollment: InsertEnrollment): Promise<Enrollment>;
   getUserEnrollments(userId: string): Promise<Enrollment[]>;
@@ -46,8 +71,10 @@ export interface PendingPayment {
   userId: string;
   items: CheckoutItem[];
   totalAmount: number;
+  amountToPay?: number;
   scholarshipCode?: string;
   tracker?: string;
+  orderId?: number;
   createdAt: Date;
 }
 
@@ -169,48 +196,53 @@ async createInquiry(insertInquiry: InsertInquiry): Promise<Inquiry> {
     return updated;
   }
 
-async createOrder(insertOrder: InsertOrder): Promise<Order> {
-    const id = this.currentId.orders++;
-    const order: Order = { 
-      ...insertOrder, 
-      id, 
-      status: insertOrder.status ?? "pending", // Ensure status is a string, not undefined
-      createdAt: new Date() 
-    };
-    this.orders.set(id, order);
+  async createOrder(insertOrder: InsertOrder): Promise<Order> {
+    const [created] = await db
+      .insert(orders)
+      .values({
+        ...insertOrder,
+        status: insertOrder.status ?? "pending",
+        paymentStatus: insertOrder.paymentStatus ?? "pending",
+        paidAmount: insertOrder.paidAmount ?? 0,
+        remainingAmount: insertOrder.remainingAmount ?? insertOrder.totalAmount,
+        allowPartialPayment: insertOrder.allowPartialPayment ?? true,
+        paymentNotes: insertOrder.paymentNotes ?? [],
+      })
+      .returning();
+
+    return created;
+  }
+
+  async getOrderById(orderId: number): Promise<Order | undefined> {
+    const [order] = await db.select().from(orders).where(eq(orders.id, orderId)).limit(1);
     return order;
   }
 
+  async updateOrder(orderId: number, updates: Partial<Order>): Promise<Order | undefined> {
+    const [updated] = await db.update(orders).set(updates).where(eq(orders.id, orderId)).returning();
+    return updated;
+  }
+
   async createOrderItem(insertItem: InsertOrderItem): Promise<OrderItem> {
-    const id = this.currentId.orderItems++;
-    const item: OrderItem = { ...insertItem, id };
-    this.orderItems.set(id, item);
-    return item;
+    const [created] = await db.insert(orderItems).values(insertItem).returning();
+    return created;
   }
 
   async createEnrollment(insertEnrollment: InsertEnrollment): Promise<Enrollment> {
-    const id = this.currentId.enrollments++;
-    const enrollment: Enrollment = { ...insertEnrollment, id, enrolledAt: new Date() };
-    this.enrollments.set(id, enrollment);
-    return enrollment;
+    const [created] = await db.insert(enrollments).values(insertEnrollment).returning();
+    return created;
   }
 
   async getUserEnrollments(userId: string): Promise<Enrollment[]> {
-    return Array.from(this.enrollments.values()).filter(e => e.userId === userId);
+    return db.select().from(enrollments).where(eq(enrollments.userId, userId)).orderBy(desc(enrollments.enrolledAt));
   }
 
   async getOrdersByUserId(userId: string): Promise<Order[]> {
-    return Array.from(this.orders.values())
-      .filter((order) => order.userId === userId)
-      .sort((a, b) => {
-        const aTime = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-        const bTime = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-        return bTime - aTime;
-      });
+    return db.select().from(orders).where(eq(orders.userId, userId)).orderBy(desc(orders.createdAt));
   }
 
   async getOrderItemsByOrderId(orderId: number): Promise<OrderItem[]> {
-    return Array.from(this.orderItems.values()).filter((item) => item.orderId === orderId);
+    return db.select().from(orderItems).where(eq(orderItems.orderId, orderId));
   }
 
   async linkParentToChild(parentUserId: string, childMoodleUserId: number): Promise<void> {
@@ -224,67 +256,151 @@ async createOrder(insertOrder: InsertOrder): Promise<Order> {
   }
 
   async createPendingPayment(payment: PendingPayment): Promise<void> {
-    this.pendingPayments.set(payment.orderRef, payment);
+    await db
+      .insert(pendingPayments)
+      .values(payment)
+      .onConflictDoUpdate({
+        target: pendingPayments.orderRef,
+        set: payment,
+      });
   }
 
   async getPendingPayment(orderRef: string): Promise<PendingPayment | undefined> {
-    return this.pendingPayments.get(orderRef);
+    const [payment] = await db.select().from(pendingPayments).where(eq(pendingPayments.orderRef, orderRef)).limit(1);
+    if (!payment) return undefined;
+    return {
+      ...payment,
+      amountToPay: payment.amountToPay ?? undefined,
+      scholarshipCode: payment.scholarshipCode ?? undefined,
+      tracker: payment.tracker ?? undefined,
+      orderId: payment.orderId ?? undefined,
+      createdAt: payment.createdAt ?? new Date(),
+    };
   }
 
   async deletePendingPayment(orderRef: string): Promise<void> {
-    this.pendingPayments.delete(orderRef);
+    await db.delete(pendingPayments).where(eq(pendingPayments.orderRef, orderRef));
   }
 
   async saveScholarshipCode(record: ScholarshipCodeRecord): Promise<void> {
-    this.scholarshipCodes.set(record.code.toUpperCase(), record);
+    await db
+      .insert(scholarshipCodes)
+      .values({
+        code: record.code.toUpperCase(),
+        moodleUserId: record.moodleUserId,
+        email: record.email,
+        name: record.name,
+        country: record.country,
+        concessionPercent: record.concessionPercent,
+        region: record.region,
+        expiresAt: record.expiresAt,
+        used: record.used,
+        usedAt: record.usedAt,
+        usedByUserId: record.usedByUserId,
+      })
+      .onConflictDoUpdate({
+        target: scholarshipCodes.code,
+        set: {
+          moodleUserId: record.moodleUserId,
+          email: record.email,
+          name: record.name,
+          country: record.country,
+          concessionPercent: record.concessionPercent,
+          region: record.region,
+          expiresAt: record.expiresAt,
+          used: record.used,
+          usedAt: record.usedAt,
+          usedByUserId: record.usedByUserId,
+        },
+      });
   }
 
   async getScholarshipCode(code: string): Promise<ScholarshipCodeRecord | undefined> {
-    return this.scholarshipCodes.get(code.toUpperCase());
+    const [record] = await db.select().from(scholarshipCodes).where(eq(scholarshipCodes.code, code.toUpperCase())).limit(1);
+    return record
+      ? {
+          code: record.code,
+          moodleUserId: record.moodleUserId,
+          email: record.email,
+          name: record.name,
+          country: record.country,
+          concessionPercent: record.concessionPercent,
+          region: record.region as ScholarshipCodeRecord["region"],
+          expiresAt: record.expiresAt,
+          createdAt: record.createdAt ?? new Date(),
+          used: record.used,
+          usedAt: record.usedAt ?? undefined,
+          usedByUserId: record.usedByUserId ?? undefined,
+        }
+      : undefined;
   }
 
   async getActiveScholarshipCodeForUser(
     moodleUserId: number,
   ): Promise<ScholarshipCodeRecord | undefined> {
-    const now = Date.now();
-    for (const record of this.scholarshipCodes.values()) {
-      if (
-        record.moodleUserId === moodleUserId &&
-        !record.used &&
-        record.expiresAt.getTime() > now
-      ) {
-        return record;
-      }
-    }
-    return undefined;
+    const rows = await db
+      .select()
+      .from(scholarshipCodes)
+      .where(sql`${scholarshipCodes.moodleUserId} = ${moodleUserId} and ${scholarshipCodes.used} = false and ${scholarshipCodes.expiresAt} > now()`)
+      .orderBy(desc(scholarshipCodes.createdAt))
+      .limit(1);
+    const record = rows[0];
+    return record
+      ? {
+          code: record.code,
+          moodleUserId: record.moodleUserId,
+          email: record.email,
+          name: record.name,
+          country: record.country,
+          concessionPercent: record.concessionPercent,
+          region: record.region as ScholarshipCodeRecord["region"],
+          expiresAt: record.expiresAt,
+          createdAt: record.createdAt ?? new Date(),
+          used: record.used,
+          usedAt: record.usedAt ?? undefined,
+          usedByUserId: record.usedByUserId ?? undefined,
+        }
+      : undefined;
   }
 
   async markScholarshipCodeUsed(code: string, userId: string): Promise<void> {
-    const record = this.scholarshipCodes.get(code.toUpperCase());
-    if (!record) return;
-    record.used = true;
-    record.usedAt = new Date();
-    record.usedByUserId = userId;
-    this.scholarshipCodes.set(code.toUpperCase(), record);
+    await db
+      .update(scholarshipCodes)
+      .set({ used: true, usedAt: new Date(), usedByUserId: userId })
+      .where(eq(scholarshipCodes.code, code.toUpperCase()));
   }
 
   async setRegisteredCountry(moodleUserId: number, country: string): Promise<void> {
-    this.registeredCountries.set(moodleUserId, country);
+    await db
+      .insert(registeredCountries)
+      .values({ moodleUserId, country })
+      .onConflictDoUpdate({
+        target: registeredCountries.moodleUserId,
+        set: { country, updatedAt: new Date() },
+      });
   }
 
   async getRegisteredCountry(moodleUserId: number): Promise<string | undefined> {
-    return this.registeredCountries.get(moodleUserId);
+    const [record] = await db.select().from(registeredCountries).where(eq(registeredCountries.moodleUserId, moodleUserId)).limit(1);
+    return record?.country;
   }
 
   async setRegistrationCountryForUsername(username: string, country: string): Promise<void> {
-    this.registrationCountryByUsername.set(username.trim().toLowerCase(), country);
+    const normalizedUsername = username.trim().toLowerCase();
+    await db
+      .insert(registrationCountries)
+      .values({ username: normalizedUsername, country })
+      .onConflictDoUpdate({
+        target: registrationCountries.username,
+        set: { country },
+      });
   }
 
   async takeRegistrationCountryForUsername(username: string): Promise<string | undefined> {
     const key = username.trim().toLowerCase();
-    const country = this.registrationCountryByUsername.get(key);
-    if (country) this.registrationCountryByUsername.delete(key);
-    return country;
+    const [record] = await db.select().from(registrationCountries).where(eq(registrationCountries.username, key)).limit(1);
+    if (record) await db.delete(registrationCountries).where(eq(registrationCountries.username, key));
+    return record?.country;
   }
 }
 

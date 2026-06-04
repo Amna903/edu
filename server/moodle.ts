@@ -141,6 +141,7 @@ function toLmsCourse(
     fullDescription: description || "This course is available through the connected Moodle LMS.",
     category: mapCategory(categoryName),
     categoryName,
+    categoryId: course.categoryid ?? null,
     format: course.format || null,
     imageUrl,
     startDate: toIsoDate(course.startdate),

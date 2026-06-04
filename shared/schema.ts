@@ -54,6 +54,19 @@ export const orders = pgTable("orders", {
   userId: text("user_id").notNull(), // Using session/temp id for now
   totalAmount: integer("total_amount").notNull(),
   status: text("status").notNull().default("pending"), // 'pending', 'completed'
+  paymentStatus: text("payment_status").default("pending"),
+  paymentProvider: text("payment_provider"),
+  paymentRef: text("payment_ref"),
+  invoiceNumber: text("invoice_number"),
+  paidAmount: integer("paid_amount").default(0),
+  remainingAmount: integer("remaining_amount").default(0),
+  allowPartialPayment: boolean("allow_partial_payment").default(true),
+  refundStatus: text("refund_status"),
+  paymentNotes: jsonb("payment_notes").$type<Array<{
+    status: string;
+    message: string;
+    createdAt: string;
+  }>>().default([]),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -69,6 +82,95 @@ export const enrollments = pgTable("enrollments", {
   userId: text("user_id").notNull(),
   programId: integer("program_id").notNull(),
   enrolledAt: timestamp("enrolled_at").defaultNow(),
+});
+
+export const pendingPayments = pgTable("pending_payments", {
+  orderRef: text("order_ref").primaryKey(),
+  userId: text("user_id").notNull(),
+  items: jsonb("items").$type<Array<{ programId: number; title: string; price: number }>>().notNull(),
+  totalAmount: integer("total_amount").notNull(),
+  amountToPay: integer("amount_to_pay"),
+  scholarshipCode: text("scholarship_code"),
+  tracker: text("tracker"),
+  orderId: integer("order_id"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const scholarshipCodes = pgTable("scholarship_codes", {
+  code: text("code").primaryKey(),
+  moodleUserId: integer("moodle_user_id").notNull(),
+  email: text("email").notNull(),
+  name: text("name").notNull(),
+  country: text("country").notNull(),
+  concessionPercent: integer("concession_percent").notNull(),
+  region: text("region").notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
+  used: boolean("used").notNull().default(false),
+  usedAt: timestamp("used_at"),
+  usedByUserId: text("used_by_user_id"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const registeredCountries = pgTable("registered_countries", {
+  moodleUserId: integer("moodle_user_id").primaryKey(),
+  country: text("country").notNull(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const registrationCountries = pgTable("registration_countries", {
+  username: text("username").primaryKey(),
+  country: text("country").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const dashboardNotificationReads = pgTable("dashboard_notification_reads", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  notificationId: integer("notification_id").notNull(),
+  readAt: timestamp("read_at").defaultNow(),
+});
+
+export const schoolLicenses = pgTable("school_licenses", {
+  id: text("id").primaryKey(),
+  schoolUserId: integer("school_user_id").notNull(),
+  courseId: integer("course_id").notNull(),
+  courseName: text("course_name").notNull(),
+  totalSeats: integer("total_seats").notNull(),
+  orderId: integer("order_id").notNull(),
+  purchaseDate: timestamp("purchase_date").defaultNow(),
+  expiresAt: timestamp("expires_at"),
+});
+
+export const schoolRosterStudents = pgTable("school_roster_students", {
+  id: serial("id").primaryKey(),
+  schoolUserId: integer("school_user_id").notNull(),
+  studentId: integer("student_id").notNull(),
+  studentEmail: text("student_email").notNull(),
+  studentName: text("student_name").notNull(),
+  uploadedAt: timestamp("uploaded_at").defaultNow(),
+  sourceUploadId: text("source_upload_id").notNull(),
+});
+
+export const schoolStudentUploads = pgTable("school_student_uploads", {
+  id: text("id").primaryKey(),
+  schoolUserId: integer("school_user_id").notNull(),
+  filename: text("filename").notNull(),
+  totalStudents: integer("total_students").notNull(),
+  processedStudents: integer("processed_students").notNull(),
+  failedStudents: integer("failed_students").notNull(),
+  status: text("status").notNull(),
+  errors: jsonb("errors").$type<Array<{ row: number; email?: string; error: string }>>().default([]),
+  uploadedAt: timestamp("uploaded_at").defaultNow(),
+});
+
+export const schoolSeatAssignments = pgTable("school_seat_assignments", {
+  id: text("id").primaryKey(),
+  schoolUserId: integer("school_user_id").notNull(),
+  licenseId: text("license_id").notNull(),
+  studentId: integer("student_id").notNull(),
+  studentEmail: text("student_email").notNull(),
+  studentName: text("student_name").notNull(),
+  assignedAt: timestamp("assigned_at").defaultNow(),
 });
 
 export const contactSubmissions = pgTable("edume_contact_submissions", {
@@ -266,6 +368,7 @@ export const lmsCourseSchema = z.object({
   fullDescription: z.string(),
   category: z.string(),
   categoryName: z.string().nullable(),
+  categoryId: z.number().nullable(),
   format: z.string().nullable(),
   imageUrl: z.string().nullable(),
   startDate: z.string().nullable(),
@@ -340,6 +443,21 @@ export const orderHistorySchema = z.object({
   userId: z.string(),
   totalAmount: z.number(),
   status: z.string(),
+  paymentStatus: z.string().optional(),
+  paymentProvider: z.string().nullable().optional(),
+  paymentRef: z.string().nullable().optional(),
+  invoiceNumber: z.string().nullable().optional(),
+  paidAmount: z.number().optional(),
+  remainingAmount: z.number().optional(),
+  allowPartialPayment: z.boolean().optional(),
+  refundStatus: z.string().nullable().optional(),
+  canRetryPayment: z.boolean().optional(),
+  refundable: z.boolean().optional(),
+  paymentNotes: z.array(z.object({
+    status: z.string(),
+    message: z.string(),
+    createdAt: z.string(),
+  })).optional(),
   createdAt: z.string(),
   items: z.array(orderHistoryItemSchema),
 });
@@ -422,6 +540,7 @@ export const parentDashboardSchema = z.object({
 });
 
 export const schoolDashboardLicenseSchema = z.object({
+  id: z.string(),
   courseId: z.number(),
   courseName: z.string(),
   assignedSeats: z.number(),
@@ -473,7 +592,16 @@ export const adminUsersListSchema = z.object({
 
 export const adminActivityLogSchema = z.object({
   id: z.string(),
-  action: z.enum(["USER_SUSPENDED", "USER_UNSUSPENDED", "PASSWORD_RESET", "ROLE_ASSIGNED", "COURSES_SYNCED"]),
+  action: z.enum([
+    "USER_SUSPENDED",
+    "USER_UNSUSPENDED",
+    "PASSWORD_RESET",
+    "ROLE_ASSIGNED",
+    "COURSES_SYNCED",
+    "COURSE_PRICING_UPDATED",
+    "COURSE_VISIBILITY_UPDATED",
+    "COURSE_CATEGORY_UPDATED",
+  ]),
   adminUsername: z.string(),
   targetUsername: z.string().nullable(),
   details: z.record(z.any()).nullable(),
@@ -512,6 +640,7 @@ export const adminCourseListItemSchema = z.object({
   shortname: z.string(),
   fullname: z.string(),
   summary: z.string().nullable(),
+  categoryId: z.number().nullable(),
   categoryName: z.string().nullable(),
   isVisible: z.boolean(),
   price: z.number(),
@@ -591,6 +720,7 @@ export const scholarshipValidateResponseSchema = z.object({
 export const paymentInitRequestSchema = z.object({
   items: z.array(checkoutItemSchema).min(1, "At least one item is required"),
   totalAmount: z.number().min(0),
+  amountToPay: z.number().min(0).optional(),
   scholarshipCode: z.string().optional(),
 });
 

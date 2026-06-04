@@ -39,3 +39,26 @@ export function useCheckout() {
     },
   });
 }
+
+export function useRequestRefund() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (orderId: number) => {
+      const res = await fetch(`/api/orders/${orderId}/refund`, {
+        method: "POST",
+        credentials: "include",
+      });
+
+      const body = await res.json();
+      if (!res.ok) {
+        throw new Error(body.message || "Failed to request refund");
+      }
+
+      return body as { success: true; message: string };
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [api.orders.list.path] });
+    },
+  });
+}

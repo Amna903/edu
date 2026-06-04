@@ -1,6 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@shared/routes";
-import type { SchoolSeatPurchaseInput } from "@shared/schema";
+import type {
+  BulkLicensePurchaseInput,
+  BulkLicensePurchaseResponse,
+  BulkSeatAssignmentInput,
+  BulkSeatAssignmentResponse,
+  SchoolSeatPurchaseInput,
+  SchoolStudentUpload,
+  SchoolUsageReport,
+  LicenseUsageMetrics,
+} from "@shared/schema";
 
 export function useStudentDashboard(enabled = true) {
   return useQuery({
@@ -401,6 +410,108 @@ export function useSchoolSeatPurchase() {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: [api.dashboard.school.path] });
       await queryClient.invalidateQueries({ queryKey: [api.orders.list.path] });
+    },
+  });
+}
+
+export function useSchoolBulkLicenses() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: BulkLicensePurchaseInput) => {
+      const res = await fetch(api.dashboard.schoolBulkLicenses.path, {
+        method: api.dashboard.schoolBulkLicenses.method,
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(input),
+      });
+
+      const body = await res.json();
+      if (!res.ok) {
+        throw new Error(body.message || "Failed to purchase bulk licenses");
+      }
+
+      return api.dashboard.schoolBulkLicenses.responses[201].parse(body) as BulkLicensePurchaseResponse;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [api.dashboard.school.path] });
+      await queryClient.invalidateQueries({ queryKey: [api.dashboard.schoolUsageReport.path] });
+    },
+  });
+}
+
+export function useSchoolUploadStudents() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: { csvText: string; filename?: string }) => {
+      const res = await fetch(api.dashboard.schoolUploadStudents.path, {
+        method: api.dashboard.schoolUploadStudents.method,
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(input),
+      });
+
+      const body = await res.json();
+      if (!res.ok) {
+        throw new Error(body.message || "Failed to upload students");
+      }
+
+      return api.dashboard.schoolUploadStudents.responses[201].parse(body) as SchoolStudentUpload;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [api.dashboard.schoolUsageReport.path] });
+    },
+  });
+}
+
+export function useSchoolAssignSeats() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: BulkSeatAssignmentInput) => {
+      const res = await fetch(api.dashboard.schoolAssignSeats.path, {
+        method: api.dashboard.schoolAssignSeats.method,
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(input),
+      });
+
+      const body = await res.json();
+      if (!res.ok) {
+        throw new Error(body.message || "Failed to assign seats");
+      }
+
+      return api.dashboard.schoolAssignSeats.responses[200].parse(body) as BulkSeatAssignmentResponse;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [api.dashboard.school.path] });
+      await queryClient.invalidateQueries({ queryKey: [api.dashboard.schoolUsageReport.path] });
+    },
+  });
+}
+
+export function useSchoolUsageReport(enabled = true) {
+  return useQuery({
+    queryKey: [api.dashboard.schoolUsageReport.path],
+    enabled,
+    queryFn: async () => {
+      const res = await fetch(api.dashboard.schoolUsageReport.path, { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to load usage report");
+      return api.dashboard.schoolUsageReport.responses[200].parse(await res.json()) as SchoolUsageReport;
+    },
+  });
+}
+
+export function useSchoolLicenseMetrics(licenseId: string, enabled = true) {
+  return useQuery({
+    queryKey: [api.dashboard.schoolLicenseMetrics.path, licenseId],
+    enabled: enabled && Boolean(licenseId),
+    queryFn: async () => {
+      const url = api.dashboard.schoolLicenseMetrics.path.replace(":licenseId", licenseId);
+      const res = await fetch(url, { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to load license metrics");
+      return api.dashboard.schoolLicenseMetrics.responses[200].parse(await res.json()) as LicenseUsageMetrics;
     },
   });
 }

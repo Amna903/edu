@@ -23,7 +23,7 @@ export default function ProgramDetails() {
   const [, courseParams] = useRoute("/courses/:slug");
   const [, navigate] = useLocation();
   const slug = (matchesPrograms ? programParams?.slug : courseParams?.slug) || "";
-  const { data: program, isLoading } = useProgram(slug);
+  const { data: program, isLoading, error } = useProgram(slug);
   const { addToCart } = useCart();
   const { toast } = useToast();
 
@@ -33,6 +33,23 @@ export default function ProgramDetails() {
         <div className="container-custom py-16 md:py-32">
           <Skeleton className="h-12 w-1/3 mb-12 rounded-full bg-slate-50" />
           <Skeleton className="h-[600px] w-full rounded-[4rem] bg-slate-50" />
+        </div>
+      </Layout>
+    );
+  }
+
+  if (error) {
+    return (
+      <Layout>
+        <div className="container-custom py-20 md:py-40 text-center">
+          <h1 className="text-5xl font-bold text-brand-navy mb-6 uppercase tracking-tighter leading-none">Could Not Load Course</h1>
+          <p className="mb-8 text-brand-primary font-medium uppercase tracking-widest">
+            We could not load the live Moodle course data right now.
+          </p>
+          <p className="mb-10 text-slate-600">{error instanceof Error ? error.message : "Please try again in a moment."}</p>
+          <Link href="/courses">
+            <Button className="bg-brand-primary hover:bg-brand-navy h-20 px-16 rounded-3xl text-xl font-bold uppercase tracking-widest">Back to Courses</Button>
+          </Link>
         </div>
       </Layout>
     );
