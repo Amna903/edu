@@ -378,6 +378,27 @@ export const lmsCourseSchema = z.object({
   lmsCourseUrl: z.string(),
 });
 
+export const lmsCourseEnrolmentMethodSchema = z.object({
+  type: z.string(),
+  name: z.string(),
+  status: z.boolean(),
+  cost: z.string().nullable(),
+  currency: z.string().nullable(),
+});
+
+export const lmsCourseContentItemSchema = z.object({
+  id: z.number().nullable(),
+  name: z.string(),
+  modname: z.string().nullable(),
+  url: z.string().nullable(),
+});
+
+export const lmsCourseDetailSchema = lmsCourseSchema.extend({
+  enrolmentMethods: z.array(lmsCourseEnrolmentMethodSchema),
+  contentItems: z.array(lmsCourseContentItemSchema),
+  paymentLabel: z.string(),
+});
+
 export const authUserSchema = z.object({
   id: z.number(),
   username: z.string(),
@@ -429,6 +450,15 @@ export const checkoutRequestSchema = z.object({
   totalAmount: z.number().min(0),
   tracker: z.string().optional(),
   scholarshipCode: z.string().optional(),
+});
+
+export const freeEnrollInputSchema = z.object({
+  courseId: z.number().int().positive(),
+});
+
+export const freeEnrollResponseSchema = z.object({
+  success: z.boolean(),
+  message: z.string(),
 });
 
 export const orderHistoryItemSchema = z.object({
@@ -994,6 +1024,7 @@ export type InsertResource = z.infer<typeof insertResourceSchema>;
 export type Program = typeof programs.$inferSelect;
 export type InsertProgram = z.infer<typeof insertProgramSchema>;
 export type LmsCourse = z.infer<typeof lmsCourseSchema>;
+export type LmsCourseDetail = z.infer<typeof lmsCourseDetailSchema>;
 export type AuthUser = z.infer<typeof authUserSchema>;
 export type AppRole = z.infer<typeof appRoleSchema>;
 export type LoginInput = z.infer<typeof loginInputSchema>;
@@ -1001,6 +1032,8 @@ export type RegisterInput = z.infer<typeof registerInputSchema>;
 export type RegisterResponse = z.infer<typeof registerResponseSchema>;
 export type CheckoutItem = z.infer<typeof checkoutItemSchema>;
 export type CheckoutRequest = z.infer<typeof checkoutRequestSchema>;
+export type FreeEnrollInput = z.infer<typeof freeEnrollInputSchema>;
+export type FreeEnrollResponse = z.infer<typeof freeEnrollResponseSchema>;
 export type OrderHistory = z.infer<typeof orderHistorySchema>;
 export type ProfileUpdateInput = z.infer<typeof profileUpdateInputSchema>;
 export type PasswordChangeInput = z.infer<typeof passwordChangeInputSchema>;

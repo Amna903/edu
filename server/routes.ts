@@ -26,7 +26,7 @@ import {
   schoolStudentUploads,
 } from "../shared/schema.js";
 import { and, desc, eq } from "drizzle-orm";
-import { getLmsCourseById, getLmsCourseBySlug, getLmsCourses } from "./moodle.js";
+import { getLmsCourseById, getLmsCourseBySlug, getLmsCourseDetail, getLmsCourses } from "./moodle.js";
 import { changeMoodlePassword, fetchCurrentUser, loginWithMoodle, registerWithMoodle, updateMoodleProfile } from "./moodle-auth.js";
 import { enrolUserInCourse } from "./moodle-commerce.js";
 import { getStudentActivityTimelineForDashboard, getStudentCertificatesForDashboard, getStudentGradesForDashboard, getUserCoursesForDashboard } from "./moodle-dashboard.js";
@@ -1395,7 +1395,9 @@ EduMeUp`,
       res.json(courses);
     } catch (error) {
       console.error("Failed to fetch LMS courses:", error);
-      res.status(500).json({ message: "Failed to fetch LMS courses" });
+      res.status(500).json({
+        message: error instanceof Error ? error.message : "Failed to fetch LMS courses",
+      });
     }
   });
 
@@ -1409,6 +1411,70 @@ EduMeUp`,
     } catch (error) {
       console.error("Failed to fetch LMS course:", error);
       res.status(500).json({ message: "Failed to fetch LMS course" });
+    }
+  });
+
+  app.get(api.lmsCourses.getDetail.path, async (req, res) => {
+    try {
+      const courseId = Number.parseInt(req.params.id, 10);
+      if (!Number.isFinite(courseId) || courseId <= 0) {
+        return res.status(400).json({ message: "Invalid course id" });
+      }
+
+      const course = await getLmsCourseDetail(courseId);
+      if (!course) {
+        return res.status(404).json({ message: "Course not found" });
+      }
+
+      res.json(course);
+    } catch (error) {
+      console.error("Failed to fetch LMS course detail:", error);
+      res.status(500).json({
+        message: error instanceof Error ? error.message : "Failed to fetch LMS course detail",
+      });
+    }
+  });
+
+  app.post(api.enrollments.free.path, async (req, res) => {
+    try {
+      if (!req.session.user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const { courseId } = api.enrollments.free.input.parse(req.body);
+      const course = await getLmsCourseById(courseId);
+      if (!course) {
+        return res.status(404).json({ message: "Course not found" });
+      }
+
+      // Allow enrollment for both paid and free courses from the catalog popup flow
+      // if (typeof course.price === "number" && course.price > 0) {
+      //   return res.status(400).json({ message: "This course requires payment" });
+      // }
+
+      const userId = String(req.session.user.id);
+      const existing = await storage.getUserEnrollments(userId);
+      if (existing.some((entry) => entry.programId === courseId)) {
+        return res.json({ success: true, message: "You are already enrolled in this course." });
+      }
+
+      try {
+        await enrolUserInCourse(req.session.user.id, courseId);
+      } catch (moodleError) {
+        console.warn(`[moodle] Failed to enrol user in Moodle course ${courseId}:`, moodleError);
+      }
+      await storage.createEnrollment({ userId, programId: courseId });
+
+      res.json({ success: true, message: "Successfully enrolled in the course." });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({
+          message: err.errors[0].message,
+          field: err.errors[0].path.join("."),
+        });
+      }
+
+      res.status(500).json({ message: err instanceof Error ? err.message : "Failed to enroll in course" });
     }
   });
 
