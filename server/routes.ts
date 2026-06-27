@@ -27,6 +27,7 @@ import {
 } from "../shared/schema.js";
 import { and, desc, eq } from "drizzle-orm";
 import { getLmsCourseById, getLmsCourseBySlug, getLmsCourseDetail, getLmsCourses } from "./moodle.js";
+import { createCourseEnrollment, getUserCourseEnrollments } from "./course-store.js";
 import { changeMoodlePassword, fetchCurrentUser, loginWithMoodle, registerWithMoodle, updateMoodleProfile } from "./moodle-auth.js";
 import { enrolUserInCourse } from "./moodle-commerce.js";
 import { getStudentActivityTimelineForDashboard, getStudentCertificatesForDashboard, getStudentGradesForDashboard, getUserCoursesForDashboard } from "./moodle-dashboard.js";
@@ -363,12 +364,16 @@ export async function registerRoutes(
       refundStatus: null,
     });
 
+    const enrolmentFailures: string[] = [];
     for (const item of pending.items) {
-      await enrolUserInCourse(Number(pending.userId), item.programId);
-      await storage.createEnrollment({
-        userId: pending.userId,
-        programId: item.programId,
-      });
+      try {
+        await enrolUserInCourse(Number(pending.userId), item.programId);
+        await createCourseEnrollment(Number(pending.userId), item.programId);
+      } catch (enrolError) {
+        const message = enrolError instanceof Error ? enrolError.message : String(enrolError);
+        console.error(`Failed to enrol user ${pending.userId} in course ${item.programId} after payment ${orderRef}:`, enrolError);
+        enrolmentFailures.push(`course ${item.programId}: ${message}`);
+      }
     }
 
     if (pending.scholarshipCode) {
@@ -376,6 +381,13 @@ export async function registerRoutes(
     }
 
     await recordPaymentEvent(existingOrder.id, completed ? "paid" : "partial", tracker ? `Verified by tracker ${tracker}` : "Payment verified");
+    if (enrolmentFailures.length > 0) {
+      await recordPaymentEvent(
+        existingOrder.id,
+        "enrolment_pending",
+        `Payment captured but Moodle enrolment failed and needs manual retry — ${enrolmentFailures.join("; ")}`,
+      );
+    }
     await storage.deletePendingPayment(orderRef);
     return existingOrder.id;
   };
@@ -1447,13 +1459,11 @@ EduMeUp`,
         return res.status(404).json({ message: "Course not found" });
       }
 
-      // Allow enrollment for both paid and free courses from the catalog popup flow
-      // if (typeof course.price === "number" && course.price > 0) {
-      //   return res.status(400).json({ message: "This course requires payment" });
-      // }
+      if (typeof course.price === "number" && course.price > 0) {
+        return res.status(400).json({ message: "This course requires payment" });
+      }
 
-      const userId = String(req.session.user.id);
-      const existing = await storage.getUserEnrollments(userId);
+      const existing = await getUserCourseEnrollments(req.session.user.id);
       if (existing.some((entry) => entry.programId === courseId)) {
         return res.json({ success: true, message: "You are already enrolled in this course." });
       }
@@ -1461,9 +1471,10 @@ EduMeUp`,
       try {
         await enrolUserInCourse(req.session.user.id, courseId);
       } catch (moodleError) {
-        console.warn(`[moodle] Failed to enrol user in Moodle course ${courseId}:`, moodleError);
+        console.error(`[moodle] Failed to enrol user in Moodle course ${courseId}:`, moodleError);
+        return res.status(502).json({ message: "Failed to enrol in the course. Please try again." });
       }
-      await storage.createEnrollment({ userId, programId: courseId });
+      await createCourseEnrollment(req.session.user.id, courseId);
 
       res.json({ success: true, message: "Successfully enrolled in the course." });
     } catch (err) {
@@ -1640,28 +1651,37 @@ EduMeUp`,
         paymentNotes: [],
       });
       const isSchoolPurchase = req.session.user.role === "school";
+      const enrolmentFailures: string[] = [];
 
       for (const item of items) {
         if (!isSchoolPurchase) {
-          await enrolUserInCourse(req.session.user.id, item.programId);
+          try {
+            await enrolUserInCourse(req.session.user.id, item.programId);
+            await createCourseEnrollment(req.session.user.id, item.programId);
+          } catch (enrolError) {
+            const message = enrolError instanceof Error ? enrolError.message : String(enrolError);
+            console.error(`Failed to enrol user ${req.session.user.id} in course ${item.programId} for order ${order.id}:`, enrolError);
+            enrolmentFailures.push(`course ${item.programId}: ${message}`);
+          }
         }
 
         await storage.createOrderItem({
           orderId: order.id,
           programId: item.programId,
-          price: item.price
+          price: item.price * (item.quantity ?? 1)
         });
-
-        if (!isSchoolPurchase) {
-          await storage.createEnrollment({
-            userId,
-            programId: item.programId
-          });
-        }
       }
 
       if (scholarshipRecord) {
         await storage.markScholarshipCodeUsed(scholarshipRecord.code, userId);
+      }
+
+      if (enrolmentFailures.length > 0) {
+        await recordPaymentEvent(
+          order.id,
+          "enrolment_pending",
+          `Order paid but Moodle enrolment failed and needs manual retry — ${enrolmentFailures.join("; ")}`,
+        );
       }
 
       res.status(201).json(await buildOrderHistoryResponse(order));
@@ -1719,7 +1739,7 @@ EduMeUp`,
         await storage.createOrderItem({
           orderId: pendingOrder.id,
           programId: item.programId,
-          price: item.price,
+          price: item.price * (item.quantity ?? 1),
         });
       }
       await storage.createPendingPayment({
@@ -1733,7 +1753,7 @@ EduMeUp`,
         createdAt: new Date(),
       });
 
-      const origin = env.app.publicUrl || buildOrigin(req.get("host") || "localhost:3001", req.protocol);
+      const origin = buildOrigin(req.get("host") || "localhost:3001", req.protocol);
 
       res.json({
         checkoutUrl: `${origin}/api/payments/payfast/checkout/${encodeURIComponent(orderRef)}`,
@@ -1763,8 +1783,8 @@ EduMeUp`,
         return res.status(404).send("Payment session not found");
       }
 
-      const origin = env.app.publicUrl || buildOrigin(req.get("host") || "localhost:3001", req.protocol);
-      const payment = buildPayfastCheckoutFields({
+      const origin = buildOrigin(req.get("host") || "localhost:3001", req.protocol);
+      const payment = await buildPayfastCheckoutFields({
         orderRef,
         itemName: buildPayfastItemName(pending.items),
         amount: pending.amountToPay ?? pending.totalAmount,
@@ -1775,8 +1795,15 @@ EduMeUp`,
         notifyPath: "/api/webhook/payfast",
       });
 
+      const escapeHtml = (value: string) =>
+        value
+          .replace(/&/g, "&amp;")
+          .replace(/"/g, "&quot;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+
       const fields = Object.entries(payment.fields)
-        .map(([name, value]) => `<input type="hidden" name="${name}" value="${String(value).replace(/"/g, "&quot;")}" />`)
+        .map(([name, value]) => `<input type="hidden" name="${escapeHtml(name)}" value="${escapeHtml(String(value))}" />`)
         .join("\n");
 
       res.setHeader("Content-Type", "text/html; charset=utf-8");
@@ -1805,15 +1832,17 @@ EduMeUp`,
   });
 
   app.post(api.payments.verify.path, async (req, res) => {
-    try {
-      if (!req.session.user) {
-        return res.status(401).json({ message: "Not authenticated" });
-      }
+try {
+    const { orderRef, tracker } = api.payments.verify.input.parse(req.body);
+    
+    // 1. Fetch pending info to get user identity if session is absent
+    const pending = await storage.getPendingPayment(orderRef);
+    const targetUserId = req.session.user?.id ? String(req.session.user.id) : (pending?.userId ? String(pending.userId) : "");
 
-      const { orderRef, tracker } = api.payments.verify.input.parse(req.body);
-      const orderId = await finalizePaidOrder(orderRef, String(req.session.user.id), tracker);
-      res.json({ success: true, orderId });
-    } catch (err) {
+    // 2. Pass execution smoothly to finalizer
+    const orderId = await finalizePaidOrder(orderRef, targetUserId, tracker);
+    res.json({ success: true, orderId });
+  } catch (err) {
       if (err instanceof z.ZodError) {
         return res.status(400).json({
           message: err.errors[0].message,
@@ -1827,17 +1856,43 @@ EduMeUp`,
   app.post(api.payments.webhook.path, async (req, res) => {
     try {
       const payload = req.body ?? {};
-      const orderRef = typeof payload.m_payment_id === "string" ? payload.m_payment_id : typeof payload.order_id === "string" ? payload.order_id : "";
-      const paymentStatus = typeof payload.payment_status === "string" ? payload.payment_status.toLowerCase() : "";
-      const amountGross = typeof payload.amount_gross === "string" ? Number(payload.amount_gross) : Number(payload.amount_gross ?? 0);
-      const tracker = typeof payload.tracker === "string" ? payload.tracker : typeof payload.pf_payment_id === "string" ? payload.pf_payment_id : undefined;
+      const orderRef =
+        typeof payload.BASKET_ID === "string"
+          ? payload.BASKET_ID
+          : typeof payload.basket_id === "string"
+            ? payload.basket_id
+            : typeof payload.m_payment_id === "string"
+              ? payload.m_payment_id
+              : typeof payload.order_id === "string"
+                ? payload.order_id
+                : "";
+      const rawPaymentStatus =
+        typeof payload.payment_status === "string"
+          ? payload.payment_status
+          : typeof payload.TRANSACTION_STATUS === "string"
+            ? payload.TRANSACTION_STATUS
+            : typeof payload.transaction_status === "string"
+              ? payload.transaction_status
+              : typeof payload.RESPONSE_CODE === "string"
+                ? payload.RESPONSE_CODE
+                : "";
+      const paymentStatus = rawPaymentStatus.toLowerCase();
+      const amountGross = typeof payload.amount_gross === "string" ? Number(payload.amount_gross) : Number(payload.amount_gross ?? payload.TXNAMT ?? 0);
+      const tracker =
+        typeof payload.tracker === "string"
+          ? payload.tracker
+          : typeof payload.pf_payment_id === "string"
+            ? payload.pf_payment_id
+            : typeof payload.TXNREF === "string"
+              ? payload.TXNREF
+              : undefined;
       const pending = orderRef ? await storage.getPendingPayment(orderRef) : undefined;
 
       if (!orderRef) {
         return res.status(200).json({ status: "ignored" });
       }
 
-      if (paymentStatus === "complete" || paymentStatus === "successful" || paymentStatus === "paid") {
+      if (paymentStatus === "complete" || paymentStatus === "successful" || paymentStatus === "success" || paymentStatus === "paid" || paymentStatus === "00") {
         await finalizePaidOrder(orderRef, pending?.userId ? String(pending.userId) : "", tracker);
         return res.json({ status: "success" });
       }
@@ -3674,7 +3729,7 @@ EduMeUp`,
   });
 
   app.get("/api/enrollments/:userId", async (req, res) => {
-    const enrollments = await storage.getUserEnrollments(req.params.userId);
+    const enrollments = await getUserCourseEnrollments(Number(req.params.userId));
     res.json(enrollments);
   });
 
@@ -3757,4 +3812,3 @@ async function seedDatabase() {
     });
   }
 }
-

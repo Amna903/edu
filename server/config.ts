@@ -126,11 +126,27 @@ export const env = {
   },
 
   payfast: {
-    merchantId: process.env.PAYFAST_MERCHANT_ID || "",
-    merchantKey: process.env.PAYFAST_MERCHANT_KEY || "",
+    merchantId: firstDefined(
+      process.env.PAYFAST_MERCHANT_ID,
+      process.env.PF_MERCHANT_ID
+    ),
+    securedKey: firstDefined(
+      process.env.PAYFAST_SECURED_KEY,
+      process.env.PAYFAST_MERCHANT_KEY,
+      process.env.PF_MERCHANT_KEY,
+      process.env.MERCHANT_SECRET_KEY
+    ),
+    merchantKey: firstDefined(
+      process.env.PAYFAST_MERCHANT_KEY,
+      process.env.PAYFAST_SECURED_KEY,
+      process.env.PF_MERCHANT_KEY,
+      process.env.MERCHANT_SECRET_KEY
+    ),
     passphrase: process.env.PAYFAST_PASSPHRASE || "",
-    baseUrl: process.env.PAYFAST_BASE_URL || "https://sandbox.payfast.co.za",
-    mode: process.env.PAYFAST_MODE || "sandbox",
+    baseUrl: process.env.PAYFAST_BASE_URL || "",
+    mode: process.env.PAYFAST_MODE || "live",
+    merchantName: process.env.PAYFAST_MERCHANT_NAME || "EduMeUp",
+    currencyCode: process.env.PAYFAST_CURRENCY_CODE || "PKR",
   },
 
   app: {
@@ -177,7 +193,7 @@ export function logEnvPresence() {
     moodleSignupToken: Boolean(env.moodle.signupToken),
     moodleAdminManage: Boolean(env.moodle.adminManageToken),
     moodleCourseToken: Boolean(env.moodle.courseToken),
-    payfastConfigured: Boolean(env.payfast.merchantId && env.payfast.merchantKey),
+    payfastConfigured: Boolean(env.payfast.merchantId && env.payfast.securedKey),
     databaseUrl: Boolean(env.databaseUrl),
     databaseUrlDirect: Boolean(env.databaseUrlDirect),
     sessionSecret: Boolean(env.sessionSecret),

@@ -673,6 +673,8 @@ export async function getLmsCourseDetail(id: number): Promise<LmsCourseDetail | 
       ? `Pay ${feeMethod.currency || "USD"} ${feeMethod.cost} to enroll`
       : course.price && course.price > 0
         ? "Paid course"
+
+        
         : "Free",
   };
 }

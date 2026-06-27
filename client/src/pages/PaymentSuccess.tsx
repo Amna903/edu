@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { useVerifyPayment } from "@/hooks/use-payments";
+import { useCart } from "@/context/CartContext";
 import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
 
 function useSearchParams() {
@@ -12,14 +13,15 @@ function useSearchParams() {
 export default function PaymentSuccess() {
   const [, navigate] = useLocation();
   const verifyPayment = useVerifyPayment();
+  const { clearCart, clearScholarship } = useCart();
   const [status, setStatus] = useState<"verifying" | "success" | "error">("verifying");
   const [message, setMessage] = useState("Verifying your payment...");
   const [orderRef, setOrderRef] = useState<string | null>(null);
 
   useEffect(() => {
     const search = useSearchParams();
-    const orderRef = search.get("order_id");
-    const tracker = search.get("tracker") || undefined;
+    const orderRef = search.get("order_id") || search.get("BASKET_ID") || search.get("basket_id");
+    const tracker = search.get("tracker") || search.get("TXNREF") || undefined;
     setOrderRef(orderRef);
 
     if (!orderRef) {
@@ -31,6 +33,9 @@ export default function PaymentSuccess() {
     verifyPayment
       .mutateAsync({ orderRef, tracker })
       .then(() => {
+        // Clear cart and scholarship on successful payment
+        clearCart();
+        clearScholarship();
         setStatus("success");
         setMessage("Payment verified successfully.");
       })
@@ -74,4 +79,3 @@ export default function PaymentSuccess() {
     </Layout>
   );
 }
-

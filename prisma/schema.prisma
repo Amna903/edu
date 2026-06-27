@@ -95,11 +95,10 @@ model CourseCatalog {
   @@index([categoryId])
   @@index([isVisible])
 }
-
 model UserCourseEnrollment {
   id              String        @id @default(cuid())
-  userId          String
-  courseCatalogId String
+  userId          String        @map("user_id")          // <-- Update this line
+  courseCatalogId String        @map("course_catalog_id") // <-- Update this line
   progress        Int           @default(0)
   isActive        Boolean       @default(true)
   enrolledAt      DateTime      @default(now())
@@ -111,6 +110,7 @@ model UserCourseEnrollment {
   @@unique([userId, courseCatalogId])
   @@index([userId])
   @@index([courseCatalogId])
+  @@map("enrollments")
 }
 
 model AdminActivityLog {

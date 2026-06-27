@@ -77,13 +77,6 @@ export const orderItems = pgTable("order_items", {
   price: integer("price").notNull(),
 });
 
-export const enrollments = pgTable("enrollments", {
-  id: serial("id").primaryKey(),
-  userId: text("user_id").notNull(),
-  programId: integer("program_id").notNull(),
-  enrolledAt: timestamp("enrolled_at").defaultNow(),
-});
-
 export const pendingPayments = pgTable("pending_payments", {
   orderRef: text("order_ref").primaryKey(),
   userId: text("user_id").notNull(),
@@ -238,10 +231,6 @@ export const insertOrderSchema = createInsertSchema(orders).omit({
   createdAt: true 
 });
 export const insertOrderItemSchema = createInsertSchema(orderItems).omit({ id: true });
-export const insertEnrollmentSchema = createInsertSchema(enrollments).omit({ 
-  id: true, 
-  enrolledAt: true 
-});
 
 export const insertInquirySchema = createInsertSchema(inquiries).omit({ 
   id: true, 
@@ -443,6 +432,7 @@ export const checkoutItemSchema = z.object({
   programId: z.number(),
   title: z.string(),
   price: z.number(),
+  quantity: z.number().int().min(1).optional(),
 });
 
 export const checkoutRequestSchema = z.object({
@@ -1085,9 +1075,6 @@ export type InsertOrder = typeof orders.$inferInsert;
 
 export type OrderItem = typeof orderItems.$inferSelect;
 export type InsertOrderItem = typeof orderItems.$inferInsert;
-
-export type Enrollment = typeof enrollments.$inferSelect;
-export type InsertEnrollment = typeof enrollments.$inferInsert;
 
 // Request types
 export type CreateInquiryRequest = InsertInquiry;

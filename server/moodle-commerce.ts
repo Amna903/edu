@@ -6,15 +6,15 @@ function getMoodleBaseUrl() {
   return baseUrl;
 }
 
-function getAdminToken() {
-  const token = env.moodle.adminManageToken || env.moodle.adminToken;
-  if (!token) throw new Error("MOODLE_ADMIN_MANAGE or MOODLE_ADMIN_TOKEN is not configured");
+function getCourseToken() {
+  const token = env.moodle.courseToken;
+  if (!token) throw new Error("MOODLE_COURSE is not configured");
   return token;
 }
 
 export async function enrolUserInCourse(userId: number, courseId: number) {
   const payload = new URLSearchParams({
-    wstoken: getAdminToken(),
+    wstoken: getCourseToken(),
     wsfunction: "enrol_manual_enrol_users",
     moodlewsrestformat: "json",
     "enrolments[0][roleid]": "5",

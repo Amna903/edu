@@ -133,10 +133,10 @@ export const ready = (async () => {
       reusePort?: boolean;
     } = {
       port,
-      host: "0.0.0.0",
+      host: process.env.HOST || "0.0.0.0",
     };
 
-    if (process.platform !== "win32") {
+    if (process.platform === "linux") {
       listenOptions.reusePort = true;
     }
 

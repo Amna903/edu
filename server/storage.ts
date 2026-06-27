@@ -14,9 +14,6 @@ import {
   orderItems,
   type OrderItem,
   type InsertOrderItem,
-  enrollments,
-  type Enrollment,
-  type InsertEnrollment,
   pendingPayments,
   scholarshipCodes,
   registeredCountries,
@@ -46,8 +43,6 @@ export interface IStorage {
   getOrderById(orderId: number): Promise<Order | undefined>;
   updateOrder(orderId: number, updates: Partial<Order>): Promise<Order | undefined>;
   createOrderItem(item: InsertOrderItem): Promise<OrderItem>;
-  createEnrollment(enrollment: InsertEnrollment): Promise<Enrollment>;
-  getUserEnrollments(userId: string): Promise<Enrollment[]>;
   getOrdersByUserId(userId: string): Promise<Order[]>;
   getOrderItemsByOrderId(orderId: number): Promise<OrderItem[]>;
   linkParentToChild(parentUserId: string, childMoodleUserId: number): Promise<void>;
@@ -84,7 +79,6 @@ export class MemStorage implements IStorage {
   private inquiries: Map<number, Inquiry>;
   private orders: Map<number, Order>;
   private orderItems: Map<number, OrderItem>;
-  private enrollments: Map<number, Enrollment>;
   private parentChildLinks: Map<string, Set<number>>;
   private pendingPayments: Map<string, PendingPayment>;
   private scholarshipCodes: Map<string, ScholarshipCodeRecord>;
@@ -98,13 +92,12 @@ export class MemStorage implements IStorage {
     this.inquiries = new Map();
     this.orders = new Map();
     this.orderItems = new Map();
-    this.enrollments = new Map();
     this.parentChildLinks = new Map();
     this.pendingPayments = new Map();
     this.scholarshipCodes = new Map();
     this.registeredCountries = new Map();
     this.registrationCountryByUsername = new Map();
-    this.currentId = { programs: 1, resources: 1, inquiries: 1, orders: 1, orderItems: 1, enrollments: 1 };
+    this.currentId = { programs: 1, resources: 1, inquiries: 1, orders: 1, orderItems: 1 };
   }
 
   async getPrograms(): Promise<Program[]> {
@@ -226,15 +219,6 @@ async createInquiry(insertInquiry: InsertInquiry): Promise<Inquiry> {
   async createOrderItem(insertItem: InsertOrderItem): Promise<OrderItem> {
     const [created] = await db.insert(orderItems).values(insertItem).returning();
     return created;
-  }
-
-  async createEnrollment(insertEnrollment: InsertEnrollment): Promise<Enrollment> {
-    const [created] = await db.insert(enrollments).values(insertEnrollment).returning();
-    return created;
-  }
-
-  async getUserEnrollments(userId: string): Promise<Enrollment[]> {
-    return db.select().from(enrollments).where(eq(enrollments.userId, userId)).orderBy(desc(enrollments.enrolledAt));
   }
 
   async getOrdersByUserId(userId: string): Promise<Order[]> {

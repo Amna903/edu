@@ -117,7 +117,7 @@ export function calculateOrderTotalWithScholarship(
   items: CheckoutItem[],
   scholarship?: ScholarshipCodeRecord,
 ): { subtotal: number; discount: number; total: number } {
-  const subtotal = items.reduce((sum, item) => sum + item.price, 0);
+  const subtotal = items.reduce((sum, item) => sum + item.price * (item.quantity ?? 1), 0);
   if (!scholarship) {
     return { subtotal, discount: 0, total: subtotal };
   }

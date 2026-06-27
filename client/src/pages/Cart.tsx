@@ -5,7 +5,7 @@ import { useCart } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Trash2, ShoppingBag, CheckCircle2, Tag, X } from "lucide-react";
+import { Trash2, ShoppingBag, CheckCircle2, Tag, X, Minus, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
 import { useAuthUser } from "@/hooks/use-auth";
@@ -19,7 +19,9 @@ export default function Cart() {
   const {
     items,
     removeFromCart,
+    updateQuantity,
     clearCart,
+    itemCount,
     subtotal,
     discount,
     total,
@@ -118,6 +120,11 @@ export default function Cart() {
 
       if (total > 0) {
         const payment = await initPayment.mutateAsync(payload);
+        // Clear cart immediately — user is being redirected to payment gateway.
+        // If they cancel and come back, the cart is empty (acceptable trade-off vs.
+        // stale cart persisting forever after successful payment).
+        clearCart();
+        clearScholarship();
         window.location.assign(payment.checkoutUrl);
         return;
       }
@@ -194,14 +201,40 @@ export default function Cart() {
                           {formatMoneyFromMinorUnits(item.price)}
                         </p>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-slate-400 hover:text-red-500"
-                        onClick={() => removeFromCart(item.programId)}
-                      >
-                        <Trash2 className="h-5 w-5" />
-                      </Button>
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 items-center overflow-hidden rounded-md border border-slate-200 bg-white">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="h-10 w-10 rounded-none text-slate-500"
+                            onClick={() => updateQuantity(item.programId, item.quantity - 1)}
+                            disabled={item.quantity <= 1}
+                          >
+                            <Minus className="h-4 w-4" />
+                          </Button>
+                          <span className="w-10 text-center text-sm font-semibold text-slate-900">
+                            {item.quantity}
+                          </span>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="h-10 w-10 rounded-none text-slate-500"
+                            onClick={() => updateQuantity(item.programId, item.quantity + 1)}
+                          >
+                            <Plus className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-slate-400 hover:text-red-500"
+                          onClick={() => removeFromCart(item.programId)}
+                        >
+                          <Trash2 className="h-5 w-5" />
+                        </Button>
+                      </div>
                     </CardContent>
                   </Card>
                 ))
@@ -257,6 +290,10 @@ export default function Cart() {
                     )}
                   </div>
 
+                  <div className="flex justify-between text-black">
+                    <span>Items</span>
+                    <span>{itemCount}</span>
+                  </div>
                   <div className="flex justify-between text-black">
                     <span>Subtotal</span>
                     <span>{formatMoneyFromMinorUnits(subtotal)}</span>

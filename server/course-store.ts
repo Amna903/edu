@@ -1,4 +1,5 @@
 import { prisma } from "./prisma.js";
+import { getStoredUserByMoodleUserId } from "./user-store.js";
 
 interface MoodleCustomField {
   shortname?: string;
@@ -34,6 +35,43 @@ export async function getStoredCourseByMoodleId(moodleCourseId: number) {
   return prisma.courseCatalog.findUnique({
     where: { moodleCourseId },
   });
+}
+
+export async function createCourseEnrollment(moodleUserId: number, moodleCourseId: number) {
+  const [user, courseCatalog] = await Promise.all([
+    getStoredUserByMoodleUserId(moodleUserId),
+    getStoredCourseByMoodleId(moodleCourseId),
+  ]);
+  if (!user) {
+    throw new Error(`User account not found for Moodle user ${moodleUserId}`);
+  }
+  if (!courseCatalog) {
+    throw new Error(`Course catalog entry not found for Moodle course ${moodleCourseId}`);
+  }
+
+  return prisma.userCourseEnrollment.upsert({
+    where: { userId_courseCatalogId: { userId: user.id, courseCatalogId: courseCatalog.id } },
+    update: {},
+    create: { userId: user.id, courseCatalogId: courseCatalog.id },
+  });
+}
+
+export async function getUserCourseEnrollments(moodleUserId: number) {
+  const user = await getStoredUserByMoodleUserId(moodleUserId);
+  if (!user) {
+    return [];
+  }
+
+  const rows = await prisma.userCourseEnrollment.findMany({
+    where: { userId: user.id },
+    include: { courseCatalog: true },
+    orderBy: { enrolledAt: "desc" },
+  });
+
+  return rows.map((row) => ({
+    ...row,
+    programId: row.courseCatalog.moodleCourseId,
+  }));
 }
 
 export async function upsertCourseCatalogFromMoodle(course: MoodleCoursePayload, categoryName?: string | null) {

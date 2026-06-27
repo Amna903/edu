@@ -9,7 +9,10 @@ type CartItem = {
   programId: number;
   title: string;
   price: number;
+  quantity: number;
 };
+
+type AddToCartItem = Omit<CartItem, "quantity"> & { quantity?: number };
 
 export type AppliedScholarship = {
   code: string;
@@ -20,9 +23,11 @@ export type AppliedScholarship = {
 
 type CartContextType = {
   items: CartItem[];
-  addToCart: (item: CartItem) => void;
+  addToCart: (item: AddToCartItem) => void;
   removeFromCart: (programId: number) => void;
+  updateQuantity: (programId: number, quantity: number) => void;
   clearCart: () => void;
+  itemCount: number;
   subtotal: number;
   discount: number;
   total: number;
@@ -32,9 +37,43 @@ type CartContextType = {
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
+const CART_STORAGE_KEY = "edumeup-cart";
+
+function normalizeCartItems(value: unknown): CartItem[] {
+  if (!Array.isArray(value)) return [];
+
+  return value
+    .map((item) => {
+      if (!item || typeof item !== "object") return null;
+      const record = item as Partial<CartItem>;
+      const programId = Number(record.programId);
+      const price = Number(record.price);
+      const quantity = Number(record.quantity ?? 1);
+
+      if (!Number.isFinite(programId) || !Number.isFinite(price) || !record.title) {
+        return null;
+      }
+
+      return {
+        programId,
+        title: String(record.title),
+        price,
+        quantity: Number.isFinite(quantity) && quantity > 0 ? Math.floor(quantity) : 1,
+      };
+    })
+    .filter((item): item is CartItem => Boolean(item));
+}
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([]);
+  const [items, setItems] = useState<CartItem[]>(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      const storedCart = window.localStorage.getItem(CART_STORAGE_KEY);
+      return storedCart ? normalizeCartItems(JSON.parse(storedCart)) : [];
+    } catch {
+      return [];
+    }
+  });
   const [scholarship, setScholarship] = useState<AppliedScholarship | null>(null);
 
   useEffect(() => {
@@ -49,10 +88,22 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const addToCart = (item: CartItem) => {
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+  }, [items]);
+
+  const addToCart = (item: AddToCartItem) => {
     setItems((prev) => {
-      if (prev.find((i) => i.programId === item.programId)) return prev;
-      return [...prev, item];
+      const existing = prev.find((i) => i.programId === item.programId);
+      if (existing) {
+        return prev.map((i) =>
+          i.programId === item.programId
+            ? { ...i, quantity: i.quantity + Math.max(1, item.quantity || 1) }
+            : i,
+        );
+      }
+      return [...prev, { ...item, quantity: Math.max(1, item.quantity || 1) }];
     });
   };
 
@@ -60,10 +111,32 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setItems((prev) => prev.filter((i) => i.programId !== programId));
   };
 
-  const clearCart = () => setItems([]);
+  const updateQuantity = (programId: number, quantity: number) => {
+    setItems((prev) =>
+      prev
+        .map((item) =>
+          item.programId === programId
+            ? { ...item, quantity: Math.max(1, Math.floor(quantity)) }
+            : item,
+        )
+        .filter((item) => item.quantity > 0),
+    );
+  };
+
+  const clearCart = () => {
+    setItems([]);
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem(CART_STORAGE_KEY);
+    }
+  };
+
+  const itemCount = useMemo(
+    () => items.reduce((acc, item) => acc + item.quantity, 0),
+    [items],
+  );
 
   const subtotal = useMemo(
-    () => items.reduce((acc, item) => acc + item.price, 0),
+    () => items.reduce((acc, item) => acc + item.price * item.quantity, 0),
     [items],
   );
 
@@ -89,7 +162,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         items,
         addToCart,
         removeFromCart,
+        updateQuantity,
         clearCart,
+        itemCount,
         subtotal,
         discount,
         total,

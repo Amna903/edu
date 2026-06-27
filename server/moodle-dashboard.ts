@@ -1,4 +1,6 @@
 import { env } from "./config.js";
+import { prisma } from "./prisma.js";
+import { getStoredUserByMoodleUserId } from "./user-store.js";
 
 function getAdminToken() {
   return env.moodle.adminToken || "";
@@ -41,7 +43,22 @@ export async function getUserCoursesForDashboard(token: string, userId: number) 
     "core_enrol_get_users_courses",
     new URLSearchParams({ userid: String(userId) }),
   );
-  return Array.isArray(data) ? data : [];
+  const moodleCourses = Array.isArray(data) ? data : [];
+
+  // Filter by active enrollments in the database
+  const storedUser = await getStoredUserByMoodleUserId(userId);
+  if (!storedUser) return moodleCourses;
+
+  const activeEnrollments = await prisma.userCourseEnrollment.findMany({
+    where: { userId: storedUser.id, isActive: true },
+    include: { courseCatalog: true },
+  });
+
+  const activeMoodleCourseIds = new Set(
+    activeEnrollments.map((e) => e.courseCatalog.moodleCourseId)
+  );
+
+  return moodleCourses.filter((course) => activeMoodleCourseIds.has(course.id));
 }
 
 export async function getStudentGradesForDashboard(userId: number, token?: string) {

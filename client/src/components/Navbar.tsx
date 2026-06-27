@@ -1,6 +1,7 @@
 import { Link, useLocation } from "wouter";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ShoppingCart } from "lucide-react";
 import { useAuthUser, useLogout } from "@/hooks/use-auth";
+import { useCart } from "@/context/CartContext";
 import logoImage from "@/assets/WhatsApp_Image_2026-02-22_at_20.36.37_1771782478374.jpeg";
 
 type MegaColumn = {
@@ -89,6 +90,7 @@ const consultancyItems: SimpleDropdownItem[] = [
 export function Navbar() {
   const [location] = useLocation();
   const { data: user } = useAuthUser();
+  const { itemCount } = useCart();
   const logout = useLogout();
 
   const dashboardPath =
@@ -234,7 +236,33 @@ export function Navbar() {
           </Link>
         </div>
 
-        <div className="shrink-0 items-center justify-end gap-2 lg:flex lg:w-[330px] 2xl:w-[390px] 2xl:gap-3 hidden">
+        <Link
+          href="/cart"
+          aria-label={`Cart with ${itemCount} item${itemCount === 1 ? "" : "s"}`}
+          className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-slate-200 text-slate-700 transition hover:bg-slate-50 hover:text-brand-primary lg:hidden"
+        >
+          <ShoppingCart className="h-5 w-5" />
+          {itemCount > 0 && (
+            <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-primary px-1.5 font-[Arial] text-[11px] font-bold leading-none text-white">
+              {itemCount > 99 ? "99+" : itemCount}
+            </span>
+          )}
+        </Link>
+
+        <div className="shrink-0 items-center justify-end gap-2 lg:flex lg:w-[370px] 2xl:w-[430px] 2xl:gap-3 hidden">
+          <Link
+            href="/cart"
+            aria-label={`Cart with ${itemCount} item${itemCount === 1 ? "" : "s"}`}
+            className="relative flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 text-slate-700 transition hover:bg-slate-50 hover:text-brand-primary xl:h-11 xl:w-11"
+          >
+            <ShoppingCart className="h-5 w-5" />
+            {itemCount > 0 && (
+              <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-primary px-1.5 font-[Arial] text-[11px] font-bold leading-none text-white">
+                {itemCount > 99 ? "99+" : itemCount}
+              </span>
+            )}
+          </Link>
+
           <Link
             href="/free-resources"
             className="whitespace-nowrap rounded-md border border-slate-200 px-4 py-2.5 font-[Arial] text-[12px] font-semibold leading-none text-slate-700 transition hover:bg-slate-50 hover:text-brand-primary xl:px-5 xl:py-3 xl:text-[13px]"

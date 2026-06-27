@@ -57,6 +57,7 @@ function CourseEnrollDialog({
   const [, navigate] = useLocation();
   const { data: user } = useAuthUser();
   const { toast } = useToast();
+  const { addToCart } = useCart();
   const freeEnroll = useFreeEnroll();
   const { data: courseDetail, isLoading: isDetailLoading } = useCourseDetail(course?.id ?? null, open);
 
@@ -77,6 +78,21 @@ function CourseEnrollDialog({
   const handleEnrollClick = async () => {
     if (!user) {
       redirectToSignup();
+      return;
+    }
+
+    if (paid) {
+      addToCart({
+        programId: displayCourse.id,
+        title: displayCourse.title,
+        price: displayCourse.price || 0,
+      });
+      toast({
+        title: "Course added to cart",
+        description: `${displayCourse.title} has been added to your cart. Redirecting to payment...`,
+      });
+      onOpenChange(false);
+      navigate("/cart");
       return;
     }
 
