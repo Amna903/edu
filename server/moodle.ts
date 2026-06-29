@@ -1,6 +1,12 @@
 import type { LmsCourse, LmsCourseDetail } from "../shared/schema.js";
 import { env } from "./config.js";
 import { getStoredCourseByMoodleId, getStoredCourseCatalog, upsertCourseCatalogFromMoodle } from "./course-store.js";
+import {
+  getMoodleAdminFetchTokens,
+  getMoodleApiUrl,
+  getMoodleCourseFetchTokens,
+  isRetryableMoodleTokenError,
+} from "./moodle-tokens.js";
 import { prisma } from "./prisma.js";
 
 interface MoodleCourse {
@@ -58,38 +64,8 @@ function getMoodleBaseUrl() {
   return env.moodle.baseUrl;
 }
 
-function getMoodleApiUrl() {
-  const directUrl = process.env.MOODLE_URL || "";
-  if (directUrl.includes("/webservice/rest/server.php")) {
-    return directUrl.split("?")[0];
-  }
-  const baseUrl = getMoodleBaseUrl();
-  return baseUrl ? `${baseUrl}/webservice/rest/server.php` : "";
-}
-
 function getMoodleCourseCatalogToken() {
   return env.moodle.courseToken;
-}
-
-/** Admin tokens for legacy course catalog reads. */
-function getMoodleAdminFetchTokens(): string[] {
-  const candidates = [
-    env.moodle.adminManageToken,
-    env.moodle.adminToken,
-    env.moodle.adminUpdateToken,
-    env.moodle.token,
-  ];
-  return candidates.filter(Boolean).filter((val, idx, self) => self.indexOf(val) === idx);
-}
-
-function getMoodleCourseFetchTokens(): string[] {
-  const courseToken = getMoodleCourseCatalogToken();
-  if (courseToken) return [courseToken];
-  return getMoodleAdminFetchTokens();
-}
-
-function isRetryableMoodleTokenError(errorCode?: string) {
-  return errorCode === "invalidtoken" || errorCode === "accessexception";
 }
 
 function formatMoodleConfigurationError(message: string) {
@@ -195,9 +171,9 @@ async function moodleRequestWithTokens<T>(
     const data = await response.json();
     if (data?.exception) {
       lastError = new Error(data.message || `Moodle error in ${wsfunction}`);
-      if (isRetryableMoodleTokenError(data.errorcode) && index < tokens.length - 1) {
+      if (isRetryableMoodleTokenError(data.errorcode, data.message) && index < tokens.length - 1) {
         if (env.authDebug === "1") {
-          console.warn(`[moodle] ${wsfunction} failed with token #${index + 1} (${data.errorcode}), trying next token`);
+          console.warn(`[moodle] ${wsfunction} failed with token #${index + 1} (${data.errorcode || "token"}), trying next token`);
         }
         continue;
       }
@@ -211,9 +187,7 @@ async function moodleRequestWithTokens<T>(
 }
 
 async function moodleRequest<T>(wsfunction: string, extraParams?: Record<string, string>) {
-  const useCourseTokenOnly = COURSE_CATALOG_WS_FUNCTIONS.has(wsfunction) && Boolean(getMoodleCourseCatalogToken());
-  const tokens = useCourseTokenOnly ? [getMoodleCourseCatalogToken()] : getMoodleCourseFetchTokens();
-  return moodleRequestWithTokens<T>(wsfunction, tokens, extraParams);
+  return moodleRequestWithTokens<T>(wsfunction, getMoodleCourseFetchTokens(), extraParams);
 }
 
 function extractCoursePrice(course: MoodleCourse) {

@@ -1,257 +1,76 @@
-
-import { pgTable, text, serial, integer, boolean, timestamp, jsonb } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// === LEAD GENERATION / INQUIRIES ===
-export const inquiries = pgTable("inquiries", {
-  id: serial("id").primaryKey(),
-  type: text("type").notNull(), // 'diagnostic', 'enrollment', 'school_charter', 'tutor_application', 'contact'
-  name: text("name").notNull(),
-  email: text("email").notNull(),
-  phone: text("phone"),
-  role: text("role"), // 'parent', 'student', 'school_admin', 'tutor'
-  gradeLevel: text("grade_level"), // For students
-  subjectInterest: text("subject_interest"),
-  learningMode: text("learning_mode"), // 'online' | 'physical' for student enrollment
-  message: text("message"),
-  status: text("status").default("new"), // 'new', 'contacted', 'resolved'
-  createdAt: timestamp("created_at").defaultNow(),
-});
-
-// === RESOURCES LIBRARY ===
-export const resources = pgTable("resources", {
-  id: serial("id").primaryKey(),
-  title: text("title").notNull(),
-  description: text("description").notNull(),
-  category: text("category").notNull(), // 'magic_sheet', 'workbook', 'planner', 'guide'
-  subject: text("subject"), // 'physics', 'chemistry', 'math', 'general'
-  fileUrl: text("file_url").notNull(),
-  thumbnailUrl: text("thumbnail_url"),
-  isFree: boolean("is_free").default(true),
-  downloadCount: integer("download_count").default(0),
-  createdAt: timestamp("created_at").defaultNow(),
-});
-
-// === PROGRAMS ===
-export const programs = pgTable("programs", {
-  id: serial("id").primaryKey(),
-  title: text("title").notNull(),
-  slug: text("slug").notNull().unique(),
-  shortDescription: text("short_description").notNull(),
-  fullDescription: text("full_description").notNull(),
-  category: text("category").notNull(), // 'pre_o_level', 'o_level', 'foundation'
-  price: integer("price"), // Base price in USD cents
-  prices: jsonb("prices").$type<Record<string, number>>(), // Map of country code to price in local currency cents
-  features: jsonb("features").$type<string[]>(), // Array of feature strings
-  isPopular: boolean("is_popular").default(false),
-  createdAt: timestamp("created_at").defaultNow(),
-});
-
-// === ORDERS & ENROLLMENTS ===
-export const orders = pgTable("orders", {
-  id: serial("id").primaryKey(),
-  userId: text("user_id").notNull(), // Using session/temp id for now
-  totalAmount: integer("total_amount").notNull(),
-  status: text("status").notNull().default("pending"), // 'pending', 'completed'
-  paymentStatus: text("payment_status").default("pending"),
-  paymentProvider: text("payment_provider"),
-  paymentRef: text("payment_ref"),
-  invoiceNumber: text("invoice_number"),
-  paidAmount: integer("paid_amount").default(0),
-  remainingAmount: integer("remaining_amount").default(0),
-  allowPartialPayment: boolean("allow_partial_payment").default(true),
-  refundStatus: text("refund_status"),
-  paymentNotes: jsonb("payment_notes").$type<Array<{
-    status: string;
-    message: string;
-    createdAt: string;
-  }>>().default([]),
-  createdAt: timestamp("created_at").defaultNow(),
-});
-
-export const orderItems = pgTable("order_items", {
-  id: serial("id").primaryKey(),
-  orderId: integer("order_id").notNull(),
-  programId: integer("program_id").notNull(),
-  price: integer("price").notNull(),
-});
-
-export const pendingPayments = pgTable("pending_payments", {
-  orderRef: text("order_ref").primaryKey(),
-  userId: text("user_id").notNull(),
-  items: jsonb("items").$type<Array<{ programId: number; title: string; price: number }>>().notNull(),
-  totalAmount: integer("total_amount").notNull(),
-  amountToPay: integer("amount_to_pay"),
-  scholarshipCode: text("scholarship_code"),
-  tracker: text("tracker"),
-  orderId: integer("order_id"),
-  createdAt: timestamp("created_at").defaultNow(),
-});
-
-export const scholarshipCodes = pgTable("scholarship_codes", {
-  code: text("code").primaryKey(),
-  moodleUserId: integer("moodle_user_id").notNull(),
-  email: text("email").notNull(),
-  name: text("name").notNull(),
-  country: text("country").notNull(),
-  concessionPercent: integer("concession_percent").notNull(),
-  region: text("region").notNull(),
-  expiresAt: timestamp("expires_at").notNull(),
-  used: boolean("used").notNull().default(false),
-  usedAt: timestamp("used_at"),
-  usedByUserId: text("used_by_user_id"),
-  createdAt: timestamp("created_at").defaultNow(),
-});
-
-export const registeredCountries = pgTable("registered_countries", {
-  moodleUserId: integer("moodle_user_id").primaryKey(),
-  country: text("country").notNull(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
-
-export const registrationCountries = pgTable("registration_countries", {
-  username: text("username").primaryKey(),
-  country: text("country").notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
-});
-
-export const dashboardNotificationReads = pgTable("dashboard_notification_reads", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull(),
-  notificationId: integer("notification_id").notNull(),
-  readAt: timestamp("read_at").defaultNow(),
-});
-
-export const schoolLicenses = pgTable("school_licenses", {
-  id: text("id").primaryKey(),
-  schoolUserId: integer("school_user_id").notNull(),
-  courseId: integer("course_id").notNull(),
-  courseName: text("course_name").notNull(),
-  totalSeats: integer("total_seats").notNull(),
-  orderId: integer("order_id").notNull(),
-  purchaseDate: timestamp("purchase_date").defaultNow(),
-  expiresAt: timestamp("expires_at"),
-});
-
-export const schoolRosterStudents = pgTable("school_roster_students", {
-  id: serial("id").primaryKey(),
-  schoolUserId: integer("school_user_id").notNull(),
-  studentId: integer("student_id").notNull(),
-  studentEmail: text("student_email").notNull(),
-  studentName: text("student_name").notNull(),
-  uploadedAt: timestamp("uploaded_at").defaultNow(),
-  sourceUploadId: text("source_upload_id").notNull(),
-});
-
-export const schoolStudentUploads = pgTable("school_student_uploads", {
-  id: text("id").primaryKey(),
-  schoolUserId: integer("school_user_id").notNull(),
-  filename: text("filename").notNull(),
-  totalStudents: integer("total_students").notNull(),
-  processedStudents: integer("processed_students").notNull(),
-  failedStudents: integer("failed_students").notNull(),
-  status: text("status").notNull(),
-  errors: jsonb("errors").$type<Array<{ row: number; email?: string; error: string }>>().default([]),
-  uploadedAt: timestamp("uploaded_at").defaultNow(),
-});
-
-export const schoolSeatAssignments = pgTable("school_seat_assignments", {
-  id: text("id").primaryKey(),
-  schoolUserId: integer("school_user_id").notNull(),
-  licenseId: text("license_id").notNull(),
-  studentId: integer("student_id").notNull(),
-  studentEmail: text("student_email").notNull(),
-  studentName: text("student_name").notNull(),
-  assignedAt: timestamp("assigned_at").defaultNow(),
-});
-
-export const contactSubmissions = pgTable("edume_contact_submissions", {
-  id: serial("id").primaryKey(),
-  consultationType: text("consultation_type").notNull(),
-  name: text("name").notNull(),
-  email: text("email").notNull(),
-  country: text("country"),
-  subject: text("subject"),
-  message: text("message"),
-  schoolName: text("school_name"),
-  studentCount: text("student_count"),
-  device: text("device"),
-  problemType: text("problem_type"),
-  createdAt: timestamp("created_at").defaultNow(),
-});
-
-// === DIAGNOSTICS ===
-export const diagnosticGuestDiagnostics = pgTable("edume_guest_diagnostics", {
-  id: serial("id").primaryKey(),
-  ipAddress: text("ip_address").notNull(),
-  subject: text("subject").notNull(),
-  diagnosticType: text("diagnostic_type").notNull(),
-  startedAt: timestamp("started_at").defaultNow(),
-  completed: boolean("completed").notNull().default(false),
-  completedAt: timestamp("completed_at"),
-  sessionToken: text("session_token").notNull().unique(),
-  moodleUserId: integer("moodle_user_id"),
-});
-
-export const diagnosticAccountFlags = pgTable("edume_diagnostic_account_flags", {
-  moodleUserId: integer("moodle_user_id").primaryKey(),
-  freeDiagnosticUsed: boolean("free_diagnostic_used").notNull().default(false),
-  teacherT1Attempts: integer("teacher_t1_attempts").notNull().default(0),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
-
-export const diagnosticSessions = pgTable("edume_diagnostic_sessions", {
-  id: serial("id").primaryKey(),
-  sessionToken: text("session_token").notNull().unique(),
-  moodleUserId: integer("moodle_user_id"),
-  ipAddress: text("ip_address").notNull(),
-  diagnosticType: integer("diagnostic_type").notNull(),
-  subject: text("subject"),
-  grade: text("grade"),
-  variant: text("variant"),
-  paid: boolean("paid").notNull().default(false),
-  status: text("status").notNull().default("started"),
-  startedAt: timestamp("started_at").defaultNow(),
-  completedAt: timestamp("completed_at"),
-  resultJson: jsonb("result_json").$type<Record<string, unknown> | null>(),
-});
-
-export const diagnosticAnswers = pgTable("edume_diagnostic_answers", {
-  id: serial("id").primaryKey(),
-  sessionToken: text("session_token").notNull(),
-  questionId: text("question_id").notNull(),
-  answer: jsonb("answer").$type<unknown>().notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
-});
-
 // === SCHEMAS ===
-export const insertOrderSchema = createInsertSchema(orders).omit({ 
-  id: true, 
-  createdAt: true 
-});
-export const insertOrderItemSchema = createInsertSchema(orderItems).omit({ id: true });
-
-export const insertInquirySchema = createInsertSchema(inquiries).omit({ 
-  id: true, 
-  createdAt: true, 
-  status: true 
-});
-
-export const insertResourceSchema = createInsertSchema(resources).omit({ 
-  id: true, 
-  createdAt: true, 
-  downloadCount: true 
-});
-
-export const insertProgramSchema = createInsertSchema(programs).omit({ 
-  id: true, 
-  createdAt: true 
+export const insertOrderSchema = z.object({
+  userId: z.string(),
+  totalAmount: z.number().int(),
+  status: z.string().optional().default("pending"),
+  paymentStatus: z.string().optional().default("pending"),
+  paymentProvider: z.string().nullable().optional(),
+  paymentRef: z.string().nullable().optional(),
+  invoiceNumber: z.string().nullable().optional(),
+  paidAmount: z.number().int().optional().default(0),
+  remainingAmount: z.number().int().optional().default(0),
+  allowPartialPayment: z.boolean().optional().default(true),
+  refundStatus: z.string().nullable().optional(),
+  paymentNotes: z.array(z.object({
+    status: z.string(),
+    message: z.string(),
+    createdAt: z.string(),
+  })).optional().default([]),
 });
 
-export const insertContactSubmissionSchema = createInsertSchema(contactSubmissions).omit({
-  id: true,
-  createdAt: true,
+export const insertOrderItemSchema = z.object({
+  orderId: z.number().int(),
+  programId: z.number().int(),
+  price: z.number().int(),
+});
+
+export const insertInquirySchema = z.object({
+  type: z.string(),
+  name: z.string(),
+  email: z.string(),
+  phone: z.string().nullable().optional(),
+  role: z.string().nullable().optional(),
+  gradeLevel: z.string().nullable().optional(),
+  subjectInterest: z.string().nullable().optional(),
+  learningMode: z.string().nullable().optional(),
+  message: z.string().nullable().optional(),
+});
+
+export const insertResourceSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+  category: z.string(),
+  subject: z.string().nullable().optional(),
+  fileUrl: z.string(),
+  thumbnailUrl: z.string().nullable().optional(),
+  isFree: z.boolean().nullable().optional().default(true),
+});
+
+export const insertProgramSchema = z.object({
+  title: z.string(),
+  slug: z.string(),
+  shortDescription: z.string(),
+  fullDescription: z.string(),
+  category: z.string(),
+  price: z.number().int().nullable().optional(),
+  prices: z.record(z.number()).nullable().optional(),
+  features: z.array(z.string()).nullable().optional(),
+  isPopular: z.boolean().nullable().optional().default(false),
+});
+
+export const insertContactSubmissionSchema = z.object({
+  consultationType: z.string(),
+  name: z.string(),
+  email: z.string(),
+  country: z.string().nullable().optional(),
+  subject: z.string().nullable().optional(),
+  message: z.string().nullable().optional(),
+  schoolName: z.string().nullable().optional(),
+  studentCount: z.string().nullable().optional(),
+  device: z.string().nullable().optional(),
+  problemType: z.string().nullable().optional(),
 });
 
 export const diagnosticTypeSchema = z.union([
@@ -1005,13 +824,55 @@ export const analyticsReportSchema = z.object({
 });
 
 // === TYPES ===
-export type Inquiry = typeof inquiries.$inferSelect;
+export type PaymentNote = {
+  status: string;
+  message: string;
+  createdAt: string;
+};
+
+export type Inquiry = {
+  id: number;
+  type: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  role: string | null;
+  gradeLevel: string | null;
+  subjectInterest: string | null;
+  learningMode: string | null;
+  message: string | null;
+  status: string | null;
+  createdAt: Date | null;
+};
 export type InsertInquiry = z.infer<typeof insertInquirySchema>;
 
-export type Resource = typeof resources.$inferSelect;
+export type Resource = {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  subject: string | null;
+  fileUrl: string;
+  thumbnailUrl: string | null;
+  isFree: boolean | null;
+  downloadCount: number | null;
+  createdAt: Date | null;
+};
 export type InsertResource = z.infer<typeof insertResourceSchema>;
 
-export type Program = typeof programs.$inferSelect;
+export type Program = {
+  id: number;
+  title: string;
+  slug: string;
+  shortDescription: string;
+  fullDescription: string;
+  category: string;
+  price: number | null;
+  prices: Record<string, number> | null;
+  features: string[] | null;
+  isPopular: boolean | null;
+  createdAt: Date | null;
+};
 export type InsertProgram = z.infer<typeof insertProgramSchema>;
 export type LmsCourse = z.infer<typeof lmsCourseSchema>;
 export type LmsCourseDetail = z.infer<typeof lmsCourseDetailSchema>;
@@ -1070,11 +931,31 @@ export type UsageMetrics = z.infer<typeof usageMetricsSchema>;
 export type AnalyticsQueryInput = z.infer<typeof analyticsQueryInputSchema>;
 export type AnalyticsReport = z.infer<typeof analyticsReportSchema>;
 
-export type Order = typeof orders.$inferSelect;
-export type InsertOrder = typeof orders.$inferInsert;
+export type Order = {
+  id: number;
+  userId: string;
+  totalAmount: number;
+  status: string;
+  paymentStatus: string | null;
+  paymentProvider: string | null;
+  paymentRef: string | null;
+  invoiceNumber: string | null;
+  paidAmount: number | null;
+  remainingAmount: number | null;
+  allowPartialPayment: boolean | null;
+  refundStatus: string | null;
+  paymentNotes: PaymentNote[] | null;
+  createdAt: Date | null;
+};
+export type InsertOrder = z.input<typeof insertOrderSchema>;
 
-export type OrderItem = typeof orderItems.$inferSelect;
-export type InsertOrderItem = typeof orderItems.$inferInsert;
+export type OrderItem = {
+  id: number;
+  orderId: number;
+  programId: number;
+  price: number;
+};
+export type InsertOrderItem = z.infer<typeof insertOrderItemSchema>;
 
 // Request types
 export type CreateInquiryRequest = InsertInquiry;

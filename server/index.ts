@@ -4,6 +4,7 @@ import { serveStatic } from "./static.js";
 import { createServer } from "http";
 import session from "express-session";
 import { env, isProduction, logEnvPresence } from "./config.js";
+import { runPendingMigrations } from "./migrate.js";
 
 const app = express();
 const httpServer = createServer(app);
@@ -96,6 +97,7 @@ app.use((req, res, next) => {
 });
 
 export const ready = (async () => {
+  await runPendingMigrations();
   await registerRoutes(httpServer, app);
 
   app.use((err: any, _req: Request, res: Response, next: NextFunction) => {

@@ -2,6 +2,7 @@ import type { AppRole, AuthUser, LoginInput, RegisterInput } from "../shared/sch
 import { countryToMoodleIso, normalizeScholarshipCountry } from "../shared/scholarship-concessions.js";
 import { env } from "./config.js";
 import { getPendingSignupByUsername, getStoredRoleByMoodleUserId, markPendingSignupConfirmed, rememberPendingRegistrationRole, rememberPendingSignup, syncUserFromMoodleSession } from "./user-store.js";
+import { prisma } from "./prisma.js";
 
 interface MoodleLoginResponse {
   token?: string;
@@ -65,19 +66,76 @@ function getServiceName() {
   return env.moodle.publicService || "moodle_mobile_app";
 }
 
+function getAdminTokenCandidates() {
+  return [
+    env.moodle.adminUpdateToken,
+    env.moodle.adminManageToken,
+    env.moodle.adminToken,
+    env.moodle.token,
+    env.moodle.signupToken,
+  ].filter((token, index, tokens) => Boolean(token) && tokens.indexOf(token) === index) as string[];
+}
+
 function getAdminToken() {
-  const token =
-    env.moodle.adminUpdateToken ||
-    env.moodle.adminManageToken ||
-    env.moodle.adminToken ||
-    env.moodle.token ||
-    env.moodle.signupToken;
+  const token = getAdminTokenCandidates()[0];
   if (!token) {
     throw new Error(
       "MOODLE_ADMIN_UPDATE, MOODLE_ADMIN_MANAGE, MOODLE_ADMIN_TOKEN, MOODLE_TOKEN, or MOODLE_SIGNUP_TOKEN is not configured",
     );
   }
   return token;
+}
+
+function isInvalidMoodleTokenError(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error);
+  return message.toLowerCase().includes("invalid token");
+}
+
+function isServiceAccountBlockedError(error: unknown) {
+  const message = (error instanceof Error ? error.message : String(error)).toLowerCase();
+  return message.includes("forcepasswordchangenotice") || message.includes("force password change");
+}
+
+function formatMoodleAuthError(message: string, context: "service" | "login" = "service") {
+  if (message.includes("forcepasswordchangenotice")) {
+    if (context === "login") {
+      return "Your account was created, but Moodle is blocking sign-in until the password is changed once in Moodle. Open moodle.edumeup.com, log in with your new credentials, complete the password change, then return here.";
+    }
+    return "The Moodle API service account must change its password before registration can work. Log in to Moodle as that service user, complete the password change, then try again.";
+  }
+  return message;
+}
+
+async function moodlePostWithTokenFallback<T>(
+  wsfunction: string,
+  params: URLSearchParams,
+  tokens: string[] = getAdminTokenCandidates(),
+) {
+  if (!tokens.length) {
+    throw new Error(
+      "MOODLE_ADMIN_UPDATE, MOODLE_ADMIN_MANAGE, MOODLE_ADMIN_TOKEN, or MOODLE_TOKEN is not configured",
+    );
+  }
+
+  let lastError: Error | null = null;
+  for (const token of tokens) {
+    try {
+      return await moodlePost<T>(token, wsfunction, params);
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error));
+      if (!isInvalidMoodleTokenError(lastError) && !isServiceAccountBlockedError(lastError)) {
+        throw lastError;
+      }
+    }
+  }
+
+  if (lastError && isServiceAccountBlockedError(lastError)) {
+    throw new Error(formatMoodleAuthError(lastError.message));
+  }
+
+  throw lastError || new Error(
+    "No valid Moodle webservice token found. In Moodle, go to Site administration → Server → Web services → Manage tokens, create a new token for a service user with core_user_create_users enabled, then set MOODLE_ADMIN_TOKEN in your .env file.",
+  );
 }
 
 function resolveAppRole(userId: number, username: string, isSiteAdmin?: boolean): AppRole {
@@ -122,7 +180,7 @@ async function moodlePost<T>(token: string, wsfunction: string, params: URLSearc
 
   const data = await response.json();
   if (data?.exception || data?.errorcode) {
-    throw new Error(data.message || `Moodle error in ${wsfunction}`);
+    throw new Error(formatMoodleAuthError(data.message || `Moodle error in ${wsfunction}`));
   }
 
   return data as T;
@@ -170,7 +228,7 @@ export async function loginWithMoodle(input: LoginInput): Promise<{ token: strin
 
   const data = await moodleGet<MoodleLoginResponse>(`${getBaseUrl()}/login/token.php?${params.toString()}`);
   if (data.error || !data.token) {
-    throw new Error(data.error || "Invalid username or password");
+    throw new Error(formatMoodleAuthError(data.error || "Invalid username or password", "login"));
   }
 
   const user = await fetchCurrentUser(data.token);
@@ -185,16 +243,20 @@ export async function registerWithMoodle(input: RegisterInput): Promise<Register
   const normalizedUsername = input.username.trim().toLowerCase();
   const normalizedEmail = input.email.trim().toLowerCase();
 
-  await rememberPendingRegistrationRole(normalizedUsername, input.role);
-  await rememberPendingSignup({
-    username: normalizedUsername,
-    email: normalizedEmail,
-    firstName: input.firstname.trim(),
-    lastName: input.lastname.trim(),
-    role: input.role,
-  });
+  const skipEmailConfirmation = !env.moodle.signupToken || env.moodle.skipEmailConfirmation;
 
-  if (env.moodle.signupToken) {
+  if (!skipEmailConfirmation) {
+    await rememberPendingRegistrationRole(normalizedUsername, input.role);
+    await rememberPendingSignup({
+      username: normalizedUsername,
+      email: normalizedEmail,
+      firstName: input.firstname.trim(),
+      lastName: input.lastname.trim(),
+      role: input.role,
+    });
+  }
+
+  if (!skipEmailConfirmation) {
     let signupSucceeded = false;
     try {
       const signupResponse = await moodlePost<MoodleSignupResponse | boolean>(
@@ -246,6 +308,8 @@ export async function registerWithMoodle(input: RegisterInput): Promise<Register
     "users[0][lastname]": input.lastname.trim(),
     "users[0][email]": normalizedEmail,
     "users[0][auth]": "manual",
+    "users[0][preferences][0][type]": "auth_forcepasswordchange",
+    "users[0][preferences][0][value]": "0",
   });
   const scholarshipCountry = normalizeScholarshipCountry(input.country);
   const moodleCountryIso = scholarshipCountry ? countryToMoodleIso(scholarshipCountry) : undefined;
@@ -253,8 +317,7 @@ export async function registerWithMoodle(input: RegisterInput): Promise<Register
     createParams.append("users[0][country]", moodleCountryIso);
   }
 
-  const result = await moodlePost<MoodleCreateUserRow[]>(
-    getAdminToken(),
+  const result = await moodlePostWithTokenFallback<MoodleCreateUserRow[]>(
     "core_user_create_users",
     createParams,
   );
@@ -262,6 +325,45 @@ export async function registerWithMoodle(input: RegisterInput): Promise<Register
   const createdUser = Array.isArray(result) ? result[0] : undefined;
   if (!createdUser?.username) {
     throw new Error("Moodle did not return the created user");
+  }
+
+  if (createdUser.id) {
+    try {
+      await moodlePostWithTokenFallback(
+        "core_user_update_users",
+        new URLSearchParams({
+          "users[0][id]": String(createdUser.id),
+          "users[0][forcepasswordchange]": "0",
+          "users[0][preferences][0][type]": "auth_forcepasswordchange",
+          "users[0][preferences][0][value]": "0",
+        }),
+      );
+    } catch (err) {
+      console.warn("[moodle] Could not clear forcepasswordchange:", err instanceof Error ? err.message : err);
+    }
+  }
+
+  // Small delay to ensure Moodle processes the update before login
+  await new Promise((resolve) => setTimeout(resolve, 500));
+
+  if (createdUser.id) {
+    // Pre-emptively create the user in the database so the role is preserved
+    // and we don't rely on pendingRegistration which we skipped above.
+    await prisma.user.upsert({
+      where: { moodleUserId: createdUser.id },
+      create: {
+        moodleUserId: createdUser.id,
+        username: normalizedUsername,
+        role: input.role,
+        email: normalizedEmail,
+        firstName: input.firstname.trim() || null,
+        lastName: input.lastname.trim() || null,
+        lastLoginAt: new Date(),
+      },
+      update: {
+        role: input.role,
+      },
+    });
   }
 
   const loginResult = await loginWithMoodle({

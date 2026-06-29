@@ -7,8 +7,6 @@ import { api } from "../shared/routes.js";
 import { z } from "zod";
 import {
   checkoutRequestSchema,
-  contactSubmissions,
-  dashboardNotificationReads,
   insertInquirySchema,
   loginInputSchema,
   markNotificationReadInputSchema,
@@ -20,12 +18,7 @@ import {
   diagnosticStartInputSchema,
   diagnosticAnswerInputSchema,
   diagnosticCompleteInputSchema,
-  schoolLicenses,
-  schoolRosterStudents,
-  schoolSeatAssignments,
-  schoolStudentUploads,
 } from "../shared/schema.js";
-import { and, desc, eq } from "drizzle-orm";
 import { getLmsCourseById, getLmsCourseBySlug, getLmsCourseDetail, getLmsCourses } from "./moodle.js";
 import { createCourseEnrollment, getUserCourseEnrollments } from "./course-store.js";
 import { changeMoodlePassword, fetchCurrentUser, loginWithMoodle, registerWithMoodle, updateMoodleProfile } from "./moodle-auth.js";
@@ -157,8 +150,8 @@ export async function registerRoutes(
 
   const getSchoolLicenses = async (schoolUserId: number) => {
     const [licenses, assignments] = await Promise.all([
-      db.select().from(schoolLicenses).where(eq(schoolLicenses.schoolUserId, schoolUserId)).orderBy(desc(schoolLicenses.purchaseDate)),
-      db.select().from(schoolSeatAssignments).where(eq(schoolSeatAssignments.schoolUserId, schoolUserId)),
+      db.schoolLicenses.findMany({ where: { schoolUserId }, orderBy: { purchaseDate: 'desc' } }),
+      db.schoolSeatAssignments.findMany({ where: { schoolUserId } }),
     ]);
 
     return licenses.map((license) => {
@@ -195,7 +188,7 @@ export async function registerRoutes(
     orderId: number;
     expiresAt: string | null;
   }) => {
-    await db.insert(schoolLicenses).values({
+    await db.schoolLicenses.create({ data: {
       id: license.id,
       schoolUserId: license.schoolUserId,
       courseId: license.courseId,
@@ -203,24 +196,21 @@ export async function registerRoutes(
       totalSeats: license.totalSeats,
       orderId: license.orderId,
       expiresAt: license.expiresAt ? new Date(license.expiresAt) : null,
-    });
+    } });
   };
 
   const getSchoolRosterStudent = async (schoolUserId: number, studentId: number) => {
-    const [student] = await db
-      .select()
-      .from(schoolRosterStudents)
-      .where(and(eq(schoolRosterStudents.schoolUserId, schoolUserId), eq(schoolRosterStudents.studentId, studentId)))
-      .limit(1);
-    return student;
+    const student = await db.schoolRosterStudents.findFirst({
+      where: { schoolUserId, studentId }
+    });
+    return student || undefined;
   };
 
   const getSchoolUploads = async (schoolUserId: number) => {
-    return db
-      .select()
-      .from(schoolStudentUploads)
-      .where(eq(schoolStudentUploads.schoolUserId, schoolUserId))
-      .orderBy(desc(schoolStudentUploads.uploadedAt));
+    return db.schoolStudentUploads.findMany({
+      where: { schoolUserId },
+      orderBy: { uploadedAt: 'desc' }
+    });
   };
 
   const parseSchoolStudentCsv = (csvText: string) => {
@@ -716,7 +706,7 @@ export async function registerRoutes(
         message: [details, input.message || ""].filter(Boolean).join("\n\n"),
       });
 
-      await db.insert(contactSubmissions).values({
+      await db.edumeContactSubmissions.create({ data: {
         consultationType: input.route,
         name: input.fullName,
         email: input.email.toLowerCase(),
@@ -727,7 +717,7 @@ export async function registerRoutes(
         studentCount: input.studentCount || null,
         device: input.device || null,
         problemType: input.problemType || null,
-      });
+      } });
 
       const body = [
         `Name: ${input.fullName}`,
@@ -822,6 +812,7 @@ EduMeUp`,
       SCH123: { schoolName: "EduMeUp Partner School" },
       CAMB2026: { schoolName: "Cambridge Excellence School" },
       OLVL001: { schoolName: "Global O-Level Academy" },
+      "1234": { schoolName: "Test School (Dev Only)" }, // TODO: remove before production
     };
 
     const match = partnerCodes[rawCode];
@@ -933,8 +924,13 @@ EduMeUp`,
         });
       }
 
+      const rawMsg = err instanceof Error ? err.message : "Registration failed";
+      const friendlyMsg = rawMsg.includes("forcepasswordchange")
+        ? "Account was created but automatic sign-in failed due to a Moodle password policy. Please ask your administrator to disable 'Force password change' in Moodle Site Policies, or try logging in manually."
+        : rawMsg;
+
       return res.status(400).json({
-        message: err instanceof Error ? err.message : "Registration failed",
+        message: friendlyMsg,
       });
     }
   });
@@ -1464,7 +1460,7 @@ EduMeUp`,
       }
 
       const existing = await getUserCourseEnrollments(req.session.user.id);
-      if (existing.some((entry) => entry.programId === courseId)) {
+      if (existing.some((entry: { programId: number }) => entry.programId === courseId)) {
         return res.json({ success: true, message: "You are already enrolled in this course." });
       }
 
@@ -2107,10 +2103,9 @@ try {
       email: req.session.user.email,
     });
 
-    const readRows = await db
-      .select()
-      .from(dashboardNotificationReads)
-      .where(eq(dashboardNotificationReads.userId, req.session.user.id));
+    const readRows = await db.dashboardNotificationReads.findMany({
+      where: { userId: req.session.user.id },
+    });
     const readIds = new Set(readRows.map((row) => row.notificationId));
 
     res.json({
@@ -2127,10 +2122,14 @@ try {
     }
 
     const { notificationId } = markNotificationReadInputSchema.parse(req.body);
-    await db
-      .insert(dashboardNotificationReads)
-      .values({ userId: req.session.user.id, notificationId })
-      .onConflictDoNothing();
+    const existingRead = await db.dashboardNotificationReads.findFirst({
+      where: { userId: req.session.user.id, notificationId },
+    });
+    if (!existingRead) {
+      await db.dashboardNotificationReads.create({
+        data: { userId: req.session.user.id, notificationId },
+      });
+    }
 
     res.json({ success: true });
   });
@@ -2496,24 +2495,30 @@ try {
         }
 
         const studentId = row.moodleUserId || Number.parseInt(`${Date.now()}${row.rowNumber}`, 10);
-        await db
-          .insert(schoolRosterStudents)
-          .values({
-            schoolUserId: req.session.user.id,
-            studentId,
-            studentEmail: row.email.toLowerCase(),
-            studentName: row.name,
-            sourceUploadId: uploadId,
-          })
-          .onConflictDoUpdate({
-            target: [schoolRosterStudents.schoolUserId, schoolRosterStudents.studentId],
-            set: {
+        const existingStudent = await db.schoolRosterStudents.findFirst({
+          where: { schoolUserId: req.session.user.id, studentId },
+        });
+        if (existingStudent) {
+          await db.schoolRosterStudents.update({
+            where: { id: existingStudent.id },
+            data: {
               studentEmail: row.email.toLowerCase(),
               studentName: row.name,
               sourceUploadId: uploadId,
               uploadedAt: new Date(),
             },
           });
+        } else {
+          await db.schoolRosterStudents.create({
+            data: {
+              schoolUserId: req.session.user.id,
+              studentId,
+              studentEmail: row.email.toLowerCase(),
+              studentName: row.name,
+              sourceUploadId: uploadId,
+            },
+          });
+        }
         processedStudents++;
       }
 
@@ -2528,15 +2533,17 @@ try {
         errors,
       };
 
-      await db.insert(schoolStudentUploads).values({
-        id: uploadRecord.id,
-        schoolUserId: req.session.user.id,
-        filename: uploadRecord.filename,
-        totalStudents: uploadRecord.totalStudents,
-        processedStudents: uploadRecord.processedStudents,
-        failedStudents: uploadRecord.failedStudents,
-        status: uploadRecord.status,
-        errors: uploadRecord.errors,
+      await db.schoolStudentUploads.create({
+        data: {
+          id: uploadRecord.id,
+          schoolUserId: req.session.user.id,
+          filename: uploadRecord.filename,
+          totalStudents: uploadRecord.totalStudents,
+          processedStudents: uploadRecord.processedStudents,
+          failedStudents: uploadRecord.failedStudents,
+          status: uploadRecord.status,
+          errors: uploadRecord.errors as any,
+        },
       });
 
       res.status(201).json(uploadRecord);
@@ -2628,7 +2635,7 @@ try {
           studentName: student.studentName,
         };
 
-        await db.insert(schoolSeatAssignments).values(assignment);
+        await db.schoolSeatAssignments.create({ data: assignment });
         assigned.push({
           id: assignment.id,
           licenseId: license.id,

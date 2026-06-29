@@ -113,7 +113,7 @@ export default function Login() {
     return "Weak";
   }, [baseRegisterForm.password]);
 
-  const namesValid = /^[A-Za-z-]{2,50}$/.test(baseRegisterForm.firstname.trim()) && /^[A-Za-z-]{2,50}$/.test(baseRegisterForm.lastname.trim());
+  const namesValid = /^[A-Za-z][A-Za-z '.-]{1,49}$/.test(baseRegisterForm.firstname.trim()) && /^[A-Za-z][A-Za-z '.-]{1,49}$/.test(baseRegisterForm.lastname.trim());
   const passwordValid = baseRegisterForm.password.length >= 8 && /[A-Za-z]/.test(baseRegisterForm.password) && /\d/.test(baseRegisterForm.password);
   const confirmMatches = baseRegisterForm.confirmPassword.length > 0 && baseRegisterForm.password === baseRegisterForm.confirmPassword;
 
@@ -334,10 +334,16 @@ export default function Login() {
                     <div className="space-y-2">
                       <Label htmlFor="register-firstname">{selectedRole === "parent" ? "Your First Name" : "First Name"}</Label>
                       <Input id="register-firstname" value={baseRegisterForm.firstname} onChange={(event) => setBaseRegisterForm((current) => ({ ...current, firstname: event.target.value }))} required />
+                      {baseRegisterForm.firstname && !/^[A-Za-z][A-Za-z '.-]{1,49}$/.test(baseRegisterForm.firstname.trim()) && (
+                        <p className="text-xs text-red-500">Only letters, spaces, hyphens, or apostrophes allowed (no numbers).</p>
+                      )}
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="register-lastname">{selectedRole === "parent" ? "Your Last Name" : "Last Name"}</Label>
                       <Input id="register-lastname" value={baseRegisterForm.lastname} onChange={(event) => setBaseRegisterForm((current) => ({ ...current, lastname: event.target.value }))} required />
+                      {baseRegisterForm.lastname && !/^[A-Za-z][A-Za-z '.-]{1,49}$/.test(baseRegisterForm.lastname.trim()) && (
+                        <p className="text-xs text-red-500">Only letters, spaces, hyphens, or apostrophes allowed (no numbers).</p>
+                      )}
                     </div>
                   </div>
                   <div className="space-y-2">
@@ -548,6 +554,46 @@ export default function Login() {
                   {registerError && <p className="text-sm text-red-600">{registerError}</p>}
                   {registerSuccess && <p className="text-sm text-brand-primary">{registerSuccess}</p>}
                   {selectedRole === "teacher" && <p className="text-xs text-slate-500">Teacher role is currently mapped through existing backend role support; dashboard specialization can be extended server-side.</p>}
+
+                  {/* Pre-submit validation checklist — only show when form has been touched */}
+                  {showRoleForm && !canSubmitRegister && (
+                    <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 space-y-1.5">
+                      <p className="text-xs font-bold text-amber-800 mb-2">Please complete all required fields:</p>
+                      {!namesValid && (
+                        <p className="text-xs text-amber-700 flex items-center gap-1.5">⚠ First &amp; Last Name must contain only letters (no numbers or symbols).</p>
+                      )}
+                      {!baseRegisterForm.email.includes("@") && (
+                        <p className="text-xs text-amber-700 flex items-center gap-1.5">⚠ A valid email address is required.</p>
+                      )}
+                      {emailCheck === "duplicate" && (
+                        <p className="text-xs text-amber-700 flex items-center gap-1.5">⚠ This email is already registered.</p>
+                      )}
+                      {!passwordValid && (
+                        <p className="text-xs text-amber-700 flex items-center gap-1.5">⚠ Password must be at least 8 characters with a letter and a number.</p>
+                      )}
+                      {passwordValid && !confirmMatches && (
+                        <p className="text-xs text-amber-700 flex items-center gap-1.5">⚠ Passwords do not match.</p>
+                      )}
+                      {!baseRegisterForm.country && (
+                        <p className="text-xs text-amber-700 flex items-center gap-1.5">⚠ Please select your country.</p>
+                      )}
+                      {!baseRegisterForm.termsAccepted && (
+                        <p className="text-xs text-amber-700 flex items-center gap-1.5">⚠ You must agree to the Terms of Use and Privacy Policy.</p>
+                      )}
+                      {selectedRole === "student" && !studentForm.grade && (
+                        <p className="text-xs text-amber-700 flex items-center gap-1.5">⚠ Please select your current grade.</p>
+                      )}
+                      {selectedRole === "parent" && (!parentForm.childName.trim() || !parentForm.childGrade) && (
+                        <p className="text-xs text-amber-700 flex items-center gap-1.5">⚠ Please enter your child&apos;s name and grade.</p>
+                      )}
+                      {selectedRole === "teacher" && (teacherForm.subjects.length === 0 || !teacherForm.teachingRole || !teacherForm.city.trim()) && (
+                        <p className="text-xs text-amber-700 flex items-center gap-1.5">⚠ Please fill in your subject(s), teaching role, and city.</p>
+                      )}
+                      {selectedRole === "school" && partnerCodeStatus !== "valid" && (
+                        <p className="text-xs text-amber-700 flex items-center gap-1.5">⚠ A valid School Partner Code is required. Enter the code and click outside the field to verify.</p>
+                      )}
+                    </div>
+                  )}
 
                   <Button type="submit" disabled={register.isPending || !canSubmitRegister} className="h-12 w-full rounded-lg bg-brand-primary text-base font-bold text-white hover:bg-brand-primary-dark">
                     {register.isPending ? (

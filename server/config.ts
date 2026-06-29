@@ -106,6 +106,13 @@ export const env = {
     adminManageToken: process.env.MOODLE_ADMIN_MANAGE || "",
     adminUpdateToken: process.env.MOODLE_ADMIN_UPDATE || "",
     signupToken: process.env.MOODLE_SIGNUP_TOKEN || "",
+    // When true, creates users via admin API (manual auth) instead of auth_email signup.
+    skipEmailConfirmation:
+      process.env.MOODLE_SKIP_EMAIL_CONFIRMATION === "1" ||
+      process.env.MOODLE_SKIP_EMAIL_CONFIRMATION === "true" ||
+      (process.env.NODE_ENV !== "production" &&
+        process.env.MOODLE_SKIP_EMAIL_CONFIRMATION !== "0" &&
+        process.env.MOODLE_SKIP_EMAIL_CONFIRMATION !== "false"),
     roleAdminId: process.env.MOODLE_ROLE_ADMIN_ID || "",
     roleParentId: process.env.MOODLE_ROLE_PARENT_ID || "",
     roleSchoolId: process.env.MOODLE_ROLE_SCHOOL_ID || "",
@@ -191,6 +198,7 @@ export function logEnvPresence() {
     moodleToken: Boolean(env.moodle.token),
     moodleAdminToken: Boolean(env.moodle.adminToken),
     moodleSignupToken: Boolean(env.moodle.signupToken),
+    moodleSkipEmailConfirmation: env.moodle.skipEmailConfirmation,
     moodleAdminManage: Boolean(env.moodle.adminManageToken),
     moodleCourseToken: Boolean(env.moodle.courseToken),
     payfastConfigured: Boolean(env.payfast.merchantId && env.payfast.securedKey),

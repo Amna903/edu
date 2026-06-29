@@ -1,6 +1,6 @@
 
 import { z } from 'zod';
-import { insertInquirySchema, insertResourceSchema, inquiries, resources, programs, lmsCourseSchema, lmsCourseDetailSchema, authUserSchema, loginInputSchema, registerInputSchema, checkoutRequestSchema, freeEnrollInputSchema, freeEnrollResponseSchema, orderHistorySchema, passwordChangeInputSchema, profileUpdateInputSchema, studentDashboardSchema, parentDashboardSchema, schoolDashboardSchema, adminDashboardSchema, adminUsersListSchema, adminActivityLogsListSchema, adminSuspendUserInputSchema, adminAssignRoleInputSchema, adminResetPasswordInputSchema, adminActionResponseSchema, adminCoursesListSchema, adminUpdateCoursePricingInputSchema, adminUpdateCourseVisibilityInputSchema, adminUpdateCourseCategoryInputSchema, adminSyncCoursesInputSchema, adminSyncCoursesResponseSchema, parentLinkChildInputSchema, paymentInitRequestSchema, paymentInitResponseSchema, paymentVerifyRequestSchema, paymentVerifyResponseSchema, registerResponseSchema, studentCertificateSchema, schoolSeatPurchaseInputSchema, dashboardNotificationListSchema, markNotificationReadInputSchema, markNotificationReadResponseSchema, revenueReportSchema, enrollmentReportSchema, progressAnalyticsSchema, usageMetricsSchema, analyticsQueryInputSchema, analyticsReportSchema, bulkLicensePurchaseInputSchema, bulkLicensePurchaseResponseSchema, schoolStudentUploadSchema, bulkSeatAssignmentInputSchema, bulkSeatAssignmentResponseSchema, licenseUsageMetricsSchema, schoolUsageReportSchema, diagnosticEligibilityInputSchema, diagnosticEligibilityResponseSchema, diagnosticStartInputSchema, diagnosticStartResponseSchema, diagnosticContentRequestSchema, diagnosticContentResponseSchema, diagnosticAnswerInputSchema, diagnosticCompleteInputSchema, diagnosticResultSchema, scholarshipApplyInputSchema, scholarshipApplyResponseSchema, scholarshipValidateInputSchema, scholarshipValidateResponseSchema, scholarshipEligibilityResponseSchema } from './schema.js';
+import { insertInquirySchema, insertResourceSchema, type Inquiry, type Resource, type Program, lmsCourseSchema, lmsCourseDetailSchema, authUserSchema, loginInputSchema, registerInputSchema, checkoutRequestSchema, freeEnrollInputSchema, freeEnrollResponseSchema, orderHistorySchema, passwordChangeInputSchema, profileUpdateInputSchema, studentDashboardSchema, parentDashboardSchema, schoolDashboardSchema, adminDashboardSchema, adminUsersListSchema, adminActivityLogsListSchema, adminSuspendUserInputSchema, adminAssignRoleInputSchema, adminResetPasswordInputSchema, adminActionResponseSchema, adminCoursesListSchema, adminUpdateCoursePricingInputSchema, adminUpdateCourseVisibilityInputSchema, adminUpdateCourseCategoryInputSchema, adminSyncCoursesInputSchema, adminSyncCoursesResponseSchema, parentLinkChildInputSchema, paymentInitRequestSchema, paymentInitResponseSchema, paymentVerifyRequestSchema, paymentVerifyResponseSchema, registerResponseSchema, studentCertificateSchema, schoolSeatPurchaseInputSchema, dashboardNotificationListSchema, markNotificationReadInputSchema, markNotificationReadResponseSchema, revenueReportSchema, enrollmentReportSchema, progressAnalyticsSchema, usageMetricsSchema, analyticsQueryInputSchema, analyticsReportSchema, bulkLicensePurchaseInputSchema, bulkLicensePurchaseResponseSchema, schoolStudentUploadSchema, bulkSeatAssignmentInputSchema, bulkSeatAssignmentResponseSchema, licenseUsageMetricsSchema, schoolUsageReportSchema, diagnosticEligibilityInputSchema, diagnosticEligibilityResponseSchema, diagnosticStartInputSchema, diagnosticStartResponseSchema, diagnosticContentRequestSchema, diagnosticContentResponseSchema, diagnosticAnswerInputSchema, diagnosticCompleteInputSchema, diagnosticResultSchema, scholarshipApplyInputSchema, scholarshipApplyResponseSchema, scholarshipValidateInputSchema, scholarshipValidateResponseSchema, scholarshipEligibilityResponseSchema } from './schema.js';
 
 export const errorSchemas = {
   validation: z.object({
@@ -22,7 +22,7 @@ export const api = {
       path: '/api/inquiries' as const,
       input: insertInquirySchema,
       responses: {
-        201: z.custom<typeof inquiries.$inferSelect>(),
+        201: z.custom<Inquiry>(),
         400: errorSchemas.validation,
       },
     },
@@ -30,7 +30,7 @@ export const api = {
       method: 'GET' as const,
       path: '/api/inquiries' as const,
       responses: {
-        200: z.array(z.custom<typeof inquiries.$inferSelect>()),
+        200: z.array(z.custom<Inquiry>()),
         401: errorSchemas.notFound,
       },
     },
@@ -44,14 +44,14 @@ export const api = {
         subject: z.string().optional(),
       }).optional(),
       responses: {
-        200: z.array(z.custom<typeof resources.$inferSelect>()),
+        200: z.array(z.custom<Resource>()),
       },
     },
     get: {
       method: 'GET' as const,
       path: '/api/resources/:id' as const,
       responses: {
-        200: z.custom<typeof resources.$inferSelect>(),
+        200: z.custom<Resource>(),
         404: errorSchemas.notFound,
       },
     },
@@ -61,14 +61,14 @@ export const api = {
       method: 'GET' as const,
       path: '/api/programs' as const,
       responses: {
-        200: z.array(z.custom<typeof programs.$inferSelect>()),
+        200: z.array(z.custom<Program>()),
       },
     },
     get: {
       method: 'GET' as const,
       path: '/api/programs/:slug' as const,
       responses: {
-        200: z.custom<typeof programs.$inferSelect>(),
+        200: z.custom<Program>(),
         404: errorSchemas.notFound,
       },
     },

@@ -5,7 +5,6 @@ import {
   useSchoolAssignSeats,
   useSchoolBulkLicenses,
   useSchoolLicenseMetrics,
-  useSchoolSeatPurchase,
   useSchoolUploadStudents,
   useSchoolUsageReport,
 } from "@/hooks/use-dashboard";
@@ -43,27 +42,18 @@ export function SchoolOperationsPanel({
   activeCourses,
 }: SchoolOperationsPanelProps) {
   const { data: courses = [] } = usePrograms();
-  const seatPurchase = useSchoolSeatPurchase();
   const bulkLicenses = useSchoolBulkLicenses();
   const uploadStudents = useSchoolUploadStudents();
   const assignSeats = useSchoolAssignSeats();
   const usageReport = useSchoolUsageReport(true);
 
   const [tab, setTab] = useState<"overview" | "purchase" | "roster" | "report">("overview");
-  const [purchaseCourseId, setPurchaseCourseId] = useState("");
-  const [purchaseSeatsCount, setPurchaseSeatsCount] = useState("10");
   const [bulkCourseId, setBulkCourseId] = useState("");
   const [bulkQuantity, setBulkQuantity] = useState("25");
   const [uploadFilename, setUploadFilename] = useState("students.csv");
   const [uploadCsvText, setUploadCsvText] = useState("email,firstname,lastname,moodleUserId\nstudent1@example.com,Amina,Ali,1001");
   const [assignLicenseId, setAssignLicenseId] = useState("");
   const [assignStudentIds, setAssignStudentIds] = useState("1001");
-
-  useEffect(() => {
-    if (!purchaseCourseId && courses.length > 0) {
-      setPurchaseCourseId(String(courses[0].id));
-    }
-  }, [courses, purchaseCourseId]);
 
   useEffect(() => {
     if (!bulkCourseId && courses.length > 0) {
@@ -77,11 +67,6 @@ export function SchoolOperationsPanel({
     }
   }, [assignLicenseId, licenses]);
 
-  const selectedPurchaseCourse = useMemo(
-    () => courses.find((course) => String(course.id) === purchaseCourseId) ?? null,
-    [courses, purchaseCourseId],
-  );
-
   const selectedBulkCourse = useMemo(
     () => courses.find((course) => String(course.id) === bulkCourseId) ?? null,
     [bulkCourseId, courses],
@@ -93,9 +78,7 @@ export function SchoolOperationsPanel({
   );
 
   const selectedMetrics = useSchoolLicenseMetrics(assignLicenseId, Boolean(assignLicenseId));
-  const safeSeatCount = Math.max(1, Number.parseInt(purchaseSeatsCount, 10) || 0);
   const safeBulkQuantity = Math.max(1, Number.parseInt(bulkQuantity, 10) || 0);
-  const seatTotal = (selectedPurchaseCourse?.price ?? 0) * safeSeatCount;
   const bulkTotal = (selectedBulkCourse?.price ?? 0) * safeBulkQuantity;
   const usage = usageReport.data;
 
@@ -150,6 +133,8 @@ export function SchoolOperationsPanel({
                 <Card className="border-slate-200 shadow-sm"><CardContent className="p-5"><p className="text-sm text-slate-500">Licenses</p><p className="mt-2 text-3xl font-black text-slate-900">{licenses.length}</p></CardContent></Card>
               </div>
 
+
+
               <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
                 <Card className="border-slate-200 shadow-sm">
                   <CardHeader className="pb-3">
@@ -168,7 +153,7 @@ export function SchoolOperationsPanel({
                           </div>
                         </div>
                       </div>
-                    )) : <p className="text-sm text-slate-500">No licenses yet. Purchase seats to begin.</p>}
+                    )) : <p className="text-sm text-slate-500">No licenses yet. Purchase bulk licenses to begin.</p>}
                   </CardContent>
                 </Card>
 
@@ -177,7 +162,7 @@ export function SchoolOperationsPanel({
                     <CardTitle>Quick Actions</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    <Button className="w-full justify-start" variant="outline" onClick={() => setTab("purchase")}><BookOpen className="mr-2 h-4 w-4" /> Purchase seats</Button>
+                    <Button className="w-full justify-start" variant="outline" onClick={() => setTab("purchase")}><BookOpen className="mr-2 h-4 w-4" /> Purchase bulk licenses</Button>
                     <Button className="w-full justify-start" variant="outline" onClick={() => setTab("roster")}><Users className="mr-2 h-4 w-4" /> Upload / assign students</Button>
                     <Button className="w-full justify-start" variant="outline" onClick={() => usageReport.refetch()}><RefreshCw className="mr-2 h-4 w-4" /> Refresh usage report</Button>
                   </CardContent>
@@ -187,43 +172,7 @@ export function SchoolOperationsPanel({
           )}
 
           {tab === "purchase" && (
-            <div className="grid gap-5 xl:grid-cols-2">
-              <Card className="border-slate-200 shadow-sm">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2"><BookOpen className="h-4 w-4 text-[#2366c9]" /> Seat Purchase</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>Select Course</Label>
-                    <select
-                      value={purchaseCourseId}
-                      onChange={(event) => setPurchaseCourseId(event.target.value)}
-                      className="w-full rounded-2xl border border-slate-200 bg-white p-3 text-sm"
-                    >
-                      {courses.map((course) => <option key={course.id} value={course.id}>{course.title}</option>)}
-                    </select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Number of Seats</Label>
-                    <Input type="number" min={1} value={purchaseSeatsCount} onChange={(event) => setPurchaseSeatsCount(event.target.value)} />
-                  </div>
-                  <div className="rounded-2xl bg-slate-50 p-4">
-                    <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Estimated Total</p>
-                    <p className="mt-2 text-2xl font-black text-slate-900">{formatCurrency(seatTotal)}</p>
-                  </div>
-                  <Button
-                    className="w-full bg-[#2366c9] text-white hover:bg-[#1a4fa0]"
-                    disabled={seatPurchase.isPending || !selectedPurchaseCourse}
-                    onClick={async () => {
-                      if (!selectedPurchaseCourse) return;
-                      await seatPurchase.mutateAsync({ courseId: selectedPurchaseCourse.id, seats: safeSeatCount });
-                    }}
-                  >
-                    {seatPurchase.isPending ? "Processing..." : "Purchase Seats"}
-                  </Button>
-                </CardContent>
-              </Card>
-
+            <div className="max-w-2xl">
               <Card className="border-slate-200 shadow-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-[#2366c9]" /> Bulk License Purchase</CardTitle>
@@ -402,7 +351,7 @@ export function SchoolOperationsPanel({
             </div>
           )}
 
-          {(seatPurchase.isSuccess || bulkLicenses.isSuccess || uploadStudents.isSuccess || assignSeats.isSuccess) && (
+          {(bulkLicenses.isSuccess || uploadStudents.isSuccess || assignSeats.isSuccess) && (
             <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">
               <div className="flex flex-wrap items-center gap-2">
                 <CheckCircle2 className="h-4 w-4" />
@@ -411,9 +360,8 @@ export function SchoolOperationsPanel({
             </div>
           )}
 
-          {(seatPurchase.isError || bulkLicenses.isError || uploadStudents.isError || assignSeats.isError) && (
+          {(bulkLicenses.isError || uploadStudents.isError || assignSeats.isError) && (
             <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-              {seatPurchase.error instanceof Error && seatPurchase.error.message}
               {bulkLicenses.error instanceof Error && bulkLicenses.error.message}
               {uploadStudents.error instanceof Error && uploadStudents.error.message}
               {assignSeats.error instanceof Error && assignSeats.error.message}
