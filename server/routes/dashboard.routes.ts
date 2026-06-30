@@ -25,8 +25,9 @@ import {
 import { buildOrigin } from "../services/payments.js";
 import { env } from "../config/config.js";
 import { prisma } from "../db/prisma.js";
-import { prisma } from "../db/prisma.js";
 import { getStoredUserByMoodleUserId, linkParentToChild, syncUserFromMoodleSession } from "../repositories/user-store.js";
+import { uploadProfileImage, isS3Configured } from "../services/s3-upload.js";
+import multer from "multer";
 
 
 export function registerDashboardRoutes(app: Express, ctx: RouteContext) {
@@ -63,6 +64,63 @@ export function registerDashboardRoutes(app: Express, ctx: RouteContext) {
     verifyRecaptchaScore,
     checkWorkbookPaymentConfirmation,
   } = ctx;
+
+  // ── 4.2 Profile Image Upload ────────────────────────────────
+  const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
+    fileFilter: (_req, file, cb) => {
+      if (!["image/jpeg", "image/png", "image/webp"].includes(file.mimetype)) {
+        return cb(new Error("Only JPEG, PNG, and WebP images are allowed"));
+      }
+      cb(null, true);
+    },
+  });
+
+  app.post("/api/profile/upload-image", upload.single("image"), async (req, res) => {
+    try {
+      if (!req.session.user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+      if (!req.file) {
+        return res.status(400).json({ message: "No image file provided" });
+      }
+      if (!isS3Configured()) {
+        return res.status(503).json({
+          message: "Image upload is not configured yet. Set AWS credentials in .env to enable this feature.",
+          configured: false,
+        });
+      }
+
+      const result = await uploadProfileImage(
+        req.session.user.id,
+        req.file.buffer,
+        req.file.mimetype
+      );
+      if (!result.success) {
+        return res.status(500).json({ message: result.error });
+      }
+
+      // Persist in local DB
+      await prisma.user.updateMany({
+        where: { moodleUserId: req.session.user.id },
+        data: { profileImage: result.url },
+      });
+
+      // Update session
+      req.session.user = { ...req.session.user, profileImageUrl: result.url };
+
+      return res.json({ success: true, url: result.url });
+    } catch (err) {
+      if (err instanceof multer.MulterError) {
+        return res.status(400).json({ message: err.message });
+      }
+      return res.status(500).json({
+        message: err instanceof Error ? err.message : "Upload failed",
+      });
+    }
+  });
+
 
   app.get(api.dashboard.studentCertificates.path, async (req, res) => {
     try {

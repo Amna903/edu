@@ -310,6 +310,26 @@ export function useSyncCourses() {
   });
 }
 
+export function useSyncUsers() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      const res = await fetch("/api/admin/users/sync", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+      });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.message || "Failed to sync users");
+      return body as { success: true; message: string; usersAffected: number };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [api.admin.users.path] });
+    },
+  });
+}
+
 // Analytics Hooks
 export function useRevenueAnalytics(period: "daily" | "weekly" | "monthly" | "yearly" = "monthly") {
   return useQuery({

@@ -138,6 +138,151 @@ export async function moodlePostWithTokenFallback<T>(
   );
 }
 
+function isFunctionNotAllowedError(error: unknown) {
+  const message = (error instanceof Error ? error.message : String(error)).toLowerCase();
+  return message.includes("not allowed") || message.includes("accessexception") || message.includes("access control exception");
+}
+
+export interface MoodleDirectoryUser {
+  id: number;
+  username: string;
+  email: string | null;
+  firstname: string | null;
+  lastname: string | null;
+  profileimageurl: string | null;
+}
+
+function normalizeDirectoryUsers(records: MoodleUserRecord[]): MoodleDirectoryUser[] {
+  const byId = new Map<number, MoodleDirectoryUser>();
+  for (const record of records) {
+    if (!record || typeof record.id !== "number" || !record.username) continue;
+    if (record.username === "guest") continue;
+    if (byId.has(record.id)) continue;
+    byId.set(record.id, {
+      id: record.id,
+      username: record.username,
+      email: record.email || null,
+      firstname: record.firstname || null,
+      lastname: record.lastname || null,
+      profileimageurl: record.profileimageurl || null,
+    });
+  }
+  return Array.from(byId.values());
+}
+
+/**
+ * Fetches the full Moodle user directory.
+ *
+ * Tries multiple listing functions in order because Moodle web-service tokens
+ * only expose the functions explicitly added to their service definition.
+ * Debug logs are printed at each step so you can see exactly which Moodle
+ * function succeeded or failed in the server terminal.
+ */
+export async function fetchAllMoodleUsers(): Promise<MoodleDirectoryUser[]> {
+  console.log("[sync-users] ── starting Moodle user directory fetch ──");
+  console.log("[sync-users] Moodle base URL:", getBaseUrl() || "(not set — check NEXT_PUBLIC_MOODLE_URL)");
+
+  const tokens = getAdminTokenCandidates();
+  console.log("[sync-users] Admin token candidates available:", tokens.length, "(values hidden)");
+  if (tokens.length === 0) {
+    throw new Error(
+      "[sync-users] No Moodle admin token configured. Set MOODLE_ADMIN_TOKEN (or MOODLE_TOKEN) in your .env file.",
+    );
+  }
+
+  const attempts: Array<{
+    label: string;
+    wsfunction: string;
+    params: URLSearchParams;
+    extract: (data: any) => MoodleUserRecord[];
+  }> = [
+    {
+      label: "core_user_get_users (email wildcard %)",
+      wsfunction: "core_user_get_users",
+      params: new URLSearchParams({
+        "criteria[0][key]": "email",
+        "criteria[0][value]": "%",
+      }),
+      extract: (data) => (data?.users ?? []) as MoodleUserRecord[],
+    },
+    {
+      label: "core_user_get_users (auth=manual)",
+      wsfunction: "core_user_get_users",
+      params: new URLSearchParams({
+        "criteria[0][key]": "auth",
+        "criteria[0][value]": "manual",
+      }),
+      extract: (data) => (data?.users ?? []) as MoodleUserRecord[],
+    },
+    {
+      label: "core_user_get_users_by_field (id range 2-500)",
+      wsfunction: "core_user_get_users_by_field",
+      params: (() => {
+        const p = new URLSearchParams({ field: "id" });
+        for (let id = 2; id <= 500; id++) p.append(`values[${id - 2}]`, String(id));
+        return p;
+      })(),
+      extract: (data) => (Array.isArray(data) ? data : []) as MoodleUserRecord[],
+    },
+  ];
+
+  let lastNotAllowedError: Error | null = null;
+
+  for (const attempt of attempts) {
+    console.log(`[sync-users] trying: ${attempt.label}`);
+    try {
+      const data = await moodlePostWithTokenFallback<any>(attempt.wsfunction, attempt.params);
+
+      // Moodle sometimes returns an error object instead of throwing
+      if (data && typeof data === "object" && data.exception) {
+        console.warn(`[sync-users] Moodle returned exception for "${attempt.label}":`, data.errorcode, "-", data.message);
+        const err = new Error(String(data.message));
+        if (isFunctionNotAllowedError(err)) {
+          lastNotAllowedError = err;
+          continue;
+        }
+        throw err;
+      }
+
+      const records = attempt.extract(data);
+      console.log(`[sync-users] "${attempt.label}" → raw records returned:`, records.length);
+
+      const users = normalizeDirectoryUsers(records);
+      console.log(`[sync-users] "${attempt.label}" → normalized users:`, users.length);
+
+      if (users.length > 0) {
+        console.log(`[sync-users] ✓ success via "${attempt.label}" — ${users.length} users ready to upsert`);
+        return users;
+      }
+
+      console.warn(`[sync-users] "${attempt.label}" returned 0 users — trying next method`);
+    } catch (error) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      console.warn(`[sync-users] "${attempt.label}" threw:`, err.message);
+      if (isFunctionNotAllowedError(err)) {
+        lastNotAllowedError = err;
+        console.warn(`[sync-users] → function not enabled on this token's service, trying next method`);
+        continue;
+      }
+      console.error(`[sync-users] unexpected error in "${attempt.label}":`, err);
+      throw err;
+    }
+  }
+
+  if (lastNotAllowedError) {
+    const msg =
+      "Moodle blocked all user-listing functions for this token. " +
+      "In Moodle: Site administration → Server → Web services → External services → " +
+      "edit the service linked to your admin token → Add functions → add 'core_user_get_users'. " +
+      "Then click Sync Users again.";
+    console.error("[sync-users] ✗ all attempts blocked:", msg);
+    throw new Error(msg);
+  }
+
+  console.warn("[sync-users] all methods returned 0 users — nothing to sync");
+  return [];
+}
+
 function resolveAppRole(userId: number, username: string, isSiteAdmin?: boolean): AppRole {
   if (isSiteAdmin || username === "admin") return "admin";
 

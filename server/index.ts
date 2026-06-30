@@ -4,6 +4,7 @@ import { serveStatic } from "./core/static.js";
 import { createServer } from "http";
 import session from "express-session";
 import { env, isProduction, logEnvPresence } from "./config/config.js";
+import { startJobWorker } from "./services/job-worker.js";
 
 const app = express();
 const httpServer = createServer(app);
@@ -144,6 +145,8 @@ export const ready = (async () => {
       listenOptions,
       () => {
         log(`serving on port ${port}`);
+        // 4.21 — Start background job worker after server is listening
+        startJobWorker();
       },
     );
   }

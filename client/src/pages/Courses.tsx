@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ProgramCard } from "@/components/ProgramCard";
+import { CourseSearch } from "@/components/CourseSearch";
 
 export default function Courses() {
   const { data: courses, isLoading, error } = usePrograms();
@@ -58,85 +59,81 @@ export default function Courses() {
                 className="h-12 rounded-2xl border-slate-200 pl-11"
               />
             </div>
+
             <div className="flex flex-wrap gap-2">
-              {categories.map((category) => (
+              {categories.map((cat) => (
                 <button
-                  key={category}
-                  type="button"
-                  onClick={() => setSelectedCategory(category)}
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
                   className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-                    selectedCategory === category
+                    selectedCategory === cat
                       ? "bg-brand-primary text-white"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                      : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                   }`}
                 >
-                  {category}
+                  {cat}
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Badge variant="secondary" className="gap-2 rounded-full px-4 py-2 text-sm">
-              <BookOpen className="h-4 w-4" />
-              Live Moodle catalog
-            </Badge>
-            <Badge variant="secondary" className="gap-2 rounded-full px-4 py-2 text-sm">
-              <GraduationCap className="h-4 w-4" />
-              Course detail pages
-            </Badge>
-            <Badge variant="secondary" className="gap-2 rounded-full px-4 py-2 text-sm">
-              <CreditCard className="h-4 w-4" />
-              Cart and payment flow
-            </Badge>
+          <div className="mt-12">
+            {isLoading && (
+              <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <Skeleton key={index} className="h-[420px] rounded-[3rem] bg-blue-50" />
+                ))}
+              </div>
+            )}
+
+            {!isLoading && error && (
+              <div className="rounded-[2rem] border border-red-200 bg-red-50 p-8 text-center text-red-700">
+                Failed to load Moodle courses right now. Please try again in a moment.
+              </div>
+            )}
+
+            {!isLoading && !error && (
+              <>
+                <div className="mb-8 flex items-center justify-between gap-4">
+                  <div>
+                    <h2 className="text-3xl font-black tracking-tight text-slate-900">Available Courses</h2>
+                    <p className="mt-2 text-slate-500">
+                      Showing {filteredCourses.length} {filteredCourses.length === 1 ? "course" : "courses"}
+                    </p>
+                  </div>
+                </div>
+
+                {filteredCourses.length === 0 ? (
+                  <div className="rounded-[2rem] border border-slate-200 bg-slate-50 p-10 text-center">
+                    <p className="text-lg font-semibold text-slate-900">No courses matched your filters.</p>
+                    <p className="mt-2 text-slate-500">Try another keyword or switch back to all categories.</p>
+                  </div>
+                ) : (
+                  <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+                    {filteredCourses.map((course) => (
+                      <ProgramCard key={course.id} program={course} />
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </div>
       </section>
 
-      <section className="py-14 md:py-20">
+      {/* 4.22 — Server-side full course catalog search with filters + pagination */}
+      <section className="py-16 bg-slate-50">
         <div className="container-custom">
-          {isLoading && (
-            <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
-              {Array.from({ length: 6 }).map((_, index) => (
-                <Skeleton key={index} className="h-[420px] rounded-[3rem] bg-blue-50" />
-              ))}
-            </div>
-          )}
-
-          {!isLoading && error && (
-            <div className="rounded-[2rem] border border-red-200 bg-red-50 p-8 text-center text-red-700">
-              Failed to load Moodle courses right now. Please try again in a moment.
-            </div>
-          )}
-
-          {!isLoading && !error && (
-            <>
-              <div className="mb-8 flex items-center justify-between gap-4">
-                <div>
-                  <h2 className="text-3xl font-black tracking-tight text-slate-900">Available Courses</h2>
-                  <p className="mt-2 text-slate-500">
-                    Showing {filteredCourses.length} {filteredCourses.length === 1 ? "course" : "courses"}
-                  </p>
-                </div>
-              </div>
-
-              {filteredCourses.length === 0 ? (
-                <div className="rounded-[2rem] border border-slate-200 bg-slate-50 p-10 text-center">
-                  <p className="text-lg font-semibold text-slate-900">No courses matched your filters.</p>
-                  <p className="mt-2 text-slate-500">Try another keyword or switch back to all categories.</p>
-                </div>
-              ) : (
-                <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
-                  {filteredCourses.map((course) => (
-                    <ProgramCard key={course.id} program={course} />
-                  ))}
-                </div>
-              )}
-            </>
-          )}
+          <div className="mb-8">
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-brand-primary">Course Catalog Search</p>
+            <h2 className="mt-2 text-3xl font-black tracking-tight text-slate-900">Search All Synced Courses</h2>
+            <p className="mt-2 text-slate-500 max-w-2xl">
+              Filter by keyword, category, and price across the full Moodle-synced catalog with server-side search and pagination.
+            </p>
+          </div>
+          <CourseSearch showResults />
         </div>
       </section>
     </Layout>
   );
 }
-

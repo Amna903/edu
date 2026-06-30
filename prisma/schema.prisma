@@ -78,6 +78,7 @@ model CourseCatalog {
   categoryName   String?
   isVisible      Boolean                @default(true)
   price          Float                  @default(0)
+  lastSyncedAt   DateTime?              @map("last_synced_at")
   createdAt      DateTime               @default(now())
   updatedAt      DateTime               @updatedAt
   enrollments    UserCourseEnrollment[]
@@ -362,4 +363,41 @@ model EdumeDiagnosticAccountFlags {
   updatedAt          DateTime @updatedAt @map("updated_at")
 
   @@map("edume_diagnostic_account_flags")
+}
+
+// ============================================================
+// 4.21 — Background Job Queue (DB-backed, no Redis required)
+// ============================================================
+model BackgroundJob {
+  id          String    @id @default(cuid())
+  type        String    // e.g. ENROLL_USER, SEND_EMAIL, MOODLE_SYNC, PAYMENT_VERIFY
+  payload     Json
+  status      String    @default("pending") // pending | running | done | failed
+  attempts    Int       @default(0)
+  maxAttempts Int       @default(3)         @map("max_attempts")
+  runAt       DateTime  @default(now())     @map("run_at")
+  lockedAt    DateTime?                     @map("locked_at")
+  lockedBy    String?                       @map("locked_by")
+  doneAt      DateTime?                     @map("done_at")
+  errorMsg    String?                       @map("error_msg")
+  createdAt   DateTime  @default(now())     @map("created_at")
+  updatedAt   DateTime  @updatedAt          @map("updated_at")
+
+  @@index([status, runAt])
+  @@index([type])
+  @@map("background_jobs")
+}
+
+// 4.20 — Dead Letter Queue for exhausted jobs
+model DeadLetterJob {
+  id          String   @id @default(cuid())
+  type        String
+  payload     Json
+  attempts    Int
+  lastError   String   @map("last_error")
+  originalId  String   @map("original_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([type])
+  @@map("dead_letter_jobs")
 }

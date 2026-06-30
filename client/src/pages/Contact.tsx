@@ -408,12 +408,11 @@ export default function Contact() {
               ["Exam Prep Workbooks & Past Papers", "Topical workbooks, past paper collections, and subject mind maps with clear pricing and usage guidance.", "/exam-prep-workbooks"],
               ["Cambridge O-Level Readiness Forecast", "What the Forecast is, who it is for, what the report includes, and pricing options.", "/olevel-readiness-forecast"],
             ].map(([title, desc, href]) => (
-              <Link key={title} href={href}>
-                <a className="block rounded-lg border border-slate-200 bg-white p-4 hover:border-[#0d2f4f]">
-                  <h3 className="text-base font-semibold text-slate-900">{title}</h3>
-                  <p className="mt-2 text-sm text-slate-600">{desc}</p>
-                  <span className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-teal-700">Go to {href} <ArrowRight className="h-4 w-4" /></span>
-                </a>
+              <Link key={title} href={href}
+                className="block rounded-lg border border-slate-200 bg-white p-4 hover:border-[#0d2f4f]">
+                <h3 className="text-base font-semibold text-slate-900">{title}</h3>
+                <p className="mt-2 text-sm text-slate-600">{desc}</p>
+                <span className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-teal-700">Go to {href} <ArrowRight className="h-4 w-4" /></span>
               </Link>
             ))}
           </div>

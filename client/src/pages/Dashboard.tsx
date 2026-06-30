@@ -1,7 +1,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { BarChart3, Bell, Check, CreditCard, Download, FileText, GraduationCap, LayoutDashboard, LifeBuoy, LogOut, RefreshCw, Shield, UserCircle2, Users } from "lucide-react";
+import { BarChart3, Bell, Check, CreditCard, Download, FileText, GraduationCap, LayoutDashboard, LifeBuoy, LogOut, Menu, RefreshCw, Shield, UserCircle2, Users, X } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,10 +16,12 @@ import { SchoolAtRiskPanel } from "@/components/dashboard/SchoolAtRiskPanel";
 import SchoolOperationsPanel from "@/components/dashboard/SchoolOperationsPanel";
 import { StudentDashboardSection } from "@/components/dashboard/StudentDashboardSection";
 import { StudentPaymentsPanel } from "@/components/dashboard/StudentPaymentsPanel";
+import { ProfileImageUpload } from "@/components/ProfileImageUpload";
+import { JobQueuePanel } from "@/components/dashboard/JobQueuePanel";
 import { useAuthUser, useLogout } from "@/hooks/use-auth";
 import { useOrders } from "@/hooks/use-orders";
 import { useChangePassword, useUpdateProfile } from "@/hooks/use-profile";
-import { useAdminDashboard, useAdminUsers, useSuspendUser, useAssignRole, useResetPassword, useActivityLogs, useAdminCourses, useUpdateCoursePricing, useUpdateCourseVisibility, useUpdateCourseCategory, useSyncCourses, useDashboardNotifications, useLinkChild, useMarkNotificationRead, useParentDashboard, useSchoolDashboard, useStudentCertificates, useStudentDashboard, useSupportTickets } from "@/hooks/use-dashboard";
+import { useAdminDashboard, useAdminUsers, useSuspendUser, useAssignRole, useResetPassword, useActivityLogs, useAdminCourses, useUpdateCoursePricing, useUpdateCourseVisibility, useUpdateCourseCategory, useSyncCourses, useSyncUsers, useDashboardNotifications, useLinkChild, useMarkNotificationRead, useParentDashboard, useSchoolDashboard, useStudentCertificates, useStudentDashboard, useSupportTickets } from "@/hooks/use-dashboard";
 
 function getDashboardPath(role?: string | null) {
   if (role === "admin") return "/dashboard/admin";
@@ -137,6 +139,7 @@ export default function Dashboard() {
     result: string;
   }>({ pending: false, success: "", error: "", result: "" });
   const [adminPanel, setAdminPanel] = useState({ tab: "users", userPage: 1, logPage: 1, coursePage: 1, searchQuery: "", courseSearch: "", selectedUserId: null as string | null });
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const isAdminUser = user?.role === "admin";
   const adminUsers = useAdminUsers(adminPanel.userPage, 20, adminPanel.searchQuery, isAdminUser);
   const activityLogs = useActivityLogs(adminPanel.logPage, 20, isAdminUser);
@@ -148,6 +151,7 @@ export default function Dashboard() {
   const updateCourseVisibility = useUpdateCourseVisibility();
   const updateCourseCategory = useUpdateCourseCategory();
   const syncCourses = useSyncCourses();
+  const syncUsers = useSyncUsers();
   const [courseDrafts, setCourseDrafts] = useState<Record<string, { price: string; categoryId: string; categoryName: string }>>({});
 
   useEffect(() => {
@@ -167,6 +171,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (!user) return;
+    setSidebarOpen(false);
     if (user.role !== "admin" && location.startsWith("/dashboard/admin")) {
       navigate(getDashboardPath(user.role));
       return;
@@ -496,7 +501,7 @@ export default function Dashboard() {
 
   return (
     <Layout>
-      <div className="container-custom py-10 md:py-14">
+      <div className="container-custom py-6 md:py-10 lg:py-14">
         {isLoading && <p className="text-slate-600">Loading your session...</p>}
 
         {!isLoading && !user && (
@@ -518,7 +523,41 @@ export default function Dashboard() {
 
         {user && (
           <div className="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
-            <aside className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm lg:sticky lg:top-24 lg:h-fit">
+
+            {/* ── Mobile toggle bar ── */}
+            <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-3 shadow-sm lg:hidden">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-700">
+                  {user.firstname?.[0] || user.fullname[0]}
+                </div>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-bold text-slate-900">{user.fullname}</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.15em] text-slate-400">{user.role}</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="flex shrink-0 items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              >
+                {sidebarOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+                {sidebarOpen ? "Close" : "Menu"}
+              </button>
+            </div>
+
+            {/* ── Backdrop ── */}
+            {sidebarOpen && (
+              <div
+                className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm lg:hidden"
+                onClick={() => setSidebarOpen(false)}
+              />
+            )}
+
+            <aside className={`
+              fixed inset-y-0 left-0 z-50 w-72 overflow-y-auto rounded-r-[2rem] border-r border-slate-200 bg-white p-5 shadow-2xl transition-transform duration-300 ease-in-out
+              lg:static lg:z-auto lg:w-auto lg:translate-x-0 lg:overflow-visible lg:rounded-[2rem] lg:border lg:shadow-sm lg:sticky lg:top-24 lg:h-fit
+              ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
+            `}>
               <div className="flex items-center gap-4 rounded-3xl bg-slate-50 p-4">
                 <div className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-100 text-lg font-bold text-blue-700">
                   {user.firstname?.[0] || user.fullname[0]}
@@ -567,7 +606,7 @@ export default function Dashboard() {
 
             <section className="space-y-6">
               <Card className="overflow-hidden border-0 bg-[radial-gradient(circle_at_top,_rgba(35,102,201,0.18),_transparent_50%),linear-gradient(135deg,#ffffff,#f8fbff)] shadow-xl">
-                <CardContent className="grid gap-4 p-8 md:grid-cols-[1fr_auto] md:items-center">
+                <CardContent className="grid gap-4 p-5 sm:p-8 md:grid-cols-[1fr_auto] md:items-center">
                   <div>
                     <p className="text-sm font-semibold uppercase tracking-[0.22em] text-blue-600">Edu Dashboard</p>
                     <h1 className="mt-2 text-3xl font-black tracking-tight text-slate-900">
@@ -686,9 +725,9 @@ export default function Dashboard() {
               )}
 
               {onMainDashboard && user?.role === "student" && (
-                <div className="grid gap-4 md:grid-cols-3">
+                <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
                   <Card>
-                    <CardContent className="p-6">
+                    <CardContent className="p-4">
                       <p className="text-sm text-slate-500">Certificates</p>
                       <p className="mt-2 text-3xl font-black text-slate-900">{studentCertificates.data?.length ?? 0}</p>
                       <Button variant="ghost" className="mt-3 h-auto px-0 text-brand-primary hover:bg-transparent" asChild>
@@ -697,7 +736,7 @@ export default function Dashboard() {
                     </CardContent>
                   </Card>
                   <Card>
-                    <CardContent className="p-6">
+                    <CardContent className="p-4">
                       <p className="text-sm text-slate-500">Orders</p>
                       <p className="mt-2 text-3xl font-black text-slate-900">{orders?.length ?? 0}</p>
                       <Button variant="ghost" className="mt-3 h-auto px-0 text-brand-primary hover:bg-transparent" asChild>
@@ -705,8 +744,8 @@ export default function Dashboard() {
                       </Button>
                     </CardContent>
                   </Card>
-                  <Card>
-                    <CardContent className="p-6">
+                  <Card className="col-span-2 md:col-span-1">
+                    <CardContent className="p-4">
                       <p className="text-sm text-slate-500">Unread Notifications</p>
                       <p className="mt-2 text-3xl font-black text-slate-900">{unreadNotifications}</p>
                       <Button variant="ghost" className="mt-3 h-auto px-0 text-brand-primary hover:bg-transparent" asChild>
@@ -764,8 +803,8 @@ export default function Dashboard() {
                     <p className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{linkChildState.error}</p>
                   )}
 
-                  <div className="grid gap-4 md:grid-cols-4">
-                    <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Children Linked</p><p className="mt-2 text-3xl font-black text-slate-900">{parentChildren.length}</p></CardContent></Card>
+                  <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+                    <Card><CardContent className="p-4"><p className="text-sm text-slate-500">Children Linked</p><p className="mt-2 text-3xl font-black text-slate-900">{parentChildren.length}</p></CardContent></Card>
                     <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Total Courses</p><p className="mt-2 text-3xl font-black text-slate-900">{parentChildren.reduce((sum, child) => sum + child.courses.length, 0)}</p></CardContent></Card>
                     <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Unread Alerts</p><p className="mt-2 text-3xl font-black text-slate-900">{unreadParentAlerts.length}</p></CardContent></Card>
                     <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Avg. Progress</p><p className="mt-2 text-3xl font-black text-slate-900">{parentChildren.length > 0 ? Math.round(parentChildren.flatMap((child) => child.courses).reduce((sum, course) => sum + course.progress, 0) / Math.max(parentChildren.flatMap((child) => child.courses).length, 1)) : 0}%</p></CardContent></Card>
@@ -923,8 +962,8 @@ export default function Dashboard() {
 
             {onMainDashboard && user.role === "school" && schoolDashboard.data && (
                 <div className="space-y-6">
-                  <div className="grid gap-4 md:grid-cols-3">
-                    <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Purchased Seats</p><p className="mt-2 text-3xl font-black text-slate-900">{schoolDashboard.data.stats.purchasedSeats}</p></CardContent></Card>
+                  <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+                    <Card><CardContent className="p-4"><p className="text-sm text-slate-500">Purchased Seats</p><p className="mt-2 text-3xl font-black text-slate-900">{schoolDashboard.data.stats.purchasedSeats}</p></CardContent></Card>
                     <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Assigned Seats</p><p className="mt-2 text-3xl font-black text-slate-900">{schoolDashboard.data.stats.assignedSeats}</p></CardContent></Card>
                     <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Active Courses</p><p className="mt-2 text-3xl font-black text-slate-900">{schoolDashboard.data.stats.activeCourses}</p></CardContent></Card>
                   </div>
@@ -943,7 +982,7 @@ export default function Dashboard() {
 
               {onMainDashboard && user.role === "admin" && adminDashboard.data && (
                 <div className="space-y-6">
-                  <div className="grid gap-4 md:grid-cols-4">
+                  <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
                     <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Users</p><p className="mt-2 text-3xl font-black text-slate-900">{adminDashboard.data.stats.totalUsers}</p></CardContent></Card>
                     <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Orders</p><p className="mt-2 text-3xl font-black text-slate-900">{adminDashboard.data.stats.totalOrders}</p></CardContent></Card>
                     <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Revenue</p><p className="mt-2 text-3xl font-black text-slate-900">${(adminDashboard.data.stats.totalRevenue / 100).toFixed(2)}</p></CardContent></Card>
@@ -951,24 +990,36 @@ export default function Dashboard() {
                   </div>
 
                   <Card>
-                    <CardHeader className="flex flex-row items-center justify-between">
+                    <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <CardTitle>Admin Management</CardTitle>
-                      <div className="flex gap-2">
-                        <button onClick={() => setAdminPanel({ ...adminPanel, tab: "users" })} className={`px-4 py-2 rounded-lg font-semibold text-sm ${adminPanel.tab === "users" ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-900"}`}>Users</button>
-                        <button onClick={() => setAdminPanel({ ...adminPanel, tab: "courses" })} className={`px-4 py-2 rounded-lg font-semibold text-sm ${adminPanel.tab === "courses" ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-900"}`}>Courses</button>
-                        <button onClick={() => setAdminPanel({ ...adminPanel, tab: "logs" })} className={`px-4 py-2 rounded-lg font-semibold text-sm ${adminPanel.tab === "logs" ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-900"}`}>Activity Logs</button>
+                      <div className="flex flex-wrap gap-2">
+                        <button onClick={() => setAdminPanel({ ...adminPanel, tab: "users" })} className={`px-3 py-2 rounded-lg font-semibold text-xs sm:text-sm ${adminPanel.tab === "users" ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-900"}`}>Users</button>
+                        <button onClick={() => setAdminPanel({ ...adminPanel, tab: "courses" })} className={`px-3 py-2 rounded-lg font-semibold text-xs sm:text-sm ${adminPanel.tab === "courses" ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-900"}`}>Courses</button>
+                        <button onClick={() => setAdminPanel({ ...adminPanel, tab: "logs" })} className={`px-3 py-2 rounded-lg font-semibold text-xs sm:text-sm ${adminPanel.tab === "logs" ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-900"}`}>Logs</button>
+                        <button onClick={() => setAdminPanel({ ...adminPanel, tab: "jobs" })} className={`px-3 py-2 rounded-lg font-semibold text-xs sm:text-sm ${adminPanel.tab === "jobs" ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-900"}`}>Jobs</button>
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       {adminPanel.tab === "users" && (
                         <div className="space-y-4">
-                          <div className="flex gap-2">
-                            <Input placeholder="Search users by name or email..." value={adminPanel.searchQuery} onChange={(e) => setAdminPanel({ ...adminPanel, searchQuery: e.target.value, userPage: 1 })} />
+                          <div className="flex flex-wrap gap-2">
+                            <Input placeholder="Search users by name or email..." value={adminPanel.searchQuery} onChange={(e) => setAdminPanel({ ...adminPanel, searchQuery: e.target.value, userPage: 1 })} className="min-w-0 flex-1" />
                             <Button onClick={() => adminUsers.refetch()}>Search</Button>
-                            <Button onClick={() => syncCourses.mutate("USER_DIRECTORY")} disabled={syncCourses.isPending} className="bg-green-600 hover:bg-green-700 whitespace-nowrap">
-                              {syncCourses.isPending && syncCourses.variables === "USER_DIRECTORY" ? "Syncing..." : "Sync Users"}
+                            <Button onClick={() => syncUsers.mutate()} disabled={syncUsers.isPending} className="bg-green-600 hover:bg-green-700 whitespace-nowrap">
+                              {syncUsers.isPending ? "Syncing..." : "Sync Users"}
                             </Button>
                           </div>
+
+                          {syncUsers.isSuccess && (
+                            <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">
+                              {syncUsers.data?.message}
+                            </div>
+                          )}
+                          {syncUsers.isError && (
+                            <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                              {syncUsers.error instanceof Error ? syncUsers.error.message : "Failed to sync users"}
+                            </div>
+                          )}
 
                           {adminUsers.isLoading ? (
                             <p className="text-slate-500">Loading users...</p>
@@ -1242,7 +1293,51 @@ export default function Dashboard() {
                             <p className="text-red-500">Error loading courses</p>
                           ) : (
                             <>
-                              <div className="overflow-x-auto rounded-2xl border border-slate-200">
+                              {/* Mobile cards */}
+                              <div className="space-y-3 lg:hidden">
+                                {adminCourses.data?.courses.map((course) => {
+                                  const draft = courseDrafts[course.id] ?? {
+                                    price: course.price > 0 ? course.price.toFixed(2) : "",
+                                    categoryId: course.categoryId !== null ? String(course.categoryId) : "",
+                                    categoryName: course.categoryName ?? "",
+                                  };
+                                  return (
+                                    <div key={course.id} className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3">
+                                      <div className="flex items-start justify-between gap-2">
+                                        <p className="font-semibold text-slate-900 text-sm leading-snug">{course.fullname}</p>
+                                        <button
+                                          onClick={() => updateCourseVisibility.mutate({ courseId: course.id, isVisible: !course.isVisible })}
+                                          disabled={updateCourseVisibility.isPending}
+                                          className={`shrink-0 rounded-full px-2 py-1 text-xs font-semibold ${course.isVisible ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-600"}`}
+                                        >
+                                          {course.isVisible ? "Live" : "Hidden"}
+                                        </button>
+                                      </div>
+                                      {course.categoryName && <p className="text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full inline-block">{course.categoryName}</p>}
+                                      <div className="flex flex-wrap gap-2">
+                                        <Input
+                                          type="number" step="0.01" min="0"
+                                          value={draft.price}
+                                          onChange={(e) => setCourseDrafts((prev) => ({ ...prev, [course.id]: { ...draft, price: e.target.value } }))}
+                                          placeholder="Price"
+                                          className="w-28 text-sm"
+                                        />
+                                        <Button size="sm" variant="outline" disabled={updateCoursePricing.isPending}
+                                          onClick={() => { const p = Number(draft.price); if (Number.isFinite(p) && p >= 0) updateCoursePricing.mutate({ courseId: course.id, price: p }); }}>
+                                          Save Price
+                                        </Button>
+                                        <Button size="sm" variant="outline" disabled={updateCourseVisibility.isPending}
+                                          onClick={() => updateCourseVisibility.mutate({ courseId: course.id, isVisible: !course.isVisible })}>
+                                          {course.isVisible ? "Hide" : "Show"}
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+
+                              {/* Desktop table */}
+                              <div className="hidden overflow-x-auto rounded-2xl border border-slate-200 lg:block">
                                 <table className="w-full text-sm">
                                   <thead className="bg-slate-50 border-b border-slate-200">
                                     <tr>
@@ -1393,7 +1488,7 @@ export default function Dashboard() {
                                     })}
                                   </tbody>
                                 </table>
-                              </div>
+                              </div>{/* end hidden lg:block desktop table */}
 
                               {adminCourses.data && (
                                 <div className="flex items-center justify-between">
@@ -1437,6 +1532,11 @@ export default function Dashboard() {
                             </div>
                           )}
                         </div>
+                      )}
+
+                      {/* 4.21 / 4.20 — Job Queue & DLQ panel */}
+                      {adminPanel.tab === "jobs" && (
+                        <JobQueuePanel />
                       )}
                     </CardContent>
                   </Card>
@@ -1585,6 +1685,20 @@ export default function Dashboard() {
                 <Card>
                   <CardHeader><CardTitle>Profile Settings</CardTitle></CardHeader>
                   <CardContent className="space-y-8">
+                    {/* 4.2 — Profile image upload */}
+                    <div className="flex flex-col items-center sm:flex-row sm:items-start gap-6 pb-2">
+                      <ProfileImageUpload
+                        currentImageUrl={user.profileImageUrl}
+                        userName={user.fullname}
+                        size="lg"
+                      />
+                      <div className="text-center sm:text-left">
+                        <p className="font-bold text-slate-900 text-lg">{user.fullname}</p>
+                        <p className="text-sm text-slate-500 capitalize">{user.role}</p>
+                        <p className="text-xs text-slate-400 mt-1">{user.email || user.username}</p>
+                      </div>
+                    </div>
+                    <Separator />
                     <form
                       className="grid gap-4 md:grid-cols-2"
                       onSubmit={async (event) => {

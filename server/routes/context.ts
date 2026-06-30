@@ -3,7 +3,7 @@ import { z } from "zod";
 import { storage } from "../db/storage.js";
 import { env } from "../config/config.js";
 import { prisma } from "../db/prisma.js";
-import { prisma } from "../db/prisma.js";
+import { enqueueJob } from "../services/job-queue.js";
 import { getLmsCourseById } from "../services/moodle/moodle.js";
 import { enrolUserInCourse } from "../services/moodle/moodle-commerce.js";
 import { createCourseEnrollment } from "../repositories/course-store.js";
@@ -350,8 +350,14 @@ export function createRouteContext() {
       await recordPaymentEvent(
         existingOrder.id,
         "enrolment_pending",
-        `Payment captured but Moodle enrolment failed and needs manual retry — ${enrolmentFailures.join("; ")}`,
+        `Payment captured but Moodle enrolment failed — queued for auto-retry: ${enrolmentFailures.join("; ")}`,
       );
+      // 4.21 / 4.20 — Enqueue retry job instead of just logging
+      await enqueueJob("PAYMENT_ENROLL_RETRY", {
+        orderId: existingOrder.id,
+        userId: pending.userId,
+        items: pending.items,
+      }, { maxAttempts: 5, runAt: new Date(Date.now() + 60_000) }).catch(() => undefined);
     }
     await storage.deletePendingPayment(orderRef);
     return existingOrder.id;
