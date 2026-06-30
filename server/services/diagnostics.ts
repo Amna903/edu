@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import { Prisma } from "@prisma/client";
-import { db } from "./db.js";
-import { setMoodleUserCustomField } from "./moodle-auth.js";
+import { prisma } from "../db/prisma.js";
+import { setMoodleUserCustomField } from "./moodle/moodle-auth.js";
 
 type DiagnosticType = 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -222,7 +222,7 @@ export async function getDiagnosticEligibility(input: {
       return { eligible: false, reason: "teacher_account_required" };
     }
 
-    const flag = await db.edumeDiagnosticAccountFlags.findFirst({ where: { moodleUserId: input.moodleUserId } });
+    const flag = await prisma.edumeDiagnosticAccountFlags.findFirst({ where: { moodleUserId: input.moodleUserId } });
     const attempts = flag?.teacherT1Attempts ?? 0;
     if (attempts >= 2) {
       return { eligible: false, reason: "teacher_limit", teacherAttempts: attempts };
@@ -236,7 +236,7 @@ export async function getDiagnosticEligibility(input: {
   }
 
   if (input.moodleUserId) {
-    const flag = await db.edumeDiagnosticAccountFlags.findFirst({ where: { moodleUserId: input.moodleUserId } });
+    const flag = await prisma.edumeDiagnosticAccountFlags.findFirst({ where: { moodleUserId: input.moodleUserId } });
     if (flag?.freeDiagnosticUsed) {
       return { eligible: false, reason: "account_used", freeUsed: true };
     }
@@ -244,7 +244,7 @@ export async function getDiagnosticEligibility(input: {
   }
 
   const ip = input.ip || "unknown";
-  const existing = await db.edumeGuestDiagnostics.findFirst({ where: { ipAddress: ip, completed: true }, orderBy: { completedAt: "desc" } });
+  const existing = await prisma.edumeGuestDiagnostics.findFirst({ where: { ipAddress: ip, completed: true }, orderBy: { completedAt: "desc" } });
 
   if (existing) {
     return { eligible: false, reason: "ip_used", softGate: true, freeUsed: true };
@@ -277,7 +277,7 @@ export async function createDiagnosticSession(input: {
   const sessionToken = crypto.randomUUID();
   const variant = diagnosticType === 2 ? getEnglishVariant(input.grade ?? null) : null;
 
-  await db.edumeDiagnosticSessions.create({ data: {
+  await prisma.edumeDiagnosticSessions.create({ data: {
     sessionToken,
     moodleUserId: input.moodleUserId ?? null,
     ipAddress: input.ip,
@@ -290,16 +290,16 @@ export async function createDiagnosticSession(input: {
   } });
 
   if (input.moodleUserId) {
-    await db.edumeDiagnosticAccountFlags.upsert({ where: { moodleUserId: input.moodleUserId }, create: {
+    await prisma.edumeDiagnosticAccountFlags.upsert({ where: { moodleUserId: input.moodleUserId }, create: {
       moodleUserId: input.moodleUserId,
       freeDiagnosticUsed: false,
       teacherT1Attempts: 0,
     }, update: { updatedAt: new Date() } });
   }
 
-  const guestExists = await db.edumeGuestDiagnostics.findFirst({ where: { sessionToken } });
+  const guestExists = await prisma.edumeGuestDiagnostics.findFirst({ where: { sessionToken } });
   if (!guestExists) {
-    await db.edumeGuestDiagnostics.create({ data: {
+    await prisma.edumeGuestDiagnostics.create({ data: {
     ipAddress: input.ip,
     subject: input.subject ?? "",
     diagnosticType: String(diagnosticType),
@@ -318,7 +318,7 @@ export async function createDiagnosticSession(input: {
 }
 
 export async function getDiagnosticContent(sessionToken: string): Promise<DiagnosticContent | null> {
-  const session = await db.edumeDiagnosticSessions.findFirst({ where: { sessionToken: sessionToken } });
+  const session = await prisma.edumeDiagnosticSessions.findFirst({ where: { sessionToken: sessionToken } });
   if (!session) return null;
 
   return {
@@ -341,7 +341,7 @@ export async function saveDiagnosticAnswer(input: {
   questionId: string;
   answer: unknown;
 }) {
-  await db.edumeDiagnosticAnswers.create({ data: {
+  await prisma.edumeDiagnosticAnswers.create({ data: {
     sessionToken: input.sessionToken,
     questionId: input.questionId,
     answer: input.answer as Prisma.InputJsonValue,
@@ -350,13 +350,13 @@ export async function saveDiagnosticAnswer(input: {
 }
 
 export async function completeDiagnosticSession(input: { sessionToken: string }) {
-  const session = await db.edumeDiagnosticSessions.findFirst({ where: { sessionToken: input.sessionToken } });
+  const session = await prisma.edumeDiagnosticSessions.findFirst({ where: { sessionToken: input.sessionToken } });
 
   if (!session) {
     throw new Error("Diagnostic session not found");
   }
 
-  const answers = await db.edumeDiagnosticAnswers.findMany({ where: { sessionToken: input.sessionToken } });
+  const answers = await prisma.edumeDiagnosticAnswers.findMany({ where: { sessionToken: input.sessionToken } });
 
   const result = buildResult(
     {
@@ -371,22 +371,22 @@ export async function completeDiagnosticSession(input: { sessionToken: string })
     answers.length,
   );
 
-  await db.edumeDiagnosticSessions.updateMany({ where: { sessionToken: input.sessionToken }, data: {
+  await prisma.edumeDiagnosticSessions.updateMany({ where: { sessionToken: input.sessionToken }, data: {
       status: "completed",
       completedAt: new Date(),
       resultJson: result as Prisma.InputJsonValue,
     } });
 
-  await db.edumeGuestDiagnostics.updateMany({ where: { sessionToken: input.sessionToken }, data: {
+  await prisma.edumeGuestDiagnostics.updateMany({ where: { sessionToken: input.sessionToken }, data: {
       completed: true,
       completedAt: new Date(),
     } });
 
   if (session.moodleUserId) {
     if (session.diagnosticType === 5) {
-      const existing = await db.edumeDiagnosticAccountFlags.findFirst({ where: { moodleUserId: session.moodleUserId } });
+      const existing = await prisma.edumeDiagnosticAccountFlags.findFirst({ where: { moodleUserId: session.moodleUserId } });
       const nextAttempts = (existing?.teacherT1Attempts ?? 0) + 1;
-      await db.edumeDiagnosticAccountFlags.upsert({ where: { moodleUserId: session.moodleUserId }, create: {
+      await prisma.edumeDiagnosticAccountFlags.upsert({ where: { moodleUserId: session.moodleUserId }, create: {
         moodleUserId: session.moodleUserId,
         freeDiagnosticUsed: existing?.freeDiagnosticUsed ?? false,
         teacherT1Attempts: nextAttempts,
@@ -396,7 +396,7 @@ export async function completeDiagnosticSession(input: { sessionToken: string })
           updatedAt: new Date(),
         } });
     } else {
-      await db.edumeDiagnosticAccountFlags.upsert({ where: { moodleUserId: session.moodleUserId }, create: {
+      await prisma.edumeDiagnosticAccountFlags.upsert({ where: { moodleUserId: session.moodleUserId }, create: {
         moodleUserId: session.moodleUserId,
         freeDiagnosticUsed: true,
         teacherT1Attempts: 0,
@@ -411,7 +411,7 @@ export async function completeDiagnosticSession(input: { sessionToken: string })
   }
 
   if (!session.moodleUserId && session.diagnosticType !== 5) {
-    await db.edumeGuestDiagnostics.updateMany({ where: { sessionToken: input.sessionToken }, data: { completed: true, completedAt: new Date() } });
+    await prisma.edumeGuestDiagnostics.updateMany({ where: { sessionToken: input.sessionToken }, data: { completed: true, completedAt: new Date() } });
   }
 
   return {
@@ -422,14 +422,14 @@ export async function completeDiagnosticSession(input: { sessionToken: string })
 }
 
 export async function getDiagnosticResults(sessionToken: string): Promise<DiagnosticResult | null> {
-  const session = await db.edumeDiagnosticSessions.findFirst({ where: { sessionToken: sessionToken } });
+  const session = await prisma.edumeDiagnosticSessions.findFirst({ where: { sessionToken: sessionToken } });
   if (!session) return null;
 
   if (session.resultJson) {
     return session.resultJson as DiagnosticResult;
   }
 
-  const answers = await db.edumeDiagnosticAnswers.findMany({ where: { sessionToken: sessionToken } });
+  const answers = await prisma.edumeDiagnosticAnswers.findMany({ where: { sessionToken: sessionToken } });
   return buildResult(
     {
       sessionToken: session.sessionToken,
@@ -445,13 +445,13 @@ export async function getDiagnosticResults(sessionToken: string): Promise<Diagno
 }
 
 export async function linkGuestDiagnosticToAccount(input: { moodleUserId: number; ip: string }) {
-  const completedGuestDiagnostic = await db.edumeGuestDiagnostics.findFirst({ where: { ipAddress: input.ip, completed: true }, orderBy: { completedAt: "desc" } });
+  const completedGuestDiagnostic = await prisma.edumeGuestDiagnostics.findFirst({ where: { ipAddress: input.ip, completed: true }, orderBy: { completedAt: "desc" } });
 
   if (!completedGuestDiagnostic) {
     return false;
   }
 
-  await db.edumeDiagnosticAccountFlags.upsert({ where: { moodleUserId: input.moodleUserId }, create: {
+  await prisma.edumeDiagnosticAccountFlags.upsert({ where: { moodleUserId: input.moodleUserId }, create: {
     moodleUserId: input.moodleUserId,
     freeDiagnosticUsed: true,
     teacherT1Attempts: 0,
@@ -466,7 +466,7 @@ export async function linkGuestDiagnosticToAccount(input: { moodleUserId: number
 }
 
 export async function getGuestDiagnosticInfo(sessionToken: string) {
-  return db.edumeGuestDiagnostics.findFirst({ where: { sessionToken: sessionToken } });
+  return prisma.edumeGuestDiagnostics.findFirst({ where: { sessionToken: sessionToken } });
 }
 
 export function getDiagnosticRouteTitle(diagnosticType: number) {

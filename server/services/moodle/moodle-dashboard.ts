@@ -1,6 +1,6 @@
-import { env } from "./config.js";
-import { prisma } from "./prisma.js";
-import { getStoredUserByMoodleUserId } from "./user-store.js";
+import { env } from "../../config/config.js";
+import { prisma } from "../../db/prisma.js";
+import { getStoredUserByMoodleUserId } from "../../repositories/user-store.js";
 
 function getAdminToken() {
   return env.moodle.adminToken || "";

@@ -11,10 +11,10 @@ import type {
   OrderItem,
   InsertOrderItem,
   PaymentNote,
-} from "../shared/schema.js";
-import type { CheckoutItem } from "../shared/schema.js";
-import type { ScholarshipCodeRecord } from "./scholarship.js";
-import { db } from "./db.js";
+} from "../../shared/schema.js";
+import type { CheckoutItem } from "../../shared/schema.js";
+import type { ScholarshipCodeRecord } from "../services/scholarship.js";
+import { prisma } from "./prisma.js"; // ✅ Changed from "./db.js"
 
 export interface IStorage {
   getPrograms(): Promise<Program[]>;
@@ -67,7 +67,7 @@ export interface PendingPayment {
 
 function toOrder(row: {
   id: number;
-  userId: string;
+  userId: string | null;
   totalAmount: number;
   status: string;
   paymentStatus: string | null;
@@ -81,8 +81,12 @@ function toOrder(row: {
   paymentNotes: Prisma.JsonValue | null;
   createdAt: Date | null;
 }): Order {
+  if (!row.userId) {
+    throw new Error(`Order ${row.id} has no userId`);
+  }
   return {
     ...row,
+    userId: row.userId,
     paymentNotes: (row.paymentNotes as PaymentNote[] | null) ?? null,
   };
 }
@@ -179,8 +183,9 @@ export class MemStorage implements IStorage {
     return resource;
   }
 
+  // ========== INQUIRIES ==========
   async createInquiry(insertInquiry: InsertInquiry): Promise<Inquiry> {
-    return db.inquiries.create({
+    return prisma.inquiries.create({
       data: {
         ...insertInquiry,
         email: insertInquiry.email.toLowerCase(),
@@ -191,30 +196,32 @@ export class MemStorage implements IStorage {
   }
 
   async getInquiriesByEmail(email: string): Promise<Inquiry[]> {
-    return db.inquiries.findMany({
+    return prisma.inquiries.findMany({
       where: { email: { equals: email, mode: "insensitive" } },
       orderBy: { createdAt: "desc" },
     });
   }
 
   async getAllInquiries(): Promise<Inquiry[]> {
-    return db.inquiries.findMany({ orderBy: { createdAt: "desc" } });
+    return prisma.inquiries.findMany({ orderBy: { createdAt: "desc" } });
   }
 
   async getInquiryById(id: number): Promise<Inquiry | undefined> {
-    return (await db.inquiries.findUnique({ where: { id } })) ?? undefined;
+    return (await prisma.inquiries.findUnique({ where: { id } })) ?? undefined;
   }
 
   async updateInquiry(id: number, updates: Partial<Inquiry>): Promise<Inquiry | undefined> {
     try {
-      return await db.inquiries.update({ where: { id }, data: updates });
+      const { id: _id, createdAt: _createdAt, ...rest } = updates;
+      return await prisma.inquiries.update({ where: { id }, data: rest });
     } catch {
       return undefined;
     }
   }
 
+  // ========== ORDERS ==========
   async createOrder(insertOrder: InsertOrder): Promise<Order> {
-    const created = await db.orders.create({
+    const created = await prisma.orders.create({
       data: {
         userId: insertOrder.userId,
         totalAmount: insertOrder.totalAmount,
@@ -227,26 +234,26 @@ export class MemStorage implements IStorage {
         remainingAmount: insertOrder.remainingAmount ?? insertOrder.totalAmount,
         allowPartialPayment: insertOrder.allowPartialPayment ?? true,
         refundStatus: insertOrder.refundStatus ?? null,
-        paymentNotes: (insertOrder.paymentNotes ?? []) as Prisma.InputJsonValue,
+        paymentNotes: (insertOrder.paymentNotes ?? []) as any,
       },
     });
     return toOrder(created);
   }
 
   async getOrderById(orderId: number): Promise<Order | undefined> {
-    const order = await db.orders.findUnique({ where: { id: orderId } });
+    const order = await prisma.orders.findUnique({ where: { id: orderId } });
     return order ? toOrder(order) : undefined;
   }
 
   async updateOrder(orderId: number, updates: Partial<Order>): Promise<Order | undefined> {
     try {
-      const { paymentNotes, ...rest } = updates;
-      const updated = await db.orders.update({
+      const { id: _id, createdAt: _createdAt, paymentNotes, ...rest } = updates;
+      const updated = await prisma.orders.update({
         where: { id: orderId },
         data: {
           ...rest,
           ...(paymentNotes !== undefined
-            ? { paymentNotes: paymentNotes as Prisma.InputJsonValue }
+            ? { paymentNotes: paymentNotes as any }
             : {}),
         },
       });
@@ -257,11 +264,11 @@ export class MemStorage implements IStorage {
   }
 
   async createOrderItem(insertItem: InsertOrderItem): Promise<OrderItem> {
-    return db.orderItems.create({ data: insertItem });
+    return prisma.orderItem.create({ data: insertItem });
   }
 
   async getOrdersByUserId(userId: string): Promise<Order[]> {
-    const rows = await db.orders.findMany({
+    const rows = await prisma.orders.findMany({
       where: { userId },
       orderBy: { createdAt: "desc" },
     });
@@ -269,9 +276,10 @@ export class MemStorage implements IStorage {
   }
 
   async getOrderItemsByOrderId(orderId: number): Promise<OrderItem[]> {
-    return db.orderItems.findMany({ where: { orderId } });
+    return prisma.orderItem.findMany({ where: { orderId } });
   }
 
+  // ========== PARENT-CHILD ==========
   async linkParentToChild(parentUserId: string, childMoodleUserId: number): Promise<void> {
     const existing = this.parentChildLinks.get(parentUserId) ?? new Set<number>();
     existing.add(childMoodleUserId);
@@ -282,8 +290,9 @@ export class MemStorage implements IStorage {
     return Array.from(this.parentChildLinks.get(parentUserId) ?? []);
   }
 
+  // ========== PENDING PAYMENTS ==========
   async createPendingPayment(payment: PendingPayment): Promise<void> {
-    await db.pendingPayments.upsert({
+    await prisma.pendingPayments.upsert({
       where: { orderRef: payment.orderRef },
       create: {
         orderRef: payment.orderRef,
@@ -310,7 +319,7 @@ export class MemStorage implements IStorage {
   }
 
   async getPendingPayment(orderRef: string): Promise<PendingPayment | undefined> {
-    const payment = await db.pendingPayments.findUnique({ where: { orderRef } });
+    const payment = await prisma.pendingPayments.findUnique({ where: { orderRef } });
     if (!payment) return undefined;
     return {
       orderRef: payment.orderRef,
@@ -326,12 +335,13 @@ export class MemStorage implements IStorage {
   }
 
   async deletePendingPayment(orderRef: string): Promise<void> {
-    await db.pendingPayments.delete({ where: { orderRef } }).catch(() => undefined);
+    await prisma.pendingPayments.delete({ where: { orderRef } }).catch(() => undefined);
   }
 
+  // ========== SCHOLARSHIP ==========
   async saveScholarshipCode(record: ScholarshipCodeRecord): Promise<void> {
     const code = record.code.toUpperCase();
-    await db.scholarshipCodes.upsert({
+    await prisma.scholarshipCodes.upsert({
       where: { code },
       create: {
         code,
@@ -362,7 +372,7 @@ export class MemStorage implements IStorage {
   }
 
   async getScholarshipCode(code: string): Promise<ScholarshipCodeRecord | undefined> {
-    const record = await db.scholarshipCodes.findUnique({
+    const record = await prisma.scholarshipCodes.findUnique({
       where: { code: code.toUpperCase() },
     });
     return record ? toScholarshipRecord(record) : undefined;
@@ -371,7 +381,7 @@ export class MemStorage implements IStorage {
   async getActiveScholarshipCodeForUser(
     moodleUserId: number,
   ): Promise<ScholarshipCodeRecord | undefined> {
-    const record = await db.scholarshipCodes.findFirst({
+    const record = await prisma.scholarshipCodes.findFirst({
       where: {
         moodleUserId,
         used: false,
@@ -383,14 +393,15 @@ export class MemStorage implements IStorage {
   }
 
   async markScholarshipCodeUsed(code: string, userId: string): Promise<void> {
-    await db.scholarshipCodes.update({
+    await prisma.scholarshipCodes.update({
       where: { code: code.toUpperCase() },
       data: { used: true, usedAt: new Date(), usedByUserId: userId },
     });
   }
 
+  // ========== REGISTERED COUNTRIES ==========
   async setRegisteredCountry(moodleUserId: number, country: string): Promise<void> {
-    await db.registeredCountries.upsert({
+    await prisma.registeredCountries.upsert({
       where: { moodleUserId },
       create: { moodleUserId, country },
       update: { country, updatedAt: new Date() },
@@ -398,32 +409,32 @@ export class MemStorage implements IStorage {
   }
 
   async getRegisteredCountry(moodleUserId: number): Promise<string | undefined> {
-    const record = await db.registeredCountries.findUnique({ where: { moodleUserId } });
+    const record = await prisma.registeredCountries.findUnique({ where: { moodleUserId } });
     return record?.country;
   }
 
   async setRegistrationCountryForUsername(username: string, country: string): Promise<void> {
     const normalizedUsername = username.trim().toLowerCase();
-    const existing = await db.registrationCountries.findFirst({
+    const existing = await prisma.registrationCountries.findFirst({
       where: { username: normalizedUsername },
     });
     if (existing) {
-      await db.registrationCountries.update({
+      await prisma.registrationCountries.update({
         where: { id: existing.id },
         data: { country },
       });
       return;
     }
-    await db.registrationCountries.create({
+    await prisma.registrationCountries.create({
       data: { username: normalizedUsername, country },
     });
   }
 
   async takeRegistrationCountryForUsername(username: string): Promise<string | undefined> {
     const key = username.trim().toLowerCase();
-    const record = await db.registrationCountries.findFirst({ where: { username: key } });
+    const record = await prisma.registrationCountries.findFirst({ where: { username: key } });
     if (record) {
-      await db.registrationCountries.delete({ where: { id: record.id } });
+      await prisma.registrationCountries.delete({ where: { id: record.id } });
     }
     return record?.country;
   }

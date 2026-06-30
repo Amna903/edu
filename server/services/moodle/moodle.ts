@@ -1,13 +1,13 @@
-import type { LmsCourse, LmsCourseDetail } from "../shared/schema.js";
-import { env } from "./config.js";
-import { getStoredCourseByMoodleId, getStoredCourseCatalog, upsertCourseCatalogFromMoodle } from "./course-store.js";
+import type { LmsCourse, LmsCourseDetail } from "../../../shared/schema.js";
+import { env } from "../../config/config.js";
+import { getStoredCourseByMoodleId, getStoredCourseCatalog, upsertCourseCatalogFromMoodle } from "../../repositories/course-store.js";
 import {
   getMoodleAdminFetchTokens,
   getMoodleApiUrl,
   getMoodleCourseFetchTokens,
   isRetryableMoodleTokenError,
 } from "./moodle-tokens.js";
-import { prisma } from "./prisma.js";
+import { prisma } from "../../db/prisma.js";
 
 interface MoodleCourse {
   id: number;

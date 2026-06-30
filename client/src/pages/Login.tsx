@@ -233,14 +233,14 @@ export default function Login() {
                       navigate(getSafeReturnUrl() || "/dashboard");
                     } catch (error) {
                       const message = error instanceof Error ? error.message.toLowerCase() : "";
-                      if (message.includes("invalid")) setLoginError("The email or password is incorrect. Please try again.");
-                      else setLoginError("Unable to connect. Please check your internet connection and try again.");
+                      if (message.includes("invalid") || message.includes("incorrect")) setLoginError("The username or password is incorrect. Please try again.");
+                      else setLoginError(`Login failed: ${error instanceof Error ? error.message : "Unknown error"}`);
                     }
                   }}
                 >
                   <div className="space-y-2">
-                    <Label htmlFor="login-email">Email Address</Label>
-                    <Input id="login-email" type="email" autoFocus autoComplete="email" value={loginForm.email} onChange={(event) => setLoginForm((current) => ({ ...current, email: event.target.value }))} className={loginInputHasError ? "border-red-400 focus-visible:ring-red-400" : ""} required />
+                    <Label htmlFor="login-email">Username or Email</Label>
+                    <Input id="login-email" type="text" autoFocus autoComplete="username" value={loginForm.email} onChange={(event) => setLoginForm((current) => ({ ...current, email: event.target.value }))} className={loginInputHasError ? "border-red-400 focus-visible:ring-red-400" : ""} required />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="login-password">Password</Label>

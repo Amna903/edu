@@ -4,9 +4,9 @@ import {
   getCountryConcession,
   resolveConcessionFromProfileCountry,
   type ConcessionRegion,
-} from "../shared/scholarship-concessions.js";
-import type { AuthUser, CheckoutItem } from "../shared/schema.js";
-import type { IStorage } from "./storage.js";
+} from "../../shared/scholarship-concessions.js";
+import type { AuthUser, CheckoutItem } from "../../shared/schema.js";
+import type { IStorage } from "../db/storage.js";
 
 export interface ScholarshipCodeRecord {
   code: string;

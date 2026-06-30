@@ -31,7 +31,8 @@ interface SchoolOperationsPanelProps {
 }
 
 function formatCurrency(value: number) {
-  return `$${(Number.isFinite(value) ? value : 0).toFixed(2)}`;
+  const inDollars = (Number.isFinite(value) ? value : 0) / 100;
+  return `$${inDollars.toFixed(2)}`;
 }
 
 export function SchoolOperationsPanel({

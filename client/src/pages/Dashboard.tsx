@@ -965,6 +965,9 @@ export default function Dashboard() {
                           <div className="flex gap-2">
                             <Input placeholder="Search users by name or email..." value={adminPanel.searchQuery} onChange={(e) => setAdminPanel({ ...adminPanel, searchQuery: e.target.value, userPage: 1 })} />
                             <Button onClick={() => adminUsers.refetch()}>Search</Button>
+                            <Button onClick={() => syncCourses.mutate("USER_DIRECTORY")} disabled={syncCourses.isPending} className="bg-green-600 hover:bg-green-700 whitespace-nowrap">
+                              {syncCourses.isPending && syncCourses.variables === "USER_DIRECTORY" ? "Syncing..." : "Sync Users"}
+                            </Button>
                           </div>
 
                           {adminUsers.isLoading ? (

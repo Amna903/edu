@@ -305,6 +305,7 @@ export function useSyncCourses() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [api.admin.courses.path] });
+      queryClient.invalidateQueries({ queryKey: [api.admin.users.path] });
     },
   });
 }

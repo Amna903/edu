@@ -9,7 +9,7 @@
     "start": "cross-env NODE_ENV=production tsx server/index.ts",
     "check": "tsc",
     "db:push": "prisma db push",
-    "db:migrate": "tsx server/run-migrations.ts",
+    "db:migrate": "tsx server/db/run-migrations.ts",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "postinstall": "prisma generate"

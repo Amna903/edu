@@ -1,10 +1,9 @@
 import express, { type Request, Response, NextFunction } from "express";
-import { registerRoutes } from "./routes.js";
-import { serveStatic } from "./static.js";
+import { registerRoutes } from "./routes/index.js";
+import { serveStatic } from "./core/static.js";
 import { createServer } from "http";
 import session from "express-session";
-import { env, isProduction, logEnvPresence } from "./config.js";
-import { runPendingMigrations } from "./migrate.js";
+import { env, isProduction, logEnvPresence } from "./config/config.js";
 
 const app = express();
 const httpServer = createServer(app);
@@ -97,7 +96,6 @@ app.use((req, res, next) => {
 });
 
 export const ready = (async () => {
-  await runPendingMigrations();
   await registerRoutes(httpServer, app);
 
   app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
@@ -119,7 +117,7 @@ export const ready = (async () => {
   if (isProduction()) {
     serveStatic(app);
   } else {
-    const { setupVite } = await import("./vite");
+    const { setupVite } = await import("./core/vite.js");
     await setupVite(httpServer, app);
   }
 

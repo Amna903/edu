@@ -1,4 +1,4 @@
-import { env } from "./config.js";
+import { env } from "../../config/config.js";
 
 function uniqueTokens(tokens: string[]) {
   return tokens.filter(Boolean).filter((token, index, self) => self.indexOf(token) === index);

@@ -1,5 +1,5 @@
-import type { CheckoutItem } from "../shared/schema.js";
-import { env } from "./config.js";
+import type { CheckoutItem } from "../../shared/schema.js";
+import { env } from "../config/config.js";
 
 type PayfastFields = Record<string, string>;
 

@@ -3,9 +3,301 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id                  String                 @id @default(cuid())
+  moodleUserId        Int                    @unique
+  username            String
+  email               String?
+  firstName           String?
+  lastName            String?
+  profileImage        String?
+  role                UserRole               @default(student)
+  createdAt           DateTime               @default(now())
+  updatedAt           DateTime               @updatedAt
+  lastLoginAt         DateTime?
+  isSuspended         Boolean                @default(false)
+  lastPasswordResetAt DateTime?
+  enrollments         UserCourseEnrollment[]
+
+  @@index([role])
+  @@map("users")
+}
+
+model PendingSignup {
+  id           String       @id @default(cuid())
+  username     String       @unique
+  email        String
+  firstName    String?
+  lastName     String?
+  role         UserRole
+  status       SignupStatus @default(pending_confirmation)
+  moodleUserId Int?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  confirmedAt  DateTime?
+
+  @@index([status])
+  @@map("pending_signups")
+}
+
+model ParentChild {
+  id        String   @id @default(cuid())
+  parentId  Int
+  childId   Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([parentId, childId])
+  @@index([parentId])
+  @@index([childId])
+  @@map("parent_child")
+}
+
+model RegistrationRole {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  role      UserRole
+  createdAt DateTime @default(now())
+
+  @@index([username])
+  @@map("registration_roles")
+}
+
+model CourseCatalog {
+  id             String                 @id @default(cuid())
+  moodleCourseId Int                    @unique
+  shortname      String
+  fullname       String
+  summary        String?
+  categoryId     Int?
+  categoryName   String?
+  isVisible      Boolean                @default(true)
+  price          Float                  @default(0)
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+  enrollments    UserCourseEnrollment[]
+
+  @@index([categoryId])
+  @@index([isVisible])
+  @@map("course_catalog")
+}
+
+model UserCourseEnrollment {
+  id              String        @id @default(cuid())
+  progress        Int           @default(0)
+  isActive        Boolean       @default(true)
+  enrolledAt      DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  courseCatalogId String        @map("course_catalog_id")
+  userId          String        @map("user_id")
+  courseCatalog   CourseCatalog @relation(fields: [courseCatalogId], references: [id])
+  user            User          @relation(fields: [userId], references: [id])
+
+  @@unique([userId, courseCatalogId])
+  @@index([userId])
+  @@index([courseCatalogId])
+  @@map("enrollments")
+}
+
+model AdminActivityLog {
+  id           String   @id @default(cuid())
+  targetUserId String?
+  details      Json?
+  createdAt    DateTime @default(now())
+  adminUserId  Int
+  action       String
+
+  @@index([adminUserId])
+  @@index([targetUserId])
+  @@index([action])
+  @@map("admin_activity_logs")
+}
+
+model RegistrationCountries {
+  id        Int      @id @default(autoincrement())
+  code      String?
+  name      String?
+  username  String
+  country   String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("registration_countries")
+}
+
+model Inquiries {
+  id              Int      @id @default(autoincrement())
+  message         String?
+  createdAt       DateTime @default(now()) @map("created_at")
+  userId          Int?     @map("user_id")
+  type            String   @default("contact")
+  name            String
+  email           String
+  phone           String?
+  role            String?
+  gradeLevel      String?  @map("grade_level")
+  subjectInterest String?  @map("subject_interest")
+  learningMode    String?  @map("learning_mode")
+  status          String?  @default("new")
+
+  @@map("inquiries")
+}
+
+model Orders {
+  id                  Int      @id @default(autoincrement())
+  totalAmount         Float    @map("total_amount")
+  status              String   @default("pending")
+  createdAt           DateTime @default(now()) @map("created_at")
+  userId              String?  @map("user_id")
+  paymentStatus       String?  @default("pending") @map("payment_status")
+  paymentProvider     String?  @map("payment_provider")
+  paymentRef          String?  @map("payment_ref")
+  invoiceNumber       String?  @map("invoice_number")
+  paidAmount          Int?     @map("paid_amount")
+  remainingAmount     Int?     @map("remaining_amount")
+  allowPartialPayment Boolean? @map("allow_partial_payment")
+  refundStatus        String?  @map("refund_status")
+  paymentNotes Json?   @map("payment_notes")
+  items               OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        Int    @id @default(autoincrement())
+  orderId   Int    @map("order_id")
+  programId Int    @map("program_id")
+  price     Int
+  order     Orders @relation(fields: [orderId], references: [id])
+
+  @@map("order_items")
+}
+
+model PendingPayments {
+  orderRef        String    @id @map("order_ref")
+  userId          String    @map("user_id")
+  items           Json
+  totalAmount     Int       @map("total_amount")
+  amountToPay     Int?      @map("amount_to_pay")
+  scholarshipCode String?   @map("scholarship_code")
+  tracker         String?
+  orderId         Int?      @map("order_id")
+  createdAt       DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+
+  @@map("pending_payments")
+}
+
+model ScholarshipCodes {
+  code              String    @id
+  moodleUserId      Int       @map("moodle_user_id")
+  email             String
+  name              String
+  country           String
+  concessionPercent Int       @map("concession_percent")
+  region            String
+  expiresAt         DateTime  @map("expires_at") @db.Timestamp(6)
+  used              Boolean   @default(false)
+  usedAt            DateTime? @map("used_at") @db.Timestamp(6)
+  usedByUserId      String?   @map("used_by_user_id")
+  createdAt         DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+
+  @@map("scholarship_codes")
+}
+
+model RegisteredCountries {
+  moodleUserId Int       @id @map("moodle_user_id")
+  country      String
+  updatedAt    DateTime? @default(now()) @map("updated_at") @db.Timestamp(6)
+
+  @@map("registered_countries")
+}
+
+model DashboardNotificationReads {
+  id             Int       @id @default(autoincrement())
+  userId         Int       @map("user_id")
+  notificationId Int       @map("notification_id")
+  readAt         DateTime? @default(now()) @map("read_at") @db.Timestamp(6)
+
+  @@unique([userId, notificationId])
+  @@map("dashboard_notification_reads")
+}
+
+model SchoolLicenses {
+  id           String    @id
+  schoolUserId Int       @map("school_user_id")
+  courseId     Int       @map("course_id")
+  courseName   String    @map("course_name")
+  totalSeats   Int       @map("total_seats")
+  orderId      Int       @map("order_id")
+  purchaseDate DateTime? @default(now()) @map("purchase_date") @db.Timestamp(6)
+  expiresAt    DateTime? @map("expires_at") @db.Timestamp(6)
+
+  @@index([schoolUserId])
+  @@map("school_licenses")
+}
+
+model SchoolRosterStudents {
+  id             Int       @id @default(autoincrement())
+  schoolUserId   Int       @map("school_user_id")
+  studentId      Int       @map("student_id")
+  studentEmail   String    @map("student_email")
+  studentName    String    @map("student_name")
+  uploadedAt     DateTime? @default(now()) @map("uploaded_at") @db.Timestamp(6)
+  sourceUploadId String    @map("source_upload_id")
+
+  @@unique([schoolUserId, studentId])
+  @@index([schoolUserId])
+  @@map("school_roster_students")
+}
+
+model SchoolStudentUploads {
+  id                String    @id
+  schoolUserId      Int       @map("school_user_id")
+  filename          String
+  totalStudents     Int       @map("total_students")
+  processedStudents Int       @map("processed_students")
+  failedStudents    Int       @map("failed_students")
+  status            String
+  errors            Json?     @default("[]")
+  uploadedAt        DateTime? @default(now()) @map("uploaded_at") @db.Timestamp(6)
+
+  @@index([schoolUserId])
+  @@map("school_student_uploads")
+}
+
+model SchoolSeatAssignments {
+  id           String    @id
+  schoolUserId Int       @map("school_user_id")
+  licenseId    String    @map("license_id")
+  studentId    Int       @map("student_id")
+  studentEmail String    @map("student_email")
+  studentName  String    @map("student_name")
+  assignedAt   DateTime? @default(now()) @map("assigned_at") @db.Timestamp(6)
+
+  @@unique([licenseId, studentId])
+  @@index([schoolUserId])
+  @@map("school_seat_assignments")
+}
+
+model EdumeContactSubmissions {
+  id               Int      @id @default(autoincrement())
+  consultationType String   @map("consultation_type")
+  name             String
+  email            String
+  country          String?
+  subject          String?
+  message          String?
+  schoolName       String?  @map("school_name")
+  studentCount     String?  @map("student_count")
+  device           String?
+  problemType      String?  @map("problem_type")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  @@map("edume_contact_submissions")
 }
 
 enum UserRole {
@@ -20,363 +312,54 @@ enum SignupStatus {
   confirmed
 }
 
-model User {
-  id             String   @id @default(cuid())
-  moodleUserId   Int      @unique
-  username       String
-  email          String?
-  firstName      String?
-  lastName       String?
-  profileImage   String?
-  role           UserRole @default(student)
-  isSuspended    Boolean  @default(false)
-  lastPasswordResetAt DateTime?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  lastLoginAt    DateTime?
-
-  enrollments    UserCourseEnrollment[]
-
-  @@index([role])
-}
-
-model PendingSignup {
-  id          String       @id @default(cuid())
-  username    String       @unique
-  email       String
-  firstName   String?
-  lastName    String?
-  role        UserRole
-  status      SignupStatus @default(pending_confirmation)
-  moodleUserId Int?
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  confirmedAt DateTime?
-
-  @@index([status])
-}
-
-model ParentChild {
-  id        String   @id @default(cuid())
-  parentId  Int
-  childId   Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([parentId, childId])
-  @@index([parentId])
-  @@index([childId])
-}
-
-model RegistrationRole {
-  id        String   @id @default(cuid())
-  username  String   @unique
-  role      UserRole
-  createdAt DateTime @default(now())
-
-  @@index([username])
-}
-
-model CourseCatalog {
-  id             String   @id @default(cuid())
-  moodleCourseId Int      @unique
-  shortname      String
-  fullname       String
-  summary        String?
-  categoryId     Int?
-  categoryName   String?
-  isVisible      Boolean  @default(true)
-  price          Float    @default(0)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  enrollments    UserCourseEnrollment[]
-
-  @@index([categoryId])
-  @@index([isVisible])
-}
-model UserCourseEnrollment {
-  id              String        @id @default(cuid())
-  userId          String        @map("user_id")          // <-- Update this line
-  courseCatalogId String        @map("course_catalog_id") // <-- Update this line
-  progress        Int           @default(0)
-  isActive        Boolean       @default(true)
-  enrolledAt      DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-
-  user            User          @relation(fields: [userId], references: [id])
-  courseCatalog   CourseCatalog @relation(fields: [courseCatalogId], references: [id])
-
-  @@unique([userId, courseCatalogId])
-  @@index([userId])
-  @@index([courseCatalogId])
-  @@map("enrollments")
-}
-
-model AdminActivityLog {
-  id            String   @id @default(cuid())
-  adminUserId   Int
-  targetUserId  String?
-  action        String
-  details       Json?
-  createdAt     DateTime @default(now())
-
-  @@index([adminUserId])
-  @@index([targetUserId])
-  @@index([action])
-}
-
-model RegistrationCountries {
-  id        Int      @id @default(autoincrement())
-  username  String   
-  country   String   
-  code      String?   
-  name      String?   
-  createdAt DateTime @default(now()) @map("created_at") // <-- Updated this line
-
-  @@map("registration_countries")
-}
-// Commerce tables (orders, inquiries, etc.) are defined here and synced via Prisma migrations.
-
-model Inquiries {
-  id              Int       @id @default(autoincrement())
-  type            String
-  name            String
-  email           String
-  phone           String?
-  role            String?
-  gradeLevel      String?   @map("grade_level")
-  subjectInterest String?   @map("subject_interest")
-  learningMode    String?   @map("learning_mode")
-  message         String?
-  status          String?   @default("new")
-  createdAt       DateTime? @default(now()) @map("created_at")
-
-  @@map("inquiries")
-}
-
-model Resources {
-  id             Int       @id @default(autoincrement())
-  title          String
-  description    String
-  category       String
-  subject        String?
-  fileUrl        String    @map("file_url")
-  thumbnailUrl   String?   @map("thumbnail_url")
-  isFree         Boolean?  @default(true) @map("is_free")
-  downloadCount  Int?      @default(0) @map("download_count")
-  createdAt      DateTime? @default(now()) @map("created_at")
-
-  @@map("resources")
-}
-
-model Programs {
-  id               Int       @id @default(autoincrement())
-  title            String
-  slug             String    @unique
-  shortDescription String    @map("short_description")
-  fullDescription  String    @map("full_description")
-  category         String
-  price            Int?
-  prices           Json?
-  features         Json?
-  isPopular        Boolean?  @default(false) @map("is_popular")
-  createdAt        DateTime? @default(now()) @map("created_at")
-
-  @@map("programs")
-}
-
-model Orders {
-  id                  Int       @id @default(autoincrement())
-  userId              String    @map("user_id")
-  totalAmount         Int       @map("total_amount")
-  status              String    @default("pending")
-  paymentStatus       String?   @default("pending") @map("payment_status")
-  paymentProvider     String?   @map("payment_provider")
-  paymentRef          String?   @map("payment_ref")
-  invoiceNumber       String?   @map("invoice_number")
-  paidAmount          Int?      @default(0) @map("paid_amount")
-  remainingAmount     Int?      @default(0) @map("remaining_amount")
-  allowPartialPayment Boolean?  @default(true) @map("allow_partial_payment")
-  refundStatus        String?   @map("refund_status")
-  paymentNotes        Json?     @default("[]") @map("payment_notes")
-  createdAt           DateTime? @default(now()) @map("created_at")
-
-  @@map("orders")
-}
-
-model OrderItems {
-  id        Int @id @default(autoincrement())
-  orderId   Int @map("order_id")
-  programId Int @map("program_id")
-  price     Int
-
-  @@map("order_items")
-}
-
-model PendingPayments {
-  orderRef        String    @id @map("order_ref")
-  userId          String    @map("user_id")
-  items           Json
-  totalAmount     Int       @map("total_amount")
-  amountToPay     Int?      @map("amount_to_pay")
-  scholarshipCode String?   @map("scholarship_code")
-  tracker         String?
-  orderId         Int?      @map("order_id")
-  createdAt       DateTime? @default(now()) @map("created_at")
-
-  @@map("pending_payments")
-}
-
-model ScholarshipCodes {
-  code              String    @id
-  moodleUserId      Int       @map("moodle_user_id")
-  email             String
-  name              String
-  country           String
-  concessionPercent Int       @map("concession_percent")
-  region            String
-  expiresAt         DateTime  @map("expires_at")
-  used              Boolean   @default(false)
-  usedAt            DateTime? @map("used_at")
-  usedByUserId      String?   @map("used_by_user_id")
-  createdAt         DateTime? @default(now()) @map("created_at")
-
-  @@map("scholarship_codes")
-}
-
-model RegisteredCountries {
-  moodleUserId Int       @id @map("moodle_user_id")
-  country      String
-  updatedAt    DateTime? @default(now()) @map("updated_at")
-
-  @@map("registered_countries")
-}
-
-model DashboardNotificationReads {
-  id             Int       @id @default(autoincrement())
-  userId         Int       @map("user_id")
-  notificationId Int       @map("notification_id")
-  readAt         DateTime? @default(now()) @map("read_at")
-
-  @@map("dashboard_notification_reads")
-}
-
-model SchoolLicenses {
-  id           String    @id
-  schoolUserId Int       @map("school_user_id")
-  courseId     Int       @map("course_id")
-  courseName   String    @map("course_name")
-  totalSeats   Int       @map("total_seats")
-  orderId      Int       @map("order_id")
-  purchaseDate DateTime? @default(now()) @map("purchase_date")
-  expiresAt    DateTime? @map("expires_at")
-
-  @@map("school_licenses")
-}
-
-model SchoolRosterStudents {
-  id             Int       @id @default(autoincrement())
-  schoolUserId   Int       @map("school_user_id")
-  studentId      Int       @map("student_id")
-  studentEmail   String    @map("student_email")
-  studentName    String    @map("student_name")
-  uploadedAt     DateTime? @default(now()) @map("uploaded_at")
-  sourceUploadId String    @map("source_upload_id")
-
-  @@map("school_roster_students")
-}
-
-model SchoolStudentUploads {
-  id                String    @id
-  schoolUserId      Int       @map("school_user_id")
-  filename          String
-  totalStudents     Int       @map("total_students")
-  processedStudents Int       @map("processed_students")
-  failedStudents    Int       @map("failed_students")
-  status            String
-  errors            Json?     @default("[]")
-  uploadedAt        DateTime? @default(now()) @map("uploaded_at")
-
-  @@map("school_student_uploads")
-}
-
-model SchoolSeatAssignments {
-  id           String    @id
-  schoolUserId Int       @map("school_user_id")
-  licenseId    String    @map("license_id")
-  studentId    Int       @map("student_id")
-  studentEmail String    @map("student_email")
-  studentName  String    @map("student_name")
-  assignedAt   DateTime? @default(now()) @map("assigned_at")
-
-  @@map("school_seat_assignments")
-}
-
-model EdumeContactSubmissions {
-  id               Int       @id @default(autoincrement())
-  consultationType String    @map("consultation_type")
-  name             String
-  email            String
-  country          String?
-  subject          String?
-  message          String?
-  schoolName       String?   @map("school_name")
-  studentCount     String?   @map("student_count")
-  device           String?
-  problemType      String?   @map("problem_type")
-  createdAt        DateTime? @default(now()) @map("created_at")
-
-  @@map("edume_contact_submissions")
-}
-
-model EdumeGuestDiagnostics {
-  id             Int       @id @default(autoincrement())
-  ipAddress      String    @map("ip_address")
-  subject        String
-  diagnosticType String    @map("diagnostic_type")
-  startedAt      DateTime? @default(now()) @map("started_at")
-  completed      Boolean   @default(false)
-  completedAt    DateTime? @map("completed_at")
-  sessionToken   String    @unique @map("session_token")
-  moodleUserId   Int?      @map("moodle_user_id")
-
-  @@map("edume_guest_diagnostics")
-}
-
-model EdumeDiagnosticAccountFlags {
-  moodleUserId       Int       @id @map("moodle_user_id")
-  freeDiagnosticUsed Boolean   @default(false) @map("free_diagnostic_used")
-  teacherT1Attempts  Int       @default(0) @map("teacher_t1_attempts")
-  updatedAt          DateTime? @default(now()) @map("updated_at")
-
-  @@map("edume_diagnostic_account_flags")
-}
-
 model EdumeDiagnosticSessions {
-  id             Int       @id @default(autoincrement())
-  sessionToken   String    @unique @map("session_token")
+  sessionToken   String    @id @map("session_token")
   moodleUserId   Int?      @map("moodle_user_id")
-  ipAddress      String    @map("ip_address")
+  ipAddress      String?   @map("ip_address")
   diagnosticType Int       @map("diagnostic_type")
   subject        String?
   grade          String?
   variant        String?
   paid           Boolean   @default(false)
-  status         String    @default("started")
-  startedAt      DateTime? @default(now()) @map("started_at")
-  completedAt    DateTime? @map("completed_at")
+  status         String
   resultJson     Json?     @map("result_json")
+  completedAt    DateTime? @map("completed_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
 
   @@map("edume_diagnostic_sessions")
 }
 
+model EdumeGuestDiagnostics {
+  id             Int       @id @default(autoincrement())
+  sessionToken   String    @map("session_token")
+  ipAddress      String    @map("ip_address")
+  subject        String?
+  diagnosticType String    @map("diagnostic_type")
+  moodleUserId   Int?      @map("moodle_user_id")
+  completed      Boolean   @default(false)
+  completedAt    DateTime? @map("completed_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  @@map("edume_guest_diagnostics")
+}
+
 model EdumeDiagnosticAnswers {
-  id           Int       @id @default(autoincrement())
-  sessionToken String    @map("session_token")
-  questionId   String    @map("question_id")
+  id           Int      @id @default(autoincrement())
+  sessionToken String   @map("session_token")
+  questionId   String   @map("question_id")
   answer       Json
-  createdAt    DateTime? @default(now()) @map("created_at")
+  createdAt    DateTime @default(now()) @map("created_at")
 
   @@map("edume_diagnostic_answers")
+}
+
+model EdumeDiagnosticAccountFlags {
+  id                 Int      @id @default(autoincrement())
+  moodleUserId       Int      @unique @map("moodle_user_id")
+  freeDiagnosticUsed Boolean  @default(false) @map("free_diagnostic_used")
+  teacherT1Attempts  Int      @default(0) @map("teacher_t1_attempts")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  @@map("edume_diagnostic_account_flags")
 }

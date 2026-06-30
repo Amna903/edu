@@ -1,5 +1,5 @@
-import type { AppRole } from "../shared/schema.js";
-import { prisma } from "./prisma.js";
+import type { AppRole } from "../../shared/schema.js";
+import { prisma } from "../db/prisma.js";
 
 type StoredRole = "admin" | "student" | "parent" | "school";
 
@@ -61,7 +61,7 @@ export async function getPendingSignupByUsername(username: string) {
 export async function markPendingSignupConfirmed(input: { username: string; moodleUserId?: number }) {
   const normalizedUsername = input.username.trim().toLowerCase();
 
-  await prisma.pendingSignup.update({
+  await prisma.pendingSignup.updateMany({
     where: { username: normalizedUsername },
     data: {
       status: "confirmed",
@@ -82,15 +82,45 @@ export async function syncUserFromMoodleSession(input: {
 }) {
   const normalizedUsername = input.username.trim().toLowerCase();
 
-  const [existingUser, pendingRegistration] = await Promise.all([
-    prisma.user.findUnique({
-      where: { moodleUserId: input.moodleUserId },
+  let existingUser = await prisma.user.findUnique({
+    where: { moodleUserId: input.moodleUserId },
+    select: { id: true, role: true },
+  });
+
+  if (!existingUser) {
+    // Auto-heal: If Moodle ID changed, find them by username OR email
+    const userByUsernameOrEmail = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { username: normalizedUsername },
+          { email: normalizedUsername },
+          ...(input.email ? [{ email: input.email.trim().toLowerCase() }] : []),
+        ],
+      },
       select: { id: true, role: true },
-    }),
-    prisma.registrationRole.findUnique({
-      where: { username: normalizedUsername },
-    }),
-  ]);
+    });
+
+    if (userByUsernameOrEmail) {
+      // Update their moodleUserId in our DB so they don't lose their role
+      existingUser = await prisma.user.update({
+        where: { id: userByUsernameOrEmail.id },
+        data: { moodleUserId: input.moodleUserId },
+        select: { id: true, role: true },
+      });
+    }
+  }
+
+  // PREVENT CREATING NEW USERS ON LOGIN (Strictly Block All Cases EXCEPT ADMIN)
+  if (!existingUser && input.role !== "admin") {
+    console.log("User not found in local DB, but Moodle auth succeeded. User is not admin, rejecting.");
+    throw new Error("User does not exist in our database. Please register properly first to log in.");
+  } else if (!existingUser && input.role === "admin") {
+    console.log("Admin user found in Moodle but not in local DB! Auto-creating local admin record with Moodle ID:", input.moodleUserId);
+  }
+
+  const pendingRegistration = await prisma.registrationRole.findUnique({
+    where: { username: normalizedUsername },
+  });
 
   let finalRole: StoredRole = normalizeRole(input.role);
 
@@ -163,7 +193,7 @@ export async function getLinkedChildren(parentMoodleUserId: number) {
     orderBy: { createdAt: "asc" },
   });
 
-  return rows.map((row) => row.childId);
+  return rows.map((row: any) => row.childId);
 }
 
 export async function getStoredUserByMoodleUserId(moodleUserId: number) {
