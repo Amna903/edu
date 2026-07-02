@@ -3,7 +3,6 @@ import { z } from "zod";
 import { storage } from "../db/storage.js";
 import { env } from "../config/config.js";
 import { prisma } from "../db/prisma.js";
-import { prisma } from "../db/prisma.js";
 import { getLmsCourseById } from "../services/moodle/moodle.js";
 import { enrolUserInCourse } from "../services/moodle/moodle-commerce.js";
 import { createCourseEnrollment } from "../repositories/course-store.js";

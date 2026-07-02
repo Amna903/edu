@@ -75,9 +75,23 @@ export function registerAuthRoutes(app: Express, ctx: RouteContext) {
   });
 
   app.post(api.auth.login.path, async (req, res) => {
+    const ip = getClientIp(req);
+    const userAgent = req.headers["user-agent"];
     try {
       const input = loginInputSchema.parse(req.body);
       const result = await loginWithMoodle(input);
+
+      // §10 — Log successful login
+      import("../services/logger.js").then(({ logLoginAttempt }) => {
+        logLoginAttempt({
+          username: input.username,
+          ipAddress: ip,
+          userAgent,
+          success: true,
+          moodleUserId: result.user.id,
+        }).catch(() => undefined);
+      }).catch(() => undefined);
+
       req.session.moodleToken = result.token;
       req.session.moodlePrivateToken = result.privateToken ?? undefined;
       req.session.user = result.user;
@@ -104,6 +118,20 @@ export function registerAuthRoutes(app: Express, ctx: RouteContext) {
       await linkGuestDiagnosticToAccount({ moodleUserId: result.user.id, ip: getClientIp(req) }).catch(() => undefined);
       res.json(req.session.user);
     } catch (err) {
+      // §10 — Log failed login
+      const input = req.body as { username?: string };
+      if (input.username) {
+        import("../services/logger.js").then(({ logLoginAttempt }) => {
+          logLoginAttempt({
+            username: input.username as string,
+            ipAddress: ip,
+            userAgent,
+            success: false,
+            failureReason: err instanceof Error ? err.message : "Unknown error",
+          }).catch(() => undefined);
+        }).catch(() => undefined);
+      }
+
       if (err instanceof z.ZodError) {
         return res.status(400).json({
           message: err.errors[0].message,

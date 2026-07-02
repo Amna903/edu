@@ -9,6 +9,7 @@ import { randomUUID } from "crypto";
 import { prisma } from "../db/prisma.js";
 import type { JobType, EnrollUserPayload, SendEmailPayload, PaymentEnrollRetryPayload } from "./job-queue.js";
 import { env } from "../config/config.js";
+import { logError } from "./logger.js";
 
 const WORKER_ID = `worker-${randomUUID().slice(0, 8)}`;
 const POLL_INTERVAL_MS = 15_000;
@@ -77,6 +78,91 @@ async function handleMoodleSyncCourses() {
   console.log(`[worker] synced ${courses.length} courses from Moodle`);
 }
 
+async function handleMoodleSyncUsers() {
+  const { moodlePostWithTokenFallback } = await import("./moodle/moodle-auth.js");
+  const { getMoodleAdminToken } = await import("./moodle/moodle-tokens.js");
+  const adminToken = getMoodleAdminToken();
+  if (!adminToken) {
+    throw new Error("No Moodle admin token available for user sync");
+  }
+
+  const usersRes = await moodlePostWithTokenFallback<{ users: any[] }>(
+    "core_user_get_users",
+    new URLSearchParams({ "criteria[0][key]": "email", "criteria[0][value]": "%%" }),
+    [adminToken],
+  );
+  const users = usersRes?.users ?? [];
+  let synced = 0;
+  for (const user of users) {
+    if (user.username === "admin") continue;
+    try {
+      await (prisma as any).user.upsert({
+        where: { moodleUserId: user.id },
+        create: {
+          moodleUserId: user.id,
+          username: user.username,
+          email: user.email || null,
+          firstName: user.firstname || null,
+          lastName: user.lastname || null,
+          profileImage: user.profileimageurl || null,
+          role: "student",
+          lastLoginAt: new Date(),
+        },
+        update: {
+          username: user.username,
+          email: user.email || null,
+          firstName: user.firstname || null,
+          lastName: user.lastname || null,
+          profileImage: user.profileimageurl || null,
+        },
+      });
+      synced++;
+    } catch (upsertErr) {
+      console.warn(`[worker] user upsert failed for moodleId=${user.id}: ${upsertErr instanceof Error ? upsertErr.message : upsertErr}`);
+    }
+  }
+  console.log(`[worker] synced ${synced}/${users.length} users from Moodle`);
+}
+
+async function handlePaymentVerify(payload: { orderId: number; orderRef: string; userId: string }) {
+  // Re-check payment status: if the order is still "initiated"/"pending"
+  // after the grace period, attempt to finalize via the stored pending payment.
+  const order = await prisma.orders.findUnique({ where: { id: payload.orderId } });
+  if (!order) {
+    console.warn(`[worker] PAYMENT_VERIFY: order ${payload.orderId} not found`);
+    return;
+  }
+
+  const currentStatus = String(order.paymentStatus ?? order.status).toLowerCase();
+  if (!["initiated", "pending"].includes(currentStatus)) {
+    // Already resolved — nothing to do
+    console.log(`[worker] PAYMENT_VERIFY: order ${payload.orderId} already has status=${currentStatus}, skipping`);
+    return;
+  }
+
+  const pending = await prisma.pendingPayments.findUnique({ where: { orderRef: payload.orderRef } });
+  if (!pending) {
+    // No pending record — mark as expired
+    await prisma.orders.update({
+      where: { id: payload.orderId },
+      data: { status: "expired", paymentStatus: "expired" },
+    });
+    console.log(`[worker] PAYMENT_VERIFY: order ${payload.orderId} marked expired (no pending record)`);
+    return;
+  }
+
+  // Log that a stale payment is still unresolved — admin will see it in activity logs
+  const { logError: log } = await import("./logger.js");
+  await log({
+    context: "PAYMENT_VERIFY_JOB",
+    error: new Error(`Payment for order ${payload.orderId} (ref: ${payload.orderRef}) has been pending for >10 minutes and could not be auto-resolved.`),
+    userId: payload.userId ? Number(payload.userId) : undefined,
+    metadata: { orderId: payload.orderId, orderRef: payload.orderRef, currentStatus },
+  });
+
+  console.warn(`[worker] PAYMENT_VERIFY: order ${payload.orderId} still unresolved after 10min (ref=${payload.orderRef})`);
+}
+
 async function handlePaymentEnrollRetry(payload: PaymentEnrollRetryPayload) {
   const { enrolUserInCourse } = await import("./moodle/moodle-commerce.js");
   const { createCourseEnrollment } = await import("../repositories/course-store.js");
@@ -103,6 +189,10 @@ async function dispatchJob(type: string, payload: unknown) {
       return handleSendEmail(payload as SendEmailPayload);
     case "MOODLE_SYNC_COURSES":
       return handleMoodleSyncCourses();
+    case "MOODLE_SYNC_USERS":
+      return handleMoodleSyncUsers();
+    case "PAYMENT_VERIFY":
+      return handlePaymentVerify(payload as { orderId: number; orderRef: string; userId: string });
     case "PAYMENT_ENROLL_RETRY":
       return handlePaymentEnrollRetry(payload as PaymentEnrollRetryPayload);
     default:
@@ -151,7 +241,7 @@ async function processNextBatch() {
         await prisma.deadLetterJob.create({
           data: {
             type: job.type,
-            payload: job.payload,
+            payload: job.payload ?? {},
             attempts: nextAttempts,
             lastError: errorMsg.slice(0, 2000),
             originalId: job.id,

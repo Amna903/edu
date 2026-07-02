@@ -102,6 +102,11 @@ export const ready = (async () => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
 
+    // §10 — Log errors centrally
+    import("./services/logger.js").then(({ logError }) => {
+      logError({ context: "express-error-handler", error: err }).catch(() => undefined);
+    }).catch(() => undefined);
+
     console.error("Internal Server Error:", err);
 
     if (res.headersSent) {
@@ -139,6 +144,14 @@ export const ready = (async () => {
     if (process.platform === "linux") {
       listenOptions.reusePort = true;
     }
+
+    // §4.21 — Start background job worker + sync scheduler
+    const { startJobWorker } = await import("./services/job-worker.js");
+    const { startSyncScheduler } = await import("./services/moodle-sync-scheduler.js");
+    const { attachGlobalErrorHandlers } = await import("./services/logger.js");
+    startJobWorker();
+    startSyncScheduler();
+    attachGlobalErrorHandlers();
 
     httpServer.listen(
       listenOptions,

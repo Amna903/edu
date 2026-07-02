@@ -7,6 +7,7 @@ import { registerDiagnosticsRoutes } from "./diagnostics.routes.js";
 import { registerDashboardRoutes } from "./dashboard.routes.js";
 import { registerPaymentRoutes } from "./payment.routes.js";
 import { registerAdminRoutes } from "./admin.routes.js";
+import { registerFeatureRoutes } from "./features.routes.js";
 import { storage } from "../db/storage.js";
 
 export async function registerRoutes(httpServer: Server, app: Express): Promise<Server> {
@@ -18,6 +19,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   registerDashboardRoutes(app, ctx);
   registerPaymentRoutes(app, ctx);
   registerAdminRoutes(app, ctx);
+  registerFeatureRoutes(app);
 
   await seedDatabase();
 

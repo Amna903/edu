@@ -13,7 +13,6 @@ import { createCourseEnrollment, getUserCourseEnrollments } from "../repositorie
 import { enrolUserInCourse } from "../services/moodle/moodle-commerce.js";
 import { env } from "../config/config.js";
 import { prisma } from "../db/prisma.js";
-import { prisma } from "../db/prisma.js";
 
 
 export function registerMiscRoutes(app: Express, ctx: RouteContext) {

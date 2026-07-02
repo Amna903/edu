@@ -12,7 +12,6 @@ import { prisma } from "../db/prisma.js";
 import { moodlePostWithTokenFallback } from "../services/moodle/moodle-auth.js";
 import { getMoodleAdminToken } from "../services/moodle/moodle-tokens.js";
 
-
 export function registerAdminRoutes(app: Express, ctx: RouteContext) {
   const {
     notificationReadByUser,

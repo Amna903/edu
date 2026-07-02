@@ -32,6 +32,12 @@ export interface MoodleSyncPayload {
   triggeredBy?: string;
 }
 
+export interface PaymentVerifyPayload {
+  orderId: number;
+  orderRef: string;
+  userId: string;
+}
+
 export interface PaymentEnrollRetryPayload {
   orderId: number;
   userId: string;
@@ -42,6 +48,7 @@ export type JobPayload =
   | EnrollUserPayload
   | SendEmailPayload
   | MoodleSyncPayload
+  | PaymentVerifyPayload
   | PaymentEnrollRetryPayload
   | Record<string, unknown>;
 

@@ -25,7 +25,6 @@ import {
 import { buildOrigin } from "../services/payments.js";
 import { env } from "../config/config.js";
 import { prisma } from "../db/prisma.js";
-import { prisma } from "../db/prisma.js";
 import { getStoredUserByMoodleUserId, linkParentToChild, syncUserFromMoodleSession } from "../repositories/user-store.js";
 
 
