@@ -1,9 +1,10 @@
 import { env } from "../../config/config.js";
 import { prisma } from "../../db/prisma.js";
 import { getStoredUserByMoodleUserId } from "../../repositories/user-store.js";
+import { getMoodleAdminToken } from "./moodle-tokens.js";
 
 function getAdminToken() {
-  return env.moodle.adminToken || "";
+  return getMoodleAdminToken();
 }
 
 function getBaseUrl() {

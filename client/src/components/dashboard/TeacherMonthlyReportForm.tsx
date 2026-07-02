@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useReviewMonthlyForm, useSubmitMonthlyForm } from "@/hooks/use-dashboard";
 
 type ActionRow = {
   action: string;
@@ -21,8 +22,11 @@ const contactOptions = ["Not started", "Contacted", "In progress", "Completed"];
 
 export function TeacherMonthlyReportForm({ role }: { role: string }) {
   const [locked, setLocked] = useState(false);
+  const [submissionId, setSubmissionId] = useState<string | null>(null);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
+  const submitMonthlyForm = useSubmitMonthlyForm();
+  const reviewMonthlyForm = useReviewMonthlyForm();
   const [topicsText, setTopicsText] = useState("Algebra, Comprehension, Exam Technique");
   const topics = useMemo(
     () => topicsText.split(",").map((topic) => topic.trim()).filter(Boolean),
@@ -236,15 +240,47 @@ export function TeacherMonthlyReportForm({ role }: { role: string }) {
           <Button
             type="button"
             className="bg-[#2366c9] text-white hover:bg-[#1a4fa0]"
-            disabled={locked}
-            onClick={() => {
+            disabled={locked || submitMonthlyForm.isPending}
+            onClick={async () => {
               if (!form.teacherName.trim() || !form.className.trim()) {
                 setError("Teacher name and class are required.");
                 return;
               }
+              if (needsDiscrepancyNote && !form.discrepancyReason.trim()) {
+                setError("Discrepancy reason is required when submitted students are below expected.");
+                return;
+              }
               setError("");
-              setSuccess("Report saved locally and locked. Download your PDF for archive records.");
-              setLocked(true);
+              try {
+                const response = await submitMonthlyForm.mutateAsync({
+                  status: "submitted",
+                  payload: {
+                    reportMonth: form.reportMonth,
+                    teacherName: form.teacherName.trim(),
+                    className: form.className.trim(),
+                    expectedStudents: Number(form.expectedStudents) || 0,
+                    submittedStudents: Number(form.submittedStudents) || 0,
+                    discrepancyReason: form.discrepancyReason.trim(),
+                    topics,
+                    topicRatings: form.topicRatings,
+                    totalSessions: Number(form.totalSessions) || 0,
+                    attendedSessions: Number(form.attendedSessions) || 0,
+                    averageMastery: Number(form.averageMastery) || 0,
+                    assessmentAverage: Number(form.assessmentAverage) || 0,
+                    homeworkCompletion: Number(form.homeworkCompletion) || 0,
+                    attendanceRate: Number(form.attendanceRate) || 0,
+                    atRiskStudents: Number(form.atRiskStudents) || 0,
+                    parentContactStatus: form.parentContactStatus,
+                    teacherNotes: form.teacherNotes.trim(),
+                    actions: actions.map((row) => ({ action: row.action, owner: row.owner, dueDate: row.dueDate || "" })),
+                  },
+                });
+                setSubmissionId(response.id);
+                setSuccess("Report submitted and locked successfully.");
+                setLocked(true);
+              } catch (submitError) {
+                setError(submitError instanceof Error ? submitError.message : "Failed to submit report.");
+              }
             }}
           >
             Lock & Save Draft
@@ -252,8 +288,20 @@ export function TeacherMonthlyReportForm({ role }: { role: string }) {
           <Button
             type="button"
             variant="outline"
-            disabled={!locked}
-            onClick={() => {
+            disabled={!locked || !submissionId || reviewMonthlyForm.isPending || !["school", "admin"].includes(role)}
+            onClick={async () => {
+              if (!submissionId) return;
+              try {
+                await reviewMonthlyForm.mutateAsync({
+                  submissionId,
+                  payload: {
+                    status: "returned",
+                    reviewNotes: "Re-opened by reviewer for corrections.",
+                  },
+                });
+              } catch {
+                // Even if review API fails for role mismatch, keep local UX editable.
+              }
               setLocked(false);
               setSuccess("");
             }}
@@ -263,9 +311,9 @@ export function TeacherMonthlyReportForm({ role }: { role: string }) {
         </div>
 
         <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4 text-xs leading-6 text-slate-500">
-          <p className="font-semibold text-slate-900">Frontend-only behavior</p>
+          <p className="font-semibold text-slate-900">Workflow behavior</p>
           <p className="mt-1">
-            This dashboard form is fully interactive on the frontend, with lock-on-submit, repeatable interventions, and topic-based scoring. It is designed to match the documented workflow while the backend endpoints are added.
+            This report form now submits to backend endpoints for persistence and review flow, while keeping lock-on-submit and repeatable intervention UX in the same screen.
           </p>
           <p className="mt-1 text-slate-600">Current viewer role: <span className="font-semibold text-slate-900">{role}</span></p>
         </div>

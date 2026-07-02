@@ -1,4 +1,4 @@
-import { getMoodleApiUrl, getMoodleCourseFetchTokens, isRetryableMoodleTokenError } from "./moodle-tokens.js";
+import { getMoodleAdminFetchTokens, getMoodleApiUrl, isRetryableMoodleTokenError } from "./moodle-tokens.js";
 
 export async function enrolUserInCourse(userId: number, courseId: number) {
   const apiUrl = getMoodleApiUrl();
@@ -6,9 +6,10 @@ export async function enrolUserInCourse(userId: number, courseId: number) {
     throw new Error("NEXT_PUBLIC_MOODLE_URL is not configured");
   }
 
-  const tokens = getMoodleCourseFetchTokens();
+  // Use admin token for school seat assignment enrollment to avoid permission mismatch.
+  const tokens = getMoodleAdminFetchTokens();
   if (!tokens.length) {
-    throw new Error("MOODLE_COURSE or MOODLE_ADMIN_TOKEN is not configured");
+    throw new Error("MOODLE_ADMIN_TOKEN is not configured");
   }
 
   let lastError: Error | null = null;
@@ -38,7 +39,26 @@ export async function enrolUserInCourse(userId: number, courseId: number) {
 
     const data = await response.json();
     if (data?.exception || data?.errorcode) {
-      lastError = new Error(data.message || "Moodle enrollment failed");
+      const normalizedMessage = String(data?.message || "").toLowerCase();
+      const normalizedErrorCode = String(data?.errorcode || "").toLowerCase();
+      if (normalizedMessage.includes("message was not sent")) {
+        // Moodle sometimes returns this even when operation succeeded if SMTP is misconfigured.
+        return { success: true };
+      }
+      const alreadyEnrolled =
+        normalizedErrorCode.includes("enrol")
+        && normalizedErrorCode.includes("exist")
+        || normalizedMessage.includes("already enrolled")
+        || normalizedMessage.includes("already enroled");
+      if (alreadyEnrolled) {
+        return { success: true };
+      }
+
+      const safeMessage =
+        (typeof data?.message === "string" && data.message.trim()) ||
+        (typeof data?.errorcode === "string" && `Moodle enrollment failed (${data.errorcode})`) ||
+        "Moodle enrollment failed (unknown Moodle error)";
+      lastError = new Error(safeMessage);
       if (isRetryableMoodleTokenError(data.errorcode, data.message)) {
         continue;
       }

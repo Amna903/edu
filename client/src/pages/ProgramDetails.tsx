@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import { formatMoneyFromMinorUnits } from "@/lib/currency";
+import { useAuthUser } from "@/hooks/use-auth";
 
 function formatCourseDate(value: string | null, fallback: string) {
   if (!value) return fallback;
@@ -26,6 +27,7 @@ export default function ProgramDetails() {
   const { data: program, isLoading, error } = useProgram(slug);
   const { addToCart } = useCart();
   const { toast } = useToast();
+  const { data: user } = useAuthUser();
 
   if (isLoading) {
     return (
@@ -70,6 +72,7 @@ export default function ProgramDetails() {
   }
 
   const canBuy = typeof program.price === "number" && program.price > 0;
+  const isSchoolUser = user?.role === "school";
 
   const handleAddToCart = () => {
     if (!canBuy) {
@@ -85,7 +88,9 @@ export default function ProgramDetails() {
 
     toast({
       title: "Course added",
-      description: `${program.title} has been added to your cart.`,
+      description: isSchoolUser
+        ? `${program.title} has been added to your license cart.`
+        : `${program.title} has been added to your cart.`,
     });
   };
 
@@ -137,7 +142,7 @@ export default function ProgramDetails() {
                   onClick={handleBuyNow}
                   className="w-full bg-brand-primary hover:bg-brand-navy text-white font-bold h-16 md:h-24 rounded-3xl text-lg md:text-xl uppercase tracking-widest shadow-xl active:scale-95 transition-all"
                 >
-                  {canBuy ? "Buy & Checkout" : "Open Course"}
+                  {canBuy ? (isSchoolUser ? "Purchase Licenses" : "Buy & Checkout") : "Open Course"}
                 </Button>
                 <Button
                   type="button"
@@ -146,7 +151,7 @@ export default function ProgramDetails() {
                   className="w-full h-14 rounded-2xl font-bold uppercase tracking-widest border-slate-200 text-brand-navy hover:bg-slate-50 transition-colors"
                 >
                   <ShoppingCart className="h-4 w-4 mr-2" />
-                  {canBuy ? "Add To Cart" : "Open In LMS"}
+                  {canBuy ? (isSchoolUser ? "Add to License Cart" : "Add To Cart") : "Open In LMS"}
                 </Button>
                 <InquiryDialog 
                   defaultType="enrollment"
@@ -251,7 +256,7 @@ export default function ProgramDetails() {
                 onClick={handleBuyNow}
                 className="mb-4 w-full bg-emerald-500 text-white hover:bg-emerald-600 font-bold h-16 rounded-2xl text-base uppercase tracking-widest shadow-xl"
               >
-                Proceed To Payment
+                {isSchoolUser ? "Purchase Licenses" : "Proceed To Payment"}
               </Button>
               <InquiryDialog 
                 defaultType="contact"

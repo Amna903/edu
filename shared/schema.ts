@@ -622,9 +622,27 @@ export const schoolStudentUploadSchema = z.object({
   })).optional(),
 });
 
-export const csvStudentInputSchema = z.object({
-  // Will be validated server-side from CSV file content
-  // Each row should have: email, firstName, lastName, moodleUserId (optional)
+export const schoolRosterStudentSchema = z.object({
+  id: z.number(),
+  studentId: z.number(),
+  studentEmail: z.string().email(),
+  studentName: z.string(),
+  uploadedAt: z.string().datetime().nullable(),
+  assignments: z.array(z.object({
+    licenseId: z.string(),
+    courseName: z.string(),
+    assignedAt: z.string().datetime().nullable(),
+  })).default([]),
+});
+
+export const schoolRosterListSchema = z.object({
+  students: z.array(schoolRosterStudentSchema),
+});
+
+export const schoolAddStudentInputSchema = z.object({
+  email: z.string().email(),
+  firstName: z.string().min(1),
+  lastName: z.string().min(1),
 });
 
 export const seatAssignmentSchema = z.object({
@@ -638,14 +656,14 @@ export const seatAssignmentSchema = z.object({
 
 export const bulkSeatAssignmentInputSchema = z.object({
   licenseId: z.string(),
-  studentIds: z.array(z.number().int().positive()),
+  rosterIds: z.array(z.number().int().positive()),
 });
 
 export const bulkSeatAssignmentResponseSchema = z.object({
   success: z.literal(true),
   assigned: z.array(seatAssignmentSchema),
   failed: z.array(z.object({
-    studentId: z.number(),
+    rosterId: z.number(),
     error: z.string(),
   })),
 });
@@ -677,6 +695,105 @@ export const schoolUsageReportSchema = z.object({
     inactiveStudents: z.number(),
     totalEnrolled: z.number(),
   }),
+});
+
+export const schoolDashboardStatsSchema = z.object({
+  generatedAt: z.string().datetime(),
+  seatUtilizationPercent: z.number(),
+  assignedSeats: z.number(),
+  purchasedSeats: z.number(),
+  atRiskFlags: z.number(),
+  lastRiskSyncAt: z.string().datetime().nullable(),
+  riskStudentsChecked: z.number(),
+  atRiskStudents: z.array(z.object({
+    studentId: z.number(),
+    studentName: z.string(),
+    studentEmail: z.string().email(),
+    inactivityDays: z.number(),
+    lowGrade: z.boolean(),
+  })),
+  classPdfCount: z.number(),
+  teacherCpdLabel: z.string(),
+  courseSeatSummary: z.array(z.object({
+    courseName: z.string(),
+    assignedSeats: z.number(),
+    totalSeats: z.number(),
+  })),
+});
+
+export const schoolArchiveSnapshotItemSchema = z.object({
+  month: z.string(),
+  summaryTitle: z.string(),
+  availabilityNote: z.string(),
+  stats: schoolDashboardStatsSchema,
+});
+
+export const schoolArchiveResponseSchema = z.object({
+  months: z.array(schoolArchiveSnapshotItemSchema),
+});
+
+export const monthlyFormActionSchema = z.object({
+  action: z.string(),
+  owner: z.string(),
+  dueDate: z.string().optional().default(""),
+});
+
+export const monthlyFormPayloadSchema = z.object({
+  reportMonth: z.string().regex(/^\d{4}-\d{2}$/),
+  teacherName: z.string().min(1),
+  className: z.string().min(1),
+  expectedStudents: z.number().int().min(0),
+  submittedStudents: z.number().int().min(0),
+  discrepancyReason: z.string().optional().default(""),
+  topics: z.array(z.string()).default([]),
+  topicRatings: z.array(z.string()).default([]),
+  totalSessions: z.number().int().min(0),
+  attendedSessions: z.number().int().min(0),
+  averageMastery: z.number().min(0).max(100),
+  assessmentAverage: z.number().min(0).max(100),
+  homeworkCompletion: z.number().min(0).max(100),
+  attendanceRate: z.number().min(0).max(100),
+  atRiskStudents: z.number().int().min(0),
+  parentContactStatus: z.string(),
+  teacherNotes: z.string().optional().default(""),
+  actions: z.array(monthlyFormActionSchema).default([]),
+});
+
+export const monthlyFormStatusSchema = z.enum(["draft", "submitted", "approved", "returned"]);
+
+export const monthlyFormSubmissionSchema = z.object({
+  id: z.string(),
+  schoolUserId: z.number(),
+  teacherUserId: z.number().nullable(),
+  status: monthlyFormStatusSchema,
+  reportMonth: z.string(),
+  payload: monthlyFormPayloadSchema,
+  reviewedByUserId: z.number().nullable(),
+  reviewNotes: z.string().nullable(),
+  reviewedAt: z.string().datetime().nullable(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+});
+
+export const submitMonthlyFormInputSchema = z.object({
+  status: z.enum(["draft", "submitted"]).default("submitted"),
+  payload: monthlyFormPayloadSchema,
+});
+
+export const reviewMonthlyFormInputSchema = z.object({
+  status: z.enum(["approved", "returned"]),
+  reviewNotes: z.string().optional().default(""),
+});
+
+export const monthlyFormSubmissionListSchema = z.object({
+  submissions: z.array(monthlyFormSubmissionSchema),
+});
+
+export const schoolRiskSyncResponseSchema = z.object({
+  success: z.literal(true),
+  processedStudents: z.number(),
+  flagsFound: z.number(),
+  chunksProcessed: z.number(),
 });
 
 export const dashboardNotificationSchema = z.object({
@@ -916,11 +1033,25 @@ export type BulkLicensePurchaseInput = z.infer<typeof bulkLicensePurchaseInputSc
 export type LicenseDetail = z.infer<typeof licenseDetailSchema>;
 export type BulkLicensePurchaseResponse = z.infer<typeof bulkLicensePurchaseResponseSchema>;
 export type SchoolStudentUpload = z.infer<typeof schoolStudentUploadSchema>;
+export type SchoolRosterStudent = z.infer<typeof schoolRosterStudentSchema>;
+export type SchoolRosterList = z.infer<typeof schoolRosterListSchema>;
+export type SchoolAddStudentInput = z.infer<typeof schoolAddStudentInputSchema>;
 export type SeatAssignment = z.infer<typeof seatAssignmentSchema>;
 export type BulkSeatAssignmentInput = z.infer<typeof bulkSeatAssignmentInputSchema>;
 export type BulkSeatAssignmentResponse = z.infer<typeof bulkSeatAssignmentResponseSchema>;
 export type LicenseUsageMetrics = z.infer<typeof licenseUsageMetricsSchema>;
 export type SchoolUsageReport = z.infer<typeof schoolUsageReportSchema>;
+export type SchoolDashboardStats = z.infer<typeof schoolDashboardStatsSchema>;
+export type SchoolArchiveSnapshotItem = z.infer<typeof schoolArchiveSnapshotItemSchema>;
+export type SchoolArchiveResponse = z.infer<typeof schoolArchiveResponseSchema>;
+export type MonthlyFormPayload = z.infer<typeof monthlyFormPayloadSchema>;
+export type MonthlyFormAction = z.infer<typeof monthlyFormActionSchema>;
+export type MonthlyFormStatus = z.infer<typeof monthlyFormStatusSchema>;
+export type MonthlyFormSubmission = z.infer<typeof monthlyFormSubmissionSchema>;
+export type SubmitMonthlyFormInput = z.infer<typeof submitMonthlyFormInputSchema>;
+export type ReviewMonthlyFormInput = z.infer<typeof reviewMonthlyFormInputSchema>;
+export type MonthlyFormSubmissionList = z.infer<typeof monthlyFormSubmissionListSchema>;
+export type SchoolRiskSyncResponse = z.infer<typeof schoolRiskSyncResponseSchema>;
 export type DashboardNotification = z.infer<typeof dashboardNotificationSchema>;
 export type DashboardNotificationList = z.infer<typeof dashboardNotificationListSchema>;
 export type MarkNotificationReadInput = z.infer<typeof markNotificationReadInputSchema>;

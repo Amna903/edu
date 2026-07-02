@@ -3,11 +3,12 @@ import { z } from "zod";
 import { storage } from "../db/storage.js";
 import { env } from "../config/config.js";
 import { prisma } from "../db/prisma.js";
-import { enqueueJob } from "../services/job-queue.js";
+import { prisma } from "../db/prisma.js";
 import { getLmsCourseById } from "../services/moodle/moodle.js";
 import { enrolUserInCourse } from "../services/moodle/moodle-commerce.js";
 import { createCourseEnrollment } from "../repositories/course-store.js";
-import { getStoredUserByMoodleUserId } from "../repositories/user-store.js";
+import { getStoredRoleByMoodleUserId, getStoredUserByMoodleUserId } from "../repositories/user-store.js";
+import { randomUUID } from "crypto";
 import { getStudentGradesForDashboard } from "../services/moodle/moodle-dashboard.js";
 import {
   assertScholarshipCodeForUser,
@@ -329,15 +330,40 @@ export function createRouteContext() {
       refundStatus: null,
     });
 
-    const enrolmentFailures: string[] = [];
+    const purchaserId = Number(pending.userId);
+    const purchaserRole = Number.isFinite(purchaserId) ? await getStoredRoleByMoodleUserId(purchaserId) : null;
+    const isSchoolPurchase = purchaserRole === "school";
+
+    const postPaymentFailures: string[] = [];
     for (const item of pending.items) {
+      if (isSchoolPurchase) {
+        try {
+          const course = await getLmsCourseById(item.programId);
+          const licenseId = `school-license-${existingOrder.id}-${item.programId}-${randomUUID().slice(0, 8)}`;
+          await createSchoolLicense({
+            id: licenseId,
+            schoolUserId: purchaserId,
+            courseId: item.programId,
+            courseName: course?.title || `Course ${item.programId}`,
+            totalSeats: item.quantity ?? 1,
+            orderId: existingOrder.id,
+            expiresAt: null,
+          });
+        } catch (licenseError) {
+          const message = licenseError instanceof Error ? licenseError.message : String(licenseError);
+          console.error(`Failed to create school license for user ${pending.userId} and course ${item.programId} after payment ${orderRef}:`, licenseError);
+          postPaymentFailures.push(`course ${item.programId}: ${message}`);
+        }
+        continue;
+      }
+
       try {
         await enrolUserInCourse(Number(pending.userId), item.programId);
         await createCourseEnrollment(Number(pending.userId), item.programId);
       } catch (enrolError) {
         const message = enrolError instanceof Error ? enrolError.message : String(enrolError);
         console.error(`Failed to enrol user ${pending.userId} in course ${item.programId} after payment ${orderRef}:`, enrolError);
-        enrolmentFailures.push(`course ${item.programId}: ${message}`);
+        postPaymentFailures.push(`course ${item.programId}: ${message}`);
       }
     }
 
@@ -346,18 +372,16 @@ export function createRouteContext() {
     }
 
     await recordPaymentEvent(existingOrder.id, completed ? "paid" : "partial", tracker ? `Verified by tracker ${tracker}` : "Payment verified");
-    if (enrolmentFailures.length > 0) {
+    if (postPaymentFailures.length > 0) {
       await recordPaymentEvent(
         existingOrder.id,
-        "enrolment_pending",
-        `Payment captured but Moodle enrolment failed — queued for auto-retry: ${enrolmentFailures.join("; ")}`,
+        isSchoolPurchase ? "license_pending" : "enrolment_pending",
+        isSchoolPurchase
+          ? `Payment captured but license creation failed and needs manual retry — ${postPaymentFailures.join("; ")}`
+          : `Payment captured but Moodle enrolment failed and needs manual retry — ${postPaymentFailures.join("; ")}`,
       );
-      // 4.21 / 4.20 — Enqueue retry job instead of just logging
-      await enqueueJob("PAYMENT_ENROLL_RETRY", {
-        orderId: existingOrder.id,
-        userId: pending.userId,
-        items: pending.items,
-      }, { maxAttempts: 5, runAt: new Date(Date.now() + 60_000) }).catch(() => undefined);
+    } else if (isSchoolPurchase) {
+      await recordPaymentEvent(existingOrder.id, "license_created", "School licenses created after successful payment");
     }
     await storage.deletePendingPayment(orderRef);
     return existingOrder.id;

@@ -1,6 +1,6 @@
 
 import { z } from 'zod';
-import { insertInquirySchema, insertResourceSchema, type Inquiry, type Resource, type Program, lmsCourseSchema, lmsCourseDetailSchema, authUserSchema, loginInputSchema, registerInputSchema, checkoutRequestSchema, freeEnrollInputSchema, freeEnrollResponseSchema, orderHistorySchema, passwordChangeInputSchema, profileUpdateInputSchema, studentDashboardSchema, parentDashboardSchema, schoolDashboardSchema, adminDashboardSchema, adminUsersListSchema, adminActivityLogsListSchema, adminSuspendUserInputSchema, adminAssignRoleInputSchema, adminResetPasswordInputSchema, adminActionResponseSchema, adminCoursesListSchema, adminUpdateCoursePricingInputSchema, adminUpdateCourseVisibilityInputSchema, adminUpdateCourseCategoryInputSchema, adminSyncCoursesInputSchema, adminSyncCoursesResponseSchema, parentLinkChildInputSchema, paymentInitRequestSchema, paymentInitResponseSchema, paymentVerifyRequestSchema, paymentVerifyResponseSchema, registerResponseSchema, studentCertificateSchema, schoolSeatPurchaseInputSchema, dashboardNotificationListSchema, markNotificationReadInputSchema, markNotificationReadResponseSchema, revenueReportSchema, enrollmentReportSchema, progressAnalyticsSchema, usageMetricsSchema, analyticsQueryInputSchema, analyticsReportSchema, bulkLicensePurchaseInputSchema, bulkLicensePurchaseResponseSchema, schoolStudentUploadSchema, bulkSeatAssignmentInputSchema, bulkSeatAssignmentResponseSchema, licenseUsageMetricsSchema, schoolUsageReportSchema, diagnosticEligibilityInputSchema, diagnosticEligibilityResponseSchema, diagnosticStartInputSchema, diagnosticStartResponseSchema, diagnosticContentRequestSchema, diagnosticContentResponseSchema, diagnosticAnswerInputSchema, diagnosticCompleteInputSchema, diagnosticResultSchema, scholarshipApplyInputSchema, scholarshipApplyResponseSchema, scholarshipValidateInputSchema, scholarshipValidateResponseSchema, scholarshipEligibilityResponseSchema } from './schema.js';
+import { insertInquirySchema, insertResourceSchema, type Inquiry, type Resource, type Program, lmsCourseSchema, lmsCourseDetailSchema, authUserSchema, loginInputSchema, registerInputSchema, checkoutRequestSchema, freeEnrollInputSchema, freeEnrollResponseSchema, orderHistorySchema, passwordChangeInputSchema, profileUpdateInputSchema, studentDashboardSchema, parentDashboardSchema, schoolDashboardSchema, adminDashboardSchema, adminUsersListSchema, adminActivityLogsListSchema, adminSuspendUserInputSchema, adminAssignRoleInputSchema, adminResetPasswordInputSchema, adminActionResponseSchema, adminCoursesListSchema, adminUpdateCoursePricingInputSchema, adminUpdateCourseVisibilityInputSchema, adminUpdateCourseCategoryInputSchema, adminSyncCoursesInputSchema, adminSyncCoursesResponseSchema, parentLinkChildInputSchema, paymentInitRequestSchema, paymentInitResponseSchema, paymentVerifyRequestSchema, paymentVerifyResponseSchema, registerResponseSchema, studentCertificateSchema, schoolSeatPurchaseInputSchema, dashboardNotificationListSchema, markNotificationReadInputSchema, markNotificationReadResponseSchema, revenueReportSchema, enrollmentReportSchema, progressAnalyticsSchema, usageMetricsSchema, analyticsQueryInputSchema, analyticsReportSchema, bulkLicensePurchaseInputSchema, bulkLicensePurchaseResponseSchema, schoolStudentUploadSchema, schoolRosterListSchema, schoolRosterStudentSchema, schoolAddStudentInputSchema, bulkSeatAssignmentInputSchema, bulkSeatAssignmentResponseSchema, licenseUsageMetricsSchema, schoolUsageReportSchema, diagnosticEligibilityInputSchema, diagnosticEligibilityResponseSchema, diagnosticStartInputSchema, diagnosticStartResponseSchema, diagnosticContentRequestSchema, diagnosticContentResponseSchema, diagnosticAnswerInputSchema, diagnosticCompleteInputSchema, diagnosticResultSchema, scholarshipApplyInputSchema, scholarshipApplyResponseSchema, scholarshipValidateInputSchema, scholarshipValidateResponseSchema, scholarshipEligibilityResponseSchema, schoolDashboardStatsSchema, schoolArchiveResponseSchema, submitMonthlyFormInputSchema, monthlyFormSubmissionSchema, reviewMonthlyFormInputSchema, schoolRiskSyncResponseSchema, monthlyFormSubmissionListSchema } from './schema.js';
 
 export const errorSchemas = {
   validation: z.object({
@@ -309,6 +309,22 @@ export const api = {
         400: errorSchemas.validation,
       },
     },
+    schoolRoster: {
+      method: 'GET' as const,
+      path: '/api/dashboard/school/roster' as const,
+      responses: {
+        200: schoolRosterListSchema,
+      },
+    },
+    schoolAddStudent: {
+      method: 'POST' as const,
+      path: '/api/dashboard/school/roster' as const,
+      input: schoolAddStudentInputSchema,
+      responses: {
+        201: schoolRosterStudentSchema,
+        400: errorSchemas.validation,
+      },
+    },
     schoolUploadStatus: {
       method: 'GET' as const,
       path: '/api/dashboard/school/upload-status/:uploadId' as const,
@@ -363,6 +379,68 @@ export const api = {
       responses: {
         200: markNotificationReadResponseSchema,
         401: errorSchemas.notFound,
+      },
+    },
+  },
+  schoolReports: {
+    dashboardStats: {
+      method: 'GET' as const,
+      path: '/api/school/dashboard/stats' as const,
+      responses: {
+        200: schoolDashboardStatsSchema,
+        403: errorSchemas.validation,
+      },
+    },
+    archive: {
+      method: 'GET' as const,
+      path: '/api/school/reports/archive' as const,
+      input: z.object({ month: z.string().regex(/^\d{4}-\d{2}$/).optional() }).optional(),
+      responses: {
+        200: schoolArchiveResponseSchema,
+        403: errorSchemas.validation,
+      },
+    },
+    syncRisk: {
+      method: 'POST' as const,
+      path: '/api/school/sync-risk' as const,
+      responses: {
+        200: schoolRiskSyncResponseSchema,
+        403: errorSchemas.validation,
+      },
+    },
+  },
+  forms: {
+    list: {
+      method: 'GET' as const,
+      path: '/api/forms/submissions' as const,
+      input: z.object({
+        month: z.string().regex(/^\d{4}-\d{2}$/).optional(),
+        status: z.enum(["draft", "submitted", "approved", "returned"]).optional(),
+      }).optional(),
+      responses: {
+        200: monthlyFormSubmissionListSchema,
+        403: errorSchemas.validation,
+      },
+    },
+    submit: {
+      method: 'POST' as const,
+      path: '/api/forms/submit' as const,
+      input: submitMonthlyFormInputSchema,
+      responses: {
+        201: monthlyFormSubmissionSchema,
+        400: errorSchemas.validation,
+        403: errorSchemas.validation,
+      },
+    },
+    review: {
+      method: 'PUT' as const,
+      path: '/api/forms/review/:id' as const,
+      input: reviewMonthlyFormInputSchema,
+      responses: {
+        200: monthlyFormSubmissionSchema,
+        400: errorSchemas.validation,
+        403: errorSchemas.validation,
+        404: errorSchemas.notFound,
       },
     },
   },

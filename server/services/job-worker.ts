@@ -49,7 +49,7 @@ async function handleSendEmail(payload: SendEmailPayload) {
 
 async function handleMoodleSyncCourses() {
   const { getLmsCourses } = await import("./moodle/moodle.js");
-  const courses = await getLmsCourses();
+  const courses = await getLmsCourses({ adminTokenOnly: true });
   for (const course of courses) {
     await (prisma as any).courseCatalog.upsert({
       where: { moodleCourseId: course.id },

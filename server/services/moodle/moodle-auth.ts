@@ -1,8 +1,10 @@
 import type { AppRole, AuthUser, LoginInput, RegisterInput } from "../../../shared/schema.js";
 import { countryToMoodleIso, normalizeScholarshipCountry } from "../../../shared/scholarship-concessions.js";
 import { env } from "../../config/config.js";
+import { getMoodleAdminToken } from "./moodle-tokens.js";
 import { getPendingSignupByUsername, getStoredRoleByMoodleUserId, markPendingSignupConfirmed, rememberPendingRegistrationRole, rememberPendingSignup, syncUserFromMoodleSession } from "../../repositories/user-store.js";
 import { prisma } from "../../db/prisma.js";
+import { recordProvisionedStudentCredential } from "../provisioned-student-credentials.js";
 
 interface MoodleLoginResponse {
   token?: string;
@@ -56,6 +58,23 @@ interface RegisterWithMoodleResult {
   message: string;
 }
 
+function sanitizeUsernameFromEmail(email: string) {
+  const base = email.split("@")[0]?.toLowerCase() || "student";
+  const normalized = base.replace(/[^a-z0-9._-]/g, "");
+  const safe = normalized.length >= 3 ? normalized : `student${Date.now()}`;
+  return safe.slice(0, 24);
+}
+
+function splitDisplayName(fullName: string) {
+  const parts = fullName.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return { firstName: "Student", lastName: "User" };
+  if (parts.length === 1) return { firstName: parts[0], lastName: "User" };
+  return {
+    firstName: parts[0],
+    lastName: parts.slice(1).join(" "),
+  };
+}
+
 function getBaseUrl() {
   const baseUrl = env.moodle.baseUrl;
   if (!baseUrl) throw new Error("NEXT_PUBLIC_MOODLE_URL is not configured");
@@ -67,23 +86,11 @@ function getServiceName() {
 }
 
 function getAdminTokenCandidates() {
-  return [
-    env.moodle.adminUpdateToken,
-    env.moodle.adminManageToken,
-    env.moodle.adminToken,
-    env.moodle.token,
-    env.moodle.signupToken,
-  ].filter((token, index, tokens) => Boolean(token) && tokens.indexOf(token) === index) as string[];
+  return [getMoodleAdminToken()];
 }
 
 function getAdminToken() {
-  const token = getAdminTokenCandidates()[0];
-  if (!token) {
-    throw new Error(
-      "MOODLE_ADMIN_UPDATE, MOODLE_ADMIN_MANAGE, MOODLE_ADMIN_TOKEN, MOODLE_TOKEN, or MOODLE_SIGNUP_TOKEN is not configured",
-    );
-  }
-  return token;
+  return getMoodleAdminToken();
 }
 
 function isInvalidMoodleTokenError(error: unknown) {
@@ -112,9 +119,7 @@ export async function moodlePostWithTokenFallback<T>(
   tokens: string[] = getAdminTokenCandidates(),
 ) {
   if (!tokens.length) {
-    throw new Error(
-      "MOODLE_ADMIN_UPDATE, MOODLE_ADMIN_MANAGE, MOODLE_ADMIN_TOKEN, or MOODLE_TOKEN is not configured",
-    );
+    throw new Error("MOODLE_ADMIN_TOKEN is not configured");
   }
 
   let lastError: Error | null = null;
@@ -136,151 +141,6 @@ export async function moodlePostWithTokenFallback<T>(
   throw lastError || new Error(
     "No valid Moodle webservice token found. In Moodle, go to Site administration → Server → Web services → Manage tokens, create a new token for a service user with core_user_create_users enabled, then set MOODLE_ADMIN_TOKEN in your .env file.",
   );
-}
-
-function isFunctionNotAllowedError(error: unknown) {
-  const message = (error instanceof Error ? error.message : String(error)).toLowerCase();
-  return message.includes("not allowed") || message.includes("accessexception") || message.includes("access control exception");
-}
-
-export interface MoodleDirectoryUser {
-  id: number;
-  username: string;
-  email: string | null;
-  firstname: string | null;
-  lastname: string | null;
-  profileimageurl: string | null;
-}
-
-function normalizeDirectoryUsers(records: MoodleUserRecord[]): MoodleDirectoryUser[] {
-  const byId = new Map<number, MoodleDirectoryUser>();
-  for (const record of records) {
-    if (!record || typeof record.id !== "number" || !record.username) continue;
-    if (record.username === "guest") continue;
-    if (byId.has(record.id)) continue;
-    byId.set(record.id, {
-      id: record.id,
-      username: record.username,
-      email: record.email || null,
-      firstname: record.firstname || null,
-      lastname: record.lastname || null,
-      profileimageurl: record.profileimageurl || null,
-    });
-  }
-  return Array.from(byId.values());
-}
-
-/**
- * Fetches the full Moodle user directory.
- *
- * Tries multiple listing functions in order because Moodle web-service tokens
- * only expose the functions explicitly added to their service definition.
- * Debug logs are printed at each step so you can see exactly which Moodle
- * function succeeded or failed in the server terminal.
- */
-export async function fetchAllMoodleUsers(): Promise<MoodleDirectoryUser[]> {
-  console.log("[sync-users] ── starting Moodle user directory fetch ──");
-  console.log("[sync-users] Moodle base URL:", getBaseUrl() || "(not set — check NEXT_PUBLIC_MOODLE_URL)");
-
-  const tokens = getAdminTokenCandidates();
-  console.log("[sync-users] Admin token candidates available:", tokens.length, "(values hidden)");
-  if (tokens.length === 0) {
-    throw new Error(
-      "[sync-users] No Moodle admin token configured. Set MOODLE_ADMIN_TOKEN (or MOODLE_TOKEN) in your .env file.",
-    );
-  }
-
-  const attempts: Array<{
-    label: string;
-    wsfunction: string;
-    params: URLSearchParams;
-    extract: (data: any) => MoodleUserRecord[];
-  }> = [
-    {
-      label: "core_user_get_users (email wildcard %)",
-      wsfunction: "core_user_get_users",
-      params: new URLSearchParams({
-        "criteria[0][key]": "email",
-        "criteria[0][value]": "%",
-      }),
-      extract: (data) => (data?.users ?? []) as MoodleUserRecord[],
-    },
-    {
-      label: "core_user_get_users (auth=manual)",
-      wsfunction: "core_user_get_users",
-      params: new URLSearchParams({
-        "criteria[0][key]": "auth",
-        "criteria[0][value]": "manual",
-      }),
-      extract: (data) => (data?.users ?? []) as MoodleUserRecord[],
-    },
-    {
-      label: "core_user_get_users_by_field (id range 2-500)",
-      wsfunction: "core_user_get_users_by_field",
-      params: (() => {
-        const p = new URLSearchParams({ field: "id" });
-        for (let id = 2; id <= 500; id++) p.append(`values[${id - 2}]`, String(id));
-        return p;
-      })(),
-      extract: (data) => (Array.isArray(data) ? data : []) as MoodleUserRecord[],
-    },
-  ];
-
-  let lastNotAllowedError: Error | null = null;
-
-  for (const attempt of attempts) {
-    console.log(`[sync-users] trying: ${attempt.label}`);
-    try {
-      const data = await moodlePostWithTokenFallback<any>(attempt.wsfunction, attempt.params);
-
-      // Moodle sometimes returns an error object instead of throwing
-      if (data && typeof data === "object" && data.exception) {
-        console.warn(`[sync-users] Moodle returned exception for "${attempt.label}":`, data.errorcode, "-", data.message);
-        const err = new Error(String(data.message));
-        if (isFunctionNotAllowedError(err)) {
-          lastNotAllowedError = err;
-          continue;
-        }
-        throw err;
-      }
-
-      const records = attempt.extract(data);
-      console.log(`[sync-users] "${attempt.label}" → raw records returned:`, records.length);
-
-      const users = normalizeDirectoryUsers(records);
-      console.log(`[sync-users] "${attempt.label}" → normalized users:`, users.length);
-
-      if (users.length > 0) {
-        console.log(`[sync-users] ✓ success via "${attempt.label}" — ${users.length} users ready to upsert`);
-        return users;
-      }
-
-      console.warn(`[sync-users] "${attempt.label}" returned 0 users — trying next method`);
-    } catch (error) {
-      const err = error instanceof Error ? error : new Error(String(error));
-      console.warn(`[sync-users] "${attempt.label}" threw:`, err.message);
-      if (isFunctionNotAllowedError(err)) {
-        lastNotAllowedError = err;
-        console.warn(`[sync-users] → function not enabled on this token's service, trying next method`);
-        continue;
-      }
-      console.error(`[sync-users] unexpected error in "${attempt.label}":`, err);
-      throw err;
-    }
-  }
-
-  if (lastNotAllowedError) {
-    const msg =
-      "Moodle blocked all user-listing functions for this token. " +
-      "In Moodle: Site administration → Server → Web services → External services → " +
-      "edit the service linked to your admin token → Add functions → add 'core_user_get_users'. " +
-      "Then click Sync Users again.";
-    console.error("[sync-users] ✗ all attempts blocked:", msg);
-    throw new Error(msg);
-  }
-
-  console.warn("[sync-users] all methods returned 0 users — nothing to sync");
-  return [];
 }
 
 function resolveAppRole(userId: number, username: string, isSiteAdmin?: boolean): AppRole {
@@ -362,6 +222,253 @@ async function moodleUserExists(username: string) {
   }
 
   return false;
+}
+
+export async function ensureMoodleStudentByEmail(input: {
+  email: string;
+  fullName?: string;
+}) {
+  const email = input.email.trim().toLowerCase();
+  if (!email) {
+    throw new Error("Email is required");
+  }
+
+  const lookupByEmail = async () => {
+    try {
+      const byField = await moodlePost<MoodleUserRecord[]>(
+        getAdminToken(),
+        "core_user_get_users_by_field",
+        new URLSearchParams({
+          field: "email",
+          "values[0]": email,
+        }),
+      );
+      if (Array.isArray(byField) && byField.length > 0) {
+        return byField[0];
+      }
+    } catch {
+      // Fall through to criteria search.
+    }
+
+    try {
+      const byCriteria = await moodlePost<MoodleUsersResponse>(
+        getAdminToken(),
+        "core_user_get_users",
+        new URLSearchParams({
+          "criteria[0][key]": "email",
+          "criteria[0][value]": email,
+        }),
+      );
+      if (Array.isArray(byCriteria?.users) && byCriteria.users.length > 0) {
+        return byCriteria.users[0];
+      }
+    } catch {
+      // Ignore and return undefined.
+    }
+
+    return undefined;
+  };
+
+  const lookupByEmailWithRetry = async () => {
+    for (let attempt = 0; attempt < 6; attempt += 1) {
+      const foundUser = await lookupByEmail();
+      if (foundUser?.id && foundUser?.username) {
+        return foundUser;
+      }
+      if (attempt < 5) {
+        await new Promise((resolve) => setTimeout(resolve, 400 * (attempt + 1)));
+      }
+    }
+    return undefined;
+  };
+
+  const existingByEmail = await lookupByEmail();
+
+  const found = existingByEmail;
+  if (found?.id && found?.username) {
+    await syncUserFromMoodleSession({
+      moodleUserId: found.id,
+      username: found.username,
+      role: "student",
+      email,
+      firstName: found.firstname || null,
+      lastName: found.lastname || null,
+      profileImage: found.profileimageurl || found.profileimageurlsmall || null,
+      allowAutoCreate: true,
+    });
+    return { moodleUserId: found.id, wasCreated: false };
+  }
+
+  const displayName = input.fullName?.trim() || "Student User";
+  const { firstName, lastName } = splitDisplayName(displayName);
+  let username = sanitizeUsernameFromEmail(email);
+  let attempts = 0;
+  let created: MoodleCreateUserRow | undefined;
+  let createdPassword = "";
+
+  const useSignupFlow = Boolean(env.moodle.signupToken) && !env.moodle.skipEmailConfirmation;
+  if (env.authDebug === "1") {
+    console.log(`[roster] create mode: ${useSignupFlow ? "signup" : "admin"} (${email})`);
+  }
+  if (useSignupFlow) {
+    let signupAttempts = 0;
+    while (signupAttempts < 3) {
+      const suffix = signupAttempts === 0 ? "" : `${Date.now()}${signupAttempts}`;
+      const candidate = `${username}${suffix}`.slice(0, 32);
+      const randomPassword = `Edu!${Math.random().toString(36).slice(-10)}A1`;
+
+      try {
+        const signupResponse = await moodlePost<MoodleSignupResponse | boolean>(
+          env.moodle.signupToken,
+          "auth_email_signup_user",
+          new URLSearchParams({
+            username: candidate,
+            password: randomPassword,
+            firstname: firstName,
+            lastname: lastName,
+            email,
+          }),
+        );
+
+        const signupSucceeded =
+          signupResponse === true ||
+          (typeof signupResponse === "object" && signupResponse !== null && signupResponse.success === true);
+
+        if (signupSucceeded) {
+          const createdBySignup = await lookupByEmailWithRetry();
+          if (createdBySignup?.id && createdBySignup?.username) {
+            await syncUserFromMoodleSession({
+              moodleUserId: createdBySignup.id,
+              username: createdBySignup.username,
+              role: "student",
+              email,
+              firstName: createdBySignup.firstname || firstName,
+              lastName: createdBySignup.lastname || lastName,
+              profileImage: createdBySignup.profileimageurl || createdBySignup.profileimageurlsmall || null,
+              allowAutoCreate: true,
+            });
+            await recordProvisionedStudentCredential({
+              email,
+              password: randomPassword,
+              moodleUserId: createdBySignup.id,
+            }).catch(() => undefined);
+            return { moodleUserId: createdBySignup.id, wasCreated: true };
+          }
+        }
+      } catch (error) {
+        const message = error instanceof Error ? error.message.toLowerCase() : "";
+        if (
+          message.includes("already")
+          || message.includes("message was not sent")
+          || message.includes("username")
+        ) {
+          const createdAfterSignupError = await lookupByEmailWithRetry();
+          if (createdAfterSignupError?.id && createdAfterSignupError?.username) {
+            await syncUserFromMoodleSession({
+              moodleUserId: createdAfterSignupError.id,
+              username: createdAfterSignupError.username,
+              role: "student",
+              email,
+              firstName: createdAfterSignupError.firstname || firstName,
+              lastName: createdAfterSignupError.lastname || lastName,
+              profileImage: createdAfterSignupError.profileimageurl || createdAfterSignupError.profileimageurlsmall || null,
+              allowAutoCreate: true,
+            });
+            await recordProvisionedStudentCredential({
+              email,
+              password: randomPassword,
+              moodleUserId: createdAfterSignupError.id,
+            }).catch(() => undefined);
+            return { moodleUserId: createdAfterSignupError.id, wasCreated: true };
+          }
+        }
+      }
+
+      signupAttempts += 1;
+    }
+  }
+
+  while (attempts < 5 && !created?.id) {
+    const suffix = attempts === 0 ? "" : `${Date.now()}${attempts}`;
+    const candidate = `${username}${suffix}`.slice(0, 32);
+    const randomPassword = `Edu!${Math.random().toString(36).slice(-10)}A1`;
+    try {
+      const createdRows = await moodlePostWithTokenFallback<MoodleCreateUserRow[]>(
+        "core_user_create_users",
+        new URLSearchParams({
+          "users[0][username]": candidate,
+          "users[0][password]": randomPassword,
+          "users[0][firstname]": firstName,
+          "users[0][lastname]": lastName,
+          "users[0][email]": email,
+          "users[0][auth]": "manual",
+          "users[0][preferences][0][type]": "auth_forcepasswordchange",
+          "users[0][preferences][0][value]": "0",
+        }),
+      );
+      created = Array.isArray(createdRows) ? createdRows[0] : undefined;
+      if (created?.id && created?.username) {
+        createdPassword = randomPassword;
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message.toLowerCase() : "";
+      // Moodle can create the user but still throw when outbound email is not configured
+      // or when a duplicated create payload is retried. In both cases, resolve by email lookup.
+      if (
+        message.includes("message was not sent")
+        || message.includes("email is already taken")
+        || message.includes("already exists")
+      ) {
+        const createdAfterWarning = await lookupByEmailWithRetry();
+        if (createdAfterWarning?.id && createdAfterWarning?.username) {
+          created = { id: createdAfterWarning.id, username: createdAfterWarning.username };
+          createdPassword = randomPassword;
+          break;
+        }
+      }
+      if (!message.includes("username")) {
+        throw error;
+      }
+    }
+    attempts += 1;
+  }
+
+  if (!created?.id || !created.username) {
+    const rescuedUser = await lookupByEmailWithRetry();
+    if (rescuedUser?.id && rescuedUser?.username) {
+      created = { id: rescuedUser.id, username: rescuedUser.username };
+    }
+  }
+
+  if (!created?.id || !created.username) {
+    throw new Error("Could not create Moodle account for student email.");
+  }
+
+  await syncUserFromMoodleSession({
+    moodleUserId: created.id,
+    username: created.username,
+    role: "student",
+    email,
+    firstName,
+    lastName,
+    profileImage: null,
+    allowAutoCreate: true,
+  });
+
+  if (createdPassword) {
+    await recordProvisionedStudentCredential({
+      email,
+      password: createdPassword,
+      moodleUserId: created.id,
+    }).catch((error) => {
+      console.warn(
+        "[roster] Failed to record created student credentials:",
+        error instanceof Error ? error.message : String(error),
+      );
+    });
+  }
+
+  return { moodleUserId: created.id, wasCreated: true };
 }
 
 export async function loginWithMoodle(input: LoginInput): Promise<{ token: string; privateToken: string | null; user: AuthUser }> {

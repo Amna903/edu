@@ -7,8 +7,16 @@ import type {
   BulkSeatAssignmentResponse,
   SchoolSeatPurchaseInput,
   SchoolStudentUpload,
+  SchoolAddStudentInput,
   SchoolUsageReport,
   LicenseUsageMetrics,
+  SchoolDashboardStats,
+  SchoolArchiveResponse,
+  SubmitMonthlyFormInput,
+  MonthlyFormSubmission,
+  ReviewMonthlyFormInput,
+  MonthlyFormSubmissionList,
+  SchoolRiskSyncResponse,
 } from "@shared/schema";
 
 export function useStudentDashboard(enabled = true) {
@@ -461,6 +469,43 @@ export function useSchoolBulkLicenses() {
   });
 }
 
+export function useSchoolRoster(enabled = true) {
+  return useQuery({
+    queryKey: [api.dashboard.schoolRoster.path],
+    enabled,
+    queryFn: async () => {
+      const res = await fetch(api.dashboard.schoolRoster.path, { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to load student roster");
+      return api.dashboard.schoolRoster.responses[200].parse(await res.json());
+    },
+  });
+}
+
+export function useSchoolAddStudent() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: SchoolAddStudentInput) => {
+      const res = await fetch(api.dashboard.schoolAddStudent.path, {
+        method: api.dashboard.schoolAddStudent.method,
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(input),
+      });
+
+      const body = await res.json();
+      if (!res.ok) {
+        throw new Error(body.message || "Failed to add student");
+      }
+
+      return api.dashboard.schoolAddStudent.responses[201].parse(body);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [api.dashboard.schoolRoster.path] });
+    },
+  });
+}
+
 export function useSchoolUploadStudents() {
   const queryClient = useQueryClient();
 
@@ -481,6 +526,7 @@ export function useSchoolUploadStudents() {
       return api.dashboard.schoolUploadStudents.responses[201].parse(body) as SchoolStudentUpload;
     },
     onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [api.dashboard.schoolRoster.path] });
       await queryClient.invalidateQueries({ queryKey: [api.dashboard.schoolUsageReport.path] });
     },
   });
@@ -508,6 +554,7 @@ export function useSchoolAssignSeats() {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: [api.dashboard.school.path] });
       await queryClient.invalidateQueries({ queryKey: [api.dashboard.schoolUsageReport.path] });
+      await queryClient.invalidateQueries({ queryKey: [api.dashboard.schoolRoster.path] });
     },
   });
 }
@@ -533,6 +580,114 @@ export function useSchoolLicenseMetrics(licenseId: string, enabled = true) {
       const res = await fetch(url, { credentials: "include" });
       if (!res.ok) throw new Error("Failed to load license metrics");
       return api.dashboard.schoolLicenseMetrics.responses[200].parse(await res.json()) as LicenseUsageMetrics;
+    },
+  });
+}
+
+export function useSchoolReportStats(enabled = true) {
+  return useQuery({
+    queryKey: [api.schoolReports.dashboardStats.path],
+    enabled,
+    queryFn: async () => {
+      const res = await fetch(api.schoolReports.dashboardStats.path, { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to load school report stats");
+      return api.schoolReports.dashboardStats.responses[200].parse(await res.json()) as SchoolDashboardStats;
+    },
+  });
+}
+
+export function useSchoolReportArchive(month?: string, enabled = true) {
+  return useQuery({
+    queryKey: [api.schoolReports.archive.path, month ?? "all"],
+    enabled,
+    queryFn: async () => {
+      const query = month ? `?month=${encodeURIComponent(month)}` : "";
+      const res = await fetch(`${api.schoolReports.archive.path}${query}`, { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to load school report archive");
+      return api.schoolReports.archive.responses[200].parse(await res.json()) as SchoolArchiveResponse;
+    },
+  });
+}
+
+export function useMonthlyFormSubmissions(filters?: { month?: string; status?: "draft" | "submitted" | "approved" | "returned" }, enabled = true) {
+  return useQuery({
+    queryKey: [api.forms.list.path, filters?.month ?? "", filters?.status ?? ""],
+    enabled,
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (filters?.month) params.set("month", filters.month);
+      if (filters?.status) params.set("status", filters.status);
+      const query = params.toString();
+      const res = await fetch(`${api.forms.list.path}${query ? `?${query}` : ""}`, { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to load monthly form submissions");
+      return api.forms.list.responses[200].parse(await res.json()) as MonthlyFormSubmissionList;
+    },
+  });
+}
+
+export function useSyncSchoolRisk() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      const res = await fetch(api.schoolReports.syncRisk.path, {
+        method: api.schoolReports.syncRisk.method,
+        credentials: "include",
+      });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.message || "Failed to sync risk flags");
+      return api.schoolReports.syncRisk.responses[200].parse(body) as SchoolRiskSyncResponse;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [api.schoolReports.dashboardStats.path] });
+      await queryClient.invalidateQueries({ queryKey: [api.dashboard.schoolUsageReport.path] });
+    },
+  });
+}
+
+export function useSubmitMonthlyForm() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: SubmitMonthlyFormInput) => {
+      const res = await fetch(api.forms.submit.path, {
+        method: api.forms.submit.method,
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(input),
+      });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.message || "Failed to submit monthly form");
+      return api.forms.submit.responses[201].parse(body) as MonthlyFormSubmission;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [api.schoolReports.dashboardStats.path] });
+      await queryClient.invalidateQueries({ queryKey: [api.schoolReports.archive.path] });
+      await queryClient.invalidateQueries({ queryKey: [api.forms.list.path] });
+    },
+  });
+}
+
+export function useReviewMonthlyForm() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: { submissionId: string; payload: ReviewMonthlyFormInput }) => {
+      const url = api.forms.review.path.replace(":id", input.submissionId);
+      const res = await fetch(url, {
+        method: api.forms.review.method,
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(input.payload),
+      });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.message || "Failed to review monthly form");
+      return api.forms.review.responses[200].parse(body) as MonthlyFormSubmission;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [api.schoolReports.dashboardStats.path] });
+      await queryClient.invalidateQueries({ queryKey: [api.schoolReports.archive.path] });
+      await queryClient.invalidateQueries({ queryKey: [api.forms.list.path] });
     },
   });
 }

@@ -31,6 +31,7 @@ export default function Cart() {
   } = useCart();
   const { toast } = useToast();
   const { data: user } = useAuthUser();
+  const isSchoolUser = user?.role === "school";
   const checkout = useCheckout();
   const initPayment = useInitPayment();
   const validateScholarship = useScholarshipValidate();
@@ -52,6 +53,15 @@ export default function Cart() {
       setCodeInput(scholarship.code);
     }
   }, [scholarship, applyScholarship]);
+
+  useEffect(() => {
+    if (isSchoolUser) return;
+    for (const item of items) {
+      if (item.quantity !== 1) {
+        updateQuantity(item.programId, 1);
+      }
+    }
+  }, [isSchoolUser, items, updateQuantity]);
 
   const handleApplyCode = async () => {
     const trimmed = codeInput.trim().toUpperCase();
@@ -113,7 +123,12 @@ export default function Cart() {
     setIsCheckingOut(true);
     try {
       const payload = {
-        items,
+        items: isSchoolUser
+          ? items
+          : items.map((item) => ({
+              ...item,
+              quantity: 1,
+            })),
         totalAmount: total,
         scholarshipCode: scholarship?.code,
       };
@@ -132,8 +147,10 @@ export default function Cart() {
       await checkout.mutateAsync(payload);
 
       toast({
-        title: "Order Successful",
-        description: "You have been enrolled in all selected programs!",
+        title: isSchoolUser ? "Licenses Acquired" : "Order Successful",
+        description: isSchoolUser
+          ? "Your licenses are ready. Assign seats to students from your dashboard."
+          : "You have been enrolled in all selected programs!",
       });
 
       clearCart();
@@ -160,11 +177,13 @@ export default function Cart() {
             </div>
             <h1 className="text-3xl font-semibold mb-4">Enrollment Confirmed!</h1>
             <p className="text-black mb-8">
-              Welcome to EduMeUp! Your order has been processed and you now have full access to your selected programs.
+              {isSchoolUser
+                ? "Your school purchase has been processed. Assign seats to students from your dashboard."
+                : "Welcome to EduMeUp! Your order has been processed and you now have full access to your selected programs."}
             </p>
-            <Link href="/programs">
+            <Link href={isSchoolUser ? "/dashboard" : "/programs"}>
               <Button className="w-full bg-emerald-600 hover:bg-emerald-700">
-                Explore More Programs
+                {isSchoolUser ? "Go to Dashboard - Assign Seats" : "Explore More Programs"}
               </Button>
             </Link>
           </div>
@@ -181,6 +200,15 @@ export default function Cart() {
 
           <div className="grid lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-4">
+              {isSchoolUser && items.length > 0 && (
+                <Card className="border-blue-200 bg-blue-50">
+                  <CardContent className="py-4">
+                    <p className="text-sm font-medium text-blue-900">
+                      School purchases create licenses. Assign seats to students from your dashboard.
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
               {items.length === 0 ? (
                 <Card>
                   <CardContent className="py-12 text-center">
@@ -202,29 +230,37 @@ export default function Cart() {
                         </p>
                       </div>
                       <div className="flex items-center gap-3">
-                        <div className="flex h-10 items-center overflow-hidden rounded-md border border-slate-200 bg-white">
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="h-10 w-10 rounded-none text-slate-500"
-                            onClick={() => updateQuantity(item.programId, item.quantity - 1)}
-                            disabled={item.quantity <= 1}
-                          >
-                            <Minus className="h-4 w-4" />
-                          </Button>
-                          <span className="w-10 text-center text-sm font-semibold text-slate-900">
-                            {item.quantity}
-                          </span>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="h-10 w-10 rounded-none text-slate-500"
-                            onClick={() => updateQuantity(item.programId, item.quantity + 1)}
-                          >
-                            <Plus className="h-4 w-4" />
-                          </Button>
+                        <div className="space-y-1">
+                          {isSchoolUser && (
+                            <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                              Number of Seats
+                            </p>
+                          )}
+                          <div className="flex h-10 items-center overflow-hidden rounded-md border border-slate-200 bg-white">
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="h-10 w-10 rounded-none text-slate-500"
+                              onClick={() => updateQuantity(item.programId, item.quantity - 1)}
+                              disabled={!isSchoolUser || item.quantity <= 1}
+                            >
+                              <Minus className="h-4 w-4" />
+                            </Button>
+                            <span className="w-10 text-center text-sm font-semibold text-slate-900">
+                              {isSchoolUser ? item.quantity : 1}
+                            </span>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="h-10 w-10 rounded-none text-slate-500"
+                              onClick={() => updateQuantity(item.programId, item.quantity + 1)}
+                              disabled={!isSchoolUser}
+                            >
+                              <Plus className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
                         <Button
                           variant="ghost"
@@ -247,48 +283,50 @@ export default function Cart() {
                   <CardTitle>Order Summary</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-3">
-                    <div className="flex items-center gap-2 text-sm font-semibold text-brand-navy">
-                      <Tag className="h-4 w-4 text-brand-primary" />
-                      Scholarship / concession code
-                    </div>
-                    <div className="flex gap-2">
-                      <Input
-                        value={codeInput}
-                        onChange={(e) => setCodeInput(e.target.value.toUpperCase())}
-                        placeholder="e.g. EDU30-ABC123"
-                        className="font-mono uppercase"
-                        disabled={!!scholarship}
-                      />
-                      {scholarship ? (
-                        <Button type="button" variant="outline" size="icon" onClick={handleRemoveScholarship}>
-                          <X className="h-4 w-4" />
-                        </Button>
-                      ) : (
-                        <Button
-                          type="button"
-                          variant="secondary"
-                          onClick={handleApplyCode}
-                          disabled={validateScholarship.isPending || !codeInput.trim()}
-                        >
-                          Apply
-                        </Button>
+                  {!isSchoolUser && (
+                    <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-3">
+                      <div className="flex items-center gap-2 text-sm font-semibold text-brand-navy">
+                        <Tag className="h-4 w-4 text-brand-primary" />
+                        Scholarship / concession code
+                      </div>
+                      <div className="flex gap-2">
+                        <Input
+                          value={codeInput}
+                          onChange={(e) => setCodeInput(e.target.value.toUpperCase())}
+                          placeholder="e.g. EDU30-ABC123"
+                          className="font-mono uppercase"
+                          disabled={!!scholarship}
+                        />
+                        {scholarship ? (
+                          <Button type="button" variant="outline" size="icon" onClick={handleRemoveScholarship}>
+                            <X className="h-4 w-4" />
+                          </Button>
+                        ) : (
+                          <Button
+                            type="button"
+                            variant="secondary"
+                            onClick={handleApplyCode}
+                            disabled={validateScholarship.isPending || !codeInput.trim()}
+                          >
+                            Apply
+                          </Button>
+                        )}
+                      </div>
+                      {scholarship && (
+                        <p className="text-xs text-emerald-700 font-medium">
+                          {scholarship.concessionPercent}% concession applied ({scholarship.country})
+                        </p>
+                      )}
+                      {!scholarship && (
+                        <p className="text-xs text-slate-500">
+                          No code yet?{" "}
+                          <Link href="/pricing#scholarship" className="text-brand-primary underline font-medium">
+                            Apply on the pricing page
+                          </Link>
+                        </p>
                       )}
                     </div>
-                    {scholarship && (
-                      <p className="text-xs text-emerald-700 font-medium">
-                        {scholarship.concessionPercent}% concession applied ({scholarship.country})
-                      </p>
-                    )}
-                    {!scholarship && (
-                      <p className="text-xs text-slate-500">
-                        No code yet?{" "}
-                        <Link href="/pricing#scholarship" className="text-brand-primary underline font-medium">
-                          Apply on the pricing page
-                        </Link>
-                      </p>
-                    )}
-                  </div>
+                  )}
 
                   <div className="flex justify-between text-black">
                     <span>Items</span>
@@ -313,15 +351,17 @@ export default function Cart() {
                     <span className="text-emerald-600">{formatMoneyFromMinorUnits(total)}</span>
                   </div>
 
-                  <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 mt-4">
-                    <p className="text-[13px] text-blue-800 font-medium">
-                      Do you qualify for our scholarship?{" "}
-                      <Link href="/pricing#scholarship" className="underline font-bold hover:text-blue-900">
-                        Check here
-                      </Link>{" "}
-                      before paying.
-                    </p>
-                  </div>
+                  {!isSchoolUser && (
+                    <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 mt-4">
+                      <p className="text-[13px] text-blue-800 font-medium">
+                        Do you qualify for our scholarship?{" "}
+                        <Link href="/pricing#scholarship" className="underline font-bold hover:text-blue-900">
+                          Check here
+                        </Link>{" "}
+                        before paying.
+                      </p>
+                    </div>
+                  )}
                 </CardContent>
                 <CardFooter>
                   {!user && (
@@ -339,7 +379,11 @@ export default function Cart() {
                       disabled={items.length === 0 || isCheckingOut || checkout.isPending}
                       onClick={handleCheckout}
                     >
-                      {isCheckingOut || checkout.isPending ? "Processing..." : "Complete Checkout"}
+                      {isCheckingOut || checkout.isPending
+                        ? "Processing..."
+                        : isSchoolUser
+                          ? "Purchase Licenses"
+                          : "Complete Checkout"}
                     </Button>
                   )}
                 </CardFooter>

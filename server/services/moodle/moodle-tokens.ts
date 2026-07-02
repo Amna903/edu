@@ -4,13 +4,16 @@ function uniqueTokens(tokens: string[]) {
   return tokens.filter(Boolean).filter((token, index, self) => self.indexOf(token) === index);
 }
 
+export function getMoodleAdminToken(): string {
+  const token = env.moodle.adminToken;
+  if (!token) {
+    throw new Error("MOODLE_ADMIN_TOKEN is not configured");
+  }
+  return token;
+}
+
 export function getMoodleAdminFetchTokens(): string[] {
-  return uniqueTokens([
-    env.moodle.adminManageToken,
-    env.moodle.adminToken,
-    env.moodle.adminUpdateToken,
-    env.moodle.token,
-  ]);
+  return [getMoodleAdminToken()];
 }
 
 export function getMoodleCourseFetchTokens(): string[] {

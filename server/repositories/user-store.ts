@@ -79,6 +79,7 @@ export async function syncUserFromMoodleSession(input: {
   firstName?: string | null;
   lastName?: string | null;
   profileImage?: string | null;
+  allowAutoCreate?: boolean;
 }) {
   const normalizedUsername = input.username.trim().toLowerCase();
 
@@ -110,8 +111,8 @@ export async function syncUserFromMoodleSession(input: {
     }
   }
 
-  // PREVENT CREATING NEW USERS ON LOGIN (Strictly Block All Cases EXCEPT ADMIN)
-  if (!existingUser && input.role !== "admin") {
+  // Keep login strict by default, but allow controlled auto-create flows (e.g. school seat assignment).
+  if (!existingUser && !input.allowAutoCreate && input.role !== "admin") {
     console.log("User not found in local DB, but Moodle auth succeeded. User is not admin, rejecting.");
     throw new Error("User does not exist in our database. Please register properly first to log in.");
   } else if (!existingUser && input.role === "admin") {

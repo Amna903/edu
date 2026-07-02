@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { AIChatLauncher } from "@/components/AIChatLauncher";
 import SchoolAnalyticsClient from "@/components/dashboard/SchoolAnalyticsClient";
+import { DashboardHero, KpiCard } from "@/components/dashboard/DashboardShell";
 import { DashboardReportsSection } from "@/components/dashboard/DashboardReportsSection";
 import { SchoolAtRiskPanel } from "@/components/dashboard/SchoolAtRiskPanel";
 import SchoolOperationsPanel from "@/components/dashboard/SchoolOperationsPanel";
@@ -52,6 +53,13 @@ function getDashboardMenu(role?: string | null, unreadNotifications = 0) {
   }
 
   return common;
+}
+
+function getRoleTitle(role?: string | null) {
+  if (role === "admin") return "Platform Operations Dashboard";
+  if (role === "parent") return "Parent Success Dashboard";
+  if (role === "school") return "School Leadership Dashboard";
+  return "Student Learning Dashboard";
 }
 
 function CourseImage({ imageUrl, title }: { imageUrl?: string | null; title: string }) {
@@ -592,6 +600,36 @@ export default function Dashboard() {
                 })}
               </nav>
 
+              <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Top Actions</p>
+                <div className="mt-2 space-y-2 text-sm">
+                  {user.role === "school" && (
+                    <>
+                      <Link href="/dashboard/school"><div className="cursor-pointer rounded-xl bg-white px-3 py-2 font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700">Assign seats</div></Link>
+                      <Link href="/dashboard/school/analytics"><div className="cursor-pointer rounded-xl bg-white px-3 py-2 font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700">View analytics</div></Link>
+                    </>
+                  )}
+                  {user.role === "student" && (
+                    <>
+                      <Link href="/dashboard/student"><div className="cursor-pointer rounded-xl bg-white px-3 py-2 font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700">Continue learning</div></Link>
+                      <Link href="/dashboard/student/certificates"><div className="cursor-pointer rounded-xl bg-white px-3 py-2 font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700">Open certificates</div></Link>
+                    </>
+                  )}
+                  {user.role === "parent" && (
+                    <>
+                      <Link href="/dashboard/parent"><div className="cursor-pointer rounded-xl bg-white px-3 py-2 font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700">Review child progress</div></Link>
+                      <Link href="/dashboard/reports"><div className="cursor-pointer rounded-xl bg-white px-3 py-2 font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700">Download parent report</div></Link>
+                    </>
+                  )}
+                  {user.role === "admin" && (
+                    <>
+                      <Link href="/dashboard/admin"><div className="cursor-pointer rounded-xl bg-white px-3 py-2 font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700">Manage users</div></Link>
+                      <Link href="/dashboard/admin/analytics"><div className="cursor-pointer rounded-xl bg-white px-3 py-2 font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700">Open analytics</div></Link>
+                    </>
+                  )}
+                </div>
+              </div>
+
               <Button
                 className="mt-6 w-full bg-slate-900 text-white hover:bg-slate-800"
                 onClick={async () => {
@@ -605,52 +643,43 @@ export default function Dashboard() {
             </aside>
 
             <section className="space-y-6">
-              <Card className="overflow-hidden border-0 bg-[radial-gradient(circle_at_top,_rgba(35,102,201,0.18),_transparent_50%),linear-gradient(135deg,#ffffff,#f8fbff)] shadow-xl">
-                <CardContent className="grid gap-4 p-5 sm:p-8 md:grid-cols-[1fr_auto] md:items-center">
-                  <div>
-                    <p className="text-sm font-semibold uppercase tracking-[0.22em] text-blue-600">Edu Dashboard</p>
-                    <h1 className="mt-2 text-3xl font-black tracking-tight text-slate-900">
-                      {user.role === "student" && "Student Dashboard"}
-                      {user.role === "parent" && "Parent Dashboard"}
-                      {user.role === "school" && "School Dashboard"}
-                      {user.role === "admin" && "Admin Dashboard"}
-                    </h1>
-                    <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600">
-                      Your Moodle-connected data is now surfaced inside `edu`, including profile, orders, enrollments, role dashboards, and the new signup flow.
-                    </p>
-                    {user.role === "student" && (
-                      <div className="mt-5 space-y-3">
-                        <div className="flex flex-wrap items-center gap-3">
-                          <AIChatLauncher className="bg-brand-primary text-white hover:bg-brand-primary-dark" />
-                          <Button
-                            type="button"
-                            variant="outline"
-                            onClick={testAiTeamWebhook}
-                            disabled={aiWebhookTestState.pending}
-                          >
-                            {aiWebhookTestState.pending ? "Testing AI Webhook..." : "Test AI Webhook"}
-                          </Button>
-                        </div>
-                        {aiWebhookTestState.success ? (
-                          <p className="rounded-2xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700">
-                            {aiWebhookTestState.success}
-                          </p>
-                        ) : null}
-                        {aiWebhookTestState.error ? (
-                          <p className="rounded-2xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700">
-                            {aiWebhookTestState.error}
-                          </p>
-                        ) : null}
-                        {aiWebhookTestState.result ? (
-                          <div className="rounded-2xl border border-slate-200 bg-white/80 px-3 py-2 text-xs text-slate-700">
-                            <p className="mb-1 font-semibold uppercase tracking-[0.12em] text-slate-500">Webhook Result</p>
-                            <pre className="whitespace-pre-wrap break-words text-[11px] leading-5">{aiWebhookTestState.result}</pre>
-                          </div>
-                        ) : null}
+              <DashboardHero
+                eyebrow="Edu Dashboard"
+                title={getRoleTitle(user.role)}
+                description="A role-focused workspace for operations, learner progress, and institutional performance."
+                actions={user.role === "student" ? (
+                  <div className="space-y-3">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <AIChatLauncher className="bg-brand-primary text-white hover:bg-brand-primary-dark" />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={testAiTeamWebhook}
+                        disabled={aiWebhookTestState.pending}
+                      >
+                        {aiWebhookTestState.pending ? "Testing AI Webhook..." : "Test AI Webhook"}
+                      </Button>
+                    </div>
+                    {aiWebhookTestState.success ? (
+                      <p className="rounded-2xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700">
+                        {aiWebhookTestState.success}
+                      </p>
+                    ) : null}
+                    {aiWebhookTestState.error ? (
+                      <p className="rounded-2xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700">
+                        {aiWebhookTestState.error}
+                      </p>
+                    ) : null}
+                    {aiWebhookTestState.result ? (
+                      <div className="rounded-2xl border border-slate-200 bg-white/80 px-3 py-2 text-xs text-slate-700">
+                        <p className="mb-1 font-semibold uppercase tracking-[0.12em] text-slate-500">Webhook Result</p>
+                        <pre className="whitespace-pre-wrap break-words text-[11px] leading-5">{aiWebhookTestState.result}</pre>
                       </div>
-                    )}
+                    ) : null}
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
+                ) : null}
+                right={(
+                  <>
                     <div className="rounded-3xl bg-white p-4 shadow-sm">
                       <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Username</p>
                       <p className="mt-2 font-bold text-slate-900">{user?.username}</p>
@@ -659,9 +688,9 @@ export default function Dashboard() {
                       <p className="text-xs uppercase tracking-[0.18em] text-slate-400">User ID</p>
                       <p className="mt-2 font-bold text-slate-900">{user?.id}</p>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </>
+                )}
+              />
 
               {onMainDashboard && user?.role === "student" && (
                 <StudentDashboardSection
@@ -804,10 +833,14 @@ export default function Dashboard() {
                   )}
 
                   <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-                    <Card><CardContent className="p-4"><p className="text-sm text-slate-500">Children Linked</p><p className="mt-2 text-3xl font-black text-slate-900">{parentChildren.length}</p></CardContent></Card>
-                    <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Total Courses</p><p className="mt-2 text-3xl font-black text-slate-900">{parentChildren.reduce((sum, child) => sum + child.courses.length, 0)}</p></CardContent></Card>
-                    <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Unread Alerts</p><p className="mt-2 text-3xl font-black text-slate-900">{unreadParentAlerts.length}</p></CardContent></Card>
-                    <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Avg. Progress</p><p className="mt-2 text-3xl font-black text-slate-900">{parentChildren.length > 0 ? Math.round(parentChildren.flatMap((child) => child.courses).reduce((sum, course) => sum + course.progress, 0) / Math.max(parentChildren.flatMap((child) => child.courses).length, 1)) : 0}%</p></CardContent></Card>
+                    <KpiCard label="Children Linked" value={parentChildren.length} tone="blue" />
+                    <KpiCard label="Total Courses" value={parentChildren.reduce((sum, child) => sum + child.courses.length, 0)} tone="violet" />
+                    <KpiCard label="Unread Alerts" value={unreadParentAlerts.length} tone="amber" />
+                    <KpiCard
+                      label="Avg. Progress"
+                      value={`${parentChildren.length > 0 ? Math.round(parentChildren.flatMap((child) => child.courses).reduce((sum, course) => sum + course.progress, 0) / Math.max(parentChildren.flatMap((child) => child.courses).length, 1)) : 0}%`}
+                      tone="emerald"
+                    />
                   </div>
 
                   <Card id="parent-alerts" className="scroll-mt-28">
@@ -962,12 +995,6 @@ export default function Dashboard() {
 
             {onMainDashboard && user.role === "school" && schoolDashboard.data && (
                 <div className="space-y-6">
-                  <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
-                    <Card><CardContent className="p-4"><p className="text-sm text-slate-500">Purchased Seats</p><p className="mt-2 text-3xl font-black text-slate-900">{schoolDashboard.data.stats.purchasedSeats}</p></CardContent></Card>
-                    <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Assigned Seats</p><p className="mt-2 text-3xl font-black text-slate-900">{schoolDashboard.data.stats.assignedSeats}</p></CardContent></Card>
-                    <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Active Courses</p><p className="mt-2 text-3xl font-black text-slate-900">{schoolDashboard.data.stats.activeCourses}</p></CardContent></Card>
-                  </div>
-
                   <SchoolOperationsPanel
                     schoolName={user.fullname}
                     licenses={schoolDashboard.data.licenses}
@@ -983,20 +1010,20 @@ export default function Dashboard() {
               {onMainDashboard && user.role === "admin" && adminDashboard.data && (
                 <div className="space-y-6">
                   <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-                    <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Users</p><p className="mt-2 text-3xl font-black text-slate-900">{adminDashboard.data.stats.totalUsers}</p></CardContent></Card>
-                    <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Orders</p><p className="mt-2 text-3xl font-black text-slate-900">{adminDashboard.data.stats.totalOrders}</p></CardContent></Card>
-                    <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Revenue</p><p className="mt-2 text-3xl font-black text-slate-900">${(adminDashboard.data.stats.totalRevenue / 100).toFixed(2)}</p></CardContent></Card>
-                    <Card><CardContent className="p-6"><p className="text-sm text-slate-500">Courses</p><p className="mt-2 text-3xl font-black text-slate-900">{adminDashboard.data.stats.activeCourses}</p></CardContent></Card>
+                    <KpiCard label="Users" value={adminDashboard.data.stats.totalUsers} tone="blue" />
+                    <KpiCard label="Orders" value={adminDashboard.data.stats.totalOrders} tone="emerald" />
+                    <KpiCard label="Revenue" value={`$${(adminDashboard.data.stats.totalRevenue / 100).toFixed(2)}`} tone="amber" />
+                    <KpiCard label="Courses" value={adminDashboard.data.stats.activeCourses} tone="violet" />
                   </div>
 
                   <Card>
                     <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <CardTitle>Admin Management</CardTitle>
-                      <div className="flex flex-wrap gap-2">
-                        <button onClick={() => setAdminPanel({ ...adminPanel, tab: "users" })} className={`px-3 py-2 rounded-lg font-semibold text-xs sm:text-sm ${adminPanel.tab === "users" ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-900"}`}>Users</button>
-                        <button onClick={() => setAdminPanel({ ...adminPanel, tab: "courses" })} className={`px-3 py-2 rounded-lg font-semibold text-xs sm:text-sm ${adminPanel.tab === "courses" ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-900"}`}>Courses</button>
-                        <button onClick={() => setAdminPanel({ ...adminPanel, tab: "logs" })} className={`px-3 py-2 rounded-lg font-semibold text-xs sm:text-sm ${adminPanel.tab === "logs" ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-900"}`}>Logs</button>
-                        <button onClick={() => setAdminPanel({ ...adminPanel, tab: "jobs" })} className={`px-3 py-2 rounded-lg font-semibold text-xs sm:text-sm ${adminPanel.tab === "jobs" ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-900"}`}>Jobs</button>
+                      <div className="flex flex-wrap gap-2 rounded-2xl bg-slate-100 p-1.5">
+                        <button onClick={() => setAdminPanel({ ...adminPanel, tab: "users" })} className={`rounded-xl px-3 py-2 font-semibold text-xs sm:text-sm ${adminPanel.tab === "users" ? "bg-white text-blue-700 shadow-sm" : "text-slate-700 hover:bg-slate-200"}`}>Users</button>
+                        <button onClick={() => setAdminPanel({ ...adminPanel, tab: "courses" })} className={`rounded-xl px-3 py-2 font-semibold text-xs sm:text-sm ${adminPanel.tab === "courses" ? "bg-white text-blue-700 shadow-sm" : "text-slate-700 hover:bg-slate-200"}`}>Courses</button>
+                        <button onClick={() => setAdminPanel({ ...adminPanel, tab: "logs" })} className={`rounded-xl px-3 py-2 font-semibold text-xs sm:text-sm ${adminPanel.tab === "logs" ? "bg-white text-blue-700 shadow-sm" : "text-slate-700 hover:bg-slate-200"}`}>Logs</button>
+                        <button onClick={() => setAdminPanel({ ...adminPanel, tab: "jobs" })} className={`rounded-xl px-3 py-2 font-semibold text-xs sm:text-sm ${adminPanel.tab === "jobs" ? "bg-white text-blue-700 shadow-sm" : "text-slate-700 hover:bg-slate-200"}`}>Jobs</button>
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-4">

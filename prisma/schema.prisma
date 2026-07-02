@@ -78,7 +78,6 @@ model CourseCatalog {
   categoryName   String?
   isVisible      Boolean                @default(true)
   price          Float                  @default(0)
-  lastSyncedAt   DateTime?              @map("last_synced_at")
   createdAt      DateTime               @default(now())
   updatedAt      DateTime               @updatedAt
   enrollments    UserCourseEnrollment[]
@@ -278,9 +277,13 @@ model SchoolSeatAssignments {
   studentEmail String    @map("student_email")
   studentName  String    @map("student_name")
   assignedAt   DateTime? @default(now()) @map("assigned_at") @db.Timestamp(6)
+  isAtRisk     Boolean   @default(false) @map("is_at_risk")
+  riskReasons  Json?     @map("risk_reasons")
+  lastRiskCheckAt DateTime? @map("last_risk_check_at") @db.Timestamp(6)
 
   @@unique([licenseId, studentId])
   @@index([schoolUserId])
+  @@index([schoolUserId, isAtRisk])
   @@map("school_seat_assignments")
 }
 
@@ -400,4 +403,48 @@ model DeadLetterJob {
 
   @@index([type])
   @@map("dead_letter_jobs")
+}
+
+model SchoolFormSubmission {
+  id               String    @id
+  schoolUserId     Int       @map("school_user_id")
+  teacherUserId    Int?      @map("teacher_user_id")
+  reportMonth      String    @map("report_month") @db.VarChar(7)
+  status           String    @db.VarChar(16)
+  payload          Json
+  reviewedByUserId Int?      @map("reviewed_by_user_id")
+  reviewNotes      String?   @map("review_notes")
+  reviewedAt       DateTime? @map("reviewed_at") @db.Timestamptz(6)
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@index([schoolUserId])
+  @@index([status])
+  @@map("school_form_submissions")
+}
+
+model SchoolMonthlySnapshot {
+  id            String   @id
+  schoolUserId  Int      @map("school_user_id")
+  snapshotMonth String   @map("snapshot_month") @db.VarChar(7)
+  snapshotData  Json     @map("snapshot_data")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@unique([schoolUserId, snapshotMonth])
+  @@index([schoolUserId])
+  @@map("school_monthly_snapshots")
+}
+
+model SchoolReportActivityLog {
+  id           String   @id
+  schoolUserId Int      @map("school_user_id")
+  actorUserId  Int      @map("actor_user_id")
+  action       String   @db.VarChar(64)
+  details      Json?
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([schoolUserId])
+  @@index([action])
+  @@map("school_report_activity_logs")
 }

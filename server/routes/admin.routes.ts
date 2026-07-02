@@ -9,7 +9,8 @@ import { upsertCourseCatalogFromMoodle, getUserCourseEnrollments } from "../repo
 import { getUserCoursesForDashboard } from "../services/moodle/moodle-dashboard.js";
 import { env } from "../config/config.js";
 import { prisma } from "../db/prisma.js";
-import { moodlePostWithTokenFallback, fetchAllMoodleUsers } from "../services/moodle/moodle-auth.js";
+import { moodlePostWithTokenFallback } from "../services/moodle/moodle-auth.js";
+import { getMoodleAdminToken } from "../services/moodle/moodle-tokens.js";
 
 
 export function registerAdminRoutes(app: Express, ctx: RouteContext) {
@@ -246,7 +247,7 @@ export function registerAdminRoutes(app: Express, ctx: RouteContext) {
 
       try {
         // Reset password in Moodle using admin token
-        const moodleToken = process.env.MOODLE_ADMIN_TOKEN || "";
+        const moodleToken = getMoodleAdminToken();
         if (moodleToken) {
           // Call Moodle API to reset password
           const response = await fetch(
@@ -311,93 +312,6 @@ export function registerAdminRoutes(app: Express, ctx: RouteContext) {
     }
   });
 
-  // === DEDICATED SYNC USERS ENDPOINT ===
-  app.post("/api/admin/users/sync", async (req, res) => {
-    if (!req.session.user || req.session.user.role !== "admin") {
-      return res.status(403).json({ message: "Admin access required" });
-    }
-
-    console.log("[sync-users] POST /api/admin/users/sync triggered by admin:", req.session.user.username);
-
-    try {
-      let users: Awaited<ReturnType<typeof fetchAllMoodleUsers>>;
-      try {
-        users = await fetchAllMoodleUsers();
-      } catch (moodleErr) {
-        const msg = moodleErr instanceof Error ? moodleErr.message : String(moodleErr);
-        console.error("[sync-users] fetchAllMoodleUsers failed:", msg);
-        return res.status(500).json({ message: msg });
-      }
-
-      console.log(`[sync-users] ${users.length} users returned from Moodle — starting DB upsert`);
-
-      let synced = 0;
-      const skipped: string[] = [];
-      const failed: string[] = [];
-
-      for (const user of users) {
-        if (user.username === "admin" || user.username === req.session.user.username) {
-          console.log(`[sync-users] skipping reserved account: ${user.username}`);
-          skipped.push(user.username);
-          continue;
-        }
-        try {
-          await prisma.user.upsert({
-            where: { moodleUserId: user.id },
-            create: {
-              moodleUserId: user.id,
-              username: user.username,
-              email: user.email || null,
-              firstName: user.firstname || null,
-              lastName: user.lastname || null,
-              profileImage: user.profileimageurl || null,
-              role: "student",
-              lastLoginAt: new Date(),
-            },
-            update: {
-              username: user.username,
-              email: user.email || null,
-              firstName: user.firstname || null,
-              lastName: user.lastname || null,
-              profileImage: user.profileimageurl || null,
-            },
-          });
-          synced++;
-          console.log(`[sync-users] upserted: ${user.username} (moodleId=${user.id})`);
-        } catch (dbErr) {
-          const msg = dbErr instanceof Error ? dbErr.message : String(dbErr);
-          console.error(`[sync-users] DB upsert failed for ${user.username} (moodleId=${user.id}):`, msg);
-          failed.push(user.username);
-        }
-      }
-
-      console.log(`[sync-users] done — synced=${synced} skipped=${skipped.length} failed=${failed.length}`);
-
-      // Log admin activity
-      try {
-        await (prisma as any).adminActivityLog.create({
-          data: {
-            adminUserId: req.session.user.id,
-            action: "USERS_SYNCED",
-            details: { synced, skipped: skipped.length, failed: failed.length },
-          },
-        });
-      } catch (logErr) {
-        console.error("[sync-users] failed to write activity log:", logErr);
-      }
-
-      return res.json({
-        success: true,
-        message: `Synced ${synced} users from Moodle${failed.length ? ` (${failed.length} failed — check server logs)` : ""}`,
-        usersAffected: synced,
-      });
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "Failed to sync users";
-      console.error("[sync-users] unexpected error:", msg);
-      return res.status(500).json({ message: msg });
-    }
-  });
-
   app.get(api.admin.activityLogs.path, async (req, res) => {
     if (!req.session.user || req.session.user.role !== "admin") {
       return res.status(403).json({ message: "Admin access required" });
@@ -409,6 +323,10 @@ export function registerAdminRoutes(app: Express, ctx: RouteContext) {
       const offset = (page - 1) * limit;
 
       const logs = await (prisma as any).adminActivityLog.findMany({
+        include: {
+          adminUser: true,
+          targetUser: true,
+        },
         orderBy: { createdAt: "desc" },
         skip: offset,
         take: limit,
@@ -416,34 +334,12 @@ export function registerAdminRoutes(app: Express, ctx: RouteContext) {
 
       const total = await (prisma as any).adminActivityLog.count();
 
-      // AdminActivityLog stores plain id references (no Prisma relations), so
-      // resolve usernames in a single batched lookup. adminUserId references
-      // User.moodleUserId; targetUserId references User.id.
-      const adminMoodleIds = Array.from(
-        new Set(logs.map((log: any) => log.adminUserId).filter((id: unknown): id is number => typeof id === "number")),
-      );
-      const targetUserIds = Array.from(
-        new Set(logs.map((log: any) => log.targetUserId).filter((id: unknown): id is string => typeof id === "string" && id.length > 0)),
-      );
-
-      const [adminUsers, targetUsers] = await Promise.all([
-        adminMoodleIds.length
-          ? prisma.user.findMany({ where: { moodleUserId: { in: adminMoodleIds as number[] } } })
-          : Promise.resolve([]),
-        targetUserIds.length
-          ? prisma.user.findMany({ where: { id: { in: targetUserIds as string[] } } })
-          : Promise.resolve([]),
-      ]);
-
-      const adminUsernameByMoodleId = new Map(adminUsers.map((user: any) => [user.moodleUserId, user.username]));
-      const targetUsernameById = new Map(targetUsers.map((user: any) => [user.id, user.username]));
-
       res.json({
         logs: logs.map((log: any) => ({
           id: log.id,
           action: log.action,
-          adminUsername: adminUsernameByMoodleId.get(log.adminUserId) || `User ${log.adminUserId}`,
-          targetUsername: log.targetUserId ? targetUsernameById.get(log.targetUserId) || null : null,
+          adminUsername: log.adminUser.username,
+          targetUsername: log.targetUser?.username || null,
           details: log.details,
           createdAt: log.createdAt.toISOString(),
         })),
@@ -674,11 +570,12 @@ export function registerAdminRoutes(app: Express, ctx: RouteContext) {
     try {
       const { target } = api.admin.syncCourses.input.parse(req.body);
 
+      // Sync courses from Moodle based on target
+      const courses = await getLmsCourses({ adminTokenOnly: true });
       let coursesAffected = 0;
 
       if (target === "COURSE_CATALOG") {
-        // Only fetch from Moodle when syncing the course catalog
-        const courses = await getLmsCourses();
+        // Update or create courses in database
         for (const course of courses) {
           await (prisma as any).courseCatalog.upsert({
             where: { moodleCourseId: course.id },
@@ -705,52 +602,41 @@ export function registerAdminRoutes(app: Express, ctx: RouteContext) {
           coursesAffected++;
         }
       } else if (target === "USER_DIRECTORY") {
-        console.log("[sync-users] route: USER_DIRECTORY target received, calling fetchAllMoodleUsers()");
-        let users: Awaited<ReturnType<typeof fetchAllMoodleUsers>>;
-        try {
-          users = await fetchAllMoodleUsers();
-        } catch (moodleErr) {
-          const msg = moodleErr instanceof Error ? moodleErr.message : String(moodleErr);
-          console.error("[sync-users] fetchAllMoodleUsers failed:", msg);
-          return res.status(500).json({ message: msg });
-        }
-
-        console.log(`[sync-users] route: ${users.length} users returned from Moodle, starting DB upsert`);
+        const usersRes = await moodlePostWithTokenFallback<{ users: any[] }>(
+          "core_user_get_users",
+          new URLSearchParams({
+            "criteria[0][key]": "email",
+            "criteria[0][value]": "%%"
+          }),
+          [getMoodleAdminToken()],
+        );
+        const users = usersRes?.users || [];
         for (const user of users) {
           if (user.username === "admin" || user.username === req.session.user.username) {
-            console.log(`[sync-users] skipping reserved account: ${user.username}`);
-            continue;
+            continue; // Skip the admin's own account
           }
-          try {
-            await (prisma as any).user.upsert({
-              where: { moodleUserId: user.id },
-              create: {
-                moodleUserId: user.id,
-                username: user.username,
-                email: user.email || null,
-                firstName: user.firstname || null,
-                lastName: user.lastname || null,
-                profileImage: user.profileimageurl || null,
-                role: "student",
-                lastLoginAt: new Date(),
-              },
-              update: {
-                username: user.username,
-                email: user.email || null,
-                firstName: user.firstname || null,
-                lastName: user.lastname || null,
-                profileImage: user.profileimageurl || null,
-              },
-            });
-            coursesAffected++;
-          } catch (dbErr) {
-            console.error(
-              `[sync-users] DB upsert failed for user ${user.username} (moodleId=${user.id}):`,
-              dbErr instanceof Error ? dbErr.message : dbErr,
-            );
-          }
+          await (prisma as any).user.upsert({
+            where: { moodleUserId: user.id },
+            create: {
+              moodleUserId: user.id,
+              username: user.username,
+              email: user.email || null,
+              firstName: user.firstname || null,
+              lastName: user.lastname || null,
+              profileImage: user.profileimageurl || null,
+              role: "student", // default role
+              lastLoginAt: new Date(),
+            },
+            update: {
+              username: user.username,
+              email: user.email || null,
+              firstName: user.firstname || null,
+              lastName: user.lastname || null,
+              profileImage: user.profileimageurl || null,
+            },
+          });
+          coursesAffected++; // Reuse variable for users affected
         }
-        console.log(`[sync-users] route: DB upsert complete — ${coursesAffected} users written`);
       }
 
       // Log admin activity

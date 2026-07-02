@@ -429,11 +429,11 @@ async function getLmsCoursesFromAdminApi(baseUrl: string) {
   return mapCoursesToLms(visibleCourses, categoryMap, baseUrl, storedCatalog);
 }
 
-export async function getLmsCourses(): Promise<LmsCourse[]> {
+export async function getLmsCourses(options?: { adminTokenOnly?: boolean }): Promise<LmsCourse[]> {
   const baseUrl = getMoodleBaseUrl();
 
   try {
-    if (getMoodleCourseCatalogToken()) {
+    if (!options?.adminTokenOnly && getMoodleCourseCatalogToken()) {
       return await getLmsCoursesFromSearch(baseUrl);
     }
     return await getLmsCoursesFromAdminApi(baseUrl);
