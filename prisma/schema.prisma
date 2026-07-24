@@ -80,6 +80,7 @@ model CourseCatalog {
   price          Float                  @default(0)
   createdAt      DateTime               @default(now())
   updatedAt      DateTime               @updatedAt
+  lastSyncedAt   DateTime?              @map("last_synced_at")
   enrollments    UserCourseEnrollment[]
 
   @@index([categoryId])
