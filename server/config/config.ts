@@ -151,6 +151,8 @@ export const env = {
     ),
     passphrase: process.env.PAYFAST_PASSPHRASE || "",
     baseUrl: process.env.PAYFAST_BASE_URL || "",
+    tokenUrl: process.env.PAYFAST_TOKEN_URL || "",
+    processUrl: process.env.PAYFAST_URL || process.env.PAYFAST_PROCESS_URL || "",
     mode: process.env.PAYFAST_MODE || "live",
     merchantName: process.env.PAYFAST_MERCHANT_NAME || "EduMeUp",
     currencyCode: process.env.PAYFAST_CURRENCY_CODE || "PKR",

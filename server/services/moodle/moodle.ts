@@ -125,6 +125,106 @@ function mapCategory(categoryName: string | null) {
   return "all_courses";
 }
 
+type MockCourseSeed = {
+  moodleCourseId: number;
+  shortname: string;
+  fullname: string;
+  summary: string;
+  categoryName: string;
+  categoryId: number;
+  price: number;
+  isVisible: boolean;
+};
+
+const MOCK_COURSE_SEEDS: MockCourseSeed[] = [
+  {
+    moodleCourseId: 2,
+    shortname: "maths-ol",
+    fullname: "O-Level Mathematics (Syllabus D)",
+    summary:
+      "Master core concepts of algebra, geometry, statistics, and trigonometry for your O-Level Cambridge exams. Complete course with practice problems and past paper solutions.",
+    categoryId: 1,
+    categoryName: "O-Level",
+    price: 150,
+    isVisible: true,
+  },
+  {
+    moodleCourseId: 3,
+    shortname: "ai-python",
+    fullname: "Introduction to AI & Python Coding",
+    summary:
+      "Learn the fundamentals of Python programming language and build your first machine learning models. Designed specifically as a bridge/foundation course for beginners.",
+    categoryId: 2,
+    categoryName: "Foundation",
+    price: 0,
+    isVisible: true,
+  },
+  {
+    moodleCourseId: 4,
+    shortname: "phys-fsc",
+    fullname: "FSc Physics Class 11 (KPK & Punjab Boards)",
+    summary:
+      "Comprehensive lectures, solved numericals, and exam preparation guides for FSc Part 1 Physics. Fully mapped to national curriculums.",
+    categoryId: 3,
+    categoryName: "Pakistan Board",
+    price: 120,
+    isVisible: true,
+  },
+  {
+    moodleCourseId: 5,
+    shortname: "eng-cambridge",
+    fullname: "Cambridge O-Level English Language (1123)",
+    summary:
+      "Improve your comprehension, directed writing, and creative writing skills. Step-by-step guidance on how to score an A* in the O-Level English examination.",
+    categoryId: 1,
+    categoryName: "O-Level",
+    price: 0,
+    isVisible: true,
+  },
+  {
+    moodleCourseId: 6,
+    shortname: "chem-prac",
+    fullname: "Cambridge O-Level Chemistry Practical Prep",
+    summary:
+      "A practical guide to laboratory procedures, qualitative analysis, and titration. Perfect for students preparing for paper 4 (Alternative to Practical).",
+    categoryId: 1,
+    categoryName: "O-Level",
+    price: 99,
+    isVisible: true,
+  },
+];
+
+function buildMockLmsCourses(baseUrl: string): LmsCourse[] {
+  return MOCK_COURSE_SEEDS.map((course) => ({
+    id: course.moodleCourseId,
+    slug: slugifyCourse(course.shortname || course.fullname || `course-${course.moodleCourseId}`, course.moodleCourseId),
+    shortName: course.shortname,
+    title: course.fullname,
+    shortDescription: stripHtml(course.summary),
+    fullDescription: stripHtml(course.summary),
+    category: mapCategory(course.categoryName),
+    categoryName: course.categoryName,
+    categoryId: course.categoryId,
+    format: null,
+    imageUrl: null,
+    startDate: null,
+    endDate: null,
+    price: course.price > 0 ? Math.round(course.price * 100) : 0,
+    visible: course.isVisible,
+    lmsCourseUrl: `${baseUrl}/course/view.php?id=${course.moodleCourseId}`,
+  }));
+}
+
+function isMissingCourseCatalogTableError(error: unknown) {
+  const message = error instanceof Error ? error.message.toLowerCase() : String(error).toLowerCase();
+  const code =
+    typeof error === "object" && error && "code" in error
+      ? String((error as { code?: unknown }).code).toUpperCase()
+      : "";
+
+  return code === "P2021" || (message.includes("course_catalog") && message.includes("does not exist"));
+}
+
 function appendMoodleFileToken(fileUrl: string | null | undefined) {
   if (!fileUrl) return null;
   const token = getMoodleCourseCatalogToken();
@@ -445,96 +545,66 @@ export async function getLmsCourses(options?: { adminTokenOnly?: boolean }): Pro
     }
 
     console.error("Moodle API request failed, falling back to local database course catalog:", moodleError);
-    let storedCatalog = await prisma.courseCatalog.findMany({
-      where: { isVisible: true },
-    });
-
-    if (storedCatalog.length <= 1) {
-      console.log("[moodle] Database course catalog is empty or only has 1 course. Seeding mock courses...");
-      const mockCourses = [
-        {
-          moodleCourseId: 2,
-          shortname: "maths-ol",
-          fullname: "O-Level Mathematics (Syllabus D)",
-          summary: "Master core concepts of algebra, geometry, statistics, and trigonometry for your O-Level Cambridge exams. Complete course with practice problems and past paper solutions.",
-          categoryId: 1,
-          categoryName: "O-Level",
-          price: 150.00,
-          isVisible: true,
-        },
-        {
-          moodleCourseId: 3,
-          shortname: "ai-python",
-          fullname: "Introduction to AI & Python Coding",
-          summary: "Learn the fundamentals of Python programming language and build your first machine learning models. Designed specifically as a bridge/foundation course for beginners.",
-          categoryId: 2,
-          categoryName: "Foundation",
-          price: 0,
-          isVisible: true,
-        },
-        {
-          moodleCourseId: 4,
-          shortname: "phys-fsc",
-          fullname: "FSc Physics Class 11 (KPK & Punjab Boards)",
-          summary: "Comprehensive lectures, solved numericals, and exam preparation guides for FSc Part 1 Physics. Fully mapped to national curriculums.",
-          categoryId: 3,
-          categoryName: "Pakistan Board",
-          price: 120.00,
-          isVisible: true,
-        },
-        {
-          moodleCourseId: 5,
-          shortname: "eng-cambridge",
-          fullname: "Cambridge O-Level English Language (1123)",
-          summary: "Improve your comprehension, directed writing, and creative writing skills. Step-by-step guidance on how to score an A* in the O-Level English examination.",
-          categoryId: 1,
-          categoryName: "O-Level",
-          price: 0,
-          isVisible: true,
-        },
-        {
-          moodleCourseId: 6,
-          shortname: "chem-prac",
-          fullname: "Cambridge O-Level Chemistry Practical Prep",
-          summary: "A practical guide to laboratory procedures, qualitative analysis, and titration. Perfect for students preparing for paper 4 (Alternative to Practical).",
-          categoryId: 1,
-          categoryName: "O-Level",
-          price: 99.00,
-          isVisible: true,
-        },
-      ];
-
-      for (const mc of mockCourses) {
-        await prisma.courseCatalog.upsert({
-          where: { moodleCourseId: mc.moodleCourseId },
-          update: {
-            shortname: mc.shortname,
-            fullname: mc.fullname,
-            summary: mc.summary,
-            categoryId: mc.categoryId,
-            categoryName: mc.categoryName,
-            price: mc.price,
-            isVisible: mc.isVisible,
-          },
-          create: {
-            moodleCourseId: mc.moodleCourseId,
-            shortname: mc.shortname,
-            fullname: mc.fullname,
-            summary: mc.summary,
-            categoryId: mc.categoryId,
-            categoryName: mc.categoryName,
-            price: mc.price,
-            isVisible: mc.isVisible,
-          },
-        });
-      }
-
-      storedCatalog = await prisma.courseCatalog.findMany({
+    try {
+      const storedCatalog = await prisma.courseCatalog.findMany({
         where: { isVisible: true },
       });
-    }
 
-    return storedCatalog.map((row) => mapStoredCatalogRow(row, baseUrl));
+      if (storedCatalog.length <= 1) {
+        console.log("[moodle] Database course catalog is empty or only has 1 course. Seeding mock courses...");
+
+        try {
+          for (const course of MOCK_COURSE_SEEDS) {
+            await prisma.courseCatalog.upsert({
+              where: { moodleCourseId: course.moodleCourseId },
+              update: {
+                shortname: course.shortname,
+                fullname: course.fullname,
+                summary: course.summary,
+                categoryId: course.categoryId,
+                categoryName: course.categoryName,
+                price: course.price,
+                isVisible: course.isVisible,
+              },
+              create: {
+                moodleCourseId: course.moodleCourseId,
+                shortname: course.shortname,
+                fullname: course.fullname,
+                summary: course.summary,
+                categoryId: course.categoryId,
+                categoryName: course.categoryName,
+                price: course.price,
+                isVisible: course.isVisible,
+              },
+            });
+          }
+
+          const refreshedCatalog = await prisma.courseCatalog.findMany({
+            where: { isVisible: true },
+          });
+
+          return refreshedCatalog.map((row) => mapStoredCatalogRow(row, baseUrl));
+        } catch (seedError) {
+          if (isMissingCourseCatalogTableError(seedError)) {
+            console.warn("[moodle] course_catalog table is missing; returning mock LMS courses instead.");
+          } else {
+            console.warn("[moodle] Failed to seed local course catalog, returning mock LMS courses instead:", seedError);
+          }
+
+          return buildMockLmsCourses(baseUrl);
+        }
+      }
+
+      return storedCatalog.map((row) => mapStoredCatalogRow(row, baseUrl));
+    } catch (dbError) {
+      if (isMissingCourseCatalogTableError(dbError)) {
+        console.warn("[moodle] course_catalog table is missing; returning mock LMS courses instead.");
+      } else {
+        console.warn("[moodle] Failed to read local course catalog, returning mock LMS courses instead:", dbError);
+      }
+
+      return buildMockLmsCourses(baseUrl);
+    }
   }
 }
 

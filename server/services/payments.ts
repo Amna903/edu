@@ -14,14 +14,26 @@ function getPayfastBaseUrl() {
 }
 
 function getPayfastTokenUrl() {
+  if (env.payfast.tokenUrl) {
+    return env.payfast.tokenUrl;
+  }
+
   return `${getPayfastBaseUrl()}/Ecommerce/api/Transaction/GetAccessToken`;
 }
 
 function getPayfastProcessUrl() {
+  if (env.payfast.processUrl) {
+    return env.payfast.processUrl;
+  }
+
   return `${getPayfastBaseUrl()}/Ecommerce/api/Transaction/PostTransaction`;
 }
 
 export function buildOrigin(host: string, proto?: string) {
+  if (env.app.publicUrl) {
+    return env.app.publicUrl.replace(/\/+$/, "");
+  }
+
   return `${proto || "http"}://${host}`;
 }
 
@@ -121,6 +133,7 @@ export async function buildPayfastCheckoutFields(params: {
 
   const successUrl = `${params.origin}${params.returnPath || "/payment-success"}?order_id=${encodeURIComponent(params.orderRef)}`;
   const failureUrl = `${params.origin}${params.cancelPath || "/cart"}?order_id=${encodeURIComponent(params.orderRef)}`;
+  const notifyUrl = `${params.origin}${params.notifyPath || "/api/webhook/payfast"}`;
 
   const fields: PayfastFields = {
     MERCHANT_ID: env.payfast.merchantId,
@@ -138,7 +151,7 @@ export async function buildPayfastCheckoutFields(params: {
     FAILURE_URL: failureUrl,
     BASKET_ID: params.orderRef,
     ORDER_DATE: formatOrderDate(),
-    CHECKOUT_URL: successUrl,
+    CHECKOUT_URL: notifyUrl,
     TRAN_TYPE: "ECOMM_PURCHASE",
     STORE_ID: "",
     RECURRING_TXN: "",

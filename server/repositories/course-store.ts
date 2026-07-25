@@ -16,6 +16,16 @@ interface MoodleCoursePayload {
   customfields?: MoodleCustomField[];
 }
 
+function isMissingCourseCatalogTableError(error: unknown) {
+  const message = error instanceof Error ? error.message.toLowerCase() : String(error).toLowerCase();
+  const code =
+    typeof error === "object" && error && "code" in error
+      ? String((error as { code?: unknown }).code).toUpperCase()
+      : "";
+
+  return code === "P2021" || (message.includes("course_catalog") && message.includes("does not exist"));
+}
+
 function extractCoursePrice(customfields?: MoodleCustomField[]) {
   const priceField = customfields?.find((field) => {
     const key = String(field.shortname || "").toLowerCase();
@@ -27,14 +37,30 @@ function extractCoursePrice(customfields?: MoodleCustomField[]) {
 }
 
 export async function getStoredCourseCatalog() {
-  const rows = await prisma.courseCatalog.findMany();
-  return new Map(rows.map((row) => [row.moodleCourseId, row]));
+  try {
+    const rows = await prisma.courseCatalog.findMany();
+    return new Map(rows.map((row) => [row.moodleCourseId, row]));
+  } catch (error) {
+    if (isMissingCourseCatalogTableError(error)) {
+      return new Map();
+    }
+
+    throw error;
+  }
 }
 
 export async function getStoredCourseByMoodleId(moodleCourseId: number) {
-  return prisma.courseCatalog.findUnique({
-    where: { moodleCourseId },
-  });
+  try {
+    return await prisma.courseCatalog.findUnique({
+      where: { moodleCourseId },
+    });
+  } catch (error) {
+    if (isMissingCourseCatalogTableError(error)) {
+      return null;
+    }
+
+    throw error;
+  }
 }
 
 export async function createCourseEnrollment(moodleUserId: number, moodleCourseId: number) {
@@ -75,32 +101,40 @@ export async function getUserCourseEnrollments(moodleUserId: number) {
 }
 
 export async function upsertCourseCatalogFromMoodle(course: MoodleCoursePayload, categoryName?: string | null) {
-  const existingCourse = await prisma.courseCatalog.findUnique({
-    where: { moodleCourseId: course.id },
-  });
-  const extractedPrice = extractCoursePrice(course.customfields);
-  const price = typeof existingCourse?.price === "number" && existingCourse.price > 0 ? existingCourse.price : extractedPrice;
+  try {
+    const existingCourse = await prisma.courseCatalog.findUnique({
+      where: { moodleCourseId: course.id },
+    });
+    const extractedPrice = extractCoursePrice(course.customfields);
+    const price = typeof existingCourse?.price === "number" && existingCourse.price > 0 ? existingCourse.price : extractedPrice;
 
-  return prisma.courseCatalog.upsert({
-    where: { moodleCourseId: course.id },
-    update: {
-      shortname: course.shortname || `COURSE-${course.id}`,
-      fullname: course.fullname || course.shortname || `Course ${course.id}`,
-      summary: course.summary || null,
-      categoryId: course.categoryid || null,
-      categoryName: categoryName || null,
-      isVisible: course.visible !== 0,
-      price,
-    },
-    create: {
-      moodleCourseId: course.id,
-      shortname: course.shortname || `COURSE-${course.id}`,
-      fullname: course.fullname || course.shortname || `Course ${course.id}`,
-      summary: course.summary || null,
-      categoryId: course.categoryid || null,
-      categoryName: categoryName || null,
-      isVisible: course.visible !== 0,
-      price,
-    },
-  });
+    return await prisma.courseCatalog.upsert({
+      where: { moodleCourseId: course.id },
+      update: {
+        shortname: course.shortname || `COURSE-${course.id}`,
+        fullname: course.fullname || course.shortname || `Course ${course.id}`,
+        summary: course.summary || null,
+        categoryId: course.categoryid || null,
+        categoryName: categoryName || null,
+        isVisible: course.visible !== 0,
+        price,
+      },
+      create: {
+        moodleCourseId: course.id,
+        shortname: course.shortname || `COURSE-${course.id}`,
+        fullname: course.fullname || course.shortname || `Course ${course.id}`,
+        summary: course.summary || null,
+        categoryId: course.categoryid || null,
+        categoryName: categoryName || null,
+        isVisible: course.visible !== 0,
+        price,
+      },
+    });
+  } catch (error) {
+    if (isMissingCourseCatalogTableError(error)) {
+      return null;
+    }
+
+    throw error;
+  }
 }

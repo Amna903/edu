@@ -11,6 +11,10 @@ logEnvPresence();
 
 const isVercelServerless = process.env.VERCEL === "1";
 
+if (isProduction()) {
+  app.set("trust proxy", 1);
+}
+
 declare module "http" {
   interface IncomingMessage {
     rawBody: unknown;

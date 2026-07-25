@@ -7,6 +7,7 @@
  */
 
 import { prisma } from "../db/prisma.js";
+import { canUseAdminActivityLogs } from "./schema-availability.js";
 
 export type LogLevel = "info" | "warn" | "error" | "fatal";
 
@@ -46,6 +47,10 @@ export async function logLoginAttempt(opts: LoginAttemptOptions): Promise<void> 
     console.warn(logLine);
   }
 
+  if (!(await canUseAdminActivityLogs())) {
+    return;
+  }
+
   try {
     await (prisma as any).adminActivityLog.create({
       data: {
@@ -67,6 +72,10 @@ export async function logError(opts: ErrorLogOptions): Promise<void> {
   const errorStack = opts.error instanceof Error ? (opts.error.stack ?? null) : null;
 
   console.error(`[error] ${opts.context}: ${errorMessage}`, opts.metadata ?? "");
+
+  if (!(await canUseAdminActivityLogs())) {
+    return;
+  }
 
   try {
     await (prisma as any).adminActivityLog.create({

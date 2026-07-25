@@ -126,12 +126,25 @@ export class MemStorage implements IStorage {
   private resources: Map<number, Resource>;
   private parentChildLinks: Map<string, Set<number>>;
   private currentId: { programs: number; resources: number };
+  private registrationCountriesTableExistsPromise: Promise<boolean> | null = null;
 
   constructor() {
     this.programs = new Map();
     this.resources = new Map();
     this.parentChildLinks = new Map();
     this.currentId = { programs: 1, resources: 1 };
+  }
+
+  private async hasRegistrationCountriesTable() {
+    if (!this.registrationCountriesTableExistsPromise) {
+      this.registrationCountriesTableExistsPromise = prisma.$queryRaw<{ exists: boolean }[]>`
+        SELECT to_regclass('public.registration_countries') IS NOT NULL AS "exists"
+      `
+        .then((rows) => Boolean(rows?.[0]?.exists))
+        .catch(() => false);
+    }
+
+    return this.registrationCountriesTableExistsPromise;
   }
 
   async getPrograms(): Promise<Program[]> {
@@ -414,6 +427,10 @@ export class MemStorage implements IStorage {
   }
 
   async setRegistrationCountryForUsername(username: string, country: string): Promise<void> {
+    if (!(await this.hasRegistrationCountriesTable())) {
+      return;
+    }
+
     const normalizedUsername = username.trim().toLowerCase();
     const existing = await prisma.registrationCountries.findFirst({
       where: { username: normalizedUsername },
@@ -431,6 +448,10 @@ export class MemStorage implements IStorage {
   }
 
   async takeRegistrationCountryForUsername(username: string): Promise<string | undefined> {
+    if (!(await this.hasRegistrationCountriesTable())) {
+      return undefined;
+    }
+
     const key = username.trim().toLowerCase();
     const record = await prisma.registrationCountries.findFirst({ where: { username: key } });
     if (record) {

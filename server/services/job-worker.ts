@@ -10,6 +10,7 @@ import { prisma } from "../db/prisma.js";
 import type { JobType, EnrollUserPayload, SendEmailPayload, PaymentEnrollRetryPayload } from "./job-queue.js";
 import { env } from "../config/config.js";
 import { logError } from "./logger.js";
+import { canUseBackgroundJobs, canUseDeadLetterJobs } from "./schema-availability.js";
 
 const WORKER_ID = `worker-${randomUUID().slice(0, 8)}`;
 const POLL_INTERVAL_MS = 15_000;
@@ -203,6 +204,10 @@ async function dispatchJob(type: string, payload: unknown) {
 // ── Core poll loop ───────────────────────────────────────────
 
 async function processNextBatch() {
+  if (!(await canUseBackgroundJobs())) {
+    return;
+  }
+
   // Release stale locks first (worker crashed mid-job)
   const staleThreshold = new Date(Date.now() - LOCK_TIMEOUT_MS);
   await prisma.backgroundJob.updateMany({
@@ -238,15 +243,17 @@ async function processNextBatch() {
 
       if (nextAttempts >= job.maxAttempts) {
         // Move to Dead Letter Queue (4.20)
-        await prisma.deadLetterJob.create({
-          data: {
-            type: job.type,
-            payload: job.payload ?? {},
-            attempts: nextAttempts,
-            lastError: errorMsg.slice(0, 2000),
-            originalId: job.id,
-          },
-        });
+        if (await canUseDeadLetterJobs()) {
+          await prisma.deadLetterJob.create({
+            data: {
+              type: job.type,
+              payload: job.payload ?? {},
+              attempts: nextAttempts,
+              lastError: errorMsg.slice(0, 2000),
+              originalId: job.id,
+            },
+          });
+        }
         await prisma.backgroundJob.update({
           where: { id: job.id },
           data: {
@@ -281,12 +288,22 @@ let workerTimer: ReturnType<typeof setInterval> | null = null;
 
 export function startJobWorker() {
   if (workerTimer) return;
-  console.log(`[worker] starting — id=${WORKER_ID}, poll every ${POLL_INTERVAL_MS / 1000}s`);
-  // Run once immediately, then on interval
-  processNextBatch().catch((err) => console.error("[worker] init poll error:", err));
-  workerTimer = setInterval(() => {
-    processNextBatch().catch((err) => console.error("[worker] poll error:", err));
-  }, POLL_INTERVAL_MS);
+
+  canUseBackgroundJobs()
+    .then((ready) => {
+      if (!ready) {
+        console.warn("[worker] background_jobs table unavailable; worker disabled until migrations are applied");
+        return;
+      }
+
+      console.log(`[worker] starting — id=${WORKER_ID}, poll every ${POLL_INTERVAL_MS / 1000}s`);
+      // Run once immediately, then on interval
+      processNextBatch().catch((err) => console.error("[worker] init poll error:", err));
+      workerTimer = setInterval(() => {
+        processNextBatch().catch((err) => console.error("[worker] poll error:", err));
+      }, POLL_INTERVAL_MS);
+    })
+    .catch((err) => console.error("[worker] startup probe failed:", err));
 }
 
 export function stopJobWorker() {

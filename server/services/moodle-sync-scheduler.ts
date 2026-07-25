@@ -14,6 +14,7 @@ import { enqueueJob } from "./job-queue.js";
 import { prisma } from "../db/prisma.js";
 import { env } from "../config/config.js";
 import { logError } from "./logger.js";
+import { canUseBackgroundJobs, canUseOrders } from "./schema-availability.js";
 
 let syncTimer: ReturnType<typeof setInterval> | null = null;
 let paymentVerifyTimer: ReturnType<typeof setInterval> | null = null;
@@ -21,6 +22,10 @@ let paymentVerifyTimer: ReturnType<typeof setInterval> | null = null;
 /** Enqueue a Moodle course-catalog sync job (deduplicates if one is already pending). */
 async function scheduleMoodleCoursesSync(): Promise<void> {
   try {
+    if (!(await canUseBackgroundJobs())) {
+      return;
+    }
+
     // Skip if a pending/running sync job already exists
     const existing = await prisma.backgroundJob.findFirst({
       where: { type: "MOODLE_SYNC_COURSES", status: { in: ["pending", "running"] } },
@@ -37,6 +42,10 @@ async function scheduleMoodleCoursesSync(): Promise<void> {
 /** Enqueue a Moodle user-directory sync job. */
 async function scheduleMoodleUsersSync(): Promise<void> {
   try {
+    if (!(await canUseBackgroundJobs())) {
+      return;
+    }
+
     const existing = await prisma.backgroundJob.findFirst({
       where: { type: "MOODLE_SYNC_USERS", status: { in: ["pending", "running"] } },
     });
@@ -55,6 +64,10 @@ async function scheduleMoodleUsersSync(): Promise<void> {
  */
 async function schedulePaymentVerification(): Promise<void> {
   try {
+    if (!(await canUseBackgroundJobs()) || !(await canUseOrders())) {
+      return;
+    }
+
     const staleThreshold = new Date(Date.now() - 10 * 60 * 1000); // 10 minutes ago
 
     const staleOrders = await prisma.orders.findMany({
@@ -99,26 +112,41 @@ export function startSyncScheduler(): void {
   const userSyncMs = (env.moodle.syncUserDirectoryMinutes || 120) * 60 * 1000;
   const paymentVerifyMs = 5 * 60 * 1000; // every 5 minutes
 
-  // Run once at startup
-  scheduleMoodleCoursesSync().catch(() => undefined);
-  schedulePaymentVerification().catch(() => undefined);
+  Promise.all([canUseBackgroundJobs(), canUseOrders()])
+    .then(([jobsReady, ordersReady]) => {
+      if (!jobsReady) {
+        console.warn("[sync-scheduler] background_jobs table unavailable; scheduler disabled until migrations are applied");
+        return;
+      }
 
-  syncTimer = setInterval(() => {
-    scheduleMoodleCoursesSync().catch(() => undefined);
-  }, courseSyncMs);
+      // Run once at startup
+      scheduleMoodleCoursesSync().catch(() => undefined);
+      if (ordersReady) {
+        schedulePaymentVerification().catch(() => undefined);
+      }
 
-  // Users sync on a separate (longer) interval
-  setInterval(() => {
-    scheduleMoodleUsersSync().catch(() => undefined);
-  }, userSyncMs);
+      syncTimer = setInterval(() => {
+        scheduleMoodleCoursesSync().catch(() => undefined);
+      }, courseSyncMs);
 
-  paymentVerifyTimer = setInterval(() => {
-    schedulePaymentVerification().catch(() => undefined);
-  }, paymentVerifyMs);
+      // Users sync on a separate (longer) interval
+      setInterval(() => {
+        scheduleMoodleUsersSync().catch(() => undefined);
+      }, userSyncMs);
 
-  console.log(
-    `[sync-scheduler] started — courses every ${env.moodle.syncCourseCatalogMinutes}min, users every ${env.moodle.syncUserDirectoryMinutes}min, payment-verify every 5min`,
-  );
+      if (ordersReady) {
+        paymentVerifyTimer = setInterval(() => {
+          schedulePaymentVerification().catch(() => undefined);
+        }, paymentVerifyMs);
+      }
+
+      console.log(
+        `[sync-scheduler] started — courses every ${env.moodle.syncCourseCatalogMinutes}min, users every ${env.moodle.syncUserDirectoryMinutes}min, payment-verify every 5min`,
+      );
+    })
+    .catch((err) => {
+      logError({ context: "moodle-sync-scheduler:start", error: err }).catch(() => undefined);
+    });
 }
 
 export function stopSyncScheduler(): void {

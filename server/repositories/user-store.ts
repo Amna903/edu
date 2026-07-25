@@ -10,6 +10,72 @@ function normalizeRole(value?: string | null): StoredRole {
   return "student";
 }
 
+function isMissingUsersTableError(error: unknown) {
+  const message = error instanceof Error ? error.message.toLowerCase() : String(error).toLowerCase();
+  const code =
+    typeof error === "object" && error && "code" in error
+      ? String((error as { code?: unknown }).code).toUpperCase()
+      : "";
+
+  return code === "P2021" || (message.includes("public.users") && message.includes("does not exist"));
+}
+
+function buildEphemeralUser(input: {
+  moodleUserId: number;
+  username: string;
+  role: string;
+  email?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  profileImage?: string | null;
+}) {
+  const role = normalizeRole(input.role);
+
+  return {
+    id: `ephemeral-${input.moodleUserId}`,
+    moodleUserId: input.moodleUserId,
+    username: input.username,
+    email: input.email ?? null,
+    firstName: input.firstName ?? null,
+    lastName: input.lastName ?? null,
+    profileImage: input.profileImage ?? null,
+    role,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    lastLoginAt: new Date(),
+    isSuspended: false,
+    lastPasswordResetAt: null,
+    enrollments: [],
+  };
+}
+
+let usersTableExistsPromise: Promise<boolean> | null = null;
+let pendingSignupsTableExistsPromise: Promise<boolean> | null = null;
+
+async function hasUsersTable() {
+  if (!usersTableExistsPromise) {
+    usersTableExistsPromise = prisma.$queryRaw<{ exists: boolean }[]>`
+      SELECT to_regclass('public.users') IS NOT NULL AS "exists"
+    `
+      .then((rows) => Boolean(rows?.[0]?.exists))
+      .catch(() => false);
+  }
+
+  return usersTableExistsPromise;
+}
+
+async function hasPendingSignupsTable() {
+  if (!pendingSignupsTableExistsPromise) {
+    pendingSignupsTableExistsPromise = prisma.$queryRaw<{ exists: boolean }[]>`
+      SELECT to_regclass('public.pending_signups') IS NOT NULL AS "exists"
+    `
+      .then((rows) => Boolean(rows?.[0]?.exists))
+      .catch(() => false);
+  }
+
+  return pendingSignupsTableExistsPromise;
+}
+
 export async function rememberPendingRegistrationRole(username: string, role: AppRole) {
   await prisma.registrationRole.upsert({
     where: { username: username.trim().toLowerCase() },
@@ -28,6 +94,10 @@ export async function rememberPendingSignup(input: {
   lastName?: string | null;
   role: AppRole;
 }) {
+  if (!(await hasPendingSignupsTable())) {
+    return;
+  }
+
   const normalizedUsername = input.username.trim().toLowerCase();
   const normalizedEmail = input.email.trim().toLowerCase();
 
@@ -53,12 +123,20 @@ export async function rememberPendingSignup(input: {
 }
 
 export async function getPendingSignupByUsername(username: string) {
+  if (!(await hasPendingSignupsTable())) {
+    return null;
+  }
+
   return prisma.pendingSignup.findUnique({
     where: { username: username.trim().toLowerCase() },
   });
 }
 
 export async function markPendingSignupConfirmed(input: { username: string; moodleUserId?: number }) {
+  if (!(await hasPendingSignupsTable())) {
+    return;
+  }
+
   const normalizedUsername = input.username.trim().toLowerCase();
 
   await prisma.pendingSignup.updateMany({
@@ -83,93 +161,117 @@ export async function syncUserFromMoodleSession(input: {
 }) {
   const normalizedUsername = input.username.trim().toLowerCase();
 
-  let existingUser = await prisma.user.findUnique({
-    where: { moodleUserId: input.moodleUserId },
-    select: { id: true, role: true },
-  });
+  if (!(await hasUsersTable())) {
+    return buildEphemeralUser(input);
+  }
 
-  if (!existingUser) {
-    // Auto-heal: If Moodle ID changed, find them by username OR email
-    const userByUsernameOrEmail = await prisma.user.findFirst({
-      where: {
-        OR: [
-          { username: normalizedUsername },
-          { email: normalizedUsername },
-          ...(input.email ? [{ email: input.email.trim().toLowerCase() }] : []),
-        ],
-      },
+  try {
+    let existingUser = await prisma.user.findUnique({
+      where: { moodleUserId: input.moodleUserId },
       select: { id: true, role: true },
     });
 
-    if (userByUsernameOrEmail) {
-      // Update their moodleUserId in our DB so they don't lose their role
-      existingUser = await prisma.user.update({
-        where: { id: userByUsernameOrEmail.id },
-        data: { moodleUserId: input.moodleUserId },
+    if (!existingUser) {
+      // Auto-heal: If Moodle ID changed, find them by username OR email
+      const userByUsernameOrEmail = await prisma.user.findFirst({
+        where: {
+          OR: [
+            { username: normalizedUsername },
+            { email: normalizedUsername },
+            ...(input.email ? [{ email: input.email.trim().toLowerCase() }] : []),
+          ],
+        },
         select: { id: true, role: true },
       });
+
+      if (userByUsernameOrEmail) {
+        // Update their moodleUserId in our DB so they don't lose their role
+        existingUser = await prisma.user.update({
+          where: { id: userByUsernameOrEmail.id },
+          data: { moodleUserId: input.moodleUserId },
+          select: { id: true, role: true },
+        });
+      }
     }
+
+    // Keep login strict by default, but allow controlled auto-create flows (e.g. school seat assignment).
+    if (!existingUser && !input.allowAutoCreate && input.role !== "admin") {
+      console.log("User not found in local DB, but Moodle auth succeeded. User is not admin, rejecting.");
+      throw new Error("User does not exist in our database. Please register properly first to log in.");
+    } else if (!existingUser && input.role === "admin") {
+      console.log("Admin user found in Moodle but not in local DB! Auto-creating local admin record with Moodle ID:", input.moodleUserId);
+    }
+
+    const pendingRegistration = await prisma.registrationRole.findUnique({
+      where: { username: normalizedUsername },
+    });
+
+    let finalRole: StoredRole = normalizeRole(input.role);
+
+    if (pendingRegistration) {
+      finalRole = pendingRegistration.role;
+    } else if (existingUser && existingUser.role !== "student") {
+      finalRole = existingUser.role;
+    }
+
+    const user = await prisma.user.upsert({
+      where: { moodleUserId: input.moodleUserId },
+      create: {
+        moodleUserId: input.moodleUserId,
+        username: normalizedUsername,
+        role: finalRole,
+        email: input.email ?? null,
+        firstName: input.firstName ?? null,
+        lastName: input.lastName ?? null,
+        profileImage: input.profileImage ?? null,
+        lastLoginAt: new Date(),
+      },
+      update: {
+        username: normalizedUsername,
+        role: finalRole,
+        email: input.email ?? undefined,
+        firstName: input.firstName ?? undefined,
+        lastName: input.lastName ?? undefined,
+        profileImage: input.profileImage ?? undefined,
+        lastLoginAt: new Date(),
+      },
+    });
+
+    if (pendingRegistration) {
+      await prisma.registrationRole.delete({
+        where: { id: pendingRegistration.id },
+      }).catch(() => undefined);
+    }
+
+    return user;
+  } catch (error) {
+    if (isMissingUsersTableError(error)) {
+      return buildEphemeralUser(input);
+    }
+
+    throw error;
   }
-
-  // Keep login strict by default, but allow controlled auto-create flows (e.g. school seat assignment).
-  if (!existingUser && !input.allowAutoCreate && input.role !== "admin") {
-    console.log("User not found in local DB, but Moodle auth succeeded. User is not admin, rejecting.");
-    throw new Error("User does not exist in our database. Please register properly first to log in.");
-  } else if (!existingUser && input.role === "admin") {
-    console.log("Admin user found in Moodle but not in local DB! Auto-creating local admin record with Moodle ID:", input.moodleUserId);
-  }
-
-  const pendingRegistration = await prisma.registrationRole.findUnique({
-    where: { username: normalizedUsername },
-  });
-
-  let finalRole: StoredRole = normalizeRole(input.role);
-
-  if (pendingRegistration) {
-    finalRole = pendingRegistration.role;
-  } else if (existingUser && existingUser.role !== "student") {
-    finalRole = existingUser.role;
-  }
-
-  const user = await prisma.user.upsert({
-    where: { moodleUserId: input.moodleUserId },
-    create: {
-      moodleUserId: input.moodleUserId,
-      username: normalizedUsername,
-      role: finalRole,
-      email: input.email ?? null,
-      firstName: input.firstName ?? null,
-      lastName: input.lastName ?? null,
-      profileImage: input.profileImage ?? null,
-      lastLoginAt: new Date(),
-    },
-    update: {
-      username: normalizedUsername,
-      role: finalRole,
-      email: input.email ?? undefined,
-      firstName: input.firstName ?? undefined,
-      lastName: input.lastName ?? undefined,
-      profileImage: input.profileImage ?? undefined,
-      lastLoginAt: new Date(),
-    },
-  });
-
-  if (pendingRegistration) {
-    await prisma.registrationRole.delete({
-      where: { id: pendingRegistration.id },
-    }).catch(() => undefined);
-  }
-
-  return user;
 }
 
 export async function getStoredRoleByMoodleUserId(moodleUserId: number): Promise<StoredRole | null> {
-  const user = await prisma.user.findUnique({
-    where: { moodleUserId },
-    select: { role: true },
-  });
+  if (!(await hasUsersTable())) {
+    return null;
+  }
 
-  return user?.role ?? null;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { moodleUserId },
+      select: { role: true },
+    });
+
+    return user?.role ?? null;
+  } catch (error) {
+    if (isMissingUsersTableError(error)) {
+      return null;
+    }
+
+    throw error;
+  }
 }
 
 export async function linkParentToChild(parentMoodleUserId: number, childMoodleUserId: number) {
@@ -198,7 +300,19 @@ export async function getLinkedChildren(parentMoodleUserId: number) {
 }
 
 export async function getStoredUserByMoodleUserId(moodleUserId: number) {
-  return prisma.user.findUnique({
-    where: { moodleUserId },
-  });
+  if (!(await hasUsersTable())) {
+    return null;
+  }
+
+  try {
+    return await prisma.user.findUnique({
+      where: { moodleUserId },
+    });
+  } catch (error) {
+    if (isMissingUsersTableError(error)) {
+      return null;
+    }
+
+    throw error;
+  }
 }
