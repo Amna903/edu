@@ -127,6 +127,7 @@ export class MemStorage implements IStorage {
   private parentChildLinks: Map<string, Set<number>>;
   private currentId: { programs: number; resources: number };
   private registrationCountriesTableExistsPromise: Promise<boolean> | null = null;
+  private registeredCountriesTableExistsPromise: Promise<boolean> | null = null;
 
   constructor() {
     this.programs = new Map();
@@ -145,6 +146,18 @@ export class MemStorage implements IStorage {
     }
 
     return this.registrationCountriesTableExistsPromise;
+  }
+
+  private async hasRegisteredCountriesTable() {
+    if (!this.registeredCountriesTableExistsPromise) {
+      this.registeredCountriesTableExistsPromise = prisma.$queryRaw<{ exists: boolean }[]>`
+        SELECT to_regclass('public.registered_countries') IS NOT NULL AS "exists"
+      `
+        .then((rows) => Boolean(rows?.[0]?.exists))
+        .catch(() => false);
+    }
+
+    return this.registeredCountriesTableExistsPromise;
   }
 
   async getPrograms(): Promise<Program[]> {
@@ -414,6 +427,10 @@ export class MemStorage implements IStorage {
 
   // ========== REGISTERED COUNTRIES ==========
   async setRegisteredCountry(moodleUserId: number, country: string): Promise<void> {
+    if (!(await this.hasRegisteredCountriesTable())) {
+      return;
+    }
+
     await prisma.registeredCountries.upsert({
       where: { moodleUserId },
       create: { moodleUserId, country },
@@ -422,6 +439,10 @@ export class MemStorage implements IStorage {
   }
 
   async getRegisteredCountry(moodleUserId: number): Promise<string | undefined> {
+    if (!(await this.hasRegisteredCountriesTable())) {
+      return undefined;
+    }
+
     const record = await prisma.registeredCountries.findUnique({ where: { moodleUserId } });
     return record?.country;
   }

@@ -64,10 +64,34 @@ export async function getStoredCourseByMoodleId(moodleCourseId: number) {
 }
 
 export async function createCourseEnrollment(moodleUserId: number, moodleCourseId: number) {
-  const [user, courseCatalog] = await Promise.all([
+  const [existingUser, existingCourseCatalog] = await Promise.all([
     getStoredUserByMoodleUserId(moodleUserId),
     getStoredCourseByMoodleId(moodleCourseId),
   ]);
+  const user =
+    existingUser ??
+    await prisma.user.upsert({
+      where: { moodleUserId },
+      update: {},
+      create: {
+        moodleUserId,
+        username: `moodle-user-${moodleUserId}`,
+        role: "student",
+      },
+    });
+  const courseCatalog =
+    existingCourseCatalog ??
+    await prisma.courseCatalog.upsert({
+      where: { moodleCourseId },
+      update: {},
+      create: {
+        moodleCourseId,
+        shortname: `COURSE-${moodleCourseId}`,
+        fullname: `Course ${moodleCourseId}`,
+        price: 0,
+      },
+    });
+
   if (!user) {
     throw new Error(`User account not found for Moodle user ${moodleUserId}`);
   }

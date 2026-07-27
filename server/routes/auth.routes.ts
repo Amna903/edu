@@ -98,7 +98,12 @@ export function registerAuthRoutes(app: Express, ctx: RouteContext) {
 
       const pendingCountry = await storage.takeRegistrationCountryForUsername(result.user.username);
       if (pendingCountry) {
-        await storage.setRegisteredCountry(result.user.id, pendingCountry);
+        await storage.setRegisteredCountry(result.user.id, pendingCountry).catch((error) => {
+          console.warn(
+            "[auth] Failed to persist registered country after login:",
+            error instanceof Error ? error.message : String(error),
+          );
+        });
         const iso = countryToMoodleIso(pendingCountry);
         if (iso && !result.user.country) {
           await updateMoodleProfile(
@@ -160,7 +165,12 @@ export function registerAuthRoutes(app: Express, ctx: RouteContext) {
         req.session.user = loginResult.user;
         const scholarshipCountry = normalizeScholarshipCountry(input.country);
         if (scholarshipCountry) {
-          await storage.setRegisteredCountry(loginResult.user.id, scholarshipCountry);
+          await storage.setRegisteredCountry(loginResult.user.id, scholarshipCountry).catch((error) => {
+            console.warn(
+              "[auth] Failed to persist registered country after signup:",
+              error instanceof Error ? error.message : String(error),
+            );
+          });
           const iso = countryToMoodleIso(scholarshipCountry);
           if (iso && req.session.moodleToken) {
             await updateMoodleProfile(
@@ -181,7 +191,12 @@ export function registerAuthRoutes(app: Express, ctx: RouteContext) {
       } else {
         const scholarshipCountry = normalizeScholarshipCountry(input.country);
         if (scholarshipCountry) {
-          await storage.setRegistrationCountryForUsername(input.username, scholarshipCountry);
+          await storage.setRegistrationCountryForUsername(input.username, scholarshipCountry).catch((error) => {
+            console.warn(
+              "[auth] Failed to persist pending registration country:",
+              error instanceof Error ? error.message : String(error),
+            );
+          });
         }
       }
 

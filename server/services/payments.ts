@@ -29,12 +29,37 @@ function getPayfastProcessUrl() {
   return `${getPayfastBaseUrl()}/Ecommerce/api/Transaction/PostTransaction`;
 }
 
+function normalizeHost(host: string) {
+  return host
+    .split(",")[0]
+    .trim()
+    .replace(/^https?:\/\//i, "")
+    .replace(/\/.*$/, "");
+}
+
+function isLocalHost(host: string) {
+  const hostname = host.split(":")[0]?.toLowerCase() || "";
+  return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
+}
+
+function isTransientTunnelUrl(url: string) {
+  const normalized = url.toLowerCase();
+  return normalized.includes(".ngrok-free.app") || normalized.includes(".ngrok.app") || normalized.includes(".ngrok.io");
+}
+
 export function buildOrigin(host: string, proto?: string) {
-  if (env.app.publicUrl) {
-    return env.app.publicUrl.replace(/\/+$/, "");
+  const requestHost = normalizeHost(host);
+  const configuredOrigin = env.app.publicUrl.replace(/\/+$/, "");
+
+  if (requestHost && !isLocalHost(requestHost) && (!configuredOrigin || isTransientTunnelUrl(configuredOrigin))) {
+    return `${proto || "https"}://${requestHost}`;
   }
 
-  return `${proto || "http"}://${host}`;
+  if (configuredOrigin) {
+    return configuredOrigin;
+  }
+
+  return `${proto || "http"}://${requestHost || host}`;
 }
 
 function formatPayfastAmount(amountMinorUnits: number) {
