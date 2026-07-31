@@ -34,8 +34,8 @@ const SUBJECT_OPTIONS = ["English Language", "English Literature", "Mathematics"
 const ROLE_CARDS = [
   { value: "student" as const, title: "I am a Student", description: "Enrolling in courses, taking diagnostics, or using EduMeUp for my own learning.", Icon: GraduationCap },
   { value: "parent" as const, title: "I am a Parent / Guardian", description: "Monitoring my child's progress, managing their learning, and receiving their performance reports.", Icon: ShieldCheck },
-  { value: "teacher" as const, title: "I am a Teacher", description: "Training for Cambridge teaching, joining the EduMeUp certified tutor network, or using AI tools.", Icon: Presentation },
-  { value: "school" as const, title: "I represent a School", description: "Enrolling students through a partner school account. Requires a school partner code.", Icon: School },
+  // { value: "teacher" as const, title: "I am a Teacher", description: "Training for Cambridge teaching, joining the EduMeUp certified tutor network, or using AI tools.", Icon: Presentation },
+  { value: "school" as const, title: "I represent a School", description: "Enrolling students through a partner school account.", Icon: School },
 ];
 
 function getQueryParam(name: string) {
@@ -87,7 +87,12 @@ export default function Login() {
   const [studentForm, setStudentForm] = useState({ grade: "", heardAbout: "" });
   const [parentForm, setParentForm] = useState({ childName: "", childGrade: "" });
   const [teacherForm, setTeacherForm] = useState({ subjects: [] as string[], teachingRole: "", city: "", tutorInterest: "No" as "Yes" | "No" });
-  const [schoolForm, setSchoolForm] = useState({ partnerCode: "", schoolAdminRole: "" });
+  const [schoolForm, setSchoolForm] = useState({ partnerCode: "", schoolName: "", schoolAdminRole: "" });
+
+  const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({});
+  const touchField = (field: string) => {
+    setTouchedFields((prev) => ({ ...prev, [field]: true }));
+  };
 
   useEffect(() => {
     const tab = new URLSearchParams(search).get("tab");
@@ -114,7 +119,12 @@ export default function Login() {
   }, [baseRegisterForm.password]);
 
   const namesValid = /^[A-Za-z][A-Za-z '.-]{1,49}$/.test(baseRegisterForm.firstname.trim()) && /^[A-Za-z][A-Za-z '.-]{1,49}$/.test(baseRegisterForm.lastname.trim());
-  const passwordValid = baseRegisterForm.password.length >= 8 && /[A-Za-z]/.test(baseRegisterForm.password) && /\d/.test(baseRegisterForm.password);
+  const passwordHasMinLen = baseRegisterForm.password.length >= 8;
+  const passwordHasUpper = /[A-Z]/.test(baseRegisterForm.password);
+  const passwordHasLower = /[a-z]/.test(baseRegisterForm.password);
+  const passwordHasNumber = /\d/.test(baseRegisterForm.password);
+  const passwordHasSpecial = /[^A-Za-z0-9]/.test(baseRegisterForm.password);
+  const passwordValid = passwordHasMinLen && passwordHasUpper && passwordHasLower && passwordHasNumber && passwordHasSpecial;
   const confirmMatches = baseRegisterForm.confirmPassword.length > 0 && baseRegisterForm.password === baseRegisterForm.confirmPassword;
 
   const canSubmitRegister =
@@ -131,7 +141,7 @@ export default function Login() {
     ((selectedRole === "student" && Boolean(studentForm.grade)) ||
       (selectedRole === "parent" && Boolean(parentForm.childName.trim()) && Boolean(parentForm.childGrade)) ||
       (selectedRole === "teacher" && teacherForm.subjects.length > 0 && Boolean(teacherForm.teachingRole) && Boolean(teacherForm.city.trim())) ||
-      (selectedRole === "school" && partnerCodeStatus === "valid"));
+      (selectedRole === "school" && Boolean(schoolForm.schoolName.trim())));
 
   const checkEmailDuplicate = async () => {
     const email = baseRegisterForm.email.trim().toLowerCase();
@@ -332,54 +342,190 @@ export default function Login() {
                 >
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-2">
-                      <Label htmlFor="register-firstname">{selectedRole === "parent" ? "Your First Name" : "First Name"}</Label>
-                      <Input id="register-firstname" value={baseRegisterForm.firstname} onChange={(event) => setBaseRegisterForm((current) => ({ ...current, firstname: event.target.value }))} required />
-                      {baseRegisterForm.firstname && !/^[A-Za-z][A-Za-z '.-]{1,49}$/.test(baseRegisterForm.firstname.trim()) && (
-                        <p className="text-xs text-red-500">Only letters, spaces, hyphens, or apostrophes allowed (no numbers).</p>
+                      <Label htmlFor="register-firstname">
+                        {selectedRole === "parent" ? "Your First Name" : "First Name"} <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="register-firstname"
+                        value={baseRegisterForm.firstname}
+                        onBlur={() => touchField("firstname")}
+                        onChange={(event) => {
+                          touchField("firstname");
+                          setBaseRegisterForm((current) => ({ ...current, firstname: event.target.value }));
+                        }}
+                        className={
+                          (touchedFields.firstname || baseRegisterForm.firstname) && (!baseRegisterForm.firstname.trim() || !/^[A-Za-z][A-Za-z '.-]{1,49}$/.test(baseRegisterForm.firstname.trim()))
+                            ? "border-red-400 focus-visible:ring-red-200"
+                            : ""
+                        }
+                        required
+                      />
+                      {(touchedFields.firstname || baseRegisterForm.firstname) && !baseRegisterForm.firstname.trim() && (
+                        <p className="text-xs text-red-500 flex items-center gap-1 font-medium"><span>⚠</span> First name is required.</p>
+                      )}
+                      {(touchedFields.firstname || baseRegisterForm.firstname) && baseRegisterForm.firstname.trim() && !/^[A-Za-z][A-Za-z '.-]{1,49}$/.test(baseRegisterForm.firstname.trim()) && (
+                        <p className="text-xs text-red-500 flex items-center gap-1 font-medium"><span>⚠</span> Only letters, spaces, hyphens, or apostrophes allowed (no numbers).</p>
                       )}
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="register-lastname">{selectedRole === "parent" ? "Your Last Name" : "Last Name"}</Label>
-                      <Input id="register-lastname" value={baseRegisterForm.lastname} onChange={(event) => setBaseRegisterForm((current) => ({ ...current, lastname: event.target.value }))} required />
-                      {baseRegisterForm.lastname && !/^[A-Za-z][A-Za-z '.-]{1,49}$/.test(baseRegisterForm.lastname.trim()) && (
-                        <p className="text-xs text-red-500">Only letters, spaces, hyphens, or apostrophes allowed (no numbers).</p>
+                      <Label htmlFor="register-lastname">
+                        {selectedRole === "parent" ? "Your Last Name" : "Last Name"} <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="register-lastname"
+                        value={baseRegisterForm.lastname}
+                        onBlur={() => touchField("lastname")}
+                        onChange={(event) => {
+                          touchField("lastname");
+                          setBaseRegisterForm((current) => ({ ...current, lastname: event.target.value }));
+                        }}
+                        className={
+                          (touchedFields.lastname || baseRegisterForm.lastname) && (!baseRegisterForm.lastname.trim() || !/^[A-Za-z][A-Za-z '.-]{1,49}$/.test(baseRegisterForm.lastname.trim()))
+                            ? "border-red-400 focus-visible:ring-red-200"
+                            : ""
+                        }
+                        required
+                      />
+                      {(touchedFields.lastname || baseRegisterForm.lastname) && !baseRegisterForm.lastname.trim() && (
+                        <p className="text-xs text-red-500 flex items-center gap-1 font-medium"><span>⚠</span> Last name is required.</p>
+                      )}
+                      {(touchedFields.lastname || baseRegisterForm.lastname) && baseRegisterForm.lastname.trim() && !/^[A-Za-z][A-Za-z '.-]{1,49}$/.test(baseRegisterForm.lastname.trim()) && (
+                        <p className="text-xs text-red-500 flex items-center gap-1 font-medium"><span>⚠</span> Only letters, spaces, hyphens, or apostrophes allowed (no numbers).</p>
                       )}
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="register-email">{selectedRole === "parent" ? "Your Email Address" : selectedRole === "school" ? "Your School Email" : "Email Address"}</Label>
-                    <Input id="register-email" type="email" autoComplete="email" value={baseRegisterForm.email} onBlur={checkEmailDuplicate} onChange={(event) => setBaseRegisterForm((current) => ({ ...current, email: event.target.value }))} required />
+                    <Label htmlFor="register-email">
+                      {selectedRole === "parent" ? "Your Email Address" : selectedRole === "school" ? "Your School Email" : "Email Address"} <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="register-email"
+                      type="email"
+                      autoComplete="email"
+                      value={baseRegisterForm.email}
+                      onBlur={() => {
+                        touchField("email");
+                        checkEmailDuplicate();
+                      }}
+                      onChange={(event) => {
+                        touchField("email");
+                        setBaseRegisterForm((current) => ({ ...current, email: event.target.value }));
+                      }}
+                      className={
+                        (touchedFields.email || baseRegisterForm.email) && (!baseRegisterForm.email.includes("@") || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(baseRegisterForm.email.trim()) || emailCheck === "duplicate")
+                          ? "border-red-400 focus-visible:ring-red-200"
+                          : ""
+                      }
+                      required
+                    />
+                    {(touchedFields.email || baseRegisterForm.email) && !baseRegisterForm.email.trim() && (
+                      <p className="text-xs text-red-500 flex items-center gap-1 font-medium"><span>⚠</span> Email address is required.</p>
+                    )}
+                    {(touchedFields.email || baseRegisterForm.email) && baseRegisterForm.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(baseRegisterForm.email.trim()) && (
+                      <p className="text-xs text-red-500 flex items-center gap-1 font-medium"><span>⚠</span> Please enter a valid email address (e.g. name@example.com).</p>
+                    )}
                     {emailCheck === "checking" && <p className="text-xs text-slate-500">Checking email availability...</p>}
                     {emailCheck === "duplicate" && (
-                      <p className="text-xs text-red-600">
-                        This email is already registered.{" "}
-                        <button type="button" onClick={() => navigate("/login")} className="font-semibold underline">
+                      <p className="text-xs text-red-600 flex items-center gap-1 font-medium">
+                        <span>⚠</span> This email is already registered.{" "}
+                        <button type="button" onClick={() => navigate("/login")} className="font-semibold underline ml-1">
                           Sign in -&gt;
                         </button>
                       </p>
                     )}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="register-password">Password</Label>
+                    <Label htmlFor="register-password">Password <span className="text-red-500">*</span></Label>
                     <div className="relative">
-                      <Input id="register-password" type={showRegisterPassword ? "text" : "password"} autoComplete="new-password" minLength={8} value={baseRegisterForm.password} onChange={(event) => setBaseRegisterForm((current) => ({ ...current, password: event.target.value }))} className="pr-10" required />
+                      <Input
+                        id="register-password"
+                        type={showRegisterPassword ? "text" : "password"}
+                        autoComplete="new-password"
+                        minLength={8}
+                        value={baseRegisterForm.password}
+                        onBlur={() => touchField("password")}
+                        onChange={(event) => {
+                          touchField("password");
+                          setBaseRegisterForm((current) => ({ ...current, password: event.target.value }));
+                        }}
+                        className={`pr-10 ${
+                          (touchedFields.password || baseRegisterForm.password) && !passwordValid
+                            ? "border-red-400 focus-visible:ring-red-200"
+                            : ""
+                        }`}
+                        required
+                      />
                       <button type="button" onClick={() => setShowRegisterPassword((value) => !value)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" aria-label={showRegisterPassword ? "Hide password" : "Show password"}>
                         {showRegisterPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                       </button>
                     </div>
-                    {passwordStrength && <p className="text-xs text-slate-500">Strength: {passwordStrength}</p>}
+                    {(touchedFields.password || baseRegisterForm.password) && !baseRegisterForm.password && (
+                      <p className="text-xs text-red-500 flex items-center gap-1 font-medium"><span>⚠</span> Password is required.</p>
+                    )}
+                    {(touchedFields.password || baseRegisterForm.password) && baseRegisterForm.password && !passwordValid && (
+                      <div className="space-y-1 mt-1">
+                        {!passwordHasMinLen && (
+                          <p className="text-xs text-red-500 flex items-center gap-1 font-medium"><span>⚠</span> At least 8 characters required.</p>
+                        )}
+                        {!passwordHasUpper && (
+                          <p className="text-xs text-red-500 flex items-center gap-1 font-medium"><span>⚠</span> At least 1 uppercase letter (A-Z) required.</p>
+                        )}
+                        {!passwordHasLower && (
+                          <p className="text-xs text-red-500 flex items-center gap-1 font-medium"><span>⚠</span> At least 1 lowercase letter (a-z) required.</p>
+                        )}
+                        {!passwordHasNumber && (
+                          <p className="text-xs text-red-500 flex items-center gap-1 font-medium"><span>⚠</span> At least 1 number (0-9) required.</p>
+                        )}
+                        {!passwordHasSpecial && (
+                          <p className="text-xs text-red-500 flex items-center gap-1 font-medium"><span>⚠</span> At least 1 special character (e.g. *, -, #, @, !) required.</p>
+                        )}
+                      </div>
+                    )}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="register-confirm-password">Confirm Password</Label>
-                    <Input id="register-confirm-password" type="password" autoComplete="new-password" value={baseRegisterForm.confirmPassword} onChange={(event) => setBaseRegisterForm((current) => ({ ...current, confirmPassword: event.target.value }))} required />
-                    {baseRegisterForm.confirmPassword && <p className={`text-xs ${confirmMatches ? "text-brand-primary" : "text-red-600"}`}>{confirmMatches ? "Passwords match" : "Passwords do not match"}</p>}
+                    <Label htmlFor="register-confirm-password">Confirm Password <span className="text-red-500">*</span></Label>
+                    <Input
+                      id="register-confirm-password"
+                      type="password"
+                      autoComplete="new-password"
+                      value={baseRegisterForm.confirmPassword}
+                      onBlur={() => touchField("confirmPassword")}
+                      onChange={(event) => {
+                        touchField("confirmPassword");
+                        setBaseRegisterForm((current) => ({ ...current, confirmPassword: event.target.value }));
+                      }}
+                      className={
+                        (touchedFields.confirmPassword || baseRegisterForm.confirmPassword) && !confirmMatches
+                          ? "border-red-400 focus-visible:ring-red-200"
+                          : ""
+                      }
+                      required
+                    />
+                    {(touchedFields.confirmPassword || baseRegisterForm.confirmPassword) && !baseRegisterForm.confirmPassword && (
+                      <p className="text-xs text-red-500 flex items-center gap-1 font-medium"><span>⚠</span> Please confirm your password.</p>
+                    )}
+                    {(touchedFields.confirmPassword || baseRegisterForm.confirmPassword) && baseRegisterForm.confirmPassword && !confirmMatches && (
+                      <p className="text-xs text-red-600 flex items-center gap-1 font-medium"><span>⚠</span> Passwords do not match.</p>
+                    )}
                   </div>
 
                   {selectedRole === "student" && (
                     <>
                       <div className="space-y-2">
-                        <Label htmlFor="student-grade">Current Grade / Year</Label>
-                        <select id="student-grade" value={studentForm.grade} onChange={(event) => setStudentForm((current) => ({ ...current, grade: event.target.value }))} className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm" required>
+                        <Label htmlFor="student-grade">Current Grade / Year <span className="text-red-500">*</span></Label>
+                        <select
+                          id="student-grade"
+                          value={studentForm.grade}
+                          onBlur={() => touchField("grade")}
+                          onChange={(event) => {
+                            touchField("grade");
+                            setStudentForm((current) => ({ ...current, grade: event.target.value }));
+                          }}
+                          className={`flex h-10 w-full rounded-md border bg-white px-3 py-2 text-sm ${
+                            touchedFields.grade && !studentForm.grade ? "border-red-400 focus:border-red-400" : "border-slate-200"
+                          }`}
+                          required
+                        >
                           <option value="">Select grade</option>
                           {GRADE_OPTIONS.map((option) => (
                             <option key={option} value={option}>
@@ -387,10 +533,27 @@ export default function Login() {
                             </option>
                           ))}
                         </select>
+                        {touchedFields.grade && !studentForm.grade && (
+                          <p className="text-xs text-red-500 flex items-center gap-1 font-medium"><span>⚠</span> Please select your grade.</p>
+                        )}
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="student-country">Country</Label>
-                        <select id="student-country" value={baseRegisterForm.country} onChange={(event) => { const value = event.target.value; setBaseRegisterForm((current) => ({ ...current, country: value })); setCountryScholarshipHint(isScholarshipEligibleCountry(value)); }} className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm" required>
+                        <Label htmlFor="student-country">Country <span className="text-red-500">*</span></Label>
+                        <select
+                          id="student-country"
+                          value={baseRegisterForm.country}
+                          onBlur={() => touchField("country")}
+                          onChange={(event) => {
+                            touchField("country");
+                            const value = event.target.value;
+                            setBaseRegisterForm((current) => ({ ...current, country: value }));
+                            setCountryScholarshipHint(isScholarshipEligibleCountry(value));
+                          }}
+                          className={`flex h-10 w-full rounded-md border bg-white px-3 py-2 text-sm ${
+                            touchedFields.country && !baseRegisterForm.country ? "border-red-400 focus:border-red-400" : "border-slate-200"
+                          }`}
+                          required
+                        >
                           <option value="">Select country (used for scholarship verification)</option>
                           {SCHOLARSHIP_COUNTRY_OPTIONS.map((option) => (
                             <option key={option} value={option}>
@@ -399,6 +562,9 @@ export default function Login() {
                           ))}
                           <option value="Other">Other (not on scholarship list)</option>
                         </select>
+                        {touchedFields.country && !baseRegisterForm.country && (
+                          <p className="text-xs text-red-500 flex items-center gap-1 font-medium"><span>⚠</span> Please select your country.</p>
+                        )}
                         {countryScholarshipHint && (
                           <p className="rounded-md bg-brand-primary/10 px-3 py-2 text-xs text-brand-primary">
                             You may qualify for a {getConcessionPercent(baseRegisterForm.country)}% course concession — apply at{" "}
@@ -423,12 +589,39 @@ export default function Login() {
                   {selectedRole === "parent" && (
                     <>
                       <div className="space-y-2">
-                        <Label htmlFor="parent-child-name">Your Child&apos;s Full Name</Label>
-                        <Input id="parent-child-name" value={parentForm.childName} onChange={(event) => setParentForm((current) => ({ ...current, childName: event.target.value }))} required />
+                        <Label htmlFor="parent-child-name">Your Child&apos;s Full Name <span className="text-red-500">*</span></Label>
+                        <Input
+                          id="parent-child-name"
+                          value={parentForm.childName}
+                          onBlur={() => touchField("childName")}
+                          onChange={(event) => {
+                            touchField("childName");
+                            setParentForm((current) => ({ ...current, childName: event.target.value }));
+                          }}
+                          className={
+                            (touchedFields.childName || parentForm.childName) && !parentForm.childName.trim() ? "border-red-400" : ""
+                          }
+                          required
+                        />
+                        {(touchedFields.childName || parentForm.childName) && !parentForm.childName.trim() && (
+                          <p className="text-xs text-red-500 flex items-center gap-1 font-medium"><span>⚠</span> Child&apos;s full name is required.</p>
+                        )}
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="parent-child-grade">Your Child&apos;s Current Grade</Label>
-                        <select id="parent-child-grade" value={parentForm.childGrade} onChange={(event) => setParentForm((current) => ({ ...current, childGrade: event.target.value }))} className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm" required>
+                        <Label htmlFor="parent-child-grade">Your Child&apos;s Current Grade <span className="text-red-500">*</span></Label>
+                        <select
+                          id="parent-child-grade"
+                          value={parentForm.childGrade}
+                          onBlur={() => touchField("childGrade")}
+                          onChange={(event) => {
+                            touchField("childGrade");
+                            setParentForm((current) => ({ ...current, childGrade: event.target.value }));
+                          }}
+                          className={`flex h-10 w-full rounded-md border bg-white px-3 py-2 text-sm ${
+                            touchedFields.childGrade && !parentForm.childGrade ? "border-red-400" : "border-slate-200"
+                          }`}
+                          required
+                        >
                           <option value="">Select grade</option>
                           {GRADE_OPTIONS.map((option) => (
                             <option key={option} value={option}>
@@ -436,10 +629,25 @@ export default function Login() {
                             </option>
                           ))}
                         </select>
+                        {touchedFields.childGrade && !parentForm.childGrade && (
+                          <p className="text-xs text-red-500 flex items-center gap-1 font-medium"><span>⚠</span> Please select your child&apos;s grade.</p>
+                        )}
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="parent-country">Country</Label>
-                        <select id="parent-country" value={baseRegisterForm.country} onChange={(event) => setBaseRegisterForm((current) => ({ ...current, country: event.target.value }))} className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm" required>
+                        <Label htmlFor="parent-country">Country <span className="text-red-500">*</span></Label>
+                        <select
+                          id="parent-country"
+                          value={baseRegisterForm.country}
+                          onBlur={() => touchField("country")}
+                          onChange={(event) => {
+                            touchField("country");
+                            setBaseRegisterForm((current) => ({ ...current, country: event.target.value }));
+                          }}
+                          className={`flex h-10 w-full rounded-md border bg-white px-3 py-2 text-sm ${
+                            touchedFields.country && !baseRegisterForm.country ? "border-red-400" : "border-slate-200"
+                          }`}
+                          required
+                        >
                           <option value="">Select country</option>
                           {COUNTRY_OPTIONS.map((option) => (
                             <option key={option} value={option}>
@@ -447,6 +655,9 @@ export default function Login() {
                             </option>
                           ))}
                         </select>
+                        {touchedFields.country && !baseRegisterForm.country && (
+                          <p className="text-xs text-red-500 flex items-center gap-1 font-medium"><span>⚠</span> Please select your country.</p>
+                        )}
                       </div>
                     </>
                   )}
@@ -454,35 +665,68 @@ export default function Login() {
                   {selectedRole === "teacher" && (
                     <>
                       <div className="space-y-2">
-                        <Label>Subject(s) You Teach</Label>
+                        <Label>Subject(s) You Teach <span className="text-red-500">*</span></Label>
                         <div className="grid grid-cols-2 gap-2 rounded-md border border-slate-200 p-3">
                           {SUBJECT_OPTIONS.map((subject) => (
                             <label key={subject} className="flex items-center gap-2 text-xs text-slate-700">
-                              <input type="checkbox" checked={teacherForm.subjects.includes(subject)} onChange={(event) => setTeacherForm((current) => ({ ...current, subjects: event.target.checked ? [...current.subjects, subject] : current.subjects.filter((item) => item !== subject) }))} />
+                              <input type="checkbox" checked={teacherForm.subjects.includes(subject)} onChange={(event) => { touchField("teacherSubjects"); setTeacherForm((current) => ({ ...current, subjects: event.target.checked ? [...current.subjects, subject] : current.subjects.filter((item) => item !== subject) })); }} />
                               {subject}
                             </label>
                           ))}
                         </div>
+                        {touchedFields.teacherSubjects && teacherForm.subjects.length === 0 && (
+                          <p className="text-xs text-red-500 flex items-center gap-1 font-medium"><span>⚠</span> Please select at least one subject.</p>
+                        )}
                       </div>
                       <div className="space-y-2">
-                        <Label>Teaching Role</Label>
+                        <Label>Teaching Role <span className="text-red-500">*</span></Label>
                         <div className="space-y-2 rounded-md border border-slate-200 p-3">
                           {TEACHING_ROLE_OPTIONS.map((option) => (
                             <label key={option} className="flex items-center gap-2 text-sm text-slate-700">
-                              <input type="radio" name="teaching-role" checked={teacherForm.teachingRole === option} onChange={() => setTeacherForm((current) => ({ ...current, teachingRole: option }))} />
+                              <input type="radio" name="teaching-role" checked={teacherForm.teachingRole === option} onChange={() => { touchField("teachingRole"); setTeacherForm((current) => ({ ...current, teachingRole: option })); }} />
                               {option}
                             </label>
                           ))}
                         </div>
+                        {touchedFields.teachingRole && !teacherForm.teachingRole && (
+                          <p className="text-xs text-red-500 flex items-center gap-1 font-medium"><span>⚠</span> Please select a teaching role.</p>
+                        )}
                       </div>
                       <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-2">
-                          <Label htmlFor="teacher-city">City</Label>
-                          <Input id="teacher-city" value={teacherForm.city} onChange={(event) => setTeacherForm((current) => ({ ...current, city: event.target.value }))} required />
+                          <Label htmlFor="teacher-city">City <span className="text-red-500">*</span></Label>
+                          <Input
+                            id="teacher-city"
+                            value={teacherForm.city}
+                            onBlur={() => touchField("teacherCity")}
+                            onChange={(event) => {
+                              touchField("teacherCity");
+                              setTeacherForm((current) => ({ ...current, city: event.target.value }));
+                            }}
+                            className={
+                              (touchedFields.teacherCity || teacherForm.city) && !teacherForm.city.trim() ? "border-red-400" : ""
+                            }
+                            required
+                          />
+                          {(touchedFields.teacherCity || teacherForm.city) && !teacherForm.city.trim() && (
+                            <p className="text-xs text-red-500 flex items-center gap-1 font-medium"><span>⚠</span> City is required.</p>
+                          )}
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="teacher-country">Country</Label>
-                          <select id="teacher-country" value={baseRegisterForm.country} onChange={(event) => setBaseRegisterForm((current) => ({ ...current, country: event.target.value }))} className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm" required>
+                          <Label htmlFor="teacher-country">Country <span className="text-red-500">*</span></Label>
+                          <select
+                            id="teacher-country"
+                            value={baseRegisterForm.country}
+                            onBlur={() => touchField("country")}
+                            onChange={(event) => {
+                              touchField("country");
+                              setBaseRegisterForm((current) => ({ ...current, country: event.target.value }));
+                            }}
+                            className={`flex h-10 w-full rounded-md border bg-white px-3 py-2 text-sm ${
+                              touchedFields.country && !baseRegisterForm.country ? "border-red-400" : "border-slate-200"
+                            }`}
+                            required
+                          >
                             <option value="">Select country</option>
                             {COUNTRY_OPTIONS.map((option) => (
                               <option key={option} value={option}>
@@ -490,6 +734,9 @@ export default function Login() {
                               </option>
                             ))}
                           </select>
+                          {touchedFields.country && !baseRegisterForm.country && (
+                            <p className="text-xs text-red-500 flex items-center gap-1 font-medium"><span>⚠</span> Please select your country.</p>
+                          )}
                         </div>
                       </div>
                       <div className="space-y-2">
@@ -508,23 +755,63 @@ export default function Login() {
 
                   {selectedRole === "school" && (
                     <>
+                      {/* School Partner Code field (commented out as requested) */}
+                      {/*
                       <div className="space-y-2">
                         <Label htmlFor="school-partner-code">School Partner Code</Label>
-                        <Input id="school-partner-code" value={schoolForm.partnerCode} onBlur={checkPartnerCode} onChange={(event) => setSchoolForm((current) => ({ ...current, partnerCode: event.target.value }))} required />
-                        {partnerCodeStatus === "checking" && <p className="text-xs text-slate-500">Checking partner code...</p>}
-                        {partnerCodeStatus === "invalid" && <p className="text-xs text-red-600">This partner code is not recognised. Please contact EduMeUp.</p>}
+                        <Input
+                          id="school-partner-code"
+                          value={schoolForm.partnerCode}
+                          onChange={(event) => setSchoolForm((current) => ({ ...current, partnerCode: event.target.value }))}
+                        />
                       </div>
+                      */}
                       <div className="space-y-2">
-                        <Label htmlFor="school-name">School Name (auto-filled)</Label>
-                        <Input id="school-name" value={schoolNameFromCode} readOnly className="bg-slate-50" />
+                        <Label htmlFor="school-name">School Name <span className="text-red-500">*</span></Label>
+                        <Input
+                          id="school-name"
+                          value={schoolForm.schoolName}
+                          onBlur={() => touchField("schoolName")}
+                          onChange={(event) => {
+                            touchField("schoolName");
+                            setSchoolForm((current) => ({ ...current, schoolName: event.target.value }));
+                          }}
+                          placeholder="Enter your school name"
+                          className={
+                            touchedFields.schoolName && !schoolForm.schoolName.trim()
+                              ? "border-red-400"
+                              : ""
+                          }
+                          required
+                        />
+                        {touchedFields.schoolName && !schoolForm.schoolName.trim() && (
+                          <p className="text-xs text-red-500 flex items-center gap-1 font-medium"><span>⚠</span> School Name is required.</p>
+                        )}
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="school-admin-role">Your Role at the School</Label>
-                        <Input id="school-admin-role" value={schoolForm.schoolAdminRole} onChange={(event) => setSchoolForm((current) => ({ ...current, schoolAdminRole: event.target.value }))} />
+                        <Input
+                          id="school-admin-role"
+                          value={schoolForm.schoolAdminRole}
+                          onChange={(event) => setSchoolForm((current) => ({ ...current, schoolAdminRole: event.target.value }))}
+                          placeholder="e.g. Principal, Administrator, Head Teacher"
+                        />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="school-country">Country</Label>
-                        <select id="school-country" value={baseRegisterForm.country} onChange={(event) => setBaseRegisterForm((current) => ({ ...current, country: event.target.value }))} className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm" required>
+                        <Label htmlFor="school-country">Country <span className="text-red-500">*</span></Label>
+                        <select
+                          id="school-country"
+                          value={baseRegisterForm.country}
+                          onBlur={() => touchField("country")}
+                          onChange={(event) => {
+                            touchField("country");
+                            setBaseRegisterForm((current) => ({ ...current, country: event.target.value }));
+                          }}
+                          className={`flex h-10 w-full rounded-md border bg-white px-3 py-2 text-sm ${
+                            touchedFields.country && !baseRegisterForm.country ? "border-red-400" : "border-slate-200"
+                          }`}
+                          required
+                        >
                           <option value="">Select country</option>
                           {COUNTRY_OPTIONS.map((option) => (
                             <option key={option} value={option}>
@@ -532,24 +819,41 @@ export default function Login() {
                             </option>
                           ))}
                         </select>
+                        {touchedFields.country && !baseRegisterForm.country && (
+                          <p className="text-xs text-red-500 flex items-center gap-1 font-medium"><span>⚠</span> Please select your country.</p>
+                        )}
                       </div>
                     </>
                   )}
 
-                  <label className="flex items-start gap-2 text-xs text-slate-600">
-                    <input type="checkbox" checked={baseRegisterForm.termsAccepted} onChange={(event) => setBaseRegisterForm((current) => ({ ...current, termsAccepted: event.target.checked }))} className="mt-0.5" />
-                    <span>
-                      I agree to the{" "}
-                      <a href="/terms" target="_blank" rel="noreferrer" className="font-semibold text-brand-primary hover:underline">
-                        Terms of Use
-                      </a>{" "}
-                      and{" "}
-                      <a href="/privacy" target="_blank" rel="noreferrer" className="font-semibold text-brand-primary hover:underline">
-                        Privacy Policy
-                      </a>
-                      .
-                    </span>
-                  </label>
+                  <div className="space-y-1">
+                    <label className="flex items-start gap-2 text-xs text-slate-600">
+                      <input
+                        type="checkbox"
+                        checked={baseRegisterForm.termsAccepted}
+                        onBlur={() => touchField("termsAccepted")}
+                        onChange={(event) => {
+                          touchField("termsAccepted");
+                          setBaseRegisterForm((current) => ({ ...current, termsAccepted: event.target.checked }));
+                        }}
+                        className="mt-0.5"
+                      />
+                      <span>
+                        I agree to the{" "}
+                        <a href="/terms" target="_blank" rel="noreferrer" className="font-semibold text-brand-primary hover:underline">
+                          Terms of Use
+                        </a>{" "}
+                        and{" "}
+                        <a href="/privacy" target="_blank" rel="noreferrer" className="font-semibold text-brand-primary hover:underline">
+                          Privacy Policy
+                        </a>
+                        . <span className="text-red-500">*</span>
+                      </span>
+                    </label>
+                    {touchedFields.termsAccepted && !baseRegisterForm.termsAccepted && (
+                      <p className="text-xs text-red-500 font-medium">⚠ You must accept the Terms of Use and Privacy Policy.</p>
+                    )}
+                  </div>
 
                   {registerError && <p className="text-sm text-red-600">{registerError}</p>}
                   {registerSuccess && <p className="text-sm text-brand-primary">{registerSuccess}</p>}
@@ -569,7 +873,7 @@ export default function Login() {
                         <p className="text-xs text-amber-700 flex items-center gap-1.5">⚠ This email is already registered.</p>
                       )}
                       {!passwordValid && (
-                        <p className="text-xs text-amber-700 flex items-center gap-1.5">⚠ Password must be at least 8 characters with a letter and a number.</p>
+                        <p className="text-xs text-amber-700 flex items-center gap-1.5">⚠ Password must be at least 8 characters with 1 uppercase, 1 lowercase, 1 number, &amp; 1 special char (*, -, #, @, !).</p>
                       )}
                       {passwordValid && !confirmMatches && (
                         <p className="text-xs text-amber-700 flex items-center gap-1.5">⚠ Passwords do not match.</p>
@@ -589,8 +893,8 @@ export default function Login() {
                       {selectedRole === "teacher" && (teacherForm.subjects.length === 0 || !teacherForm.teachingRole || !teacherForm.city.trim()) && (
                         <p className="text-xs text-amber-700 flex items-center gap-1.5">⚠ Please fill in your subject(s), teaching role, and city.</p>
                       )}
-                      {selectedRole === "school" && partnerCodeStatus !== "valid" && (
-                        <p className="text-xs text-amber-700 flex items-center gap-1.5">⚠ A valid School Partner Code is required. Enter the code and click outside the field to verify.</p>
+                      {selectedRole === "school" && !schoolForm.schoolName.trim() && (
+                        <p className="text-xs text-amber-700 flex items-center gap-1.5">⚠ Please enter your School Name.</p>
                       )}
                     </div>
                   )}

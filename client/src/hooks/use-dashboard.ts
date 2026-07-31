@@ -58,16 +58,30 @@ export function useStudentCertificates(enabled = true) {
 export function useLinkChild() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (childMoodleUserId: number) => {
+    mutationFn: async (payload: { childEmail?: string; childMoodleUserId?: number } | string) => {
+      const bodyPayload = typeof payload === "string" ? { childEmail: payload } : payload;
       const res = await fetch(api.dashboard.parentLinkChild.path, {
         method: api.dashboard.parentLinkChild.method,
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ childMoodleUserId }),
+        body: JSON.stringify(bodyPayload),
       });
       if (!res.ok) {
-        const body = await res.json();
-        throw new Error(body.message || "Failed to link child");
+        let errorMessage = "Failed to link child";
+        try {
+          const text = await res.text();
+          if (text) {
+            try {
+              const body = JSON.parse(text);
+              errorMessage = body.message || errorMessage;
+            } catch {
+              errorMessage = text;
+            }
+          }
+        } catch {
+          errorMessage = res.statusText || errorMessage;
+        }
+        throw new Error(errorMessage);
       }
       return api.dashboard.parentLinkChild.responses[200].parse(await res.json());
     },

@@ -371,7 +371,8 @@ export const parentDashboardChildSchema = z.object({
 });
 
 export const parentLinkChildInputSchema = z.object({
-  childMoodleUserId: z.number(),
+  childEmail: z.string().optional(),
+  childMoodleUserId: z.number().optional(),
 });
 
 export const parentDashboardSchema = z.object({

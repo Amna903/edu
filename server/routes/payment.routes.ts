@@ -15,7 +15,7 @@ import {
   getStudentGradesForDashboard,
   getUserCoursesForDashboard,
 } from "../services/moodle/moodle-dashboard.js";
-import { getStoredUserByMoodleUserId, linkParentToChild } from "../repositories/user-store.js";
+import { findChildUserByEmailOrIdentifier, getStoredUserByMoodleUserId, linkParentToChild } from "../repositories/user-store.js";
 import { buildOrigin, buildPayfastCheckoutFields, buildPayfastItemName } from "../services/payments.js";
 import { env } from "../config/config.js";
 import { prisma } from "../db/prisma.js";
@@ -821,9 +821,26 @@ try {
       return res.status(403).json({ message: "Parent access required" });
     }
 
-    const input = parentLinkChildInputSchema.parse(req.body);
-    await linkParentToChild(req.session.user.id, input.childMoodleUserId);
-    res.json({ success: true });
+    try {
+      const input = parentLinkChildInputSchema.parse(req.body);
+      let childMoodleUserId = input.childMoodleUserId;
+
+      if (!childMoodleUserId && input.childEmail) {
+        childMoodleUserId = await findChildUserByEmailOrIdentifier(input.childEmail);
+      }
+
+      if (!childMoodleUserId) {
+        return res.status(400).json({ message: "Please enter your child's email address." });
+      }
+
+      await linkParentToChild(req.session.user.id, childMoodleUserId);
+      res.json({ success: true });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: error.errors[0]?.message || "Invalid request" });
+      }
+      return res.status(400).json({ message: error instanceof Error ? error.message : "Failed to link child" });
+    }
   });
 
   app.get(api.dashboard.parent.path, async (req, res) => {

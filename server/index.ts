@@ -3,6 +3,7 @@ import { registerRoutes } from "./routes/index.js";
 import { serveStatic } from "./core/static.js";
 import { createServer } from "http";
 import session from "express-session";
+import connectPgSimple from "connect-pg-simple";
 import { env, isProduction, logEnvPresence } from "./config/config.js";
 
 const app = express();
@@ -48,8 +49,27 @@ app.use(
 );
 
 app.use(express.urlencoded({ extended: false }));
+
+let sessionStore: session.Store | undefined;
+const dbUrl = process.env.DATABASE_URL || process.env.DIRECT_URL;
+
+if (dbUrl) {
+  try {
+    const PgSession = connectPgSimple(session);
+    sessionStore = new PgSession({
+      conString: dbUrl,
+      createTableIfMissing: true,
+      tableName: "session",
+    });
+    console.log("[session] Persistent PostgreSQL session store active.");
+  } catch (err) {
+    console.warn("[session] Failed to initialize PostgreSQL session store, falling back to memory store:", err);
+  }
+}
+
 app.use(
   session({
+    store: sessionStore,
     secret: env.sessionSecret,
     resave: false,
     saveUninitialized: false,
@@ -103,15 +123,14 @@ export const ready = (async () => {
   await registerRoutes(httpServer, app);
 
   app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
+    const status = err?.status || err?.statusCode || 500;
+    const message = typeof err === "string" ? err : err?.message || "Internal Server Error";
 
-    // §10 — Log errors centrally
-    import("./services/logger.js").then(({ logError }) => {
-      logError({ context: "express-error-handler", error: err }).catch(() => undefined);
-    }).catch(() => undefined);
-
-    console.error("Internal Server Error:", err);
+    try {
+      console.error("Express Error:", message);
+    } catch {
+      // Safe fallback
+    }
 
     if (res.headersSent) {
       return next(err);

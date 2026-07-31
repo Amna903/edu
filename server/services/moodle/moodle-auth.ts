@@ -496,7 +496,7 @@ export async function registerWithMoodle(input: RegisterInput): Promise<Register
   const normalizedEmail = input.email.trim().toLowerCase();
 
   const skipEmailConfirmation = !env.moodle.signupToken || env.moodle.skipEmailConfirmation;
-
+  console.log("skipEmailConfirmation = ", skipEmailConfirmation);
   if (!skipEmailConfirmation) {
     await rememberPendingRegistrationRole(normalizedUsername, input.role);
     await rememberPendingSignup({

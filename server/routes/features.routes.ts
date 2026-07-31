@@ -269,7 +269,7 @@ export function registerFeatureRoutes(app: Express) {
         await (prisma as any).adminActivityLog.create({
           data: {
             adminUserId: req.session.user.id,
-            targetUserId: ticket.userId !== undefined ? String((ticket as any).userId) : null,
+            targetUserId: (ticket as any).userId !== undefined ? String((ticket as any).userId) : null,
             action: "TICKET_STATUS_UPDATED",
             details: { ticketId, previousStatus: ticket.status, newStatus },
           },

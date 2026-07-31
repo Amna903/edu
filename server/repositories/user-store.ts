@@ -274,29 +274,55 @@ export async function getStoredRoleByMoodleUserId(moodleUserId: number): Promise
   }
 }
 
+const inMemoryParentChildLinks = new Map<number, Set<number>>();
+
 export async function linkParentToChild(parentMoodleUserId: number, childMoodleUserId: number) {
-  await prisma.parentChild.upsert({
-    where: {
-      parentId_childId: {
+  try {
+    await prisma.parentChild.upsert({
+      where: {
+        parentId_childId: {
+          parentId: parentMoodleUserId,
+          childId: childMoodleUserId,
+        },
+      },
+      update: {},
+      create: {
         parentId: parentMoodleUserId,
         childId: childMoodleUserId,
       },
-    },
-    update: {},
-    create: {
-      parentId: parentMoodleUserId,
-      childId: childMoodleUserId,
-    },
-  });
+    });
+  } catch (error) {
+    console.warn("Prisma parentChild upsert failed, using memory fallback:", error);
+  }
+
+  const existing = inMemoryParentChildLinks.get(parentMoodleUserId) ?? new Set<number>();
+  existing.add(childMoodleUserId);
+  inMemoryParentChildLinks.set(parentMoodleUserId, existing);
 }
 
 export async function getLinkedChildren(parentMoodleUserId: number) {
-  const rows = await prisma.parentChild.findMany({
-    where: { parentId: parentMoodleUserId },
-    orderBy: { createdAt: "asc" },
-  });
+  const result = new Set<number>();
 
-  return rows.map((row: any) => row.childId);
+  try {
+    const rows = await prisma.parentChild.findMany({
+      where: { parentId: parentMoodleUserId },
+      orderBy: { createdAt: "asc" },
+    });
+    for (const row of rows) {
+      if (row.childId) result.add(row.childId);
+    }
+  } catch {
+    // Non-fatal
+  }
+
+  const inMem = inMemoryParentChildLinks.get(parentMoodleUserId);
+  if (inMem) {
+    inMem.forEach((childId) => {
+      result.add(childId);
+    });
+  }
+
+  return Array.from(result);
 }
 
 export async function getStoredUserByMoodleUserId(moodleUserId: number) {
@@ -315,4 +341,102 @@ export async function getStoredUserByMoodleUserId(moodleUserId: number) {
 
     throw error;
   }
+}
+
+export async function findChildUserByEmailOrIdentifier(identifier: string): Promise<number> {
+  const rawInput = identifier.trim().toLowerCase();
+  if (!rawInput) {
+    throw new Error("Please enter your child's email address.");
+  }
+
+  const isNumeric = /^\d+$/.test(rawInput);
+  const numericId = isNumeric ? parseInt(rawInput, 10) : null;
+  const emailPrefix = rawInput.includes("@") ? rawInput.split("@")[0] : rawInput;
+
+  // 1. Search local PostgreSQL User table & check role
+  if (await hasUsersTable()) {
+    try {
+      const user = await prisma.user.findFirst({
+        where: {
+          OR: [
+            { email: { equals: rawInput, mode: "insensitive" } },
+            { username: { equals: rawInput, mode: "insensitive" } },
+            { username: { equals: emailPrefix, mode: "insensitive" } },
+            ...(numericId ? [{ moodleUserId: numericId }] : []),
+          ],
+        },
+      });
+
+      if (user) {
+        if (user.role && user.role !== "student") {
+          throw new Error(`The account registered with email "${identifier}" is a ${user.role} account. Only student accounts can be linked.`);
+        }
+        if (user.moodleUserId) {
+          return user.moodleUserId;
+        }
+      }
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("Only student accounts can be linked")) {
+        throw error;
+      }
+      if (!isMissingUsersTableError(error)) {
+        console.error("Local user lookup failed:", error);
+      }
+    }
+  }
+
+  // 2. Search Moodle via Moodle API Web Services
+  try {
+    const { moodlePostWithTokenFallback } = await import("../services/moodle/moodle-auth.js");
+
+    if (rawInput.includes("@")) {
+      const byEmail = await moodlePostWithTokenFallback<Array<{ id: number }>>(
+        "core_user_get_users_by_field",
+        new URLSearchParams({
+          field: "email",
+          "values[0]": rawInput,
+        })
+      ).catch(() => null);
+
+      if (Array.isArray(byEmail) && byEmail.length > 0 && byEmail[0]?.id) {
+        return byEmail[0].id;
+      }
+    }
+
+    const byUsername = await moodlePostWithTokenFallback<Array<{ id: number }>>(
+      "core_user_get_users_by_field",
+      new URLSearchParams({
+        field: "username",
+        "values[0]": rawInput,
+      })
+    ).catch(() => null);
+
+    if (Array.isArray(byUsername) && byUsername.length > 0 && byUsername[0]?.id) {
+      return byUsername[0].id;
+    }
+
+    if (emailPrefix !== rawInput) {
+      const byPrefix = await moodlePostWithTokenFallback<Array<{ id: number }>>(
+        "core_user_get_users_by_field",
+        new URLSearchParams({
+          field: "username",
+          "values[0]": emailPrefix,
+        })
+      ).catch(() => null);
+
+      if (Array.isArray(byPrefix) && byPrefix.length > 0 && byPrefix[0]?.id) {
+        return byPrefix[0].id;
+      }
+    }
+  } catch (error) {
+    if (error instanceof Error && error.message.includes("Only student accounts can be linked")) {
+      throw error;
+    }
+  }
+
+  if (numericId && numericId > 0) {
+    return numericId;
+  }
+
+  throw new Error(`No student account found registered with email "${identifier}". Please verify the email address.`);
 }

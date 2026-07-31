@@ -878,15 +878,15 @@ export default function Dashboard() {
                         className="flex flex-col gap-3 md:flex-row"
                         onSubmit={async (event) => {
                           event.preventDefault();
-                          const childId = Number(childIdInput);
-                          if (!Number.isFinite(childId) || childId <= 0) {
-                            setLinkChildState({ pending: false, success: "", error: "Please enter a valid student Moodle ID." });
+                          const inputVal = childIdInput.trim();
+                          if (!inputVal) {
+                            setLinkChildState({ pending: false, success: "", error: "Please enter your child's email address." });
                             return;
                           }
 
                           setLinkChildState({ pending: true, success: "", error: "" });
                           try {
-                            await linkChild.mutateAsync(childId);
+                            await linkChild.mutateAsync({ childEmail: inputVal });
                             setChildIdInput("");
                             setLinkChildState({ pending: false, success: "Child linked successfully.", error: "" });
                           } catch (error) {
@@ -898,13 +898,17 @@ export default function Dashboard() {
                           }
                         }}
                       >
-                        <Input value={childIdInput} onChange={(event) => setChildIdInput(event.target.value)} placeholder="Child Moodle User ID" />
+                        <Input
+                          value={childIdInput}
+                          onChange={(event) => setChildIdInput(event.target.value)}
+                          placeholder="Child's Email Address (e.g. child@gmail.com)"
+                        />
                         <Button type="submit" disabled={linkChildState.pending}>
                           <Users className="mr-2 h-4 w-4" />
                           {linkChildState.pending ? "Linking..." : "Link Child"}
                         </Button>
                       </form>
-                      <p className="text-xs text-slate-500">After linking, the child will appear below with their enrolled courses and marks.</p>
+                      <p className="text-xs text-slate-500">Enter your child&apos;s registered email address. After linking, their enrolled courses and progress will appear below.</p>
 
                   <div className="space-y-6">
                     {parentChildren.map((child) => {
