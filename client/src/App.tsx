@@ -71,6 +71,9 @@ import ResetPassword from "@/pages/ResetPassword";
 import VerifyPending from "@/pages/VerifyPending";
 import VerifyExpired from "@/pages/VerifyExpired";
 import Dashboard from "@/pages/Dashboard";
+import FormPage from "@/pages/FormPage";
+import AdminForms from "@/pages/AdminForms";
+import AdminFormResponses from "@/pages/AdminFormResponses";
 import PaymentSuccess from "@/pages/PaymentSuccess";
 
 function Router() {
@@ -152,6 +155,7 @@ function Router() {
       <Route path="/why-edumeup/how-it-works" component={HowItWorks} />
       <Route path="/why-edumeup/8-step-model" component={EightStepModel} />
       <Route path="/contact" component={Contact} />
+      <Route path="/forms/:identifier" component={FormPage} />
       <Route path="/privacy" component={Privacy} />
       <Route path="/terms" component={Terms} />
       <Route path="/cookies" component={Cookies} />
@@ -171,6 +175,8 @@ function Router() {
       <Route path="/dashboard/school" component={Dashboard} />
       <Route path="/dashboard/school/analytics" component={Dashboard} />
       <Route path="/dashboard/admin" component={Dashboard} />
+      <Route path="/dashboard/admin/forms" component={AdminForms} />
+      <Route path="/dashboard/admin/forms/:identifier/responses" component={AdminFormResponses} />
       <Route path="/dashboard/admin/support" component={Dashboard} />
       <Route path="/dashboard/admin/analytics" component={Dashboard} />
       <Route path="/dashboard/notifications" component={Dashboard} />

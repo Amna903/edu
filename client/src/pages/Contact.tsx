@@ -100,7 +100,12 @@ export default function Contact() {
 
   const handleSchoolSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+    const form = event.currentTarget as HTMLFormElement | null;
+    if (!form) {
+      return;
+    }
+
+    const formData = new FormData(form);
     setLoading("school");
     setSchoolMessage(null);
     try {
@@ -120,7 +125,9 @@ export default function Contact() {
       });
       setSchoolSubmittedName(fullName.split(" ")[0] || "there");
       setSchoolMessage("success");
-      event.currentTarget.reset();
+      if (typeof form.reset === "function") {
+        form.reset();
+      }
     } catch (error) {
       setSchoolMessage(error instanceof Error ? error.message : "Unable to submit.");
     } finally {
@@ -130,7 +137,12 @@ export default function Contact() {
 
   const handleGeneralSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+    const form = event.currentTarget as HTMLFormElement | null;
+    if (!form) {
+      return;
+    }
+
+    const formData = new FormData(form);
     setLoading("general");
     setGeneralMessage(null);
     try {
@@ -145,7 +157,9 @@ export default function Contact() {
         honeypot: String(formData.get("companyWebsite") || ""),
       });
       setGeneralMessage("success");
-      event.currentTarget.reset();
+      if (typeof form.reset === "function") {
+        form.reset();
+      }
       setGeneralSubject("");
     } catch (error) {
       setGeneralMessage(error instanceof Error ? error.message : "Unable to submit.");
@@ -156,7 +170,12 @@ export default function Contact() {
 
   const handleSupportSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+    const form = event.currentTarget as HTMLFormElement | null;
+    if (!form) {
+      return;
+    }
+
+    const formData = new FormData(form);
     setLoading("support");
     setSupportMessage(null);
     try {
@@ -175,7 +194,9 @@ export default function Contact() {
         honeypot: String(formData.get("companyWebsite") || ""),
       });
       setSupportMessage("success");
-      event.currentTarget.reset();
+      if (typeof form.reset === "function") {
+        form.reset();
+      }
       setSupportProblemType("");
       setAttachment(null);
     } catch (error) {

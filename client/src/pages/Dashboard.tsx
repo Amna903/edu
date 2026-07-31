@@ -49,7 +49,7 @@ function getDashboardMenu(role?: string | null, unreadNotifications = 0) {
   }
 
   if (role === "admin") {
-    return [...common, { href: "/dashboard/admin/analytics", label: "Analytics", icon: Shield }];
+    return [...common, { href: "/dashboard/admin/forms", label: "Forms", icon: FileText }, { href: "/dashboard/admin/analytics", label: "Analytics", icon: Shield }];
   }
 
   return common;
