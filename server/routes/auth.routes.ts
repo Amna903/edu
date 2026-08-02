@@ -92,9 +92,15 @@ export function registerAuthRoutes(app: Express, ctx: RouteContext) {
         }).catch(() => undefined);
       }).catch(() => undefined);
 
+      // ==========================================
+      // SSO LOGIC START: DO NOT CHANGE
+      // ==========================================
       req.session.moodleToken = result.token;
       req.session.moodlePrivateToken = result.privateToken ?? undefined;
       req.session.user = result.user;
+      // ==========================================
+      // SSO LOGIC END
+      // ==========================================
 
       const pendingCountry = await storage.takeRegistrationCountryForUsername(result.user.username);
       if (pendingCountry) {
@@ -160,9 +166,15 @@ export function registerAuthRoutes(app: Express, ctx: RouteContext) {
           username: input.username,
           password: input.password,
         });
+        // ==========================================
+        // SSO LOGIC START: DO NOT CHANGE
+        // ==========================================
         req.session.moodleToken = loginResult.token;
         req.session.moodlePrivateToken = loginResult.privateToken ?? undefined;
         req.session.user = loginResult.user;
+        // ==========================================
+        // SSO LOGIC END
+        // ==========================================
         const scholarshipCountry = normalizeScholarshipCountry(input.country);
         if (scholarshipCountry) {
           await storage.setRegisteredCountry(loginResult.user.id, scholarshipCountry).catch((error) => {

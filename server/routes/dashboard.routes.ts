@@ -450,4 +450,137 @@ export function registerDashboardRoutes(app: Express, ctx: RouteContext) {
     }
   });
 
+  // ==========================================
+  // SSO LOGIC START: DO NOT CHANGE
+  // ==========================================
+  app.get("/api/dashboard/student/course-login/:id", async (req, res) => {
+    try {
+      const courseId = Number(req.params.id);
+      if (!Number.isFinite(courseId)) {
+        return res.status(400).json({ message: "Invalid course id" });
+      }
+
+      const fallbackUrl = `${env.moodle.baseUrl}/course/view.php?id=${courseId}`;
+
+      if (!req.session.user || !req.session.moodleToken) {
+        return res.redirect(fallbackUrl);
+      }
+
+      if (!req.session.moodlePrivateToken) {
+        return res.redirect(fallbackUrl);
+      }
+
+      const params = new URLSearchParams({
+  wstoken: req.session.moodleToken,
+  wsfunction: "tool_mobile_get_autologin_key",
+  moodlewsrestformat: "json",
+  privatetoken: req.session.moodlePrivateToken,
+  userid: String(req.session.user.id), 
+});
+
+      const response = await fetch(`${env.moodle.baseUrl}/webservice/rest/server.php`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "User-Agent": "MoodleMobile",
+        },
+        body: params.toString(),
+      });
+
+      if (!response.ok) {
+        console.error(`[SSO Error] HTTP ${response.status} from Moodle`);
+        return res.redirect(fallbackUrl);
+      }
+
+      const data = await response.json();
+      if (data.exception || !data.autologinurl) {
+        console.error("[SSO Error] Moodle exception:", data);
+        return res.redirect(fallbackUrl);
+      }
+
+      const autologinUrl = new URL(data.autologinurl);
+      if (!autologinUrl.searchParams.has('userid') && req.session.user?.id) {
+        autologinUrl.searchParams.set('userid', req.session.user.id.toString());
+      }
+      if (!autologinUrl.searchParams.has('key') && data.key) {
+        autologinUrl.searchParams.set('key', data.key);
+      }
+      autologinUrl.searchParams.set('wantsurl', `/course/view.php?id=${courseId}`);
+      const finalUrl = autologinUrl.toString();
+      console.log(`[SSO] Redirecting course-login to:`, finalUrl);
+      return res.redirect(finalUrl);
+
+    } catch (err) {
+      const courseId = req.params.id;
+      const fallbackUrl = `${env.moodle.baseUrl}/course/view.php?id=${courseId}`;
+      return res.redirect(fallbackUrl);
+    }
+  });
+  // ==========================================
+  // SSO LOGIC END
+  // ==========================================
+
+  // ==========================================
+  // SSO LOGIC START: DO NOT CHANGE
+  // ==========================================
+  app.get("/api/dashboard/student/sso-login", async (req, res) => {
+    try {
+      const fallbackUrl = `${env.moodle.baseUrl}/my`;
+
+      if (!req.session.user || !req.session.moodleToken) {
+        return res.redirect(fallbackUrl);
+      }
+
+      if (!req.session.moodlePrivateToken) {
+        return res.redirect(fallbackUrl);
+      }
+
+      const params = new URLSearchParams({
+        wstoken: req.session.moodleToken,
+        wsfunction: "tool_mobile_get_autologin_key",
+        moodlewsrestformat: "json",
+        privatetoken: req.session.moodlePrivateToken,
+      });
+
+      const response = await fetch(`${env.moodle.baseUrl}/webservice/rest/server.php`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "User-Agent": "MoodleMobile",
+        },
+        body: params.toString(),
+      });
+
+      if (!response.ok) {
+        console.error(`[SSO Error] HTTP ${response.status} from Moodle`);
+        return res.redirect(fallbackUrl);
+      }
+
+      const data = await response.json();
+      if (data.exception || !data.autologinurl) {
+        console.error("[SSO Error] Moodle exception:", data);
+        return res.redirect(fallbackUrl);
+      }
+
+      const autologinUrl = new URL(data.autologinurl);
+      if (!autologinUrl.searchParams.has('userid') && req.session.user?.id) {
+        autologinUrl.searchParams.set('userid', req.session.user.id.toString());
+      }
+      if (!autologinUrl.searchParams.has('key') && data.key) {
+        autologinUrl.searchParams.set('key', data.key);
+      }
+      autologinUrl.searchParams.set('wantsurl', '/my/');
+      const finalUrl = autologinUrl.toString();
+      console.log(`[SSO] Redirecting sso-login to:`, finalUrl);
+      return res.redirect(finalUrl);
+
+    } catch (err) {
+      const fallbackUrl = `${env.moodle.baseUrl}/my`;
+      return res.redirect(fallbackUrl);
+    }
+  });
+  // ==========================================
+  // SSO LOGIC END
+  // ==========================================
+
 }

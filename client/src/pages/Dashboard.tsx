@@ -611,7 +611,13 @@ export default function Dashboard() {
                   )}
                   {user.role === "student" && (
                     <>
-                      <Link href="/dashboard/student"><div className="cursor-pointer rounded-xl bg-white px-3 py-2 font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700">Continue learning</div></Link>
+                      {/* ========================================== */}
+                      {/* SSO LOGIC START: DO NOT CHANGE */}
+                      {/* ========================================== */}
+                      <a href="/api/dashboard/student/sso-login" target="_blank" rel="noopener noreferrer"><div className="cursor-pointer rounded-xl bg-white px-3 py-2 font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700">Continue learning</div></a>
+                      {/* ========================================== */}
+                      {/* SSO LOGIC END */}
+                      {/* ========================================== */}
                       <Link href="/dashboard/student/certificates"><div className="cursor-pointer rounded-xl bg-white px-3 py-2 font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700">Open certificates</div></Link>
                     </>
                   )}
