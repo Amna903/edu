@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 const COUNTRY_CURRENCY: Record<string, string> = {
   PK: "PKR",
   US: "USD",
@@ -5,6 +7,14 @@ const COUNTRY_CURRENCY: Record<string, string> = {
   AE: "AED",
   SA: "SAR",
 };
+
+const EUROZONE_COUNTRIES = [
+  "DE", "FR", "IT", "ES", "NL", "BE", "AT", "IE", "PT", "FI",
+  "GR", "LU", "SI", "SK", "EE", "LV", "LT", "CY", "MT", "HR",
+];
+for (const country of EUROZONE_COUNTRIES) {
+  COUNTRY_CURRENCY[country] = "EUR";
+}
 
 function countryFromLocale(locale?: string | null): string | null {
   if (!locale) return null;
@@ -30,25 +40,84 @@ function detectCountryCode(): string {
     if (timezone.includes("Karachi")) return "PK";
   }
 
-  return "US";
+  return "PK";
 }
 
 export function getCurrencyCode(countryCode?: string): string {
   const code = (countryCode || detectCountryCode()).toUpperCase();
-  return COUNTRY_CURRENCY[code] || "USD";
+  // Unmapped countries fall back to PKR (the real, always-accurate charge
+  // currency) rather than guessing a foreign currency we can't convert to.
+  return COUNTRY_CURRENCY[code] || "PKR";
+}
+
+// Live PKR exchange rates are for display only: courses are priced in PKR
+// and PayFast Pakistan only ever settles in PKR, so the amount actually
+// charged never changes. This just shows visitors a converted estimate.
+type RatesState = { rates: Record<string, number>; updatedAt: number } | null;
+let ratesState: RatesState = null;
+let ratesFetch: Promise<void> | null = null;
+const subscribers = new Set<() => void>();
+
+function notifySubscribers() {
+  subscribers.forEach((listener) => listener());
+}
+
+function loadExchangeRates(): Promise<void> {
+  if (ratesFetch) return ratesFetch;
+
+  ratesFetch = fetch("/api/currency/rates")
+    .then((res) => (res.ok ? res.json() : null))
+    .then((data: { rates?: Record<string, number> } | null) => {
+      if (data?.rates) {
+        ratesState = { rates: data.rates, updatedAt: Date.now() };
+        notifySubscribers();
+      }
+    })
+    .catch(() => {
+      // Leave ratesState as-is; formatMoneyFromMinorUnits falls back to PKR.
+    })
+    .finally(() => {
+      ratesFetch = null;
+    });
+
+  return ratesFetch;
+}
+
+// Call once near the app root so components using formatMoneyFromMinorUnits
+// re-render automatically once live rates arrive.
+export function useCurrencyRates() {
+  const [, forceRerender] = useState(0);
+
+  useEffect(() => {
+    if (!ratesState) loadExchangeRates();
+    const listener = () => forceRerender((n) => n + 1);
+    subscribers.add(listener);
+    return () => {
+      subscribers.delete(listener);
+    };
+  }, []);
 }
 
 export function formatMoneyFromMinorUnits(amountInMinorUnits: number, countryCode?: string): string {
   const currency = getCurrencyCode(countryCode);
-  const majorAmount = Number.isFinite(amountInMinorUnits) ? amountInMinorUnits / 100 : 0;
+  const majorAmountPkr = Number.isFinite(amountInMinorUnits) ? amountInMinorUnits / 100 : 0;
 
   if (currency === "PKR") {
-    return `Rs ${majorAmount.toFixed(2)}`;
+    return `Rs ${majorAmountPkr.toFixed(2)}`;
   }
 
+  const rate = ratesState?.rates[currency];
+  if (!rate) {
+    if (!ratesState) loadExchangeRates();
+    // No live rate yet (or unsupported currency) — show the real PKR amount
+    // rather than mislabeling it with a foreign currency symbol.
+    return `Rs ${majorAmountPkr.toFixed(2)}`;
+  }
+
+  const converted = majorAmountPkr * rate;
   return new Intl.NumberFormat(undefined, {
     style: "currency",
     currency,
     maximumFractionDigits: 2,
-  }).format(majorAmount);
+  }).format(converted);
 }

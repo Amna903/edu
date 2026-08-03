@@ -351,10 +351,12 @@ export function registerPaymentRoutes(app: Express, ctx: RouteContext) {
         createdAt: new Date(),
       });
 
-      const origin = buildOrigin(req.get("host") || "localhost:3001", req.protocol);
-
+      // DO NOT CHANGE: checkoutUrl must stay a relative path, not an absolute URL built
+      // via buildOrigin()/NEXT_PUBLIC_URL. An absolute URL sends the browser to a
+      // different origin than the one holding the session cookie (e.g. redirects to
+      // production while testing on localhost), causing "Not authenticated" on checkout.
       res.json({
-        checkoutUrl: `${origin}/api/payments/payfast/checkout/${encodeURIComponent(orderRef)}`,
+        checkoutUrl: `/api/payments/payfast/checkout/${encodeURIComponent(orderRef)}`,
         orderRef,
         provider: "PayFast",
       });

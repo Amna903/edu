@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CartProvider } from "@/context/CartContext";
+import { useCurrencyRates } from "@/lib/currency";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import Pricing from "@/pages/Pricing";
@@ -190,6 +191,8 @@ function Router() {
 }
 
 function App() {
+  useCurrencyRates();
+
   return (
     <QueryClientProvider client={queryClient}>
       <CartProvider>

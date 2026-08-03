@@ -13,6 +13,7 @@ import { createCourseEnrollment, getUserCourseEnrollments } from "../repositorie
 import { enrolUserInCourse } from "../services/moodle/moodle-commerce.js";
 import { env } from "../config/config.js";
 import { prisma } from "../db/prisma.js";
+import { getPkrExchangeRates } from "../services/currency.js";
 
 
 export function registerMiscRoutes(app: Express, ctx: RouteContext) {
@@ -49,6 +50,15 @@ export function registerMiscRoutes(app: Express, ctx: RouteContext) {
     verifyRecaptchaScore,
     checkWorkbookPaymentConfirmation,
   } = ctx;
+
+  // === CURRENCY ===
+  // Display-only: courses are priced in PKR and PayFast Pakistan only ever
+  // settles in PKR. These rates are used to show visitors an estimated price
+  // in their local currency; the actual charge always uses the PKR amount.
+  app.get("/api/currency/rates", async (_req, res) => {
+    const { rates, updatedAt } = await getPkrExchangeRates();
+    res.json({ base: "PKR", rates, updatedAt });
+  });
 
   // === INQUIRIES ===
   app.post("/api/contact-submissions", async (req, res) => {
