@@ -175,6 +175,19 @@ const SCHOLARSHIP_COUNTRY_TO_MOODLE_ISO: Record<string, string> = {
   Haiti: "HT",
 };
 
+const REGISTRATION_COUNTRY_TO_MOODLE_ISO: Record<string, string> = {
+  Pakistan: "PK",
+  "United Arab Emirates": "AE",
+  "Saudi Arabia": "SA",
+  "United Kingdom": "GB",
+  "United States": "US",
+  Canada: "CA",
+  Malaysia: "MY",
+  Qatar: "QA",
+  Oman: "OM",
+  Other: "",
+};
+
 const MOODLE_ISO_TO_SCHOLARSHIP_COUNTRY = Object.fromEntries(
   Object.entries(SCHOLARSHIP_COUNTRY_TO_MOODLE_ISO).map(([name, iso]) => [
     iso.toUpperCase(),
@@ -185,7 +198,7 @@ const MOODLE_ISO_TO_SCHOLARSHIP_COUNTRY = Object.fromEntries(
 export function countryToMoodleIso(country: string): string | undefined {
   const normalized = normalizeScholarshipCountry(country);
   if (!normalized) return undefined;
-  return SCHOLARSHIP_COUNTRY_TO_MOODLE_ISO[normalized];
+  return SCHOLARSHIP_COUNTRY_TO_MOODLE_ISO[normalized] || REGISTRATION_COUNTRY_TO_MOODLE_ISO[normalized] || undefined;
 }
 
 /** Map Moodle/profile country value to a canonical scholarship list country name. */

@@ -180,7 +180,9 @@ async function moodlePost<T>(token: string, wsfunction: string, params: URLSearc
   });
 
   if (!response.ok) {
-    throw new Error(`Moodle request failed with status ${response.status}`);
+    const errorText = await response.text().catch(() => "");
+    const detail = errorText.trim().slice(0, 300);
+    throw new Error(detail ? `Moodle request failed with status ${response.status}: ${detail}` : `Moodle request failed with status ${response.status}`);
   }
 
   const data = await response.json();
@@ -189,6 +191,139 @@ async function moodlePost<T>(token: string, wsfunction: string, params: URLSearc
   }
 
   return data as T;
+}
+
+function parseMoodleCookieHeader(headers: Headers) {
+  const headersWithCookies = headers as Headers & { getSetCookie?: () => string[] };
+  const setCookieHeaders = typeof headersWithCookies.getSetCookie === "function"
+    ? headersWithCookies.getSetCookie()
+    : [];
+  const rawCookies = setCookieHeaders.length > 0 ? setCookieHeaders : [headers.get("set-cookie")].filter((value): value is string => Boolean(value));
+
+  return rawCookies
+    .map((cookie) => cookie.split(";")[0]?.trim())
+    .filter((cookie): cookie is string => Boolean(cookie))
+    .join("; ");
+}
+
+function extractMoodleSesskey(html: string) {
+  const cfgMatch = html.match(/M\.cfg\s*=\s*\{[\s\S]*?"sesskey"\s*:\s*"([^"]+)"/i);
+  if (cfgMatch?.[1]) {
+    return cfgMatch[1];
+  }
+
+  const patterns = [
+    /<input\b[^>]*name=["']sesskey["'][^>]*value=["']([^"']+)["'][^>]*>/i,
+    /<input\b[^>]*value=["']([^"']+)["'][^>]*name=["']sesskey["'][^>]*>/i,
+    /name=["']sesskey["'][^>]*value=["']([^"']+)["']/i,
+    /value=["']([^"']+)["'][^>]*name=["']sesskey["']/i,
+  ];
+
+  for (const pattern of patterns) {
+    const match = html.match(pattern);
+    if (match?.[1]) {
+      return match[1];
+    }
+  }
+
+  if (!html.toLowerCase().includes("sesskey")) {
+    throw new Error("Moodle signup page did not expose a sesskey");
+  }
+
+  throw new Error(`Moodle signup page sesskey could not be parsed: ${html.slice(0, 300).replace(/\s+/g, " ")}`);
+}
+
+async function fetchMoodleWithCookies(url: string, init: RequestInit, initialCookies = "") {
+  let currentUrl = url;
+  let cookieHeader = initialCookies;
+
+  for (let redirectCount = 0; redirectCount < 5; redirectCount += 1) {
+    const response = await fetch(currentUrl, {
+      ...init,
+      redirect: "manual",
+      headers: {
+        ...(init.headers || {}),
+        ...(cookieHeader ? { Cookie: cookieHeader } : {}),
+      },
+    });
+
+    const responseCookies = parseMoodleCookieHeader(response.headers);
+    if (responseCookies) {
+      cookieHeader = cookieHeader ? `${cookieHeader}; ${responseCookies}` : responseCookies;
+    }
+
+    const location = response.headers.get("location");
+    if (response.status >= 300 && response.status < 400 && location) {
+      currentUrl = new URL(location, currentUrl).toString();
+      continue;
+    }
+
+    return { response, cookieHeader };
+  }
+
+  throw new Error(`Moodle redirected too many times while requesting ${url}`);
+}
+
+async function submitMoodleSignupForm(input: {
+  username: string;
+  password: string;
+  firstname: string;
+  lastname: string;
+  email: string;
+  country?: string;
+}) {
+  const signupUrl = `${getBaseUrl()}/login/signup.php`;
+  const getResult = await fetchMoodleWithCookies(signupUrl, {
+    method: "GET",
+    headers: {
+      "User-Agent": "Edu/1.0",
+    },
+  });
+  const getResponse = getResult.response;
+
+  if (!getResponse.ok) {
+    const errorText = await getResponse.text().catch(() => "");
+    const detail = errorText.trim().slice(0, 300);
+    throw new Error(detail ? `Moodle signup page failed with status ${getResponse.status}: ${detail}` : `Moodle signup page failed with status ${getResponse.status}`);
+  }
+
+  const html = await getResponse.text();
+  const sesskey = extractMoodleSesskey(html);
+  const cookieHeader = getResult.cookieHeader;
+  const body = new URLSearchParams({
+    sesskey,
+    _qf__login_signup_form: "1",
+    username: input.username,
+    password: input.password,
+    email: input.email,
+    email2: input.email,
+    firstname: input.firstname,
+    lastname: input.lastname,
+    city: "",
+    country: input.country || "",
+    submitbutton: "Create my new account",
+  });
+
+  const postResult = await fetchMoodleWithCookies(signupUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      Origin: new URL(getBaseUrl()).origin,
+      Referer: signupUrl,
+      "User-Agent": "Edu/1.0",
+    },
+    body: body.toString(),
+  }, cookieHeader);
+  const postResponse = postResult.response;
+
+  const responseText = await postResponse.text().catch(() => "");
+  if (!postResponse.ok) {
+    const detail = responseText.trim().slice(0, 300);
+    throw new Error(detail ? `Moodle signup failed with status ${postResponse.status}: ${detail}` : `Moodle signup failed with status ${postResponse.status}`);
+  }
+
+  return responseText;
 }
 
 async function moodleUserExists(username: string) {
@@ -479,21 +614,26 @@ export async function loginWithMoodle(input: LoginInput): Promise<{ token: strin
   });
 
   const data = await moodleGet<MoodleLoginResponse>(`${getBaseUrl()}/login/token.php?${params.toString()}`);
-  if (data.error || !data.token) {
+  const token = String(data.token ?? "");
+  if (data.error || !token) {
     throw new Error(formatMoodleAuthError(data.error || "Invalid username or password", "login"));
   }
 
-  const user = await fetchCurrentUser(data.token);
+  const user = await fetchCurrentUser(token);
   return {
-    token: data.token,
+    token,
     privateToken: data.privatetoken || null,
     user,
   };
 }
 
 export async function registerWithMoodle(input: RegisterInput): Promise<RegisterWithMoodleResult> {
-  const normalizedUsername = input.username.trim().toLowerCase();
-  const normalizedEmail = input.email.trim().toLowerCase();
+  const normalizedUsername = String(input.username ?? "").trim().toLowerCase();
+  const normalizedEmail = String(input.email ?? "").trim().toLowerCase();
+  const password = String(input.password ?? "");
+  const firstName = String(input.firstname ?? "").trim();
+  const lastName = String(input.lastname ?? "").trim();
+  const moodleCountryIso = countryToMoodleIso(String(input.country ?? ""));
 
   const skipEmailConfirmation = !env.moodle.signupToken || env.moodle.skipEmailConfirmation;
   console.log("skipEmailConfirmation = ", skipEmailConfirmation);
@@ -502,8 +642,8 @@ export async function registerWithMoodle(input: RegisterInput): Promise<Register
     await rememberPendingSignup({
       username: normalizedUsername,
       email: normalizedEmail,
-      firstName: input.firstname.trim(),
-      lastName: input.lastname.trim(),
+      firstName,
+      lastName,
       role: input.role,
     });
   }
@@ -511,30 +651,71 @@ export async function registerWithMoodle(input: RegisterInput): Promise<Register
   if (!skipEmailConfirmation) {
     let signupSucceeded = false;
     try {
-      const signupResponse = await moodlePost<MoodleSignupResponse | boolean>(
-        env.moodle.signupToken,
-        "auth_email_signup_user",
-        new URLSearchParams({
-          username: normalizedUsername,
-          password: input.password,
-          firstname: input.firstname.trim(),
-          lastname: input.lastname.trim(),
-          email: normalizedEmail,
-        }),
-      );
+      const signupUrl = `${getBaseUrl()}/login/signup.php`;
+      const getResponse = await fetch(signupUrl, {
+        method: "GET",
+        headers: {
+          "User-Agent": "Edu/1.0",
+        },
+      });
 
-      signupSucceeded =
-        signupResponse === true ||
-        (typeof signupResponse === "object" && signupResponse !== null && signupResponse.success === true);
+      if (!getResponse.ok) {
+        const errorText = await getResponse.text().catch(() => "");
+        const detail = errorText.trim().slice(0, 300);
+        throw new Error(detail ? `Moodle signup page failed with status ${getResponse.status}: ${detail}` : `Moodle signup page failed with status ${getResponse.status}`);
+      }
+
+      const html = await getResponse.text();
+      const sesskey = extractMoodleSesskey(html);
+      const cookieHeader = parseMoodleCookieHeader(getResponse.headers);
+      const postBody = new URLSearchParams({
+        sesskey,
+        _qf__login_signup_form: "1",
+        username: normalizedUsername,
+        password,
+        email: normalizedEmail,
+        email2: normalizedEmail,
+        firstname: firstName,
+        lastname: lastName,
+        city: "",
+        submitbutton: "Create my new account",
+      });
+
+      if (moodleCountryIso) {
+        postBody.set("country", moodleCountryIso);
+      }
+
+      const postResponse = await fetch(signupUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          Origin: new URL(getBaseUrl()).origin,
+          Referer: signupUrl,
+          ...(cookieHeader ? { Cookie: cookieHeader } : {}),
+          "User-Agent": "Edu/1.0",
+        },
+        body: postBody.toString(),
+        redirect: "follow",
+      });
+
+      const responseText = await postResponse.text().catch(() => "");
+      if (!postResponse.ok) {
+        const detail = responseText.trim().slice(0, 300);
+        throw new Error(detail ? `Moodle signup failed with status ${postResponse.status}: ${detail}` : `Moodle signup failed with status ${postResponse.status}`);
+      }
+
+      signupSucceeded = true;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message.toLowerCase() : String(error).toLowerCase();
+      if (errorMessage.includes("already") || errorMessage.includes("taken")) {
+        const userAlreadyCreated = await moodleUserExists(normalizedUsername);
+        if (userAlreadyCreated) {
+          signupSucceeded = true;
+        }
+      }
 
       if (!signupSucceeded) {
-        console.log("[moodle] Signup response:", signupResponse);
-      }
-    } catch (error) {
-      const userAlreadyCreated = await moodleUserExists(normalizedUsername);
-      if (userAlreadyCreated) {
-        signupSucceeded = true;
-      } else {
         throw error;
       }
     }
@@ -564,9 +745,9 @@ export async function registerWithMoodle(input: RegisterInput): Promise<Register
     "users[0][preferences][0][value]": "0",
   });
   const scholarshipCountry = normalizeScholarshipCountry(input.country);
-  const moodleCountryIso = scholarshipCountry ? countryToMoodleIso(scholarshipCountry) : undefined;
-  if (moodleCountryIso) {
-    createParams.append("users[0][country]", moodleCountryIso);
+  const creationCountryIso = scholarshipCountry ? countryToMoodleIso(scholarshipCountry) : undefined;
+  if (creationCountryIso) {
+    createParams.append("users[0][country]", creationCountryIso);
   }
 
   const result = await moodlePostWithTokenFallback<MoodleCreateUserRow[]>(
