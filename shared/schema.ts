@@ -306,7 +306,7 @@ export const profileUpdateInputSchema = z.object({
   lastname: z.string().min(1, "Last name is required"),
   email: z.string().email("Valid email is required").optional(),
   city: z.string().optional().default(""),
-  country: z.string().optional().default(""),
+  country: z.string().min(1, "Country is required"),
   phone: z.string().optional().default(""),
   description: z.string().optional().default(""),
 });

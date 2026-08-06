@@ -2,8 +2,6 @@ import type { Express } from "express";
 import { z } from "zod";
 import { api } from "../../shared/routes.js";
 import type { RouteContext } from "./context.js";
-
-import { randomUUID } from "crypto";
 import { storage } from "../db/storage.js";
 import {
   markNotificationReadInputSchema,
@@ -12,10 +10,12 @@ import {
   passwordChangeInputSchema,
   insertInquirySchema,
 } from "../../shared/schema.js";
+import { uploadSingleImage, handleUserProfileImageUpload, isS3Configured } from "../services/s3-upload.js";
 import { getLmsCourseById, getLmsCourses, getLmsCourseBySlug, getLmsCourseDetail } from "../services/moodle/moodle.js";
 import { createCourseEnrollment, getUserCourseEnrollments } from "../repositories/course-store.js";
 import { enrolUserInCourse } from "../services/moodle/moodle-commerce.js";
 import { changeMoodlePassword, fetchCurrentUser, updateMoodleProfile } from "../services/moodle/moodle-auth.js";
+import { countryToMoodleIso, normalizeScholarshipCountry } from "../../shared/scholarship-concessions.js";
 import {
   getStudentActivityTimelineForDashboard,
   getStudentCertificatesForDashboard,
@@ -81,6 +81,50 @@ export function registerDashboardRoutes(app: Express, ctx: RouteContext) {
     res.json({ success: true });
   });
 
+  app.post("/api/profile/upload-image", uploadSingleImage, async (req, res) => {
+    try {
+      if (!req.session.user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+
+      if (!isS3Configured()) {
+        return res.json({ configured: false });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({ message: "No image file provided" });
+      }
+
+      // Upload process
+      const result = await handleUserProfileImageUpload(
+        req.session.user.id,
+        req.file,
+        req.session.user,
+        req.session.moodleToken
+      );
+      // Upload ke baad DB se fetch karein
+      const updatedUser = await prisma.user.findUnique({
+        where: { moodleUserId: req.session.user.id },
+        select: { id: true, username: true, profileImage: true }
+      });
+      console.log("✅ [Profile Image] DB after update:", updatedUser);
+      if (!result.success) {
+        return res.status(result.status).json({ message: result.message });
+      }
+
+      return res.json({
+        url: result.imageUrl,
+        message: "Profile image updated successfully"
+      });
+
+    } catch (error) {
+      console.error("[Profile Image] Route Error:", error);
+      return res.status(500).json({
+        message: error instanceof Error ? error.message : "Failed to upload profile image",
+      });
+    }
+  });
   app.post("/api/support/ai", async (req, res) => {
     try {
       if (!req.session.user) {
@@ -149,25 +193,77 @@ export function registerDashboardRoutes(app: Express, ctx: RouteContext) {
       }
 
       const input = profileUpdateInputSchema.parse(req.body);
+      console.log("🔍 [Profile Update] Input received:", {
+        firstname: input.firstname,
+        lastname: input.lastname,
+        city: input.city,
+        country: input.country,
+        phone: input.phone,
+        description: input.description,
+      });
+
       const usernameAsEmail = /\S+@\S+\.\S+/.test(req.session.user.username) ? req.session.user.username : "";
       const lockedEmail = req.session.user.email || input.email || usernameAsEmail;
       if (!lockedEmail) {
         return res.status(400).json({ message: "Email is missing for this account. Please contact support." });
       }
-      await updateMoodleProfile(req.session.user.id, {
-        firstname: input.firstname,
-        lastname: input.lastname,
-        email: lockedEmail,
-        city: input.city,
-        country: input.country,
-        phone: input.phone,
-        description: input.description,
-      }, req.session.moodleToken);
 
+      // 1. Moodle ke liye ISO convert karein
+      const isoCountry = countryToMoodleIso(input.country);
+      console.log("🔍 [Profile Update] Country conversion:", {
+        inputCountry: input.country,
+        isoCountry: isoCountry,
+        finalCountry: isoCountry || input.country,
+      });
+
+      console.log("🔍 [Profile Update] Calling updateMoodleProfile with country:", isoCountry || input.country);
+      await updateMoodleProfile(
+        req.session.user.id,
+        {
+          firstname: input.firstname,
+          lastname: input.lastname,
+          email: lockedEmail,
+          city: input.city,
+          country: isoCountry || input.country,
+          phone: input.phone,
+          description: input.description,
+        },
+        req.session.moodleToken
+      );
+      console.log("✅ [Profile Update] updateMoodleProfile completed successfully");
+
+      // 2. Local DB mein country save karein
+      const scholarshipCountry = normalizeScholarshipCountry(input.country);
+      if (scholarshipCountry) {
+        console.log("🔍 [Profile Update] Saving country to local DB:", {
+          moodleUserId: req.session.user.id,
+          country: scholarshipCountry,
+        });
+        await storage.setRegisteredCountry(req.session.user.id, scholarshipCountry).catch((error) => {
+          console.warn(
+            "[dashboard] Failed to persist registered country after profile update:",
+            error instanceof Error ? error.message : String(error),
+          );
+        });
+        console.log("✅ [Profile Update] Local DB save completed");
+      } else {
+        console.log("ℹ️ [Profile Update] No scholarship country to save (normalize returned null)");
+      }
+
+      // 3. Moodle se fresh user data fetch karein
+      console.log("🔍 [Profile Update] Fetching updated user from Moodle...");
       const user = await fetchCurrentUser(req.session.moodleToken);
+      console.log("✅ [Profile Update] User fetched from Moodle:", {
+        id: user.id,
+        username: user.username,
+        country: user.country,
+        city: user.city,
+      });
+
       req.session.user = user;
       res.json(user);
     } catch (err) {
+      console.error("❌ [Profile Update] Error occurred:", err);
       if (err instanceof z.ZodError) {
         return res.status(400).json({
           message: err.errors[0].message,
@@ -199,6 +295,7 @@ export function registerDashboardRoutes(app: Express, ctx: RouteContext) {
           description: req.body?.description || currentUser.description || null,
         };
         req.session.user = user;
+        console.log("🔄 [Profile Update] Fallback user set:", { country: user.country });
         return res.json(user);
       }
 
@@ -207,7 +304,6 @@ export function registerDashboardRoutes(app: Express, ctx: RouteContext) {
       });
     }
   });
-
   app.post(api.auth.changePassword.path, async (req, res) => {
     try {
       if (!req.session.user) {
@@ -450,8 +546,8 @@ export function registerDashboardRoutes(app: Express, ctx: RouteContext) {
     }
   });
 
-  // ==========================================
-  // SSO LOGIC START: DO NOT CHANGE
+ // ==========================================
+  // SSO LOGIC START: COURSE LOGIN
   // ==========================================
   app.get("/api/dashboard/student/course-login/:id", async (req, res) => {
     try {
@@ -463,78 +559,16 @@ export function registerDashboardRoutes(app: Express, ctx: RouteContext) {
       const fallbackUrl = `${env.moodle.baseUrl}/course/view.php?id=${courseId}`;
 
       if (!req.session.user || !req.session.moodleToken) {
+        console.error("❌ [SSO Course] Failed: User or moodleToken missing in session.");
         return res.redirect(fallbackUrl);
       }
 
       if (!req.session.moodlePrivateToken) {
+        console.error("❌ [SSO Course] Failed: moodlePrivateToken missing in session.");
         return res.redirect(fallbackUrl);
       }
 
-      const params = new URLSearchParams({
-  wstoken: req.session.moodleToken,
-  wsfunction: "tool_mobile_get_autologin_key",
-  moodlewsrestformat: "json",
-  privatetoken: req.session.moodlePrivateToken,
-  userid: String(req.session.user.id), 
-});
-
-      const response = await fetch(`${env.moodle.baseUrl}/webservice/rest/server.php`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          "User-Agent": "MoodleMobile",
-        },
-        body: params.toString(),
-      });
-
-      if (!response.ok) {
-        console.error(`[SSO Error] HTTP ${response.status} from Moodle`);
-        return res.redirect(fallbackUrl);
-      }
-
-      const data = await response.json();
-      if (data.exception || !data.autologinurl) {
-        console.error("[SSO Error] Moodle exception:", data);
-        return res.redirect(fallbackUrl);
-      }
-
-      const autologinUrl = new URL(data.autologinurl);
-      if (!autologinUrl.searchParams.has('userid') && req.session.user?.id) {
-        autologinUrl.searchParams.set('userid', req.session.user.id.toString());
-      }
-      if (!autologinUrl.searchParams.has('key') && data.key) {
-        autologinUrl.searchParams.set('key', data.key);
-      }
-      autologinUrl.searchParams.set('wantsurl', `/course/view.php?id=${courseId}`);
-      const finalUrl = autologinUrl.toString();
-      console.log(`[SSO] Redirecting course-login to:`, finalUrl);
-      return res.redirect(finalUrl);
-
-    } catch (err) {
-      const courseId = req.params.id;
-      const fallbackUrl = `${env.moodle.baseUrl}/course/view.php?id=${courseId}`;
-      return res.redirect(fallbackUrl);
-    }
-  });
-  // ==========================================
-  // SSO LOGIC END
-  // ==========================================
-
-  // ==========================================
-  // SSO LOGIC START: DO NOT CHANGE
-  // ==========================================
-  app.get("/api/dashboard/student/sso-login", async (req, res) => {
-    try {
-      const fallbackUrl = `${env.moodle.baseUrl}/my`;
-
-      if (!req.session.user || !req.session.moodleToken) {
-        return res.redirect(fallbackUrl);
-      }
-
-      if (!req.session.moodlePrivateToken) {
-        return res.redirect(fallbackUrl);
-      }
-
+      // 🔥 FIX: Removed 'userid' from params
       const params = new URLSearchParams({
         wstoken: req.session.moodleToken,
         wsfunction: "tool_mobile_get_autologin_key",
@@ -552,13 +586,77 @@ export function registerDashboardRoutes(app: Express, ctx: RouteContext) {
       });
 
       if (!response.ok) {
-        console.error(`[SSO Error] HTTP ${response.status} from Moodle`);
+        console.error(`❌ [SSO Course Error] HTTP ${response.status} from Moodle`);
         return res.redirect(fallbackUrl);
       }
 
       const data = await response.json();
       if (data.exception || !data.autologinurl) {
-        console.error("[SSO Error] Moodle exception:", data);
+        console.error("❌ [SSO Course Error] Moodle returned an exception:", data);
+        return res.redirect(fallbackUrl);
+      }
+
+      const autologinUrl = new URL(data.autologinurl);
+      if (!autologinUrl.searchParams.has('userid') && req.session.user?.id) {
+        autologinUrl.searchParams.set('userid', req.session.user.id.toString());
+      }
+      if (!autologinUrl.searchParams.has('key') && data.key) {
+        autologinUrl.searchParams.set('key', data.key);
+      }
+      autologinUrl.searchParams.set('wantsurl', `/course/view.php?id=${courseId}`);
+      const finalUrl = autologinUrl.toString();
+      console.log(`✅ [SSO Course] Success! Redirecting to:`, finalUrl);
+      return res.redirect(finalUrl);
+
+    } catch (err) {
+      console.error("❌ [SSO Course Error] Try/Catch triggered:", err);
+      const courseId = req.params.id;
+      const fallbackUrl = `${env.moodle.baseUrl}/course/view.php?id=${courseId}`;
+      return res.redirect(fallbackUrl);
+    }
+  });
+ // ==========================================
+  // SSO LOGIC START: MAIN SSO LOGIN
+  // ==========================================
+  app.get("/api/dashboard/student/sso-login", async (req, res) => {
+    try {
+      const fallbackUrl = `${env.moodle.baseUrl}/my`;
+
+      if (!req.session.user || !req.session.moodleToken) {
+        console.error("❌ [SSO Main] Failed: User or moodleToken missing in session.");
+        return res.redirect(fallbackUrl);
+      }
+
+      if (!req.session.moodlePrivateToken) {
+        console.error("❌ [SSO Main] Failed: moodlePrivateToken missing in session.");
+        return res.redirect(fallbackUrl);
+      }
+
+      // 🔥 FIX: Removed 'userid' from params
+      const params = new URLSearchParams({
+        wstoken: req.session.moodleToken,
+        wsfunction: "tool_mobile_get_autologin_key",
+        moodlewsrestformat: "json",
+        privatetoken: req.session.moodlePrivateToken,
+      });
+
+      const response = await fetch(`${env.moodle.baseUrl}/webservice/rest/server.php`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "User-Agent": "MoodleMobile",
+        },
+        body: params.toString(),
+      });
+
+      if (!response.ok) {
+        console.error(`❌ [SSO Main Error] HTTP ${response.status} from Moodle`);
+        return res.redirect(fallbackUrl);
+      }
+
+      const data = await response.json();
+      if (data.exception || !data.autologinurl) {
+        console.error("❌ [SSO Main Error] Moodle exception:", data);
         return res.redirect(fallbackUrl);
       }
 
@@ -571,16 +669,13 @@ export function registerDashboardRoutes(app: Express, ctx: RouteContext) {
       }
       autologinUrl.searchParams.set('wantsurl', '/my/');
       const finalUrl = autologinUrl.toString();
-      console.log(`[SSO] Redirecting sso-login to:`, finalUrl);
+      console.log(`✅ [SSO Main] Success! Redirecting sso-login to:`, finalUrl);
       return res.redirect(finalUrl);
 
     } catch (err) {
+      console.error("❌ [SSO Main Error] Try/Catch triggered:", err);
       const fallbackUrl = `${env.moodle.baseUrl}/my`;
       return res.redirect(fallbackUrl);
     }
   });
-  // ==========================================
-  // SSO LOGIC END
-  // ==========================================
-
 }

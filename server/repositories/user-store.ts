@@ -197,7 +197,7 @@ export async function syncUserFromMoodleSession(input: {
     // Keep login strict by default, but allow controlled auto-create flows (e.g. school seat assignment).
     if (!existingUser && !input.allowAutoCreate && input.role !== "admin") {
       console.log("User not found in local DB, but Moodle auth succeeded. User is not admin, rejecting.");
-      throw new Error("User does not exist in our database. Please register properly first to log in.");
+      throw new Error("No user associated with these credentials.");
     } else if (!existingUser && input.role === "admin") {
       console.log("Admin user found in Moodle but not in local DB! Auto-creating local admin record with Moodle ID:", input.moodleUserId);
     }

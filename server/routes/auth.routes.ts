@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { z } from "zod";
 import { api } from "../../shared/routes.js";
 import type { RouteContext } from "./context.js";
+import { prisma } from "../db/prisma.js";
 
 import { storage } from "../db/storage.js";
 import {
@@ -9,7 +10,7 @@ import {
 
   registerInputSchema
 } from "../../shared/schema.js";
-import {  fetchCurrentUser, loginWithMoodle, registerWithMoodle, updateMoodleProfile } from "../services/moodle/moodle-auth.js";
+import { fetchCurrentUser, loginWithMoodle, registerWithMoodle, updateMoodleProfile } from "../services/moodle/moodle-auth.js";
 import { linkGuestDiagnosticToAccount } from "../services/diagnostics.js";
 import { countryToMoodleIso, normalizeScholarshipCountry } from "../../shared/scholarship-concessions.js";
 
@@ -244,7 +245,25 @@ export function registerAuthRoutes(app: Express, ctx: RouteContext) {
         return res.status(401).json({ message: "Not authenticated" });
       }
 
-      const user = await fetchCurrentUser(req.session.moodleToken);
+      // const user = await fetchCurrentUser(req.session.moodleToken);
+      // 1. Moodle se fetch
+    const moodleUser = await fetchCurrentUser(req.session.moodleToken);
+    console.log("📸 Moodle user:", moodleUser.id, "profileImage:", moodleUser.profileImageUrl);
+    
+    // 2. Local DB se fetch
+    const localUser = await prisma.user.findUnique({
+      where: { moodleUserId: moodleUser.id },
+      select: { profileImage: true },
+    });
+    console.log("📸 Local DB profileImage:", localUser?.profileImage);
+
+    // 3. Merge (Local DB priority)
+    const user = {
+      ...moodleUser,
+      profileImage: localUser?.profileImage || moodleUser.profileImageUrl,
+      profileImageUrl: localUser?.profileImage || moodleUser.profileImageUrl,
+    };
+    console.log("📸 Final response:", user.profileImage);
       req.session.user = user;
       await linkGuestDiagnosticToAccount({ moodleUserId: user.id, ip: getClientIp(req) }).catch(() => undefined);
       res.json(user);

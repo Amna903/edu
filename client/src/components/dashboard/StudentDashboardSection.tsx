@@ -193,7 +193,7 @@ export function StudentDashboardSection({ data, fullname }: StudentDashboardProp
                 </div>
                 {course.lastActivity && <p className="mt-2 text-xs text-slate-500">Last activity: {course.lastActivity}</p>}
                 <Button className="mt-3 w-full bg-[#2366c9] text-white hover:bg-[#1a4fa0]" asChild>
-                  <Link href={course.lmsCourseUrl || `/programs/${course.id}`}>{course.completed ? "View course" : "Continue"}</Link>
+                  <Link href={course.lmsCourseUrl || `/programs/${course.id}`}>{course.completed ? "View course" : "Continue Learning"}</Link>
                 </Button>
               </div>
             )) : (

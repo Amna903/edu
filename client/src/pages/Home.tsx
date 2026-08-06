@@ -143,7 +143,6 @@ export default function Home() {
                       <div className="text-[11px] tracking-[2px] uppercase font-bold text-blue-100">Mastery Cycle</div>
                       <div className="text-base font-bold">Diagnose, repair, master, retain.</div>
                     </div>
-                    <div className="text-[11px] font-bold text-slate-900 bg-blue-100 rounded-full px-2.5 py-1.5">Animated SVG</div>
                   </div>
 
                   <svg viewBox="0 0 420 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Animated mastery cycle visual">

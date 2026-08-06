@@ -1,7 +1,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { BarChart3, Bell, Check, CreditCard, Download, FileText, GraduationCap, LayoutDashboard, LifeBuoy, LogOut, Menu, RefreshCw, Shield, UserCircle2, Users, X } from "lucide-react";
+import { BarChart3, Bell, Check, CreditCard, Download, FileText, GraduationCap, LayoutDashboard, LifeBuoy, LogOut, Menu, Pencil, RefreshCw, Shield, UserCircle2, Users, X } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,7 @@ import { useAuthUser, useLogout } from "@/hooks/use-auth";
 import { useOrders } from "@/hooks/use-orders";
 import { useChangePassword, useUpdateProfile } from "@/hooks/use-profile";
 import { useAdminDashboard, useAdminUsers, useSuspendUser, useAssignRole, useResetPassword, useActivityLogs, useAdminCourses, useUpdateCoursePricing, useUpdateCourseVisibility, useUpdateCourseCategory, useSyncCourses, useSyncUsers, useDashboardNotifications, useLinkChild, useMarkNotificationRead, useParentDashboard, useSchoolDashboard, useStudentCertificates, useStudentDashboard, useSupportTickets } from "@/hooks/use-dashboard";
+import { normalizeScholarshipCountry, SCHOLARSHIP_COUNTRY_OPTIONS } from "@shared/scholarship-concessions";
 
 function getDashboardPath(role?: string | null) {
   if (role === "admin") return "/dashboard/admin";
@@ -55,11 +56,40 @@ function getDashboardMenu(role?: string | null, unreadNotifications = 0) {
   return common;
 }
 
-function getRoleTitle(role?: string | null) {
-  if (role === "admin") return "Platform Operations Dashboard";
-  if (role === "parent") return "Parent Success Dashboard";
-  if (role === "school") return "School Leadership Dashboard";
-  return "Student Learning Dashboard";
+// function getRoleTitle(role?: string | null) {
+//   if (role === "admin") return "Platform Operations Dashboard";
+//   if (role === "parent") return "Parent Success Dashboard";
+//   if (role === "school") return "School Leadership Dashboard";
+//   return "Student Learning Dashboard";
+// }
+function getDashboardEyebrow(role?: string | null) {
+  if (role === "admin") return "Admin Dashboard";
+  if (role === "parent") return "Parent Dashboard";
+  if (role === "school") return "School Dashboard";
+  return "Student Dashboard";
+}
+const REGISTRATION_COUNTRY_OPTIONS = ["Pakistan", "United Arab Emirates", "Saudi Arabia", "United Kingdom", "United States", "Canada", "Malaysia", "Qatar", "Oman"];
+const REGISTRATION_MOODLE_ISO_TO_COUNTRY: Record<string, string> = {
+  AE: "United Arab Emirates",
+  CA: "Canada",
+  GB: "United Kingdom",
+  MY: "Malaysia",
+  OM: "Oman",
+  PK: "Pakistan",
+  QA: "Qatar",
+  SA: "Saudi Arabia",
+  US: "United States",
+};
+const PROFILE_COUNTRY_OPTIONS = [
+  ...SCHOLARSHIP_COUNTRY_OPTIONS,
+  ...REGISTRATION_COUNTRY_OPTIONS.filter((country) => !SCHOLARSHIP_COUNTRY_OPTIONS.includes(country)),
+  "Other",
+];
+
+function normalizeProfileCountry(country?: string | null) {
+  const value = country?.trim();
+  if (!value) return "";
+  return normalizeScholarshipCountry(value) || REGISTRATION_MOODLE_ISO_TO_COUNTRY[value.toUpperCase()] || value;
 }
 
 function CourseImage({ imageUrl, title }: { imageUrl?: string | null; title: string }) {
@@ -98,7 +128,7 @@ function CourseImage({ imageUrl, title }: { imageUrl?: string | null; title: str
 
 export default function Dashboard() {
   const [location, navigate] = useLocation();
-  const { data: user, isLoading } = useAuthUser();
+  const { data: user, isLoading, refetch } = useAuthUser();
   const logout = useLogout();
   const { data: orders } = useOrders();
   const updateProfile = useUpdateProfile();
@@ -122,6 +152,7 @@ export default function Dashboard() {
     phone: "",
     description: "",
   });
+  const [profileSuccess, setProfileSuccess] = useState("");
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: "",
     newPassword: "",
@@ -161,6 +192,20 @@ export default function Dashboard() {
   const syncCourses = useSyncCourses();
   const syncUsers = useSyncUsers();
   const [courseDrafts, setCourseDrafts] = useState<Record<string, { price: string; categoryId: string; categoryName: string }>>({});
+
+  useEffect(() => {
+    if (user) {
+      setProfileForm({
+        firstname: user?.firstname || "",
+        lastname: user?.lastname || "",
+        email: user?.email || (user?.username?.includes("@") ? user.username : ""),
+        city: user?.city || "",
+        country: normalizeProfileCountry(user?.country),
+        phone: user?.phone || "",
+        description: user?.description || "",
+      });
+    }
+  }, [user]);
 
   useEffect(() => {
     if (selectedTicketId !== null) {
@@ -282,15 +327,33 @@ export default function Dashboard() {
     })();
   }, [location, studentDashboard.data, user]);
 
-  const effectiveProfile = {
-    firstname: profileForm.firstname || user?.firstname || "",
-    lastname: profileForm.lastname || user?.lastname || "",
+  
+  const userProfile = {
+    firstname: user?.firstname || "",
+    lastname: user?.lastname || "",
     email: user?.email || (user?.username?.includes("@") ? user.username : ""),
-    city: profileForm.city || user?.city || "",
-    country: profileForm.country || user?.country || "",
-    phone: profileForm.phone || user?.phone || "",
-    description: profileForm.description || user?.description || "",
+    city: user?.city || "",
+    country: normalizeProfileCountry(user?.country),
+    phone: user?.phone || "",
+    description: user?.description || "",
   };
+
+  const profileRequiredMissing =
+    !profileForm.firstname.trim() ||
+    !profileForm.lastname.trim() ||
+    !profileForm.country.trim();
+
+  const profileCountryOptions = PROFILE_COUNTRY_OPTIONS.includes(profileForm.country)
+    ? PROFILE_COUNTRY_OPTIONS
+    : [profileForm.country, ...PROFILE_COUNTRY_OPTIONS].filter(Boolean);
+
+  const hasChanges =
+    profileForm.firstname !== userProfile.firstname ||
+    profileForm.lastname !== userProfile.lastname ||
+    profileForm.city !== userProfile.city ||
+    profileForm.country !== userProfile.country ||
+    profileForm.phone !== userProfile.phone ||
+    profileForm.description !== userProfile.description;
 
   const [launchingCourseId, setLaunchingCourseId] = useState<number | null>(null);
 
@@ -303,11 +366,11 @@ export default function Dashboard() {
     }
 
     setLaunchingCourseId(courseId);
-    
+
     // The lmsCourseUrl is our proxy route /api/dashboard/student/course-login/:id
     // which handles the auto-login logic on the server
     newWindow.location.href = lmsCourseUrl;
-    
+
     // Clear loading state after a delay
     setTimeout(() => setLaunchingCourseId(null), 2000);
   };
@@ -473,8 +536,7 @@ export default function Dashboard() {
         ].filter(Boolean);
 
         throw new Error(
-          `${typeof body.message === "string" ? body.message : `Webhook test failed with status ${response.status}`}${
-            detailParts.length ? ` | ${detailParts.join(" | ")}` : ""
+          `${typeof body.message === "string" ? body.message : `Webhook test failed with status ${response.status}`}${detailParts.length ? ` | ${detailParts.join(" | ")}` : ""
           }`,
         );
       }
@@ -583,9 +645,8 @@ export default function Dashboard() {
                   return (
                     <Link key={item.href} href={item.href}>
                       <div
-                        className={`flex cursor-pointer items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition ${
-                          active ? "bg-brand-primary text-white shadow-lg shadow-blue-100" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                        }`}
+                        className={`flex cursor-pointer items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition ${active ? "bg-brand-primary text-white shadow-lg shadow-blue-100" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                          }`}
                       >
                         <Icon className="h-4 w-4" />
                         <span>{item.label}</span>
@@ -650,9 +711,9 @@ export default function Dashboard() {
 
             <section className="space-y-6">
               <DashboardHero
-                eyebrow="Edu Dashboard"
-                title={getRoleTitle(user.role)}
-                description="A role-focused workspace for operations, learner progress, and institutional performance."
+  eyebrow={getDashboardEyebrow(user.role)}
+  title={`Welcome back, ${user.firstname || user.fullname.split(" ")[0]}!`}
+  description="A role-focused workspace for operations, learner progress, and institutional performance."
                 actions={user.role === "student" ? (
                   <div className="space-y-3">
                     <div className="flex flex-wrap items-center gap-3">
@@ -686,14 +747,14 @@ export default function Dashboard() {
                 ) : null}
                 right={(
                   <>
-                    <div className="rounded-3xl bg-white p-4 shadow-sm">
+                    {/* <div className="rounded-3xl bg-white p-4 shadow-sm">
                       <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Username</p>
                       <p className="mt-2 font-bold text-slate-900">{user?.username}</p>
                     </div>
                     <div className="rounded-3xl bg-white p-4 shadow-sm">
                       <p className="text-xs uppercase tracking-[0.18em] text-slate-400">User ID</p>
                       <p className="mt-2 font-bold text-slate-900">{user?.id}</p>
-                    </div>
+                    </div> */}
                   </>
                 )}
               />
@@ -916,94 +977,94 @@ export default function Dashboard() {
                       </form>
                       <p className="text-xs text-slate-500">Enter your child&apos;s registered email address. After linking, their enrolled courses and progress will appear below.</p>
 
-                  <div className="space-y-6">
-                    {parentChildren.map((child) => {
-                      const avgProgress = child.courses.length > 0
-                        ? Math.round(child.courses.reduce((sum, course) => sum + course.progress, 0) / child.courses.length)
-                        : 0;
+                      <div className="space-y-6">
+                        {parentChildren.map((child) => {
+                          const avgProgress = child.courses.length > 0
+                            ? Math.round(child.courses.reduce((sum, course) => sum + course.progress, 0) / child.courses.length)
+                            : 0;
 
-                      const gradedCourses = child.courses.filter((course) => course.grade !== "N/A" && course.grade !== "-");
-                      const averageMarks = child.courses.length > 0
-                        ? Math.round(child.courses.reduce((sum, course) => sum + course.percentage, 0) / child.courses.length)
-                        : 0;
+                          const gradedCourses = child.courses.filter((course) => course.grade !== "N/A" && course.grade !== "-");
+                          const averageMarks = child.courses.length > 0
+                            ? Math.round(child.courses.reduce((sum, course) => sum + course.percentage, 0) / child.courses.length)
+                            : 0;
 
-                      return (
-                        <Card key={child.id} id={`parent-child-${child.id}`} className="scroll-mt-28 border-slate-200 shadow-sm">
-                          <CardHeader className="border-b border-slate-100">
-                            <CardTitle>{child.name}</CardTitle>
-                            <p className="text-sm text-slate-500">{child.email}</p>
-                          </CardHeader>
-                          <CardContent className="space-y-5 p-6">
-                            <div className="grid gap-4 md:grid-cols-3">
-                              <div className="rounded-3xl bg-slate-50 p-4">
-                                <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Enrolled Courses</p>
-                                <p className="mt-2 text-2xl font-black text-slate-900">{child.courses.length}</p>
-                              </div>
-                              <div className="rounded-3xl bg-slate-50 p-4">
-                                <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Average Marks</p>
-                                <p className="mt-2 text-2xl font-black text-slate-900">{averageMarks}%</p>
-                              </div>
-                              <div className="rounded-3xl bg-slate-50 p-4">
-                                <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Graded Courses</p>
-                                <p className="mt-2 text-2xl font-black text-slate-900">{gradedCourses.length}</p>
-                              </div>
-                            </div>
+                          return (
+                            <Card key={child.id} id={`parent-child-${child.id}`} className="scroll-mt-28 border-slate-200 shadow-sm">
+                              <CardHeader className="border-b border-slate-100">
+                                <CardTitle>{child.name}</CardTitle>
+                                <p className="text-sm text-slate-500">{child.email}</p>
+                              </CardHeader>
+                              <CardContent className="space-y-5 p-6">
+                                <div className="grid gap-4 md:grid-cols-3">
+                                  <div className="rounded-3xl bg-slate-50 p-4">
+                                    <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Enrolled Courses</p>
+                                    <p className="mt-2 text-2xl font-black text-slate-900">{child.courses.length}</p>
+                                  </div>
+                                  <div className="rounded-3xl bg-slate-50 p-4">
+                                    <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Average Marks</p>
+                                    <p className="mt-2 text-2xl font-black text-slate-900">{averageMarks}%</p>
+                                  </div>
+                                  <div className="rounded-3xl bg-slate-50 p-4">
+                                    <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Graded Courses</p>
+                                    <p className="mt-2 text-2xl font-black text-slate-900">{gradedCourses.length}</p>
+                                  </div>
+                                </div>
 
-                            <div id="parent-children" className="space-y-3 scroll-mt-28">
-                              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">View Children Profiles</p>
-                              <p className="text-sm text-slate-600">This child is enrolled in the courses below.</p>
-                            </div>
+                                <div id="parent-children" className="space-y-3 scroll-mt-28">
+                                  <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">View Children Profiles</p>
+                                  <p className="text-sm text-slate-600">This child is enrolled in the courses below.</p>
+                                </div>
 
-                            <div id="parent-progress" className="space-y-3 scroll-mt-28">
-                              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">Monitor Progress</p>
-                              <div className="space-y-3">
-                                {child.courses.map((course) => (
-                                  <div key={`${child.id}-${course.id}-progress`} className="rounded-2xl border border-slate-200 p-4">
-                                    <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                                      <div>
-                                        <p className="font-semibold text-slate-900">{course.courseName}</p>
-                                        <p className="text-xs text-slate-500">Enrolled course</p>
+                                <div id="parent-progress" className="space-y-3 scroll-mt-28">
+                                  <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">Monitor Progress</p>
+                                  <div className="space-y-3">
+                                    {child.courses.map((course) => (
+                                      <div key={`${child.id}-${course.id}-progress`} className="rounded-2xl border border-slate-200 p-4">
+                                        <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                                          <div>
+                                            <p className="font-semibold text-slate-900">{course.courseName}</p>
+                                            <p className="text-xs text-slate-500">Enrolled course</p>
+                                          </div>
+                                          <p className="text-sm font-bold text-brand-primary">Progress {Math.round(course.progress)}%</p>
+                                        </div>
+                                        <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
+                                          <div className="h-full rounded-full bg-gradient-to-r from-brand-primary to-indigo-500" style={{ width: `${course.progress}%` }} />
+                                        </div>
                                       </div>
-                                      <p className="text-sm font-bold text-brand-primary">Progress {Math.round(course.progress)}%</p>
-                                    </div>
-                                    <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
-                                      <div className="h-full rounded-full bg-gradient-to-r from-brand-primary to-indigo-500" style={{ width: `${course.progress}%` }} />
-                                    </div>
+                                    ))}
+                                    {child.courses.length === 0 && <p className="text-sm text-slate-500">No course progress yet.</p>}
                                   </div>
-                                ))}
-                                {child.courses.length === 0 && <p className="text-sm text-slate-500">No course progress yet.</p>}
-                              </div>
-                            </div>
+                                </div>
 
-                            <div id="parent-grades" className="space-y-3 scroll-mt-28">
-                              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">View Grades / Marks</p>
-                              <div className="space-y-3">
-                                {child.courses.map((course) => (
-                                  <div key={`${child.id}-${course.id}-grade`} className="rounded-2xl border border-slate-200 p-4">
-                                    <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                                      <p className="font-semibold text-slate-900">{course.courseName}</p>
-                                      <p className="text-sm font-bold text-slate-700">
-                                        {course.grade !== "N/A" && course.grade !== "-" ? `Marks: ${Math.round(course.percentage)}% (Grade ${course.grade})` : `Marks: ${Math.round(course.percentage)}% (Pending grade)`}
-                                      </p>
-                                    </div>
-                                    <p className="mt-1 text-sm text-slate-500">Raw percentage: {Math.round(course.percentage)}%</p>
+                                <div id="parent-grades" className="space-y-3 scroll-mt-28">
+                                  <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">View Grades / Marks</p>
+                                  <div className="space-y-3">
+                                    {child.courses.map((course) => (
+                                      <div key={`${child.id}-${course.id}-grade`} className="rounded-2xl border border-slate-200 p-4">
+                                        <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                                          <p className="font-semibold text-slate-900">{course.courseName}</p>
+                                          <p className="text-sm font-bold text-slate-700">
+                                            {course.grade !== "N/A" && course.grade !== "-" ? `Marks: ${Math.round(course.percentage)}% (Grade ${course.grade})` : `Marks: ${Math.round(course.percentage)}% (Pending grade)`}
+                                          </p>
+                                        </div>
+                                        <p className="mt-1 text-sm text-slate-500">Raw percentage: {Math.round(course.percentage)}%</p>
+                                      </div>
+                                    ))}
+                                    {child.courses.length === 0 && <p className="text-sm text-slate-500">No grades available yet.</p>}
                                   </div>
-                                ))}
-                                {child.courses.length === 0 && <p className="text-sm text-slate-500">No grades available yet.</p>}
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      );
-                    })}
-                    {parentChildren.length === 0 && <p className="text-slate-600">No linked children yet.</p>}
-                  </div>
-                </CardContent>
-              </Card>
-              </div>
-            )}
+                                </div>
+                              </CardContent>
+                            </Card>
+                          );
+                        })}
+                        {parentChildren.length === 0 && <p className="text-slate-600">No linked children yet.</p>}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
 
-            {onMainDashboard && user.role === "school" && schoolDashboard.data && (
+              {onMainDashboard && user.role === "school" && schoolDashboard.data && (
                 <div className="space-y-6">
                   <SchoolOperationsPanel
                     schoolName={user.fullname}
@@ -1097,9 +1158,8 @@ export default function Dashboard() {
                                           <button
                                             onClick={() => suspendUser.mutate({ userId: u.id, suspend: !u.isSuspended })}
                                             disabled={suspendUser.isPending}
-                                            className={`px-3 py-1 rounded text-xs font-semibold ${
-                                              u.isSuspended ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"
-                                            }`}
+                                            className={`px-3 py-1 rounded text-xs font-semibold ${u.isSuspended ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"
+                                              }`}
                                           >
                                             {u.isSuspended ? "Suspended" : "Active"}
                                           </button>
@@ -1497,9 +1557,8 @@ export default function Dashboard() {
                                             <button
                                               onClick={() => updateCourseVisibility.mutate({ courseId: course.id, isVisible: !course.isVisible })}
                                               disabled={updateCourseVisibility.isPending}
-                                              className={`inline-flex min-w-28 items-center justify-center rounded-full px-3 py-2 text-xs font-semibold transition ${
-                                                course.isVisible ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200" : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                                              }`}
+                                              className={`inline-flex min-w-28 items-center justify-center rounded-full px-3 py-2 text-xs font-semibold transition ${course.isVisible ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200" : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                                                }`}
                                             >
                                               {course.isVisible ? "Published" : "Hidden"}
                                             </button>
@@ -1725,7 +1784,7 @@ export default function Dashboard() {
                     {/* 4.2 — Profile image upload */}
                     <div className="flex flex-col items-center sm:flex-row sm:items-start gap-6 pb-2">
                       <ProfileImageUpload
-                        currentImageUrl={user.profileImageUrl}
+                        currentImageUrl={user.profileImageUrl || undefined}
                         userName={user.fullname}
                         size="lg"
                       />
@@ -1740,30 +1799,87 @@ export default function Dashboard() {
                       className="grid gap-4 md:grid-cols-2"
                       onSubmit={async (event) => {
                         event.preventDefault();
+                        if (!hasChanges || profileRequiredMissing) return;
+
                         await updateProfile.mutateAsync({
-                          ...effectiveProfile,
-                          email: effectiveProfile.email || undefined,
+                          firstname: profileForm.firstname.trim(),
+                          lastname: profileForm.lastname.trim(),
+                          email: userProfile.email || undefined,
+                          city: profileForm.city.trim(),
+                          country: profileForm.country.trim(),
+                          phone: profileForm.phone.trim(),
+                          description: profileForm.description.trim(),
                         });
-                        setProfileForm({
-                          firstname: "",
-                          lastname: "",
-                          email: "",
-                          city: "",
-                          country: "",
-                          phone: "",
-                          description: "",
-                        });
+
+                        await refetch();
+
+                        setProfileSuccess("Profile updated successfully!");
+                        setTimeout(() => setProfileSuccess(""), 5000);
                       }}
                     >
-                      <div className="space-y-2"><Label htmlFor="firstname">First Name</Label><Input id="firstname" value={effectiveProfile.firstname} onChange={(event) => setProfileForm((current) => ({ ...current, firstname: event.target.value }))} /></div>
-                      <div className="space-y-2"><Label htmlFor="lastname">Last Name</Label><Input id="lastname" value={effectiveProfile.lastname} onChange={(event) => setProfileForm((current) => ({ ...current, lastname: event.target.value }))} /></div>
-                      <div className="space-y-2"><Label htmlFor="email">Email</Label><Input id="email" type="text" value={effectiveProfile.email || "No email linked to this account"} disabled className="cursor-not-allowed bg-slate-100 text-slate-600" /></div>
-                      <div className="space-y-2"><Label htmlFor="phone">Phone</Label><Input id="phone" value={effectiveProfile.phone} onChange={(event) => setProfileForm((current) => ({ ...current, phone: event.target.value }))} /></div>
-                      <div className="space-y-2"><Label htmlFor="city">City</Label><Input id="city" value={effectiveProfile.city} onChange={(event) => setProfileForm((current) => ({ ...current, city: event.target.value }))} /></div>
-                      <div className="space-y-2"><Label htmlFor="country">Country</Label><Input id="country" value={effectiveProfile.country} onChange={(event) => setProfileForm((current) => ({ ...current, country: event.target.value }))} /></div>
-                      <div className="space-y-2 md:col-span-2"><Label htmlFor="description">Bio</Label><Textarea id="description" value={effectiveProfile.description} onChange={(event) => setProfileForm((current) => ({ ...current, description: event.target.value }))} /></div>
+                      <div className="space-y-2">
+                        <Label htmlFor="firstname">First Name <span className="text-red-500">*</span></Label>
+                        <Input id="firstname" value={profileForm.firstname} required onChange={(event) => setProfileForm((current) => ({ ...current, firstname: event.target.value }))} />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="lastname">Last Name <span className="text-red-500">*</span></Label>
+                        <Input id="lastname" value={profileForm.lastname} required onChange={(event) => setProfileForm((current) => ({ ...current, lastname: event.target.value }))} />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="email">Email</Label>
+                        <Input id="email" type="text" value={profileForm.email || "No email linked to this account"} disabled className="cursor-not-allowed bg-slate-100 text-slate-600" />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="phone">Phone</Label>
+                        <Input id="phone" value={profileForm.phone} onChange={(event) => setProfileForm((current) => ({ ...current, phone: event.target.value }))} />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="city">City</Label>
+                        <Input id="city" value={profileForm.city} onChange={(event) => setProfileForm((current) => ({ ...current, city: event.target.value }))} />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="country">Country <span className="text-red-500">*</span></Label>
+                        <select
+                          id="country"
+                          value={profileForm.country}
+                          required
+                          onChange={(event) => setProfileForm((current) => ({ ...current, country: event.target.value }))}
+                          className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm"
+                        >
+                          <option value="">Select country</option>
+                          {profileCountryOptions.map((option) => (
+                            <option key={option} value={option}>
+                              {option}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="space-y-2 md:col-span-2">
+                        <Label htmlFor="description">Bio</Label>
+                        <Textarea id="description" value={profileForm.description} onChange={(event) => setProfileForm((current) => ({ ...current, description: event.target.value }))} />
+                      </div>
+
+                      {/* Status Messages */}
                       {updateProfile.error && <p className="text-sm text-red-600 md:col-span-2">{updateProfile.error.message}</p>}
-                      <div className="md:col-span-2"><Button type="submit" className="bg-brand-primary text-white hover:bg-brand-primary-dark">{updateProfile.isPending ? "Saving..." : "Save Profile"}</Button></div>
+                      {profileSuccess && <p className="text-sm font-semibold text-emerald-600 md:col-span-2">{profileSuccess}</p>}
+                      {hasChanges && profileRequiredMissing && <p className="text-sm text-red-600 md:col-span-2">First name, last name, and country are required.</p>}
+
+                      {/* Single Save Button */}
+                      <div className="flex flex-wrap gap-3 md:col-span-2">
+                        <Button
+                          type="submit"
+                          disabled={!hasChanges || updateProfile.isPending || profileRequiredMissing}
+                          className="bg-brand-primary text-white hover:bg-brand-primary-dark"
+                        >
+                          {updateProfile.isPending ? "Saving..." : "Save Profile"}
+                        </Button>
+                      </div>
                     </form>
 
                     <Separator />
@@ -1820,11 +1936,10 @@ export default function Dashboard() {
                               key={ticket.id}
                               type="button"
                               onClick={() => setSelectedTicketId(ticket.id)}
-                              className={`w-full rounded-2xl border p-4 text-left transition ${
-                                selectedTicketId === ticket.id
-                                  ? "border-brand-primary bg-blue-50"
-                                  : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
-                              }`}
+                              className={`w-full rounded-2xl border p-4 text-left transition ${selectedTicketId === ticket.id
+                                ? "border-brand-primary bg-blue-50"
+                                : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
+                                }`}
                             >
                               <div className="flex items-center justify-between gap-3">
                                 <div>
@@ -2075,11 +2190,10 @@ export default function Dashboard() {
                                 key={ticket.id}
                                 type="button"
                                 onClick={() => setSelectedTicketId(ticket.id)}
-                                className={`w-full rounded-2xl border p-4 text-left transition ${
-                                  selectedTicketId === ticket.id
-                                    ? "border-brand-primary bg-blue-50"
-                                    : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
-                                }`}
+                                className={`w-full rounded-2xl border p-4 text-left transition ${selectedTicketId === ticket.id
+                                  ? "border-brand-primary bg-blue-50"
+                                  : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
+                                  }`}
                               >
                                 <div className="flex items-center justify-between gap-3">
                                   <div>
