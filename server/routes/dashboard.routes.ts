@@ -81,40 +81,89 @@ export function registerDashboardRoutes(app: Express, ctx: RouteContext) {
     res.json({ success: true });
   });
 
+  app.get("/api/user/picture-proxy", async (req, res) => {
+    try {
+      const rawUrl = typeof req.query.url === "string" ? req.query.url : "";
+      if (!rawUrl) {
+        return res.status(400).send("No image URL provided");
+      }
+
+      if (!req.session.user || !req.session.moodleToken) {
+        return res.status(401).send("Not authenticated");
+      }
+
+      // If URL is not from Moodle (e.g. AWS S3 or external URL), redirect directly
+      if (!rawUrl.includes(env.moodle.baseUrl)) {
+        return res.redirect(rawUrl);
+      }
+
+      const token = req.session.moodleToken;
+      const separator = rawUrl.includes("?") ? "&" : "?";
+      const authenticatedUrl = rawUrl.includes("token=")
+        ? rawUrl
+        : `${rawUrl}${separator}wstoken=${token}`;
+
+      let moodleRes = await fetch(authenticatedUrl);
+      if (!moodleRes.ok) {
+        // Fallback try with token parameter
+        const altUrl = `${rawUrl}${separator}token=${token}`;
+        moodleRes = await fetch(altUrl);
+      }
+
+      if (!moodleRes.ok) {
+        return res.status(moodleRes.status).send("Failed to fetch image from Moodle");
+      }
+
+      const contentType = moodleRes.headers.get("content-type") || "image/jpeg";
+      res.setHeader("Content-Type", contentType);
+      res.setHeader("Cache-Control", "public, max-age=86400");
+      const buffer = await moodleRes.arrayBuffer();
+      return res.send(Buffer.from(buffer));
+    } catch (err) {
+      console.error("[Picture Proxy Error]:", err);
+      return res.status(500).send("Failed to proxy image");
+    }
+  });
+
   app.post("/api/profile/upload-image", uploadSingleImage, async (req, res) => {
     try {
       if (!req.session.user) {
         return res.status(401).json({ message: "Not authenticated" });
       }
 
-
-      if (!isS3Configured()) {
-        return res.json({ configured: false });
-      }
-
       if (!req.file) {
         return res.status(400).json({ message: "No image file provided" });
       }
 
-      // Upload process
+      // Upload process via Moodle sync & S3 if configured
       const result = await handleUserProfileImageUpload(
         req.session.user.id,
         req.file,
         req.session.user,
         req.session.moodleToken
       );
-      // Upload ke baad DB se fetch karein
-      const updatedUser = await prisma.user.findUnique({
-        where: { moodleUserId: req.session.user.id },
-        select: { id: true, username: true, profileImage: true }
-      });
-      console.log("✅ [Profile Image] DB after update:", updatedUser);
+
       if (!result.success) {
         return res.status(result.status).json({ message: result.message });
       }
 
+      if (!req.session.moodleToken) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      // Fetch fresh user profile from Moodle
+      const refreshedUser = await fetchCurrentUser(req.session.moodleToken);
+      let newPicUrl = refreshedUser.profileImageUrl;
+      if (newPicUrl && newPicUrl.includes("pluginfile.php")) {
+        newPicUrl = `/api/user/picture-proxy?url=${encodeURIComponent(newPicUrl)}`;
+      }
+
+      if (req.session.user) {
+        req.session.user.profileImageUrl = newPicUrl;
+      }
+
       return res.json({
-        url: result.imageUrl,
+        url: newPicUrl,
         message: "Profile image updated successfully"
       });
 
@@ -261,6 +310,16 @@ export function registerDashboardRoutes(app: Express, ctx: RouteContext) {
       });
 
       req.session.user = user;
+
+      await (prisma as any).adminActivityLog.create({
+        data: {
+          adminUserId: req.session.user.id,
+          targetUserId: String(req.session.user.id),
+          action: "PROFILE_UPDATED",
+          details: { ipAddress: getClientIp(req) },
+        },
+      }).catch(() => undefined);
+
       res.json(user);
     } catch (err) {
       console.error("❌ [Profile Update] Error occurred:", err);
@@ -304,6 +363,7 @@ export function registerDashboardRoutes(app: Express, ctx: RouteContext) {
       });
     }
   });
+
   app.post(api.auth.changePassword.path, async (req, res) => {
     try {
       if (!req.session.user) {
@@ -318,6 +378,15 @@ export function registerDashboardRoutes(app: Express, ctx: RouteContext) {
         newPassword: input.newPassword,
       });
 
+      await (prisma as any).adminActivityLog.create({
+        data: {
+          adminUserId: req.session.user.id,
+          targetUserId: String(req.session.user.id),
+          action: "PASSWORD_CHANGED",
+          details: { ipAddress: getClientIp(req) },
+        },
+      }).catch(() => undefined);
+
       res.json({ success: true });
     } catch (err) {
       if (err instanceof z.ZodError) {
@@ -330,6 +399,122 @@ export function registerDashboardRoutes(app: Express, ctx: RouteContext) {
       return res.status(400).json({
         message: err instanceof Error ? err.message : "Password change failed",
       });
+    }
+  });
+
+  app.get("/api/profile/activity", async (req, res) => {
+    try {
+      if (!req.session.user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const moodleUserId = req.session.user.id;
+      const activities: Array<{
+        id: string;
+        type: "security" | "learning" | "account";
+        title: string;
+        details?: string | null;
+        timestamp: string;
+      }> = [];
+
+      // 1. Fetch User-Facing Security & Role Activity Logs from local DB
+      const USER_ALLOWED_ACTIONS = [
+        "LOGIN_SUCCESS",
+        "LOGIN_FAILED",
+        "PROFILE_UPDATED",
+        "PASSWORD_CHANGED",
+        "PARENT_LINK_CHILD",
+        "SCHOOL_SEATS_PURCHASE",
+        "SCHOOL_ROSTER_UPLOAD",
+        "SCHOOL_SEAT_ASSIGNMENT",
+        "ADMIN_USER_SUSPEND",
+        "ADMIN_USER_ROLE_ASSIGN",
+        "ADMIN_USER_PASSWORD_RESET",
+        "ADMIN_COURSE_PRICE_UPDATE",
+        "ADMIN_COURSE_VISIBILITY_UPDATE",
+      ];
+
+      try {
+        const logs = await (prisma as any).adminActivityLog.findMany({
+          where: {
+            action: { in: USER_ALLOWED_ACTIONS },
+            OR: [
+              { adminUserId: moodleUserId },
+              { targetUserId: String(moodleUserId) },
+            ],
+          },
+          orderBy: { createdAt: "desc" },
+          take: 30,
+        });
+
+        for (const log of logs) {
+          let title: string = log.action;
+          if (log.action === "LOGIN_SUCCESS") title = "Account Login Successful";
+          else if (log.action === "LOGIN_FAILED") title = "Failed Login Attempt";
+          else if (log.action === "PROFILE_UPDATED") title = "Profile Details Updated";
+          else if (log.action === "PASSWORD_CHANGED") title = "Account Password Changed";
+          else if (log.action === "PARENT_LINK_CHILD") title = "Linked Child Student Account";
+          else if (log.action === "SCHOOL_SEATS_PURCHASE") title = "Purchased School Seat Licenses";
+          else if (log.action === "SCHOOL_ROSTER_UPLOAD") title = "Uploaded Student Roster CSV";
+          else if (log.action === "SCHOOL_SEAT_ASSIGNMENT") title = "Assigned Course Seat to Student";
+          else if (log.action === "ADMIN_USER_SUSPEND") title = "Admin: Updated User Status";
+          else if (log.action === "ADMIN_USER_ROLE_ASSIGN") title = "Admin: Assigned User Role";
+          else if (log.action === "ADMIN_USER_PASSWORD_RESET") title = "Admin: Reset User Password";
+          else if (log.action === "ADMIN_COURSE_PRICE_UPDATE") title = "Admin: Updated Course Price";
+          else if (log.action === "ADMIN_COURSE_VISIBILITY_UPDATE") title = "Admin: Updated Course Visibility";
+
+          const detailsObj = (log.details ?? {}) as Record<string, any>;
+          const parts: string[] = [];
+          if (detailsObj.courseName) parts.push(`Course: ${detailsObj.courseName}`);
+          if (detailsObj.totalSeats) parts.push(`Seats: ${detailsObj.totalSeats}`);
+          if (detailsObj.assignedCount) parts.push(`Assigned: ${detailsObj.assignedCount} student(s)`);
+          if (detailsObj.studentName) parts.push(`Student: ${detailsObj.studentName}`);
+          if (detailsObj.studentEmail) parts.push(`Email: ${detailsObj.studentEmail}`);
+          if (detailsObj.filename) parts.push(`File: ${detailsObj.filename}`);
+          if (detailsObj.ipAddress) parts.push(`IP: ${detailsObj.ipAddress}`);
+          if (detailsObj.failureReason) parts.push(`Reason: ${detailsObj.failureReason}`);
+          if (detailsObj.targetUserId) parts.push(`Target ID: ${detailsObj.targetUserId}`);
+
+          activities.push({
+            id: `log-${log.id}`,
+            type: log.action.includes("LOGIN") ? "security" : "account",
+            title,
+            details: parts.length > 0 ? parts.join(" | ") : null,
+            timestamp: log.createdAt ? log.createdAt.toISOString() : new Date().toISOString(),
+          });
+        }
+      } catch (err) {
+        console.warn("[Profile Activity] Could not fetch DB logs:", err);
+      }
+
+      // 2. If user is a student, fetch Moodle course learning activity
+      if (req.session.user.role === "student" && req.session.moodleToken) {
+        try {
+          const learningActivities = await getStudentActivityTimelineForDashboard(
+            req.session.moodleToken,
+            moodleUserId
+          );
+          for (const item of learningActivities) {
+            activities.push({
+              id: `learning-${item.id}-${item.timeCompleted}`,
+              type: "learning",
+              title: `Completed Activity: ${item.moduleName}`,
+              details: `Course: ${item.courseName}`,
+              timestamp: new Date(item.timeCompleted * 1000).toISOString(),
+            });
+          }
+        } catch (err) {
+          console.warn("[Profile Activity] Could not fetch Moodle learning timeline:", err);
+        }
+      }
+
+      // 3. Sort all activities by timestamp desc
+      activities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+      return res.json(activities.slice(0, 30));
+    } catch (err) {
+      console.error("[Profile Activity] Error:", err);
+      return res.status(500).json({ message: "Failed to fetch account activity" });
     }
   });
 

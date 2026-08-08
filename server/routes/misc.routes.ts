@@ -60,6 +60,87 @@ export function registerMiscRoutes(app: Express, ctx: RouteContext) {
     res.json({ base: "PKR", rates, updatedAt });
   });
 
+  // === COURSE SEARCH & CATEGORY FILTERING ===
+  app.get("/api/search/courses", async (req, res) => {
+    try {
+      const q = typeof req.query.q === "string" ? req.query.q.trim().toLowerCase() : "";
+      const categoryFilter = typeof req.query.category === "string" ? req.query.category.trim() : "";
+      const sort = typeof req.query.sort === "string" ? req.query.sort : "title";
+      const page = Math.max(1, parseInt(String(req.query.page || 1), 10) || 1);
+      const limit = Math.max(1, Math.min(50, parseInt(String(req.query.limit || 12), 10) || 12));
+
+      const allCourses = await getLmsCourses();
+
+      // Extract unique category names
+      const categoriesSet = new Set<string>();
+      allCourses.forEach((c) => {
+        const cat = (c.categoryName || c.category || "").replace(/_/g, " ").trim();
+        if (cat) categoriesSet.add(cat);
+      });
+
+      // Filter by query and category
+      let filtered = allCourses.filter((course) => {
+        const catLabel = (course.categoryName || course.category || "").replace(/_/g, " ").trim();
+        
+        const matchesCategory = !categoryFilter || catLabel.toLowerCase() === categoryFilter.toLowerCase();
+
+        const matchesQuery = !q || (
+          course.title.toLowerCase().includes(q) ||
+          course.shortName.toLowerCase().includes(q) ||
+          (course.shortDescription && course.shortDescription.toLowerCase().includes(q)) ||
+          catLabel.toLowerCase().includes(q)
+        );
+
+        return matchesCategory && matchesQuery;
+      });
+
+      // Sort
+      if (sort === "price_asc") {
+        filtered.sort((a, b) => (a.price || 0) - (b.price || 0));
+      } else if (sort === "price_desc") {
+        filtered.sort((a, b) => (b.price || 0) - (a.price || 0));
+      } else if (sort === "newest") {
+        filtered.sort((a, b) => b.id - a.id);
+      } else {
+        // title (A-Z)
+        filtered.sort((a, b) => a.title.localeCompare(b.title));
+      }
+
+      // Pagination
+      const total = filtered.length;
+      const totalPages = Math.ceil(total / limit) || 1;
+      const startIndex = (page - 1) * limit;
+      const paginatedCourses = filtered.slice(startIndex, startIndex + limit);
+
+      const formattedCourses = paginatedCourses.map((c) => ({
+        id: c.id,
+        moodleCourseId: c.id,
+        title: c.title,
+        shortname: c.shortName,
+        summary: c.shortDescription,
+        category: (c.categoryName || c.category).replace(/_/g, " "),
+        price: c.price ? c.price / 100 : 0, // Convert minor units to major units
+        isVisible: c.visible,
+        slug: c.slug,
+        imageUrl: c.imageUrl,
+        lmsUrl: c.lmsCourseUrl,
+        lastSyncedAt: new Date().toISOString(),
+      }));
+
+      res.json({
+        courses: formattedCourses,
+        total,
+        page,
+        limit,
+        totalPages,
+        categories: Array.from(categoriesSet),
+      });
+    } catch (err) {
+      console.error("[search/courses] Error searching courses:", err);
+      res.status(500).json({ message: "Failed to search courses." });
+    }
+  });
+
   // === INQUIRIES ===
   app.post("/api/contact-submissions", async (req, res) => {
     try {

@@ -68,8 +68,8 @@ if (redisClient) {
     ttl: 60 * 60 * 24 * 7,
     // Moodle tokens and user session data are encrypted before Redis persistence.
     serializer: {
-      stringify: (value) => encryptAtRest(JSON.stringify(value)),
-      parse: (value) => {
+      stringify: (value: unknown) => encryptAtRest(JSON.stringify(value)),
+      parse: (value: string) => {
         try {
           return JSON.parse(decryptAtRest(value));
         } catch {

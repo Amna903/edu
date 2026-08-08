@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect, useRef } from "react";
 
 export interface CourseSearchResult {
-  id: string;
+  id: string | number;
   moodleCourseId: number;
   title: string;
   shortname: string;
@@ -14,6 +14,9 @@ export interface CourseSearchResult {
   category: string | null;
   price: number;
   isVisible: boolean;
+  slug?: string;
+  imageUrl?: string | null;
+  lmsUrl?: string | null;
   lastSyncedAt: string | null;
 }
 
@@ -46,7 +49,8 @@ export function useCourseSearch(options: {
   return useQuery<CourseSearchResponse>({
     queryKey: ["/api/search/courses", q, category, sort, page, limit],
     enabled,
-    staleTime: 30_000,
+    staleTime: 60_000,
+    placeholderData: (previousData) => previousData,
     queryFn: async () => {
       const res = await fetch(`/api/search/courses?${params}`);
       if (!res.ok) throw new Error("Search failed");

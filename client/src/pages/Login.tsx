@@ -265,9 +265,9 @@ export default function Login() {
                         <input type="checkbox" checked={rememberMe} onChange={(event) => setRememberMe(event.target.checked)} />
                         Remember Me
                       </label>
-                      <button type="button" onClick={() => navigate("/forgot-password")} className="text-[13px] text-slate-500 transition hover:text-brand-primary">
+                      <a href="https://moodle.edumeup.com/login/forgot_password.php" target="_blank" rel="noreferrer" className="text-[13px] text-slate-500 transition hover:text-brand-primary">
                         Forgot your password?
-                      </button>
+                      </a>
                     </div>
                   </div>
                   {loginError && <p className="text-sm text-red-600">{loginError}</p>}

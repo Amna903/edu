@@ -520,6 +520,61 @@ export function useSchoolAddStudent() {
   });
 }
 
+export function useSchoolDeleteStudent() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (rosterId: number) => {
+      const res = await fetch(`/api/dashboard/school/roster/${rosterId}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      const body = await res.json();
+      if (!res.ok) {
+        throw new Error(body.message || "Failed to delete student");
+      }
+
+      return body;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [api.dashboard.schoolRoster.path] });
+      await queryClient.invalidateQueries({ queryKey: [api.dashboard.schoolUsageReport.path] });
+      await queryClient.invalidateQueries({ queryKey: [api.dashboard.school.path] });
+    },
+  });
+}
+
+export function useSchoolUpdateStudent() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: { rosterId: number; studentName: string; studentEmail: string }) => {
+      const res = await fetch(`/api/dashboard/school/roster/${input.rosterId}`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          studentName: input.studentName,
+          studentEmail: input.studentEmail,
+        }),
+      });
+
+      const body = await res.json();
+      if (!res.ok) {
+        throw new Error(body.message || "Failed to update student");
+      }
+
+      return body;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [api.dashboard.schoolRoster.path] });
+      await queryClient.invalidateQueries({ queryKey: [api.dashboard.schoolUsageReport.path] });
+      await queryClient.invalidateQueries({ queryKey: [api.dashboard.school.path] });
+    },
+  });
+}
+
 export function useSchoolUploadStudents() {
   const queryClient = useQueryClient();
 

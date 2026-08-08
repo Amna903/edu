@@ -20,6 +20,7 @@ interface MoodleCourse {
   visible?: number;
   categoryid?: number;
   categoryname?: string;
+  courseimage?: string;
   overviewfiles?: Array<{ fileurl?: string }>;
   customfields?: Array<{ shortname?: string; value?: string }>;
 }
@@ -368,7 +369,8 @@ function toLmsCourse(
 ): LmsCourse {
   const categoryName = course.categoryname || categoryMap.get(course.categoryid || -1) || null;
   const description = stripHtml(course.summary);
-  const imageUrl = appendMoodleFileToken(course.overviewfiles?.[0]?.fileurl || null);
+  const rawImageUrl = course.overviewfiles?.[0]?.fileurl || course.courseimage || null;
+  const imageUrl = appendMoodleFileToken(rawImageUrl);
 
   return {
     id: course.id,
@@ -440,25 +442,32 @@ async function searchMoodleCourses(forceRefresh = false): Promise<MoodleCourse[]
   try {
     const emptyBatch = await runCourseSearch("", seenIds);
     allCourses = allCourses.concat(emptyBatch);
+    if (emptyBatch.length > 5) {
+      searchCoursesCache = { fetchedAt: Date.now(), courses: allCourses };
+      return allCourses;
+    }
   } catch (err) {
     if (env.authDebug === "1") {
       console.warn("[moodle] runCourseSearch empty failed:", err);
     }
   }
 
-  for (const term of "abcdefghijklmnopqrstuvwxyz0123456789".split("")) {
-    try {
-      const batch = await runCourseSearch(term, seenIds);
-      allCourses = allCourses.concat(batch);
-    } catch (err) {
-      if (env.authDebug === "1") {
-        console.warn(`[moodle] runCourseSearch term "${term}" failed:`, err);
-      }
-      const msg = err instanceof Error ? err.message : String(err);
-      if (msg.includes("invalidtoken") || msg.includes("token not found")) {
-        throw err;
-      }
-    }
+  const terms = "abcdefghijklmnopqrstuvwxyz0123456789".split("");
+  const chunkSize = 6;
+  for (let i = 0; i < terms.length; i += chunkSize) {
+    const batchTerms = terms.slice(i, i + chunkSize);
+    await Promise.all(
+      batchTerms.map(async (term) => {
+        try {
+          const batch = await runCourseSearch(term, seenIds);
+          allCourses = allCourses.concat(batch);
+        } catch (err) {
+          if (env.authDebug === "1") {
+            console.warn(`[moodle] runCourseSearch term "${term}" failed:`, err);
+          }
+        }
+      })
+    );
   }
 
   searchCoursesCache = { fetchedAt: Date.now(), courses: allCourses };

@@ -8,7 +8,9 @@ import { enableDeveloperToolsDeterrent } from "./lib/developer-tools-deterrent";
 enableDeveloperToolsDeterrent();
 // DEVTOOLS-DETERRENT END — Safe to comment out for testing purposes.
 
-createRoot(document.getElementById("root")!).render(<App />);
+const loader = document.getElementById("app-loader");
+if (loader) {
+  loader.remove();
+}
 
-// Remove the static shell immediately after React has a chance to paint—no artificial delay.
-requestAnimationFrame(() => document.getElementById("app-loader")?.remove());
+createRoot(document.getElementById("root")!).render(<App />);

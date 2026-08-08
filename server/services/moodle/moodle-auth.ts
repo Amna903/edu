@@ -359,6 +359,47 @@ async function moodleUserExists(username: string) {
   return false;
 }
 
+export async function confirmMoodleUserAccount(userId: number, username?: string) {
+  try {
+    await moodlePostWithTokenFallback(
+      "core_user_update_users",
+      new URLSearchParams({
+        "users[0][id]": String(userId),
+        "users[0][auth]": "manual",
+        "users[0][suspended]": "0",
+      }),
+    );
+    console.log(`[Moodle] Updated user ${userId} auth=manual, suspended=0`);
+  } catch (err) {
+    console.warn(`[Moodle] Update auth=manual for user ${userId} failed:`, err instanceof Error ? err.message : String(err));
+  }
+
+  if (username) {
+    try {
+      const res = await moodlePostWithTokenFallback(
+        "core_auth_confirm_user",
+        new URLSearchParams({
+          username: username,
+          secret: "",
+        }),
+      );
+      console.log(`[Moodle] core_auth_confirm_user for ${username} result:`, res);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message.toLowerCase() : String(err).toLowerCase();
+      if (
+        msg.includes("invalid confirmation data")
+        || msg.includes("already confirmed")
+        || msg.includes("secret")
+        || msg.includes("invalid parameter")
+      ) {
+        console.log(`[Moodle] User ${username} (ID: ${userId}) confirmation token already resolved or bypassed. Moving on.`);
+      } else {
+        console.warn(`[Moodle] core_auth_confirm_user notice for ${username}:`, err instanceof Error ? err.message : String(err));
+      }
+    }
+  }
+}
+
 export async function ensureMoodleStudentByEmail(input: {
   email: string;
   fullName?: string;
@@ -370,8 +411,7 @@ export async function ensureMoodleStudentByEmail(input: {
 
   const lookupByEmail = async () => {
     try {
-      const byField = await moodlePost<MoodleUserRecord[]>(
-        getAdminToken(),
+      const byField = await moodlePostWithTokenFallback<MoodleUserRecord[]>(
         "core_user_get_users_by_field",
         new URLSearchParams({
           field: "email",
@@ -386,8 +426,7 @@ export async function ensureMoodleStudentByEmail(input: {
     }
 
     try {
-      const byCriteria = await moodlePost<MoodleUsersResponse>(
-        getAdminToken(),
+      const byCriteria = await moodlePostWithTokenFallback<MoodleUsersResponse>(
         "core_user_get_users",
         new URLSearchParams({
           "criteria[0][key]": "email",
@@ -417,10 +456,15 @@ export async function ensureMoodleStudentByEmail(input: {
     return undefined;
   };
 
+
+
   const existingByEmail = await lookupByEmail();
 
   const found = existingByEmail;
   if (found?.id && found?.username) {
+    // Ensure account is confirmed in Moodle so "Confirmation pending" status is cleared
+    await confirmMoodleUserAccount(found.id, found.username);
+
     await syncUserFromMoodleSession({
       moodleUserId: found.id,
       username: found.username,
@@ -431,7 +475,7 @@ export async function ensureMoodleStudentByEmail(input: {
       profileImage: found.profileimageurl || found.profileimageurlsmall || null,
       allowAutoCreate: true,
     });
-    return { moodleUserId: found.id, wasCreated: false };
+    return { moodleUserId: found.id, username: found.username, wasCreated: false };
   }
 
   const displayName = input.fullName?.trim() || "Student User";
@@ -441,87 +485,7 @@ export async function ensureMoodleStudentByEmail(input: {
   let created: MoodleCreateUserRow | undefined;
   let createdPassword = "";
 
-  const useSignupFlow = Boolean(env.moodle.signupToken) && !env.moodle.skipEmailConfirmation;
-  if (env.authDebug === "1") {
-    console.log(`[roster] create mode: ${useSignupFlow ? "signup" : "admin"} (${email})`);
-  }
-  if (useSignupFlow) {
-    let signupAttempts = 0;
-    while (signupAttempts < 3) {
-      const suffix = signupAttempts === 0 ? "" : `${Date.now()}${signupAttempts}`;
-      const candidate = `${username}${suffix}`.slice(0, 32);
-      const randomPassword = `Edu!${Math.random().toString(36).slice(-10)}A1`;
 
-      try {
-        const signupResponse = await moodlePost<MoodleSignupResponse | boolean>(
-          env.moodle.signupToken,
-          "auth_email_signup_user",
-          new URLSearchParams({
-            username: candidate,
-            password: randomPassword,
-            firstname: firstName,
-            lastname: lastName,
-            email,
-          }),
-        );
-
-        const signupSucceeded =
-          signupResponse === true ||
-          (typeof signupResponse === "object" && signupResponse !== null && signupResponse.success === true);
-
-        if (signupSucceeded) {
-          const createdBySignup = await lookupByEmailWithRetry();
-          if (createdBySignup?.id && createdBySignup?.username) {
-            await syncUserFromMoodleSession({
-              moodleUserId: createdBySignup.id,
-              username: createdBySignup.username,
-              role: "student",
-              email,
-              firstName: createdBySignup.firstname || firstName,
-              lastName: createdBySignup.lastname || lastName,
-              profileImage: createdBySignup.profileimageurl || createdBySignup.profileimageurlsmall || null,
-              allowAutoCreate: true,
-            });
-            await recordProvisionedStudentCredential({
-              email,
-              password: randomPassword,
-              moodleUserId: createdBySignup.id,
-            }).catch(() => undefined);
-            return { moodleUserId: createdBySignup.id, wasCreated: true };
-          }
-        }
-      } catch (error) {
-        const message = error instanceof Error ? error.message.toLowerCase() : "";
-        if (
-          message.includes("already")
-          || message.includes("message was not sent")
-          || message.includes("username")
-        ) {
-          const createdAfterSignupError = await lookupByEmailWithRetry();
-          if (createdAfterSignupError?.id && createdAfterSignupError?.username) {
-            await syncUserFromMoodleSession({
-              moodleUserId: createdAfterSignupError.id,
-              username: createdAfterSignupError.username,
-              role: "student",
-              email,
-              firstName: createdAfterSignupError.firstname || firstName,
-              lastName: createdAfterSignupError.lastname || lastName,
-              profileImage: createdAfterSignupError.profileimageurl || createdAfterSignupError.profileimageurlsmall || null,
-              allowAutoCreate: true,
-            });
-            await recordProvisionedStudentCredential({
-              email,
-              password: randomPassword,
-              moodleUserId: createdAfterSignupError.id,
-            }).catch(() => undefined);
-            return { moodleUserId: createdAfterSignupError.id, wasCreated: true };
-          }
-        }
-      }
-
-      signupAttempts += 1;
-    }
-  }
 
   while (attempts < 5 && !created?.id) {
     const suffix = attempts === 0 ? "" : `${Date.now()}${attempts}`;
@@ -537,6 +501,7 @@ export async function ensureMoodleStudentByEmail(input: {
           "users[0][lastname]": lastName,
           "users[0][email]": email,
           "users[0][auth]": "manual",
+          "users[0][createpassword]": "1",
           "users[0][preferences][0][type]": "auth_forcepasswordchange",
           "users[0][preferences][0][value]": "0",
         }),
@@ -579,13 +544,16 @@ export async function ensureMoodleStudentByEmail(input: {
     throw new Error("Could not create Moodle account for student email.");
   }
 
+  // Auto-confirm newly created Moodle user so seat enrollment succeeds seamlessly
+  await confirmMoodleUserAccount(created.id, created.username);
+
   await syncUserFromMoodleSession({
     moodleUserId: created.id,
     username: created.username,
     role: "student",
     email,
-    firstName,
-    lastName,
+    firstName: firstName,
+    lastName: lastName,
     profileImage: null,
     allowAutoCreate: true,
   });
@@ -603,7 +571,12 @@ export async function ensureMoodleStudentByEmail(input: {
     });
   }
 
-  return { moodleUserId: created.id, wasCreated: true };
+  return {
+    moodleUserId: created.id,
+    username: created.username,
+    generatedPassword: createdPassword || undefined,
+    wasCreated: true,
+  };
 }
 
 export async function loginWithMoodle(input: LoginInput): Promise<{ token: string; privateToken: string | null; user: AuthUser }> {

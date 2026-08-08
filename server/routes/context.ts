@@ -125,14 +125,50 @@ export function createRouteContext() {
   };
 
   const getSchoolLicenses = async (schoolUserId: number) => {
-    const [licenses, assignments] = await Promise.all([
-      prisma.schoolLicenses.findMany({ where: { schoolUserId }, orderBy: { purchaseDate: 'desc' } }),
+    const [rawLicenses, assignments] = await Promise.all([
+      prisma.schoolLicenses.findMany({ where: { schoolUserId }, orderBy: { purchaseDate: 'asc' } }),
       prisma.schoolSeatAssignments.findMany({ where: { schoolUserId } }),
     ]);
 
-    return licenses.map((license) => {
+    const courseMap = new Map<number, typeof rawLicenses[0]>();
+    const duplicateIdsToDelete: string[] = [];
+
+    for (const license of rawLicenses) {
+      const existing = courseMap.get(license.courseId);
+      if (!existing) {
+        courseMap.set(license.courseId, { ...license });
+      } else {
+        existing.totalSeats += license.totalSeats;
+        duplicateIdsToDelete.push(license.id);
+      }
+    }
+
+    if (duplicateIdsToDelete.length > 0) {
+      for (const primaryLicense of Array.from(courseMap.values())) {
+        const courseId = primaryLicense.courseId;
+        const dupes = rawLicenses.filter((l) => l.courseId === courseId && l.id !== primaryLicense.id);
+        if (dupes.length > 0) {
+          const dupeIds = dupes.map((d) => d.id);
+          await prisma.schoolSeatAssignments.updateMany({
+            where: { licenseId: { in: dupeIds } },
+            data: { licenseId: primaryLicense.id },
+          }).catch(() => {});
+          await prisma.schoolLicenses.update({
+            where: { id: primaryLicense.id },
+            data: { totalSeats: primaryLicense.totalSeats },
+          }).catch(() => {});
+          await prisma.schoolLicenses.deleteMany({
+            where: { id: { in: dupeIds } },
+          }).catch(() => {});
+        }
+      }
+    }
+
+    const consolidatedLicenses = Array.from(courseMap.values());
+
+    return consolidatedLicenses.map((license) => {
       const assignedStudents = assignments
-        .filter((assignment) => assignment.licenseId === license.id)
+        .filter((assignment) => assignment.licenseId === license.id || duplicateIdsToDelete.includes(assignment.licenseId))
         .map((assignment) => ({
           studentId: assignment.studentId,
           studentEmail: assignment.studentEmail,
@@ -164,6 +200,31 @@ export function createRouteContext() {
     orderId: number;
     expiresAt: string | null;
   }) => {
+    const existing = await prisma.schoolLicenses.findFirst({
+      where: { schoolUserId: license.schoolUserId, courseId: license.courseId },
+      orderBy: { purchaseDate: 'asc' },
+    });
+
+    if (existing) {
+      await prisma.schoolLicenses.update({
+        where: { id: existing.id },
+        data: {
+          totalSeats: existing.totalSeats + license.totalSeats,
+        },
+      });
+      await (prisma as any).adminActivityLog.create({
+        data: {
+          adminUserId: license.schoolUserId,
+          action: "SCHOOL_SEATS_PURCHASE",
+          details: {
+            courseName: license.courseName,
+            totalSeats: license.totalSeats,
+          },
+        },
+      }).catch(() => {});
+      return;
+    }
+
     await prisma.schoolLicenses.create({ data: {
       id: license.id,
       schoolUserId: license.schoolUserId,
@@ -173,6 +234,17 @@ export function createRouteContext() {
       orderId: license.orderId,
       expiresAt: license.expiresAt ? new Date(license.expiresAt) : null,
     } });
+
+    await (prisma as any).adminActivityLog.create({
+      data: {
+        adminUserId: license.schoolUserId,
+        action: "SCHOOL_SEATS_PURCHASE",
+        details: {
+          courseName: license.courseName,
+          totalSeats: license.totalSeats,
+        },
+      },
+    }).catch(() => {});
   };
 
   const getSchoolRosterStudent = async (schoolUserId: number, studentId: number) => {

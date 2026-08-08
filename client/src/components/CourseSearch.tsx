@@ -7,9 +7,9 @@ import { useState } from "react";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { useCourseSearch, useDebounce } from "@/hooks/use-search";
+import { ProgramCard } from "@/components/ProgramCard";
+import type { LmsCourse } from "@shared/schema";
 
 interface CourseSearchProps {
   /** Show results inline (default) or just expose search state */
@@ -32,7 +32,7 @@ export function CourseSearch({ showResults = true, onCourseClick, className = ""
     category,
     sort,
     page,
-    limit: 12,
+    limit: 9,
     enabled: showResults,
   });
 
@@ -56,21 +56,21 @@ export function CourseSearch({ showResults = true, onCourseClick, className = ""
   const hasFilters = query || category || sort !== "title";
 
   return (
-    <div className={`space-y-4 ${className}`}>
+    <div className={`space-y-6 ${className}`}>
       {/* Search bar */}
       <div className="flex gap-2">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
           <Input
             value={query}
             onChange={(e) => handleQueryChange(e.target.value)}
             placeholder="Search courses, subjects, categories..."
-            className="pl-10 pr-10"
+            className="pl-11 pr-10 h-12 rounded-2xl border-slate-200"
           />
           {query && (
             <button
               onClick={() => handleQueryChange("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
             >
               <X className="h-4 w-4" />
             </button>
@@ -79,13 +79,13 @@ export function CourseSearch({ showResults = true, onCourseClick, className = ""
         <Button
           variant="outline"
           onClick={() => setShowFilters(!showFilters)}
-          className={showFilters ? "border-blue-500 text-blue-600" : ""}
+          className={`h-12 rounded-2xl px-5 font-bold ${showFilters ? "border-blue-500 text-[#2366c9] bg-blue-50" : ""}`}
         >
           <SlidersHorizontal className="h-4 w-4 mr-2" />
           Filters
         </Button>
         {hasFilters && (
-          <Button variant="ghost" onClick={clearFilters} className="text-slate-500">
+          <Button variant="ghost" onClick={clearFilters} className="h-12 rounded-2xl font-semibold text-slate-500">
             Clear
           </Button>
         )}
@@ -93,10 +93,10 @@ export function CourseSearch({ showResults = true, onCourseClick, className = ""
 
       {/* Filter panel */}
       {showFilters && (
-        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 space-y-4">
+        <div className="rounded-2xl border border-blue-100 bg-slate-50/80 p-5 space-y-4">
           <div className="flex flex-wrap gap-4">
-            <div className="space-y-1">
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Sort by</p>
+            <div className="space-y-1.5">
+              <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Sort by</p>
               <div className="flex gap-2 flex-wrap">
                 {[
                   { value: "title", label: "Title A–Z" },
@@ -107,9 +107,9 @@ export function CourseSearch({ showResults = true, onCourseClick, className = ""
                   <button
                     key={opt.value}
                     onClick={() => { setSort(opt.value); setPage(1); }}
-                    className={`px-3 py-1 rounded-full text-xs font-semibold border transition ${
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-bold border transition ${
                       sort === opt.value
-                        ? "bg-blue-600 text-white border-blue-600"
+                        ? "bg-[#2366c9] text-white border-[#2366c9] shadow-sm"
                         : "bg-white text-slate-700 border-slate-200 hover:border-blue-300"
                     }`}
                   >
@@ -122,16 +122,26 @@ export function CourseSearch({ showResults = true, onCourseClick, className = ""
 
           {/* Category chips from live data */}
           {data?.categories && data.categories.length > 0 && (
-            <div className="space-y-1">
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Category</p>
+            <div className="space-y-1.5 border-t border-slate-200/60 pt-3">
+              <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Categories</p>
               <div className="flex flex-wrap gap-2">
+                <button
+                  onClick={() => handleCategoryChange("")}
+                  className={`px-3.5 py-1 rounded-full text-xs font-bold border transition ${
+                    !category
+                      ? "bg-[#2366c9] text-white border-[#2366c9] shadow-sm"
+                      : "bg-white text-slate-700 border-slate-200 hover:border-blue-300"
+                  }`}
+                >
+                  All Categories
+                </button>
                 {data.categories.map((cat) => (
                   <button
                     key={cat}
                     onClick={() => handleCategoryChange(cat)}
-                    className={`px-3 py-1 rounded-full text-xs font-semibold border transition ${
+                    className={`px-3.5 py-1 rounded-full text-xs font-bold border transition ${
                       category === cat
-                        ? "bg-blue-600 text-white border-blue-600"
+                        ? "bg-[#2366c9] text-white border-[#2366c9] shadow-sm"
                         : "bg-white text-slate-700 border-slate-200 hover:border-blue-300"
                     }`}
                   >
@@ -148,65 +158,63 @@ export function CourseSearch({ showResults = true, onCourseClick, className = ""
       {showResults && (
         <>
           {/* Status line */}
-          <div className="flex items-center justify-between text-sm text-slate-500">
-            {isLoading || isFetching ? (
-              <span>Searching...</span>
+          <div className="flex items-center justify-between text-sm font-medium text-slate-500">
+            {isLoading && !data ? (
+              <span>Loading Courses…</span>
             ) : data ? (
               <span>
-                {data.total} {data.total === 1 ? "course" : "courses"} found
+                Showing {data.courses.length} of {data.total} {data.total === 1 ? "course" : "courses"}
                 {debouncedQuery ? ` for "${debouncedQuery}"` : ""}
                 {category ? ` in ${category}` : ""}
+                {isFetching ? " (updating…)" : ""}
               </span>
             ) : null}
           </div>
 
           {/* Course grid */}
-          {isLoading ? (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="h-36 rounded-2xl bg-slate-100 animate-pulse" />
-              ))}
+          {isLoading && !data ? (
+            <div className="space-y-8">
+              <div className="flex flex-col items-center justify-center py-12">
+                <div className="app-loader-mark mb-3">E</div>
+                <p className="font-bold text-sm text-slate-700 animate-pulse">Loading Courses…</p>
+              </div>
+              <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="h-96 rounded-[2.5rem] bg-slate-100/80 animate-pulse border border-slate-200" />
+                ))}
+              </div>
             </div>
           ) : data && data.courses.length > 0 ? (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {data.courses.map((course) => (
-                <Card
-                  key={course.id}
-                  className="cursor-pointer border-slate-200 hover:border-blue-300 hover:shadow-md transition"
-                  onClick={() => onCourseClick?.(course.moodleCourseId, course.title)}
-                >
-                  <CardContent className="p-5 space-y-3">
-                    <div className="flex items-start justify-between gap-2">
-                      <p className="font-semibold text-slate-900 text-sm leading-snug line-clamp-2">
-                        {course.title}
-                      </p>
-                      {course.price > 0 ? (
-                        <span className="shrink-0 text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full">
-                          PKR {course.price.toLocaleString()}
-                        </span>
-                      ) : (
-                        <Badge variant="secondary" className="shrink-0 text-xs">Free</Badge>
-                      )}
-                    </div>
-                    {course.category && (
-                      <span className="inline-block text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
-                        {course.category}
-                      </span>
-                    )}
-                    {course.summary && (
-                      <p className="text-xs text-slate-500 line-clamp-2 leading-5">
-                        {course.summary.replace(/<[^>]+>/g, "")}
-                      </p>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {data.courses.map((course) => {
+                const moodleId = typeof course.moodleCourseId === "number" ? course.moodleCourseId : Number(course.id) || 0;
+                const programItem: LmsCourse = {
+                  id: moodleId,
+                  slug: course.slug || `course-${moodleId}`,
+                  shortName: course.shortname || `COURSE-${moodleId}`,
+                  title: course.title,
+                  shortDescription: course.summary ? course.summary.replace(/<[^>]+>/g, "") : "Interactive Moodle course.",
+                  fullDescription: course.summary ? course.summary.replace(/<[^>]+>/g, "") : "Interactive Moodle course.",
+                  category: course.category || "General",
+                  categoryName: course.category || "General",
+                  categoryId: null,
+                  format: "online",
+                  imageUrl: course.imageUrl || null,
+                  startDate: null,
+                  endDate: null,
+                  price: course.price ? Math.round(course.price * 100) : 0,
+                  visible: true,
+                  lmsCourseUrl: course.lmsUrl || `https://lms.edumeup.com/course/view.php?id=${moodleId}`,
+                };
+
+                return <ProgramCard key={course.id} program={programItem} />;
+              })}
             </div>
           ) : data && debouncedQuery ? (
-            <div className="rounded-2xl border border-dashed border-slate-200 p-8 text-center text-slate-500">
-              <Search className="mx-auto h-8 w-8 mb-3 opacity-30" />
-              <p className="font-semibold text-slate-700">No courses found for "{debouncedQuery}"</p>
-              <p className="mt-1 text-sm">Try a different keyword or clear the filters.</p>
+            <div className="rounded-[2rem] border border-dashed border-slate-200 bg-slate-50/50 p-12 text-center text-slate-500">
+              <Search className="mx-auto h-10 w-10 mb-3 opacity-30 text-[#2366c9]" />
+              <p className="font-bold text-slate-800 text-lg">No courses found for "{debouncedQuery}"</p>
+              <p className="mt-1 text-sm">Try a different keyword or click Clear Filters.</p>
             </div>
           ) : null}
 

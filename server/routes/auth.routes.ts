@@ -11,6 +11,7 @@ import {
   registerInputSchema
 } from "../../shared/schema.js";
 import { fetchCurrentUser, loginWithMoodle, registerWithMoodle, updateMoodleProfile } from "../services/moodle/moodle-auth.js";
+import { env } from "../config/config.js";
 import { linkGuestDiagnosticToAccount } from "../services/diagnostics.js";
 import { countryToMoodleIso, normalizeScholarshipCountry } from "../../shared/scholarship-concessions.js";
 
@@ -257,19 +258,104 @@ export function registerAuthRoutes(app: Express, ctx: RouteContext) {
     });
     console.log("📸 Local DB profileImage:", localUser?.profileImage);
 
-    // 3. Merge (Local DB priority)
+    // 3. Merge & Proxy Moodle pluginfile image URLs
+    const rawPicUrl = localUser?.profileImage || moodleUser.profileImageUrl;
+    let finalProfileImage = rawPicUrl;
+    if (rawPicUrl && rawPicUrl.includes("pluginfile.php")) {
+      finalProfileImage = `/api/user/picture-proxy?url=${encodeURIComponent(rawPicUrl)}`;
+    }
+
     const user = {
       ...moodleUser,
-      profileImage: localUser?.profileImage || moodleUser.profileImageUrl,
-      profileImageUrl: localUser?.profileImage || moodleUser.profileImageUrl,
+      profileImage: finalProfileImage,
+      profileImageUrl: finalProfileImage,
     };
-    console.log("📸 Final response:", user.profileImage);
+    console.log("📸 Final response profile image:", user.profileImage);
       req.session.user = user;
       await linkGuestDiagnosticToAccount({ moodleUserId: user.id, ip: getClientIp(req) }).catch(() => undefined);
       res.json(user);
     } catch (err) {
       req.session.destroy(() => undefined);
       res.status(401).json({ message: "Not authenticated" });
+    }
+  });
+
+  // ==========================================
+  // OPENCODE: Forgot password (SRS 1.5) — programmatically triggers Moodle's
+  // built-in forgot-password flow. The server POSTs to Moodle's forgot_password.php
+  // on behalf of the user, so Moodle sends the reset email using its own SMTP.
+  // The user stays on the EduMeUp app and never sees the Moodle page.
+  // ==========================================
+  app.post("/api/auth/forgot", async (req, res) => {
+    try {
+      const email = typeof req.body?.email === "string" ? req.body.email.trim() : "";
+      if (!email) {
+        return res.status(400).json({ message: "Email is required" });
+      }
+      const moodleBase = env.moodle.baseUrl?.replace(/\/+$/, "");
+      if (!moodleBase) {
+        return res.status(500).json({ message: "Moodle base URL is not configured" });
+      }
+
+      // Step 1: GET the forgot password page to obtain the sesskey and logintoken
+      const forgotPageUrl = `${moodleBase}/login/forgot_password.php`;
+      const pageResponse = await fetch(forgotPageUrl, {
+        method: "GET",
+        headers: { "User-Agent": "EduMeUp/1.0" },
+        redirect: "follow",
+      });
+
+      const pageHtml = await pageResponse.text();
+      const cookies = pageResponse.headers.getSetCookie?.() || [];
+      const cookieHeader = cookies.map((c) => c.split(";")[0]).join("; ");
+
+      // Extract sesskey
+      const sesskeyMatch = pageHtml.match(/name="sesskey"\s+value="([^"]+)"/);
+      const sesskey = sesskeyMatch?.[1] || "";
+
+      // Extract logintoken
+      const logintokenMatch = pageHtml.match(/name="logintoken"\s+value="([^"]+)"/);
+      const logintoken = logintokenMatch?.[1] || "";
+
+      if (!sesskey) {
+        console.warn("[forgot-password] Could not extract sesskey from Moodle page");
+        // Still return success to not reveal account existence
+        return res.json({ success: true });
+      }
+
+      // Step 2: POST the form data to Moodle's forgot_password.php
+      const formBody = new URLSearchParams();
+      formBody.set("sesskey", sesskey);
+      if (logintoken) formBody.set("logintoken", logintoken);
+      formBody.set("email", email.trim());
+
+      const submitResponse = await fetch(forgotPageUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "User-Agent": "EduMeUp/1.0",
+          Cookie: cookieHeader,
+        },
+        body: formBody.toString(),
+        redirect: "follow",
+      });
+
+      if (env.authDebug === "1") {
+        const responseText = await submitResponse.text();
+        console.log(`[forgot-password] Moodle response status: ${submitResponse.status}, body snippet: ${responseText.substring(0, 300)}`);
+      }
+
+      // Always return success (don't reveal whether email exists)
+      res.json({ success: true });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({
+          message: err.errors[0].message,
+          field: err.errors[0].path.join("."),
+        });
+      }
+      console.error("[forgot-password] error:", err);
+      res.status(500).json({ message: "Failed to send password reset email" });
     }
   });
 

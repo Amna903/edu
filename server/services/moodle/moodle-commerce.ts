@@ -1,4 +1,5 @@
 import { getMoodleAdminFetchTokens, getMoodleApiUrl, isRetryableMoodleTokenError } from "./moodle-tokens.js";
+import { confirmMoodleUserAccount } from "./moodle-auth.js";
 
 export async function enrolUserInCourse(userId: number, courseId: number) {
   const apiUrl = getMoodleApiUrl();
@@ -52,6 +53,56 @@ export async function enrolUserInCourse(userId: number, courseId: number) {
         || normalizedMessage.includes("already enroled");
       if (alreadyEnrolled) {
         return { success: true };
+      }
+
+      const isUserNotConfirmed =
+        normalizedErrorCode.includes("usernotconfirmed")
+        || normalizedMessage.includes("usernotconfirmed")
+        || normalizedMessage.includes("not confirmed");
+
+      if (isUserNotConfirmed) {
+        try {
+          let targetUsername: string | undefined;
+          try {
+            const userLookupRes = await fetch(apiUrl, {
+              method: "POST",
+              headers: { "Content-Type": "application/x-www-form-urlencoded" },
+              body: new URLSearchParams({
+                wstoken: token,
+                wsfunction: "core_user_get_users_by_field",
+                moodlewsrestformat: "json",
+                field: "id",
+                "values[0]": String(userId),
+              }).toString(),
+            });
+            if (userLookupRes.ok) {
+              const usersList = await userLookupRes.json();
+              if (Array.isArray(usersList) && usersList[0]?.username) {
+                targetUsername = usersList[0].username;
+              }
+            }
+          } catch {
+            // Ignore lookup error
+          }
+
+          await confirmMoodleUserAccount(userId, targetUsername);
+
+          const retryResponse = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: payload.toString(),
+          });
+          if (retryResponse.ok) {
+            const retryData = await retryResponse.json();
+            if (!retryData?.exception && !retryData?.errorcode) {
+              return { success: true };
+            }
+          }
+        } catch (confirmErr) {
+          console.warn("[Moodle Enrolment] Auto-confirm user attempt failed:", confirmErr);
+        }
       }
 
       const safeMessage =

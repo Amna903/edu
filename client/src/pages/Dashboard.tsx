@@ -19,6 +19,7 @@ import { StudentDashboardSection } from "@/components/dashboard/StudentDashboard
 import { StudentPaymentsPanel } from "@/components/dashboard/StudentPaymentsPanel";
 import { ProfileImageUpload } from "@/components/ProfileImageUpload";
 import { JobQueuePanel } from "@/components/dashboard/JobQueuePanel";
+import { UserAccountActivityPanel } from "@/components/dashboard/UserAccountActivityPanel";
 import { useAuthUser, useLogout } from "@/hooks/use-auth";
 import { useOrders } from "@/hooks/use-orders";
 import { useChangePassword, useUpdateProfile } from "@/hooks/use-profile";
@@ -90,6 +91,15 @@ function normalizeProfileCountry(country?: string | null) {
   const value = country?.trim();
   if (!value) return "";
   return normalizeScholarshipCountry(value) || REGISTRATION_MOODLE_ISO_TO_COUNTRY[value.toUpperCase()] || value;
+}
+
+function formatDisplayName(name?: string | null): string {
+  if (!name) return "User";
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 }
 
 function CourseImage({ imageUrl, title }: { imageUrl?: string | null; title: string }) {
@@ -601,11 +611,15 @@ export default function Dashboard() {
             {/* ── Mobile toggle bar ── */}
             <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-3 shadow-sm lg:hidden">
               <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-700">
-                  {user.firstname?.[0] || user.fullname[0]}
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-blue-100 text-sm font-bold text-blue-700">
+                  {user.profileImageUrl ? (
+                    <img src={user.profileImageUrl} alt={user.fullname} className="h-full w-full object-cover" />
+                  ) : (
+                    (user.firstname?.[0] || user.fullname[0] || "U").toUpperCase()
+                  )}
                 </div>
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-bold text-slate-900">{user.fullname}</p>
+                  <p className="truncate text-sm font-bold text-slate-900">{formatDisplayName(user.fullname)}</p>
                   <p className="text-xs font-semibold uppercase tracking-[0.15em] text-slate-400">{user.role}</p>
                 </div>
               </div>
@@ -633,11 +647,15 @@ export default function Dashboard() {
               ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
             `}>
               <div className="flex items-center gap-4 rounded-3xl bg-slate-50 p-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-100 text-lg font-bold text-blue-700">
-                  {user.firstname?.[0] || user.fullname[0]}
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-blue-100 text-lg font-bold text-blue-700 shadow-sm border border-slate-200">
+                  {user.profileImageUrl ? (
+                    <img src={user.profileImageUrl} alt={user.fullname} className="h-full w-full object-cover" />
+                  ) : (
+                    (user.firstname?.[0] || user.fullname[0] || "U").toUpperCase()
+                  )}
                 </div>
                 <div className="min-w-0">
-                  <p className="truncate text-base font-bold text-slate-900">{user.fullname}</p>
+                  <p className="truncate text-base font-bold text-slate-900">{formatDisplayName(user.fullname)}</p>
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">{user.role}</p>
                 </div>
               </div>
@@ -715,9 +733,9 @@ export default function Dashboard() {
 
             <section className="space-y-6">
               <DashboardHero
-  eyebrow={getDashboardEyebrow(user.role)}
-  title={`Welcome back, ${user.firstname || user.fullname.split(" ")[0]}!`}
-  description="A role-focused workspace for operations, learner progress, and institutional performance."
+                eyebrow={getDashboardEyebrow(user.role)}
+                title={`Welcome back, ${formatDisplayName(user.firstname || user.fullname.split(" ")[0])}!`}
+                description="A role-focused workspace for operations, learner progress, and institutional performance."
                 actions={user.role === "student" ? (
                   <div className="space-y-3">
                     <div className="flex flex-wrap items-center gap-3">
@@ -858,35 +876,35 @@ export default function Dashboard() {
 
               {onMainDashboard && user.role === "parent" && (
                 <div className="space-y-6">
-                  <Card className="border-0 bg-[radial-gradient(circle_at_top,_rgba(35,102,201,0.16),_transparent_40%),linear-gradient(135deg,#ffffff,#f7fbff)] shadow-xl">
-                    <CardContent className="grid gap-4 p-6 md:grid-cols-[1.2fr_0.8fr] md:items-center">
-                      <div>
-                        <p className="text-sm font-semibold uppercase tracking-[0.22em] text-blue-600">Parent Tools</p>
+                  <Card className="border-0 bg-[radial-gradient(circle_at_top,_rgba(35,102,201,0.16),_transparent_40%),linear-gradient(135deg,#ffffff,#f7fbff)] shadow-xl overflow-hidden">
+                    <CardContent className="flex flex-col gap-6 p-6 lg:flex-row lg:items-center lg:justify-between">
+                      <div className="max-w-xl">
+                        <p className="text-xs font-bold uppercase tracking-[0.22em] text-blue-600">Parent Tools</p>
                         <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900">Manage your children's progress from one place</h2>
-                        <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600">
+                        <p className="mt-2 text-sm leading-relaxed text-slate-600">
                           View profiles, track progress and grades, watch alerts, and export a report whenever you need one.
                         </p>
                       </div>
-                      <div className="grid gap-3 sm:grid-cols-2">
-                        <Button type="button" variant="outline" className="justify-start rounded-2xl border-slate-200 bg-white" onClick={() => document.getElementById("parent-children")?.scrollIntoView({ behavior: "smooth", block: "start" })}>
-                          <Users className="mr-2 h-4 w-4" /> View Children Profiles
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full lg:w-auto lg:max-w-md shrink-0">
+                        <Button type="button" variant="outline" className="justify-start rounded-xl border-slate-200/80 bg-white/90 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50 shadow-sm" onClick={() => document.getElementById("parent-children")?.scrollIntoView({ behavior: "smooth", block: "start" })}>
+                          <Users className="mr-2 h-4 w-4 shrink-0 text-blue-600" /> <span className="truncate">View Children Profiles</span>
                         </Button>
-                        <Button type="button" variant="outline" className="justify-start rounded-2xl border-slate-200 bg-white" onClick={() => document.getElementById("parent-progress")?.scrollIntoView({ behavior: "smooth", block: "start" })}>
-                          <BarChart3 className="mr-2 h-4 w-4" /> Monitor Progress
+                        <Button type="button" variant="outline" className="justify-start rounded-xl border-slate-200/80 bg-white/90 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50 shadow-sm" onClick={() => document.getElementById("parent-progress")?.scrollIntoView({ behavior: "smooth", block: "start" })}>
+                          <BarChart3 className="mr-2 h-4 w-4 shrink-0 text-indigo-600" /> <span className="truncate">Monitor Progress</span>
                         </Button>
-                        <Button type="button" variant="outline" className="justify-start rounded-2xl border-slate-200 bg-white" onClick={() => document.getElementById("parent-grades")?.scrollIntoView({ behavior: "smooth", block: "start" })}>
-                          <Check className="mr-2 h-4 w-4" /> View Grades
+                        <Button type="button" variant="outline" className="justify-start rounded-xl border-slate-200/80 bg-white/90 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50 shadow-sm" onClick={() => document.getElementById("parent-grades")?.scrollIntoView({ behavior: "smooth", block: "start" })}>
+                          <Check className="mr-2 h-4 w-4 shrink-0 text-emerald-600" /> <span className="truncate">View Grades</span>
                         </Button>
-                        <Button type="button" variant="outline" className="justify-start rounded-2xl border-slate-200 bg-white" onClick={() => document.getElementById("parent-alerts")?.scrollIntoView({ behavior: "smooth", block: "start" })}>
-                          <Bell className="mr-2 h-4 w-4" /> Receive Alerts
+                        <Button type="button" variant="outline" className="justify-start rounded-xl border-slate-200/80 bg-white/90 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50 shadow-sm" onClick={() => document.getElementById("parent-alerts")?.scrollIntoView({ behavior: "smooth", block: "start" })}>
+                          <Bell className="mr-2 h-4 w-4 shrink-0 text-amber-600" /> <span className="truncate">Receive Alerts</span>
                         </Button>
                         <Button
                           type="button"
-                          className="justify-start rounded-2xl bg-brand-primary text-white hover:bg-brand-primary-dark sm:col-span-2"
+                          className="justify-center rounded-xl bg-brand-primary text-white hover:bg-brand-primary-dark sm:col-span-2 text-xs sm:text-sm font-semibold shadow-md"
                           onClick={() => downloadParentReport()}
                           disabled={reportDownloadState.pending}
                         >
-                          <Download className="mr-2 h-4 w-4" />
+                          <Download className="mr-2 h-4 w-4 shrink-0" />
                           {reportDownloadState.pending ? "Preparing Report..." : "Download Reports"}
                         </Button>
                       </div>
@@ -1793,9 +1811,10 @@ export default function Dashboard() {
               )}
 
               {onProfile && (
-                <Card>
-                  <CardHeader><CardTitle>Profile Settings</CardTitle></CardHeader>
-                  <CardContent className="space-y-8">
+                <div className="space-y-6">
+                  <Card>
+                    <CardHeader><CardTitle>Profile Settings</CardTitle></CardHeader>
+                    <CardContent className="space-y-8">
                     {/* 4.2 — Profile image upload */}
                     <div className="flex flex-col items-center sm:flex-row sm:items-start gap-6 pb-2">
                       <ProfileImageUpload
@@ -1914,6 +1933,8 @@ export default function Dashboard() {
                     </form>
                   </CardContent>
                 </Card>
+                <UserAccountActivityPanel />
+              </div>
               )}
 
               {onOrders && user.role === "student" && (

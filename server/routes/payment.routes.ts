@@ -1183,6 +1183,17 @@ try {
       const email = input.email.trim().toLowerCase();
       const studentName = [input.firstName.trim(), input.lastName.trim()].filter(Boolean).join(" ").trim();
 
+      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!emailPattern.test(email)) {
+        return res.status(400).json({ message: "Invalid student email format. Please enter a valid email address (e.g. student@school.edu)." });
+      }
+
+      const domain = email.split("@")[1] || "";
+      const typoDomains = ["gmai.com", "gmaill.com", "gmal.com", "yaho.com", "outlok.com", "hotmai.com"];
+      if (typoDomains.includes(domain)) {
+        return res.status(400).json({ message: `Domain '@${domain}' looks like a typo. Please check and enter a valid email address.` });
+      }
+
       const existing = await prisma.schoolRosterStudents.findFirst({
         where: { schoolUserId: req.session.user.id, studentEmail: email },
       });
@@ -1200,6 +1211,17 @@ try {
           sourceUploadId: `manual-${randomUUID()}`,
         },
       });
+
+      await (prisma as any).adminActivityLog.create({
+        data: {
+          adminUserId: req.session.user.id,
+          action: "SCHOOL_ROSTER_UPLOAD",
+          details: {
+            studentName,
+            studentEmail: email,
+          },
+        },
+      }).catch(() => {});
 
       res.status(201).json({
         id: created.id,
@@ -1297,6 +1319,19 @@ try {
         },
       });
 
+      await (prisma as any).adminActivityLog.create({
+        data: {
+          adminUserId: req.session.user.id,
+          action: "SCHOOL_ROSTER_UPLOAD",
+          details: {
+            filename: input.filename || "students.csv",
+            totalStudents: parsedRows.length,
+            processedStudents,
+            failedStudents: errors.length,
+          },
+        },
+      }).catch(() => {});
+
       res.status(201).json(uploadRecord);
     } catch (err) {
       if (err instanceof z.ZodError) {
@@ -1334,6 +1369,100 @@ try {
       });
     } catch (err) {
       res.status(500).json({ message: err instanceof Error ? err.message : "Failed to load upload status" });
+    }
+  });
+
+  app.delete("/api/dashboard/school/roster/:id", async (req, res) => {
+    try {
+      if (!req.session.user || req.session.user.role !== "school") {
+        return res.status(403).json({ message: "School access required" });
+      }
+      const rosterId = parseInt(req.params.id, 10);
+      if (isNaN(rosterId)) {
+        return res.status(400).json({ message: "Invalid roster student ID" });
+      }
+
+      const student = await prisma.schoolRosterStudents.findFirst({
+        where: { id: rosterId, schoolUserId: req.session.user.id },
+      });
+
+      if (!student) {
+        return res.status(404).json({ message: "Student not found on your roster" });
+      }
+
+      await prisma.schoolSeatAssignments.deleteMany({
+        where: {
+          schoolUserId: req.session.user.id,
+          OR: [
+            { studentId: student.studentId },
+            { studentEmail: student.studentEmail },
+          ],
+        },
+      });
+
+      await prisma.schoolRosterStudents.delete({
+        where: { id: student.id },
+      });
+
+      res.json({ success: true, message: "Student deleted from roster" });
+    } catch (err) {
+      res.status(500).json({ message: err instanceof Error ? err.message : "Failed to delete student" });
+    }
+  });
+
+  app.patch("/api/dashboard/school/roster/:id", async (req, res) => {
+    try {
+      if (!req.session.user || req.session.user.role !== "school") {
+        return res.status(403).json({ message: "School access required" });
+      }
+      const rosterId = parseInt(req.params.id, 10);
+      if (isNaN(rosterId)) {
+        return res.status(400).json({ message: "Invalid roster student ID" });
+      }
+
+      const { studentName, studentEmail } = req.body || {};
+      const trimmedName = typeof studentName === "string" ? studentName.trim() : "";
+      const trimmedEmail = typeof studentEmail === "string" ? studentEmail.trim().toLowerCase() : "";
+
+      if (!trimmedName || !trimmedEmail) {
+        return res.status(400).json({ message: "Name and email are required" });
+      }
+
+      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!emailPattern.test(trimmedEmail)) {
+        return res.status(400).json({ message: "Invalid email format" });
+      }
+
+      const student = await prisma.schoolRosterStudents.findFirst({
+        where: { id: rosterId, schoolUserId: req.session.user.id },
+      });
+
+      if (!student) {
+        return res.status(404).json({ message: "Student not found on your roster" });
+      }
+
+      const updated = await prisma.schoolRosterStudents.update({
+        where: { id: student.id },
+        data: {
+          studentName: trimmedName,
+          studentEmail: trimmedEmail,
+        },
+      });
+
+      await prisma.schoolSeatAssignments.updateMany({
+        where: {
+          schoolUserId: req.session.user.id,
+          studentId: student.studentId,
+        },
+        data: {
+          studentName: trimmedName,
+          studentEmail: trimmedEmail,
+        },
+      });
+
+      res.json({ success: true, student: updated });
+    } catch (err) {
+      res.status(500).json({ message: err instanceof Error ? err.message : "Failed to update student" });
     }
   });
 
@@ -1389,12 +1518,25 @@ try {
         }
 
         let moodleUserId = student.studentId;
+        let createdAccountInfo: { username?: string; generatedPassword?: string } | undefined;
         try {
           const moodleUser = await ensureMoodleStudentByEmail({
             email: normalizedEmail,
             fullName: student.studentName,
           });
           moodleUserId = moodleUser.moodleUserId;
+          if (moodleUser.wasCreated || moodleUser.generatedPassword) {
+            createdAccountInfo = {
+              username: moodleUser.username || normalizedEmail,
+              generatedPassword: moodleUser.generatedPassword,
+            };
+          }
+          if (moodleUserId && student.studentId !== moodleUserId) {
+            await prisma.schoolRosterStudents.update({
+              where: { id: student.id },
+              data: { studentId: moodleUserId },
+            }).catch(() => {});
+          }
         } catch (error) {
           failed.push({
             rosterId,
@@ -1443,6 +1585,97 @@ try {
           },
           create: assignment,
         });
+
+        const protocol = req.headers["x-forwarded-proto"] || req.protocol || "http";
+        const host = req.headers.host || "localhost:5000";
+        const loginUrl = `${protocol}://${host}/login`;
+
+        // STEP 1: Account Creation Email (Sent ONLY when a brand-new student account is created)
+        if (createdAccountInfo?.generatedPassword) {
+          const creationSubject = "Welcome to EduMeUp - Your Account Details";
+          const creationBody = `Dear ${student.studentName},
+
+Welcome to EduMeUp! Your student account has been created for learning access on EduMeUp.
+
+==================================================
+ACCOUNT DETAILS
+==================================================
+Portal Login URL: ${loginUrl}
+Email / Username: ${createdAccountInfo.username || normalizedEmail}
+Temporary Password: ${createdAccountInfo.generatedPassword}
+==================================================
+
+GETTING STARTED:
+1. Open the Portal Login URL: ${loginUrl}
+2. Log in using your email/username and temporary password provided above.
+
+Warm regards,
+EduMeUp Support Team`;
+
+          await sendTransactionalEmail({
+            to: normalizedEmail,
+            subject: creationSubject,
+            text: creationBody,
+          }).catch((emailErr) => {
+            console.warn("[Account Creation] Failed to send creation email:", emailErr);
+          });
+
+          console.log(`\n======================================================`);
+          console.log(`📧 STEP 1: ACCOUNT CREATION WELCOME EMAIL SENT:`);
+          console.log(`To: ${normalizedEmail}`);
+          console.log(`Username: ${createdAccountInfo.username || normalizedEmail}`);
+          console.log(`Password: ${createdAccountInfo.generatedPassword}`);
+          console.log(`Login Link: ${loginUrl}`);
+          console.log(`======================================================\n`);
+        }
+
+        // STEP 2: Seat Assignment Email (Sent EVERY TIME a course seat is assigned)
+        const seatAssignmentSubject = `Course Seat Assigned: ${license.courseName}`;
+        const seatAssignmentBody = `Dear ${student.studentName},
+
+You have been assigned a seat for the course "${license.courseName}" on EduMeUp!
+
+==================================================
+SEAT ASSIGNMENT DETAILS
+==================================================
+Course Enrolled: ${license.courseName}
+Portal Login URL: ${loginUrl}
+Email Address: ${normalizedEmail}
+==================================================
+
+Please log in to your account at ${loginUrl} to access your course materials immediately.
+
+Warm regards,
+EduMeUp Academic Team`;
+
+        await sendTransactionalEmail({
+          to: normalizedEmail,
+          subject: seatAssignmentSubject,
+          text: seatAssignmentBody,
+        }).catch((emailErr) => {
+          console.warn("[Seat Assignment] Failed to send assignment email:", emailErr);
+        });
+
+        console.log(`\n======================================================`);
+        console.log(`📧 STEP 2: COURSE SEAT ASSIGNED EMAIL SENT:`);
+        console.log(`To: ${normalizedEmail}`);
+        console.log(`Course: ${license.courseName}`);
+        console.log(`Login Link: ${loginUrl}`);
+        console.log(`======================================================\n`);
+
+      if (assigned.length > 0) {
+        await (prisma as any).adminActivityLog.create({
+          data: {
+            adminUserId: req.session.user.id,
+            action: "SCHOOL_SEAT_ASSIGNMENT",
+            details: {
+              licenseId: license.id,
+              courseName: license.courseName,
+              assignedCount: assigned.length,
+            },
+          },
+        }).catch(() => {});
+      }
         assigned.push({
           id: assignment.id,
           licenseId: license.id,
