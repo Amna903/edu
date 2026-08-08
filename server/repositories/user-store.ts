@@ -275,29 +275,55 @@ export async function getStoredRoleByMoodleUserId(moodleUserId: number): Promise
 }
 
 const inMemoryParentChildLinks = new Map<number, Set<number>>();
+export const MAX_CHILDREN_PER_PARENT = 10;
 
-export async function linkParentToChild(parentMoodleUserId: number, childMoodleUserId: number) {
+export class ParentChildLimitError extends Error {
+  constructor() {
+    super(`A parent can link a maximum of ${MAX_CHILDREN_PER_PARENT} children.`);
+    this.name = "ParentChildLimitError";
+  }
+}
+
+export async function linkParentToChild(parentMoodleUserId: number, childMoodleUserId: number): Promise<{ created: boolean }> {
   try {
-    await prisma.parentChild.upsert({
-      where: {
-        parentId_childId: {
-          parentId: parentMoodleUserId,
-          childId: childMoodleUserId,
+    return await prisma.$transaction(async (transaction) => {
+      const existingLink = await transaction.parentChild.findUnique({
+        where: {
+          parentId_childId: {
+            parentId: parentMoodleUserId,
+            childId: childMoodleUserId,
+          },
         },
-      },
-      update: {},
-      create: {
-        parentId: parentMoodleUserId,
-        childId: childMoodleUserId,
-      },
+        select: { id: true },
+      });
+
+      // Linking the same child twice is safe and does not consume another slot.
+      if (existingLink) return { created: false };
+
+      const linkedCount = await transaction.parentChild.count({ where: { parentId: parentMoodleUserId } });
+      if (linkedCount >= MAX_CHILDREN_PER_PARENT) throw new ParentChildLimitError();
+
+      await transaction.parentChild.create({
+        data: { parentId: parentMoodleUserId, childId: childMoodleUserId },
+      });
+      const existing = inMemoryParentChildLinks.get(parentMoodleUserId) ?? new Set<number>();
+      existing.add(childMoodleUserId);
+      inMemoryParentChildLinks.set(parentMoodleUserId, existing);
+      return { created: true };
     });
   } catch (error) {
+    if (error instanceof ParentChildLimitError) throw error;
     console.warn("Prisma parentChild upsert failed, using memory fallback:", error);
   }
 
   const existing = inMemoryParentChildLinks.get(parentMoodleUserId) ?? new Set<number>();
+  if (!existing.has(childMoodleUserId) && existing.size >= MAX_CHILDREN_PER_PARENT) {
+    throw new ParentChildLimitError();
+  }
+  const created = !existing.has(childMoodleUserId);
   existing.add(childMoodleUserId);
   inMemoryParentChildLinks.set(parentMoodleUserId, existing);
+  return { created };
 }
 
 export async function getLinkedChildren(parentMoodleUserId: number) {

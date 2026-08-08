@@ -15,7 +15,7 @@ import {
   getStudentGradesForDashboard,
   getUserCoursesForDashboard,
 } from "../services/moodle/moodle-dashboard.js";
-import { findChildUserByEmailOrIdentifier, getStoredUserByMoodleUserId, linkParentToChild } from "../repositories/user-store.js";
+import { findChildUserByEmailOrIdentifier, getStoredUserByMoodleUserId, linkParentToChild, MAX_CHILDREN_PER_PARENT, ParentChildLimitError } from "../repositories/user-store.js";
 import { buildOrigin, buildPayfastCheckoutFields, buildPayfastItemName } from "../services/payments.js";
 import { env } from "../config/config.js";
 import { prisma } from "../db/prisma.js";
@@ -835,9 +835,12 @@ try {
         return res.status(400).json({ message: "Please enter your child's email address." });
       }
 
-      await linkParentToChild(req.session.user.id, childMoodleUserId);
-      res.json({ success: true });
+      const result = await linkParentToChild(req.session.user.id, childMoodleUserId);
+      res.json({ success: true, created: result.created });
     } catch (error) {
+      if (error instanceof ParentChildLimitError) {
+        return res.status(400).json({ message: `Maximum ${MAX_CHILDREN_PER_PARENT} children are allowed per parent account.` });
+      }
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: error.errors[0]?.message || "Invalid request" });
       }
@@ -892,13 +895,25 @@ try {
     }
 
     try {
+      const childIdParam = String(req.query.childId ?? "").trim();
+      const childId = childIdParam ? Number(childIdParam) : undefined;
+      if (childId !== undefined && (!Number.isInteger(childId) || childId <= 0)) {
+        return res.status(400).json({ message: "Invalid child report request." });
+      }
+      if (childId !== undefined) {
+        const linkedChildren = await loadLinkedChildren(req.session.user.id);
+        if (!linkedChildren.includes(childId)) {
+          return res.status(403).json({ message: "This child is not linked to your account." });
+        }
+      }
       const csv = await buildParentReportCsv({
         parentId: req.session.user.id,
         email: req.session.user.email,
+        childId,
       });
 
       res.setHeader("Content-Type", "text/csv; charset=utf-8");
-      res.setHeader("Content-Disposition", `attachment; filename="parent-dashboard-report-${req.session.user.id}.csv"`);
+      res.setHeader("Content-Disposition", `attachment; filename="${childId ? `child-${childId}-report` : "parent-dashboard-report"}-${req.session.user.id}.csv"`);
       res.send(`\ufeff${csv}`);
     } catch (error) {
       res.status(500).json({ message: error instanceof Error ? error.message : "Failed to generate report" });

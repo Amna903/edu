@@ -12,6 +12,10 @@ function formatValue(value: unknown) {
   return JSON.stringify(value);
 }
 
+function formatSubmittedAt(value: string) {
+  return new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" }).format(new Date(value));
+}
+
 export default function AdminFormResponses() {
   const [match, params] = useRoute("/dashboard/admin/forms/:identifier/responses");
   const identifier = params?.identifier;
@@ -83,6 +87,11 @@ export default function AdminFormResponses() {
                 <Button type="button" variant="outline" onClick={handleExportCsv}>
                   Export CSV
                 </Button>
+                {identifier ? (
+                  <Button type="button" variant="outline" onClick={() => window.open(`/api/admin/forms/${encodeURIComponent(identifier)}/files.zip`, "_blank", "noopener,noreferrer")}>
+                    Download all files (ZIP)
+                  </Button>
+                ) : null}
                 <Link href="/dashboard/admin/forms">
                   <Button variant="secondary">Back to admin forms</Button>
                 </Link>
@@ -124,7 +133,7 @@ export default function AdminFormResponses() {
                   <div>
                     <p className="text-sm font-semibold uppercase tracking-[0.22em] text-brand-primary">Response {currentIndex + 1} of {submissions.length}</p>
                     <h2 className="mt-2 text-2xl font-bold text-slate-900">{selectedSubmission.responderName || selectedSubmission.responderEmail || selectedSubmission.publicSubmissionId}</h2>
-                    <p className="mt-1 text-sm text-slate-500">Submitted {new Date(selectedSubmission.submittedAt).toLocaleString()}</p>
+                    <p className="mt-1 text-sm text-slate-500">Submitted {formatSubmittedAt(selectedSubmission.submittedAt)}</p>
                   </div>
                   <div className="rounded-full bg-white px-3 py-1 text-sm font-semibold text-slate-600 shadow-sm">{selectedSubmission.status}</div>
                 </div>
@@ -142,10 +151,15 @@ export default function AdminFormResponses() {
                   <div className="rounded-[22px] border border-slate-200 bg-slate-50 p-4">
                     <p className="text-sm font-semibold text-slate-800">Files</p>
                     <div className="mt-3 space-y-3">
-                      {selectedSubmission.files.map((file) => (
+                      {selectedSubmission.files.map((file, fileIndex) => (
                         <div key={`${file.fieldName}-${file.originalName}`} className="rounded-2xl border border-slate-200 bg-white p-3 text-sm text-slate-700">
                           <p className="font-semibold">{file.originalName}</p>
                           <p className="mt-1">{file.mimeType} · {(file.size / 1024).toFixed(1)} KB</p>
+                          {identifier ? (
+                            <a href={`/api/admin/forms/${encodeURIComponent(identifier)}/submissions/${encodeURIComponent(selectedSubmission.publicSubmissionId)}/files/${fileIndex}`} className="mt-2 inline-block font-semibold text-brand-primary hover:underline">
+                              Download file
+                            </a>
+                          ) : null}
                         </div>
                       ))}
                     </div>

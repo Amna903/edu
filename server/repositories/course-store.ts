@@ -1,4 +1,5 @@
 import { prisma } from "../db/prisma.js";
+import { notifyCourseUpdate } from "../services/notifications.js";
 import { getStoredUserByMoodleUserId } from "./user-store.js";
 
 interface MoodleCustomField {
@@ -132,11 +133,15 @@ export async function upsertCourseCatalogFromMoodle(course: MoodleCoursePayload,
     const extractedPrice = extractCoursePrice(course.customfields);
     const price = typeof existingCourse?.price === "number" && existingCourse.price > 0 ? existingCourse.price : extractedPrice;
 
-    return await prisma.courseCatalog.upsert({
+    const nextTitle = course.fullname || course.shortname || `Course ${course.id}`;
+    const changed = Boolean(existingCourse && (
+      existingCourse.fullname !== nextTitle || existingCourse.summary !== (course.summary || null) || existingCourse.isVisible !== (course.visible !== 0)
+    ));
+    const saved = await prisma.courseCatalog.upsert({
       where: { moodleCourseId: course.id },
       update: {
         shortname: course.shortname || `COURSE-${course.id}`,
-        fullname: course.fullname || course.shortname || `Course ${course.id}`,
+        fullname: nextTitle,
         summary: course.summary || null,
         categoryId: course.categoryid || null,
         categoryName: categoryName || null,
@@ -146,7 +151,7 @@ export async function upsertCourseCatalogFromMoodle(course: MoodleCoursePayload,
       create: {
         moodleCourseId: course.id,
         shortname: course.shortname || `COURSE-${course.id}`,
-        fullname: course.fullname || course.shortname || `Course ${course.id}`,
+        fullname: nextTitle,
         summary: course.summary || null,
         categoryId: course.categoryid || null,
         categoryName: categoryName || null,
@@ -154,6 +159,12 @@ export async function upsertCourseCatalogFromMoodle(course: MoodleCoursePayload,
         price,
       },
     });
+    if (changed) {
+      void notifyCourseUpdate({ courseId: saved.id, courseName: saved.fullname, message: `There is an update to ${saved.fullname}. Open your dashboard to review the latest details.` }).catch((error) =>
+        console.error("Course update notification failed:", error),
+      );
+    }
+    return saved;
   } catch (error) {
     if (isMissingCourseCatalogTableError(error)) {
       return null;

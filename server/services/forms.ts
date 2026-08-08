@@ -71,6 +71,16 @@ export interface StoredFormSubmission {
   updatedAt: string;
 }
 
+export interface StoredSubmissionFile {
+  fieldName: string;
+  originalName: string;
+  mimeType: string;
+  size: number;
+  base64: string;
+}
+
+export class FormSubmissionValidationError extends Error {}
+
 const CONTACT_ALIAS = "contact";
 const TEACHER_ALIAS = "teacher-application";
 const GENERAL_ENQUIRY_ALIAS = "general-enquiry";
@@ -144,7 +154,7 @@ function toStoredSubmission(row: {
   submitted_at: Date;
   created_at: Date;
   updated_at: Date;
-}): StoredFormSubmission {
+}, includeFileContents = false): StoredFormSubmission {
   return {
     id: row.id,
     formId: row.form_id,
@@ -159,7 +169,7 @@ function toStoredSubmission(row: {
           originalName: String((file as Record<string, unknown>).originalName ?? ""),
           mimeType: String((file as Record<string, unknown>).mimeType ?? "application/octet-stream"),
           size: Number((file as Record<string, unknown>).size ?? 0),
-          base64: String((file as Record<string, unknown>).base64 ?? ""),
+          base64: includeFileContents ? String((file as Record<string, unknown>).base64 ?? "") : "",
         }))
       : [],
     ipAddress: row.ip_address,
@@ -278,6 +288,7 @@ async function ensureBaseTables() {
       responder_email TEXT,
       payload JSONB NOT NULL DEFAULT '{}'::jsonb,
       files JSONB NOT NULL DEFAULT '[]'::jsonb,
+      submission_token TEXT,
       ip_address TEXT,
       user_agent TEXT,
       submitted_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -295,6 +306,9 @@ async function ensureBaseTables() {
   await prisma.$executeRawUnsafe(`
     CREATE INDEX IF NOT EXISTS form_submissions_status_idx ON form_submissions(status)
   `);
+  await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS forms_kind_idx ON forms(kind)`);
+  await prisma.$executeRawUnsafe(`ALTER TABLE form_submissions ADD COLUMN IF NOT EXISTS submission_token TEXT`);
+  await prisma.$executeRawUnsafe(`CREATE UNIQUE INDEX IF NOT EXISTS form_submissions_submission_token_idx ON form_submissions(submission_token) WHERE submission_token IS NOT NULL`);
 }
 
 async function seedSystemForms() {
@@ -356,6 +370,16 @@ export async function ensureFormsReady() {
 
 export async function createForm(input: FormInput): Promise<StoredForm> {
   await ensureBaseTables();
+  const fieldNames = new Set<string>();
+  for (const field of input.fields) {
+    const name = field.name.trim();
+    if (!name) throw new Error("Each field needs a name");
+    if (fieldNames.has(name)) throw new Error(`Duplicate field name: ${name}`);
+    if (field.type === "select" && !(field.options ?? []).some((option) => option.trim())) {
+      throw new Error(`Select field \"${field.label}\" needs at least one option`);
+    }
+    fieldNames.add(name);
+  }
   const formId = randomUUID();
   const publicId = nanoid(24);
   const now = new Date();
@@ -491,7 +515,7 @@ export async function getFormByIdentifier(identifier: string): Promise<StoredFor
     created_at: Date;
     updated_at: Date;
   }>>(
-    `SELECT * FROM forms WHERE public_id = $1 OR kind = $1 LIMIT 1`,
+    `SELECT * FROM forms WHERE public_id = $1 OR kind = $1 ORDER BY (public_id = $1) DESC LIMIT 1`,
     identifier,
   );
 
@@ -522,7 +546,7 @@ export async function getFormByIdentifier(identifier: string): Promise<StoredFor
   };
 }
 
-export async function listFormSubmissions(identifier: string): Promise<{ form: StoredForm; submissions: StoredFormSubmission[] } | undefined> {
+export async function listFormSubmissions(identifier: string, includeFileContents = false): Promise<{ form: StoredForm; submissions: StoredFormSubmission[] } | undefined> {
   const form = await getFormByIdentifier(identifier);
   if (!form) {
     return undefined;
@@ -553,6 +577,9 @@ export async function listFormSubmissions(identifier: string): Promise<{ form: S
     };
   }
 
+  const filesSelect = includeFileContents
+    ? "files"
+    : "COALESCE((SELECT jsonb_agg(file - 'base64') FROM jsonb_array_elements(files) AS file), '[]'::jsonb) AS files";
   const rows = await prisma.$queryRawUnsafe<Array<{
     id: string;
     form_id: string;
@@ -568,13 +595,14 @@ export async function listFormSubmissions(identifier: string): Promise<{ form: S
     created_at: Date;
     updated_at: Date;
   }>>(
-    `SELECT * FROM form_submissions WHERE form_id = $1 ORDER BY submitted_at DESC`,
+    `SELECT id, form_id, public_submission_id, status, responder_name, responder_email, payload, ${filesSelect}, ip_address, user_agent, submitted_at, created_at, updated_at
+     FROM form_submissions WHERE form_id = $1 ORDER BY submitted_at DESC`,
     form.id,
   );
 
   return {
     form,
-    submissions: rows.map(toStoredSubmission),
+    submissions: rows.map((row) => toStoredSubmission(row, includeFileContents)),
   };
 }
 
@@ -595,13 +623,14 @@ export async function exportFormSubmissionsCsv(identifier: string): Promise<{ fi
     return `"${text.replace(/"/g, '""')}"`;
   };
 
-  const header = ["Submission ID", "Status", "Name", "Email", "Submitted At", ...orderedKeys].map(escape).join(",");
+  const header = ["Submission ID", "Status", "Name", "Email", "Submitted At", "Uploaded Files", ...orderedKeys].map(escape).join(",");
   const rows = result.submissions.map((submission) => [
     submission.publicSubmissionId,
     submission.status,
     submission.responderName ?? "",
     submission.responderEmail ?? "",
     submission.submittedAt,
+    submission.files.map((file) => `${file.fieldName}: ${file.originalName}`).join("; "),
     ...orderedKeys.map((key) => submission.payload[key] ?? ""),
   ].map(escape).join(","));
 
@@ -609,6 +638,88 @@ export async function exportFormSubmissionsCsv(identifier: string): Promise<{ fi
     filename: `${result.form.publicId}-submissions.csv`,
     csv: [header, ...rows].join("\n"),
   };
+}
+
+export async function getFormSubmissionFile(
+  identifier: string,
+  publicSubmissionId: string,
+  fileIndex: number,
+): Promise<{ file: StoredSubmissionFile } | undefined> {
+  const form = await getFormByIdentifier(identifier);
+  if (!form || !Number.isInteger(fileIndex) || fileIndex < 0) return undefined;
+  const rows = await prisma.$queryRawUnsafe<Array<{ files: unknown }>>(
+    `SELECT files FROM form_submissions WHERE form_id = $1 AND public_submission_id = $2 LIMIT 1`,
+    form.id,
+    publicSubmissionId,
+  );
+  const file = Array.isArray(rows[0]?.files) ? rows[0].files[fileIndex] as StoredSubmissionFile | undefined : undefined;
+  if (!file || !Number.isInteger(fileIndex) || fileIndex < 0) return undefined;
+  return { file };
+}
+
+function crc32(content: Buffer) {
+  let crc = 0xffffffff;
+  for (const byte of Array.from(content)) {
+    crc ^= byte;
+    for (let bit = 0; bit < 8; bit += 1) crc = (crc >>> 1) ^ (0xedb88320 & -(crc & 1));
+  }
+  return (crc ^ 0xffffffff) >>> 0;
+}
+
+function zipStoredFiles(entries: Array<{ name: string; content: Buffer }>) {
+  const localParts: Buffer[] = [];
+  const centralParts: Buffer[] = [];
+  let offset = 0;
+  for (const entry of entries) {
+    const name = Buffer.from(entry.name, "utf8");
+    const crc = crc32(entry.content);
+    const local = Buffer.alloc(30);
+    local.writeUInt32LE(0x04034b50, 0);
+    local.writeUInt16LE(20, 4);
+    local.writeUInt16LE(0x0800, 6);
+    local.writeUInt16LE(0, 8); // stored (no compression)
+    local.writeUInt32LE(crc, 14);
+    local.writeUInt32LE(entry.content.length, 18);
+    local.writeUInt32LE(entry.content.length, 22);
+    local.writeUInt16LE(name.length, 26);
+    localParts.push(local, name, entry.content);
+
+    const central = Buffer.alloc(46);
+    central.writeUInt32LE(0x02014b50, 0);
+    central.writeUInt16LE(20, 4);
+    central.writeUInt16LE(20, 6);
+    central.writeUInt16LE(0x0800, 8);
+    central.writeUInt16LE(0, 10);
+    central.writeUInt32LE(crc, 16);
+    central.writeUInt32LE(entry.content.length, 20);
+    central.writeUInt32LE(entry.content.length, 24);
+    central.writeUInt16LE(name.length, 28);
+    central.writeUInt32LE(offset, 42);
+    centralParts.push(central, name);
+    offset += local.length + name.length + entry.content.length;
+  }
+  const centralDirectory = Buffer.concat(centralParts);
+  const end = Buffer.alloc(22);
+  end.writeUInt32LE(0x06054b50, 0);
+  end.writeUInt16LE(entries.length, 8);
+  end.writeUInt16LE(entries.length, 10);
+  end.writeUInt32LE(centralDirectory.length, 12);
+  end.writeUInt32LE(offset, 16);
+  return Buffer.concat([...localParts, centralDirectory, end]);
+}
+
+export async function exportFormSubmissionFilesZip(identifier: string): Promise<{ filename: string; content: Buffer } | undefined> {
+  const result = await listFormSubmissions(identifier, true);
+  if (!result) return undefined;
+  const entries: Array<{ name: string; content: Buffer }> = [];
+  for (const submission of result.submissions) {
+    for (const [index, file] of Array.from(submission.files.entries())) {
+      const content = Buffer.from(file.base64, "base64");
+      const safeName = file.originalName.replace(/[\\/:*?"<>|\r\n]/g, "_") || `file-${index + 1}`;
+      entries.push({ name: `${submission.publicSubmissionId}/${safeName}`, content });
+    }
+  }
+  return { filename: `${result.form.publicId}-uploaded-files.zip`, content: zipStoredFiles(entries) };
 }
 
 export async function submitFormSubmission(input: {
@@ -625,21 +736,56 @@ export async function submitFormSubmission(input: {
   responderEmail?: string | null;
   ipAddress?: string | null;
   userAgent?: string | null;
+  submissionToken?: string | null;
 }): Promise<StoredFormSubmission> {
   const form = await getFormByIdentifier(input.identifier);
   if (!form || !form.isActive) {
     throw new Error("Form not found");
   }
 
+  const fieldsByName = new Map(form.fields.map((field) => [field.name, field]));
+  for (const file of input.files) {
+    const field = fieldsByName.get(file.fieldName);
+    if (!field || field.type !== "file") {
+      throw new FormSubmissionValidationError(`File upload is not allowed for field \"${file.fieldName}\"`);
+    }
+  }
+  for (const field of form.fields) {
+    const value = input.values[field.name];
+    const responderValue = ["fullName", "name", "responderName"].includes(field.name)
+      ? input.responderName
+      : ["email", "responderEmail"].includes(field.name)
+        ? input.responderEmail
+        : undefined;
+    const hasValue = Array.isArray(value)
+      ? value.some((entry) => String(entry).trim())
+      : Boolean((typeof value === "string" && value.trim()) || responderValue?.trim());
+    const hasFile = input.files.some((file) => file.fieldName === field.name);
+    if (field.required && !hasValue && !hasFile) {
+      throw new FormSubmissionValidationError(`${field.label} is required`);
+    }
+    if (field.type === "select" && hasValue && typeof value === "string" && !field.options.includes(value)) {
+      throw new FormSubmissionValidationError(`Invalid selection for ${field.label}`);
+    }
+  }
+
   const submissionId = randomUUID();
   const publicSubmissionId = nanoid(18);
   const now = new Date();
 
+  if (input.submissionToken) {
+    const existing = await prisma.$queryRawUnsafe<Array<{
+      id: string; form_id: string; public_submission_id: string; status: string; responder_name: string | null; responder_email: string | null;
+      payload: unknown; files: unknown; ip_address: string | null; user_agent: string | null; submitted_at: Date; created_at: Date; updated_at: Date;
+    }>>(`SELECT * FROM form_submissions WHERE form_id = $1 AND submission_token = $2 LIMIT 1`, form.id, input.submissionToken);
+    if (existing[0]) return toStoredSubmission(existing[0]);
+  }
+
   const created = await prisma.$transaction(async (tx) => {
     await tx.$executeRawUnsafe(
       `INSERT INTO form_submissions
-       (id, form_id, public_submission_id, status, responder_name, responder_email, payload, files, ip_address, user_agent, submitted_at, created_at, updated_at)
-       VALUES ($1, $2, $3, 'new', $4, $5, $6::jsonb, $7::jsonb, $8, $9, $10, $11, $12)`,
+       (id, form_id, public_submission_id, status, responder_name, responder_email, payload, files, submission_token, ip_address, user_agent, submitted_at, created_at, updated_at)
+       VALUES ($1, $2, $3, 'new', $4, $5, $6::jsonb, $7::jsonb, $8, $9, $10, $11, $12, $13)`,
       submissionId,
       form.id,
       publicSubmissionId,
@@ -647,6 +793,7 @@ export async function submitFormSubmission(input: {
       input.responderEmail ?? null,
       JSON.stringify(input.values),
       JSON.stringify(input.files),
+      input.submissionToken ?? null,
       input.ipAddress ?? null,
       input.userAgent ?? null,
       now,

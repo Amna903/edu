@@ -11,6 +11,14 @@ import { useAdminFormSubmissions, useAdminForms, useCreateAdminForm, type Create
 
 const FIELD_TYPES = ["text", "email", "textarea", "select", "file", "number", "tel", "date"] as const;
 
+function formatSubmittedAt(value: string) {
+  return new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" }).format(new Date(value));
+}
+
+function formIdentifier(form: { kind?: string | null; publicId: string }) {
+  return form.kind && form.kind !== "custom" ? form.kind : form.publicId;
+}
+
 type FieldType = (typeof FIELD_TYPES)[number];
 
 function buildEmptyField(index: number): CreateFormFieldInput {
@@ -131,7 +139,7 @@ export default function AdminForms() {
     return adminForms.data?.forms.filter((form) => form.kind !== "general-enquiry") ?? [];
   }, [adminForms.data]);
   const selectedForm = useMemo(() => {
-    return adminForms.data?.forms.find((form) => form.publicId === selectedIdentifier || form.kind === selectedIdentifier) ?? null;
+    return adminForms.data?.forms.find((form) => formIdentifier(form) === selectedIdentifier) ?? null;
   }, [adminForms.data, selectedIdentifier]);
 
   useEffect(() => {
@@ -146,7 +154,7 @@ export default function AdminForms() {
   }, [adminForms.data, generalEnquiryForm, selectedIdentifier]);
 
   const openResponsesInNewTab = (form: { kind?: string | null; publicId: string }) => {
-    const identifier = form.kind || form.publicId;
+    const identifier = formIdentifier(form);
     window.open(`/dashboard/admin/forms/${encodeURIComponent(identifier)}/responses`, "_blank", "noopener,noreferrer");
   };
   const submissionsQuery = useAdminFormSubmissions(selectedIdentifier, Boolean(selectedIdentifier));
@@ -340,7 +348,7 @@ export default function AdminForms() {
                         <button
                           type="button"
                           className="w-full text-left"
-                          onClick={() => setSelectedIdentifier(generalEnquiryForm.kind || generalEnquiryForm.publicId)}
+                          onClick={() => setSelectedIdentifier(formIdentifier(generalEnquiryForm))}
                         >
                           <div className="flex items-center justify-between gap-3">
                             <div>
@@ -357,10 +365,13 @@ export default function AdminForms() {
                           <Button type="button" variant="outline" size="sm" onClick={() => openResponsesInNewTab(generalEnquiryForm)}>
                             Open responses
                           </Button>
-                          <Button type="button" variant="outline" size="sm" onClick={() => window.open(`/api/admin/forms/${encodeURIComponent(generalEnquiryForm.kind || generalEnquiryForm.publicId)}/export.csv`, "_blank", "noopener,noreferrer")}>
+                          <Button type="button" variant="outline" size="sm" onClick={() => window.open(`/api/admin/forms/${encodeURIComponent(formIdentifier(generalEnquiryForm))}/export.csv`, "_blank", "noopener,noreferrer")}>
                             Export CSV
                           </Button>
-                          <Button type="button" variant="secondary" size="sm" onClick={() => setSelectedIdentifier(generalEnquiryForm.kind || generalEnquiryForm.publicId)}>
+                          <Button type="button" variant="outline" size="sm" onClick={() => window.open(`/api/admin/forms/${encodeURIComponent(formIdentifier(generalEnquiryForm))}/files.zip`, "_blank", "noopener,noreferrer")}>
+                            Files ZIP
+                          </Button>
+                          <Button type="button" variant="secondary" size="sm" onClick={() => setSelectedIdentifier(formIdentifier(generalEnquiryForm))}>
                             Select form
                           </Button>
                         </div>
@@ -375,7 +386,7 @@ export default function AdminForms() {
                         <button
                           type="button"
                           className="w-full text-left"
-                          onClick={() => setSelectedIdentifier(form.kind || form.publicId)}
+                          onClick={() => setSelectedIdentifier(formIdentifier(form))}
                         >
                           <div className="flex items-center justify-between gap-3">
                             <div>
@@ -392,10 +403,13 @@ export default function AdminForms() {
                           <Button type="button" variant="outline" size="sm" onClick={() => openResponsesInNewTab(form)}>
                             Open responses
                           </Button>
-                          <Button type="button" variant="outline" size="sm" onClick={() => window.open(`/api/admin/forms/${encodeURIComponent(form.kind || form.publicId)}/export.csv`, "_blank", "noopener,noreferrer")}>
+                          <Button type="button" variant="outline" size="sm" onClick={() => window.open(`/api/admin/forms/${encodeURIComponent(formIdentifier(form))}/export.csv`, "_blank", "noopener,noreferrer")}>
                             Export CSV
                           </Button>
-                          <Button type="button" variant="secondary" size="sm" onClick={() => setSelectedIdentifier(form.kind || form.publicId)}>
+                          <Button type="button" variant="outline" size="sm" onClick={() => window.open(`/api/admin/forms/${encodeURIComponent(formIdentifier(form))}/files.zip`, "_blank", "noopener,noreferrer")}>
+                            Files ZIP
+                          </Button>
+                          <Button type="button" variant="secondary" size="sm" onClick={() => setSelectedIdentifier(formIdentifier(form))}>
                             Select form
                           </Button>
                         </div>
@@ -429,8 +443,11 @@ export default function AdminForms() {
                     <Button asChild variant="outline" size="sm">
                       <Link href={selectedForm.publicUrl}>Open public form</Link>
                     </Button>
-                    <Button type="button" variant="outline" size="sm" onClick={() => window.open(`/api/admin/forms/${encodeURIComponent(selectedForm.kind || selectedForm.publicId)}/export.csv`, "_blank", "noopener,noreferrer")}>
+                    <Button type="button" variant="outline" size="sm" onClick={() => window.open(`/api/admin/forms/${encodeURIComponent(formIdentifier(selectedForm))}/export.csv`, "_blank", "noopener,noreferrer")}>
                       Export CSV
+                    </Button>
+                    <Button type="button" variant="outline" size="sm" onClick={() => window.open(`/api/admin/forms/${encodeURIComponent(formIdentifier(selectedForm))}/files.zip`, "_blank", "noopener,noreferrer")}>
+                      Download files ZIP
                     </Button>
                     <Button type="button" variant="secondary" size="sm" onClick={() => openResponsesInNewTab(selectedForm)}>
                       Open responses in new tab
@@ -476,7 +493,7 @@ export default function AdminForms() {
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                       <div>
                         <p className="font-semibold text-slate-900">{submission.responderName || submission.responderEmail || submission.publicSubmissionId}</p>
-                        <p className="text-xs text-slate-500">{new Date(submission.submittedAt).toLocaleString()}</p>
+                        <p className="text-xs text-slate-500">{formatSubmittedAt(submission.submittedAt)}</p>
                       </div>
                       <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-600 shadow-sm">{submission.status}</span>
                     </div>
@@ -491,10 +508,15 @@ export default function AdminForms() {
                         <div className="grid gap-1 rounded-2xl border border-slate-200 bg-white p-3 sm:grid-cols-[160px_minmax(0,1fr)]">
                           <span className="font-semibold text-slate-800">Files</span>
                           <div className="space-y-2">
-                            {submission.files.map((file) => (
+                            {submission.files.map((file, fileIndex) => (
                               <div key={`${file.fieldName}-${file.originalName}`} className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
                                 <p className="font-semibold">{file.originalName}</p>
                                 <p>{file.mimeType} · {(file.size / 1024).toFixed(1)} KB</p>
+                                {selectedIdentifier ? (
+                                  <a href={`/api/admin/forms/${encodeURIComponent(selectedIdentifier)}/submissions/${encodeURIComponent(submission.publicSubmissionId)}/files/${fileIndex}`} className="mt-2 inline-block font-semibold text-brand-primary hover:underline">
+                                    Download file
+                                  </a>
+                                ) : null}
                               </div>
                             ))}
                           </div>

@@ -1,7 +1,8 @@
 import type { Express, Request } from "express";
 import multer from "multer";
 import { z } from "zod";
-import { ensureFormsReady, createForm, exportFormSubmissionsCsv, getDefaultContactIdentifier, getDefaultTeacherIdentifier, getFormByIdentifier, listForms, listFormSubmissions, submitFormSubmission, type FormFieldType, type StoredForm } from "../services/forms.js";
+import { ensureFormsReady, createForm, exportFormSubmissionFilesZip, exportFormSubmissionsCsv, FormSubmissionValidationError, getDefaultContactIdentifier, getDefaultTeacherIdentifier, getFormByIdentifier, getFormSubmissionFile, listForms, listFormSubmissions, submitFormSubmission, type FormFieldType, type StoredForm } from "../services/forms.js";
+import { getCachedJson, setCachedJson } from "../services/redis.js";
 import type { RouteContext } from "./context.js";
 
 const upload = multer({
@@ -58,6 +59,10 @@ function readUploadedFiles(req: Request) {
   }));
 }
 
+function safeDownloadName(name: string) {
+  return name.replace(/[\\/:*?"<>|\r\n]/g, "_").slice(0, 180) || "upload";
+}
+
 function isAdmin(req: Request) {
   return Boolean(req.session.user && req.session.user.role === "admin");
 }
@@ -82,15 +87,28 @@ export function registerFormsRoutes(app: Express, ctx: RouteContext) {
         return res.status(400).json({ message: "Form identifier is required" });
       }
 
+      const cacheKey = `public-form:${identifier}`;
+      const cached = await getCachedJson<Record<string, unknown>>(cacheKey);
+      if (cached) {
+        res.setHeader("Cache-Control", "public, max-age=300, stale-while-revalidate=86400");
+        res.setHeader("X-Cache", "HIT");
+        return res.json(cached);
+      }
+
       const form = await getFormByIdentifier(identifier);
       if (!form || !form.isActive) {
         return res.status(404).json({ message: "Form not found" });
       }
 
-      return res.json({
+      const response = {
         ...form,
         publicUrl: buildPublicFormUrl(form),
-      });
+      };
+      // Fire-and-forget: Redis cache writes never hold up the page response.
+      void setCachedJson(cacheKey, response, 300);
+      res.setHeader("Cache-Control", "public, max-age=300, stale-while-revalidate=86400");
+      res.setHeader("X-Cache", "MISS");
+      return res.json(response);
     } catch (err) {
       return res.status(500).json({ message: err instanceof Error ? err.message : "Failed to load form" });
     }
@@ -109,12 +127,14 @@ export function registerFormsRoutes(app: Express, ctx: RouteContext) {
 
       const responderName = asText(values.fullName || values.name || values.responderName);
       const responderEmail = asText(values.email || values.responderEmail);
+      const submissionToken = asText(values._submissionToken);
       const payload = { ...values };
       delete payload.fullName;
       delete payload.name;
       delete payload.responderName;
       delete payload.email;
       delete payload.responderEmail;
+      delete payload._submissionToken;
 
       const created = await submitFormSubmission({
         identifier: form.kind === getDefaultContactIdentifier() ? getDefaultContactIdentifier() : form.publicId,
@@ -124,10 +144,14 @@ export function registerFormsRoutes(app: Express, ctx: RouteContext) {
         responderEmail: responderEmail || null,
         ipAddress: req.ip || req.socket.remoteAddress || null,
         userAgent: req.headers["user-agent"] || null,
+        submissionToken: submissionToken || null,
       });
 
       return res.status(201).json(created);
     } catch (err) {
+      if (err instanceof FormSubmissionValidationError) {
+        return res.status(400).json({ message: err.message });
+      }
       return res.status(500).json({ message: err instanceof Error ? err.message : "Failed to submit form" });
     }
   });
@@ -252,6 +276,50 @@ export function registerFormsRoutes(app: Express, ctx: RouteContext) {
       return res.send(result.csv);
     } catch (err) {
       return res.status(500).json({ message: err instanceof Error ? err.message : "Failed to export form submissions" });
+    }
+  });
+
+  app.get("/api/admin/forms/:identifier/files.zip", async (req, res) => {
+    try {
+      if (!isAdmin(req)) return res.status(403).json({ message: "Admin access required" });
+      const result = await exportFormSubmissionFilesZip(String(req.params.identifier || "").trim());
+      if (!result) return res.status(404).json({ message: "Form not found" });
+      res.setHeader("Content-Type", "application/zip");
+      res.setHeader("Content-Length", result.content.length);
+      res.setHeader("Content-Disposition", `attachment; filename="${result.filename}"`);
+      return res.send(result.content);
+    } catch (err) {
+      return res.status(500).json({ message: err instanceof Error ? err.message : "Failed to export uploaded files" });
+    }
+  });
+
+  app.get("/api/admin/forms/:identifier/submissions/:submissionId/files/:fileIndex", async (req, res) => {
+    try {
+      if (!isAdmin(req)) {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+
+      const fileIndex = Number(req.params.fileIndex);
+      const result = await getFormSubmissionFile(
+        String(req.params.identifier || "").trim(),
+        String(req.params.submissionId || "").trim(),
+        fileIndex,
+      );
+      if (!result) {
+        return res.status(404).json({ message: "File not found" });
+      }
+
+      const content = Buffer.from(result.file.base64, "base64");
+      if (!content.length && result.file.size > 0) {
+        return res.status(422).json({ message: "Stored file is invalid" });
+      }
+      const filename = safeDownloadName(result.file.originalName);
+      res.setHeader("Content-Type", result.file.mimeType || "application/octet-stream");
+      res.setHeader("Content-Length", content.length);
+      res.setHeader("Content-Disposition", `attachment; filename="${filename}"; filename*=UTF-8''${encodeURIComponent(filename)}`);
+      return res.send(content);
+    } catch (err) {
+      return res.status(500).json({ message: err instanceof Error ? err.message : "Failed to download file" });
     }
   });
 

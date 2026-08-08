@@ -4,7 +4,11 @@ import { serveStatic } from "./core/static.js";
 import { createServer } from "http";
 import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
+import { RedisStore } from "connect-redis";
 import { env, isProduction, logEnvPresence } from "./config/config.js";
+import { decryptAtRest, encryptAtRest } from "./services/encryption.js";
+import { getRedisClient } from "./services/redis.js";
+import { inputSafety, rateLimit, securityHeaders } from "./middleware/security.js";
 
 const app = express();
 const httpServer = createServer(app);
@@ -40,20 +44,45 @@ declare module "express-session" {
   }
 }
 
+app.use(securityHeaders);
 app.use(
   express.json({
+    limit: "1mb",
     verify: (req, _res, buf) => {
       req.rawBody = buf;
     },
   }),
 );
 
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: false, limit: "1mb" }));
+app.use(inputSafety);
 
 let sessionStore: session.Store | undefined;
 const dbUrl = process.env.DATABASE_URL || process.env.DIRECT_URL;
+const redisClient = getRedisClient();
 
-if (dbUrl) {
+if (redisClient) {
+  sessionStore = new RedisStore({
+    client: redisClient,
+    prefix: "edu:sess:",
+    ttl: 60 * 60 * 24 * 7,
+    // Moodle tokens and user session data are encrypted before Redis persistence.
+    serializer: {
+      stringify: (value) => encryptAtRest(JSON.stringify(value)),
+      parse: (value) => {
+        try {
+          return JSON.parse(decryptAtRest(value));
+        } catch {
+          // Supports existing pre-encryption sessions during a zero-downtime deployment.
+          return JSON.parse(value);
+        }
+      },
+    },
+  });
+  console.log("[session] Redis session cache configured.");
+}
+
+if (!sessionStore && dbUrl) {
   try {
     const PgSession = connectPgSimple(session);
     sessionStore = new PgSession({
@@ -71,16 +100,21 @@ app.use(
   session({
     store: sessionStore,
     secret: env.sessionSecret,
+    name: isProduction() ? "__Host-edu.sid" : "edu.sid",
     resave: false,
     saveUninitialized: false,
+    unset: "destroy",
     cookie: {
       httpOnly: true,
       sameSite: "lax",
       secure: isProduction(),
+      path: "/",
       maxAge: 1000 * 60 * 60 * 24 * 7,
     },
   }),
 );
+
+app.use(rateLimit);
 
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
@@ -96,23 +130,23 @@ export function log(message: string, source = "express") {
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
-  let capturedJsonResponse: Record<string, any> | undefined = undefined;
-
-  const originalResJson = res.json;
-  res.json = function (bodyJson, ...args) {
-    capturedJsonResponse = bodyJson;
-    return originalResJson.apply(res, [bodyJson, ...args]);
-  };
-
   res.on("finish", () => {
     const duration = Date.now() - start;
     if (path.startsWith("/api")) {
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-      }
-
       log(logLine);
+    }
+
+    // Audit only state changes; write asynchronously so it never adds user-visible latency.
+    if (path.startsWith("/api") && !["GET", "HEAD", "OPTIONS"].includes(req.method) && !path.startsWith("/api/payment")) {
+      import("./services/logger.js").then(({ logAuditEvent }) =>
+        logAuditEvent({
+          action: `API_${req.method}_${path.replace(/[^a-zA-Z0-9]+/g, "_").toUpperCase()}`,
+          userId: req.session.user?.id,
+          ipAddress: req.ip,
+          statusCode: res.statusCode,
+        }),
+      ).catch(() => undefined);
     }
   });
 

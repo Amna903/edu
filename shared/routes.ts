@@ -266,7 +266,7 @@ export const api = {
       path: '/api/dashboard/parent/link-child' as const,
       input: parentLinkChildInputSchema,
       responses: {
-        200: z.object({ success: z.literal(true) }),
+        200: z.object({ success: z.literal(true), created: z.boolean() }),
       },
     },
     parentReport: {

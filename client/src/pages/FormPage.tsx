@@ -48,6 +48,7 @@ export default function FormPage() {
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const submitLockRef = useRef(false);
+  const submissionTokenRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (formQuery.data) {
@@ -83,8 +84,11 @@ export default function FormPage() {
 
     const form = event.currentTarget;
     const formData = new FormData(form);
+    submissionTokenRef.current ??= crypto.randomUUID();
+    formData.set("_submissionToken", submissionTokenRef.current);
     try {
       await submitMutation.mutateAsync(formData);
+      submissionTokenRef.current = null;
       setFeedback({ type: "success", message: "Your response has been received. Thank you!" });
       if (typeof form?.reset === "function") {
         form.reset();

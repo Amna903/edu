@@ -8,6 +8,7 @@ import { enrolUserInCourse } from "../services/moodle/moodle-commerce.js";
 import { createCourseEnrollment } from "../repositories/course-store.js";
 import { getStoredRoleByMoodleUserId, getStoredUserByMoodleUserId } from "../repositories/user-store.js";
 import { randomUUID } from "crypto";
+import { listInAppNotifications, notifyPayment } from "../services/notifications.js";
 import { getStudentGradesForDashboard } from "../services/moodle/moodle-dashboard.js";
 import {
   assertScholarshipCodeForUser,
@@ -383,6 +384,11 @@ export function createRouteContext() {
       await recordPaymentEvent(existingOrder.id, "license_created", "School licenses created after successful payment");
     }
     await storage.deletePendingPayment(orderRef);
+    // Notifications are intentionally detached from payment completion: an email/provider outage cannot affect an order.
+    const purchaser = Number.isFinite(purchaserId) ? await getStoredUserByMoodleUserId(purchaserId) : null;
+    void notifyPayment({ userId: purchaserId, email: purchaser?.email, orderId: existingOrder.id, completed }).catch((error) =>
+      console.error("Payment notification failed:", error),
+    );
     return existingOrder.id;
   };
 
@@ -431,6 +437,18 @@ export function createRouteContext() {
       // });
     }
 
+    const storedNotifications = await listInAppNotifications(input.userId);
+    storedNotifications.forEach((notification) => {
+      notifications.push({
+        id: notificationIdFromKey(`app-${notification.id}`),
+        title: notification.title,
+        message: notification.message,
+        createdAt: notification.createdAt,
+        type: notification.type,
+        actionUrl: notification.actionUrl ?? undefined,
+      });
+    });
+
     return notifications.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   };
 
@@ -439,8 +457,9 @@ export function createRouteContext() {
     return `"${text.replace(/"/g, '""')}"`;
   };
 
-  const buildParentReportCsv = async (input: { parentId: number; email: string | null }) => {
-    const childIds = await loadLinkedChildren(input.parentId);
+  const buildParentReportCsv = async (input: { parentId: number; email: string | null; childId?: number }) => {
+    const linkedChildIds = await loadLinkedChildren(input.parentId);
+    const childIds = input.childId ? linkedChildIds.filter((id) => id === input.childId) : linkedChildIds;
     const parentNotifications = await buildDashboardNotifications({ userId: input.parentId, email: input.email });
 
     const rows: Array<Array<string | number | boolean | null | undefined>> = [

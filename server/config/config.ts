@@ -91,6 +91,10 @@ export const env = {
     process.env.NEON_DATABASE_URL,
   ),
   sessionSecret: process.env.SESSION_SECRET || "edu-dev-session-secret",
+  // Use a separate, high-entropy key in production to encrypt server-side session data.
+  sessionEncryptionKey: process.env.SESSION_ENCRYPTION_KEY || process.env.SESSION_SECRET || "edu-dev-session-secret",
+  redisUrl: process.env.REDIS_URL || process.env.REDIS_TLS_URL || "",
+  cacheDefaultTtlSeconds: toInt(process.env.CACHE_DEFAULT_TTL_SECONDS, 300),
 
   debug: process.env.DEBUG || "",
   debugMiddleware: process.env.DEBUG_MIDDLEWARE || "",

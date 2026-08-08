@@ -27,6 +27,31 @@ export interface ErrorLogOptions {
   metadata?: Record<string, unknown>;
 }
 
+export interface AuditEventOptions {
+  action: string;
+  userId?: number;
+  targetUserId?: string | null;
+  ipAddress?: string;
+  statusCode: number;
+}
+
+/** Persist a security-relevant action without ever storing request bodies or secrets. */
+export async function logAuditEvent(opts: AuditEventOptions): Promise<void> {
+  if (!(await canUseAdminActivityLogs())) return;
+  try {
+    await (prisma as any).adminActivityLog.create({
+      data: {
+        adminUserId: opts.userId ?? 0,
+        targetUserId: opts.targetUserId ?? null,
+        action: opts.action,
+        details: { ipAddress: opts.ipAddress ?? null, statusCode: opts.statusCode },
+      },
+    });
+  } catch (error) {
+    console.error("[logger] Failed to persist audit event:", error);
+  }
+}
+
 /** Log a login attempt (success or failure). Stored in DB + console. */
 export async function logLoginAttempt(opts: LoginAttemptOptions): Promise<void> {
   const action = opts.success ? "LOGIN_SUCCESS" : "LOGIN_FAILED";

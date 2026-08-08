@@ -92,6 +92,7 @@ export function usePublicForm(identifier?: string | null) {
   return useQuery<PublicForm, Error>({
     queryKey: ["publicForm", identifier],
     enabled: Boolean(identifier),
+    staleTime: 5 * 60 * 1000,
     queryFn: async () => {
       if (!identifier) {
         throw new Error("Form identifier is required");

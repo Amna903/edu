@@ -461,11 +461,12 @@ export default function Dashboard() {
     }
   }
 
-  async function downloadParentReport() {
+  async function downloadParentReport(child?: { id: number; name: string }) {
     setReportDownloadState({ pending: true, error: "" });
 
     try {
-      const response = await fetch("/api/dashboard/parent/report.csv", {
+      const query = child ? `?childId=${encodeURIComponent(child.id)}` : "";
+      const response = await fetch(`/api/dashboard/parent/report.csv${query}`, {
         credentials: "include",
       });
 
@@ -478,7 +479,10 @@ export default function Dashboard() {
       const url = window.URL.createObjectURL(blob);
       const anchor = document.createElement("a");
       anchor.href = url;
-      anchor.download = `parent-dashboard-report-${user?.id || "export"}.csv`;
+      const childFileName = child?.name.trim().replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase();
+      anchor.download = childFileName
+        ? `${childFileName}-report.csv`
+        : `parent-dashboard-report-${user?.id || "export"}.csv`;
       document.body.appendChild(anchor);
       anchor.click();
       anchor.remove();
@@ -879,7 +883,7 @@ export default function Dashboard() {
                         <Button
                           type="button"
                           className="justify-start rounded-2xl bg-brand-primary text-white hover:bg-brand-primary-dark sm:col-span-2"
-                          onClick={downloadParentReport}
+                          onClick={() => downloadParentReport()}
                           disabled={reportDownloadState.pending}
                         >
                           <Download className="mr-2 h-4 w-4" />
@@ -953,9 +957,13 @@ export default function Dashboard() {
 
                           setLinkChildState({ pending: true, success: "", error: "" });
                           try {
-                            await linkChild.mutateAsync({ childEmail: inputVal });
+                            const result = await linkChild.mutateAsync({ childEmail: inputVal });
                             setChildIdInput("");
-                            setLinkChildState({ pending: false, success: "Child linked successfully.", error: "" });
+                            setLinkChildState({
+                              pending: false,
+                              success: result.created ? "Child linked successfully." : "This child is already linked to your account.",
+                              error: "",
+                            });
                           } catch (error) {
                             setLinkChildState({
                               pending: false,
@@ -975,7 +983,7 @@ export default function Dashboard() {
                           {linkChildState.pending ? "Linking..." : "Link Child"}
                         </Button>
                       </form>
-                      <p className="text-xs text-slate-500">Enter your child&apos;s registered email address. After linking, their enrolled courses and progress will appear below.</p>
+                      <p className="text-xs text-slate-500">{parentChildren.length}/10 children linked. Enter your child&apos;s registered email address. After linking, their enrolled courses and progress will appear below.</p>
 
                       <div className="space-y-6">
                         {parentChildren.map((child) => {
@@ -991,8 +999,15 @@ export default function Dashboard() {
                           return (
                             <Card key={child.id} id={`parent-child-${child.id}`} className="scroll-mt-28 border-slate-200 shadow-sm">
                               <CardHeader className="border-b border-slate-100">
-                                <CardTitle>{child.name}</CardTitle>
-                                <p className="text-sm text-slate-500">{child.email}</p>
+                                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                                  <div>
+                                    <CardTitle>{child.name}</CardTitle>
+                                    <p className="mt-1 text-sm text-slate-500">{child.email}</p>
+                                  </div>
+                                  <Button type="button" variant="outline" size="sm" onClick={() => downloadParentReport(child)} disabled={reportDownloadState.pending}>
+                                    <Download className="mr-2 h-4 w-4" /> Export this child's report
+                                  </Button>
+                                </div>
                               </CardHeader>
                               <CardContent className="space-y-5 p-6">
                                 <div className="grid gap-4 md:grid-cols-3">
